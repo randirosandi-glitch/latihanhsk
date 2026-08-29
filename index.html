@@ -187,7 +187,7 @@ function renderHome(){
     const palette=['blue','purple','orange','pink','green'][idx%5];
     const pct=st.pct||0;
     const status=pct>=100?'Selesai':pct>0?'Sedang berjalan':'Belum dimulai';
-    const packageIcon=pct>=100?'checkSquare':pct>0?'file':'headphones';
+    const packageIcon='file';
     return `<button class="tile packageTile packageTile-${palette}" type="button" onclick="openPackage('${esc(code)}')">
       <div class="pkgTop"><div class="tileIcon" aria-hidden="true">${svg(packageIcon)}</div><span class="statusPill">${status}</span></div>
       <div class="pkgTitleRow"><div><b>Paket ${esc(code)}</b><small>${esc(desc)}</small></div><span class="pkgArrow">→</span></div>
