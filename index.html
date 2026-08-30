@@ -226,6 +226,7 @@ const USERNAME_KEY='hsk4-kelas-e-username-v1';
 let currentUsername='';
 let cloudSyncTimer=null;
 let cloudSyncBusy=false;
+let cloudSyncPending=false;
 function normalizeUsername(v){return String(v||'').trim().toLowerCase()}
 function validUsername(v){return /^[a-z0-9._-]{3,24}$/.test(v)}
 function cloudEnabled(){return /^https:\/\/[^\s]+$/.test(CLOUD_CONFIG.url)&&CLOUD_CONFIG.anonKey.length>20}
@@ -238,12 +239,69 @@ function hideUsernameModal(){const m=$('usernameModal');if(!m)return;m.classList
 function cloudUrl(path=''){return CLOUD_CONFIG.url.replace(/\/$/,'')+'/rest/v1/'+CLOUD_TABLE+path}
 function cloudErrorMessage(status){if(status===401||status===403)return 'Supabase menolak akses. Periksa RLS policy untuk anon (SELECT, INSERT, UPDATE).';if(status===409)return 'Username sudah terdaftar.';return 'Gagal terhubung ke Supabase (HTTP '+status+').'}
 function cloudHeaders(extra={}){return {'apikey':CLOUD_CONFIG.anonKey,'Authorization':'Bearer '+CLOUD_CONFIG.anonKey,'Content-Type':'application/json',...extra}}
-async function cloudFindUser(username){if(!cloudEnabled())return null;const url=cloudUrl('?username=eq.'+encodeURIComponent(username)+'&select=id,username,data,created_at&limit=1');const r=await fetch(url,{headers:cloudHeaders()});if(!r.ok)throw new Error(cloudErrorMessage(r.status));const rows=await r.json();return rows[0]||null}
-async function cloudCreateUser(username){if(!cloudEnabled())return true;const r=await fetch(cloudUrl(),{method:'POST',headers:cloudHeaders({'Prefer':'return=minimal'}),body:JSON.stringify({username,data:{}})});if(!r.ok)throw new Error(cloudErrorMessage(r.status));return true}
-async function cloudUpdateUser(username,store){if(!cloudEnabled())return true;const url=cloudUrl('?username=eq.'+encodeURIComponent(username));const r=await fetch(url,{method:'PATCH',headers:cloudHeaders({'Prefer':'return=minimal'}),body:JSON.stringify({data:store,updated_at:new Date().toISOString()})});if(!r.ok)throw new Error(cloudErrorMessage(r.status));return true}
-async function pullCloudState(force=false){if(!currentUsername||!cloudEnabled())return false;try{const row=await cloudFindUser(currentUsername);if(!row){await cloudCreateUser(currentUsername);writeStore({});return true}const remote=row.data||{};const local=readStore();const merged={...remote};let localNewer=false;Object.entries(local).forEach(([k,v])=>{if(!merged[k]||Number(v.updatedAt||0)>Number(merged[k].updatedAt||0)){merged[k]=v;localNewer=true}});writeStore(merged);if(localNewer)await cloudUpdateUser(currentUsername,merged);renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();return true}catch(e){console.warn('Cloud sync pull failed',e);return false}}
-async function pushCloudState(store){if(!currentUsername||!cloudEnabled())return false;if(cloudSyncBusy)return false;cloudSyncBusy=true;try{await cloudUpdateUser(currentUsername,store);return true}catch(e){console.warn('Cloud sync push failed',e);return false}finally{cloudSyncBusy=false}}
-function scheduleCloudSync(){if(!currentUsername||!cloudEnabled())return;clearTimeout(cloudSyncTimer);cloudSyncTimer=setTimeout(()=>pushCloudState(readStore()),700)}
+async function cloudFindUser(username){
+  if(!cloudEnabled())return null;
+  const url=cloudUrl('?username=eq.'+encodeURIComponent(username)+'&select=id,username,data,created_at,updated_at&limit=1');
+  const r=await fetch(url,{headers:cloudHeaders()});
+  if(!r.ok)throw new Error(cloudErrorMessage(r.status));
+  const rows=await r.json();
+  return rows[0]||null;
+}
+async function cloudUpsertUser(username,store){
+  if(!cloudEnabled())return true;
+  const r=await fetch(cloudUrl(),{
+    method:'POST',
+    headers:cloudHeaders({'Prefer':'resolution=merge-duplicates,return=minimal'}),
+    body:JSON.stringify({username,data:store,updated_at:new Date().toISOString()})
+  });
+  if(!r.ok)throw new Error(cloudErrorMessage(r.status));
+  return true;
+}
+async function cloudUpdateUser(username,store){return cloudUpsertUser(username,store)}
+async function pullCloudState(force=false){
+  if(!currentUsername||!cloudEnabled())return false;
+  try{
+    const local=readStore();
+    const row=await cloudFindUser(currentUsername);
+    if(!row){
+      // Akun belum punya row cloud. Jangan pernah menghapus progres lokal; upload sekarang.
+      await cloudUpsertUser(currentUsername,local);
+      renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();
+      return true;
+    }
+    const remote=row.data||{};
+    const merged={...remote};
+    let localNewer=false;
+    Object.entries(local).forEach(([k,v])=>{
+      if(!merged[k]||Number(v.updatedAt||0)>Number(merged[k].updatedAt||0)){merged[k]=v;localNewer=true}
+    });
+    writeStore(merged);
+    if(localNewer)await cloudUpsertUser(currentUsername,merged);
+    renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();
+    return true;
+  }catch(e){console.warn('Cloud sync pull failed',e);return false}
+}
+async function pushCloudState(store){
+  if(!currentUsername||!cloudEnabled())return false;
+  if(cloudSyncBusy){cloudSyncPending=true;return false}
+  cloudSyncBusy=true;
+  try{await cloudUpsertUser(currentUsername,store);return true}
+  catch(e){console.warn('Cloud sync push failed',e);cloudSyncPending=true;return false}
+  finally{
+    cloudSyncBusy=false;
+    if(cloudSyncPending){cloudSyncPending=false;clearTimeout(cloudSyncTimer);cloudSyncTimer=setTimeout(()=>pushCloudState(readStore()),150)}
+  }
+}
+function scheduleCloudSync(){
+  if(!currentUsername||!cloudEnabled())return;
+  clearTimeout(cloudSyncTimer);
+  cloudSyncTimer=setTimeout(()=>pushCloudState(readStore()),350);
+}
+function flushCloudSync(){
+  if(!currentUsername||!cloudEnabled())return;
+  clearTimeout(cloudSyncTimer);
+  pushCloudState(readStore());
+}
 function saveUsername(){const v=normalizeUsername($('usernameInput')?.value);const hint=$('usernameHint');if(!validUsername(v)){if(hint)hint.textContent='Username harus 3–24 karakter dan hanya boleh memakai huruf kecil, angka, titik, garis bawah, atau tanda hubung.';return}currentUsername=v;setUsernameLocal(v);hideUsernameModal();renderUserPill();renderContext();renderHome();renderScores();renderPackagesScreen();pullCloudState(true)}
 function changeUsername(){if($('usernameInput'))$('usernameInput').value=currentUsername;showUsernameModal()}
 function renderUserPill(){
@@ -254,7 +312,7 @@ function renderUserPill(){
   const b=document.createElement('button');b.id='usernamePill';b.className='usernamePill';b.type='button';b.title='Ganti username';b.innerHTML='<span>@</span><b>'+esc(currentUsername)+'</b>';b.onclick=changeUsername;top.appendChild(b);
   const l=document.createElement('button');l.id='topLogout';l.className='topBack logoutTop';l.type='button';l.textContent='Keluar';l.onclick=logout;top.appendChild(l);
 }
-function initUsernameAndCloud(){currentUsername=getUsername();renderUserPill();if(!currentUsername){showUsernameModal();return}pullCloudState()}
+async function initUsernameAndCloud(){currentUsername=getUsername();renderUserPill();if(!currentUsername){showUsernameModal();return false}await pullCloudState();return true}
 
 function svg(k){return {'home':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg>','back':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/><path d="M9 12h12"/></svg>','sun':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>','moon':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.1A8.5 8.5 0 0 1 8.9 3.8 8.6 8.6 0 1 0 20.2 15.1Z"/></svg>','check':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>','listen':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13a8 8 0 0 1 16 0"/><path d="M4 13v4a2 2 0 0 0 2 2h1v-7H6a2 2 0 0 0-2 1Z"/><path d="M20 13v4a2 2 0 0 1-2 2h-1v-7h1a2 2 0 0 1 2 1Z"/><path d="M12 21h2"/></svg>','read':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5A2.5 2.5 0 0 1 7.5 2H19v17H7.5A2.5 2.5 0 0 0 5 21V4.5Z"/><path d="M5 19.5A2.5 2.5 0 0 1 7.5 17H19"/></svg>','write':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m4 20 4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z"/><path d="m14.5 7.5 2 2"/></svg>','box':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m4 7 8-4 8 4-8 4-8-4Z"/><path d="M4 7v10l8 4 8-4V7"/><path d="M12 11v10"/></svg>','chart':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5"/><path d="M4 19h17"/><path d="m7 15 3-4 3 2 5-7"/></svg>','file':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M14 3v5h5"/><path d="M8 12h8M8 16h6"/></svg>','headphones':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13a8 8 0 0 1 16 0"/><path d="M4 13v4a2 2 0 0 0 2 2h1v-7H6a2 2 0 0 0-2 1Z"/><path d="M20 13v4a2 2 0 0 1-2 2h-1v-7h1a2 2 0 0 1 2 1Z"/></svg>','checkSquare':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8 12 2.5 2.5L16 9"/></svg>'}[k]}
 let exitFromBack=false;
@@ -293,13 +351,15 @@ function clearSectionState(code,type,idx){const st=readStore();delete st[stateKe
 function sectionStats(code,type,idx){const sec=DB[code]?.[type]?.[idx];if(!sec)return {answered:0,total:0,pct:0,score:0};const saved=getSectionState(code,type,idx);let answered=0,score=0;for(const q of sec.questions){const id=String(q[0]);const u=saved.answers[id];if(u!==undefined&&String(u).trim()!==''){answered++;if(isCorrect(q,u,type,idx))score++}}const total=sec.questions.length;return {answered,total,pct:total?Math.round(answered/total*100):0,score}}
 function correctIndex(q,type){const id=Number(q[0]);const key=String(q[3]??'').trim();if(type==='reading'&&id>=56&&id<=65)return permutations().indexOf(key);if(type==='listening'&&id<=10)return key==='√'?0:1;if(/^[A-F]$/.test(key))return key.charCodeAt(0)-65;const opts=q[2]||[];return opts.findIndex(o=>norm(o)===norm(key))}
 function isCorrect(q,u,type,idx){if(type==='writing')return isSequenceWriting(type,idx)?isSequenceAnswerCorrect(q,u):false;const ci=correctIndex(q,type);return Number(u)===ci}
-function packageStats(code){let total=0,answered=0,score=0,gradedTotal=0;const rows=[];for(const [type,m] of Object.entries(META)){const arr=DB[code]?.[type]||[];for(let i=0;i<arr.length;i++){const st=sectionStats(code,type,i);total+=st.total;answered+=st.answered;if(type!=='writing'||isSequenceWriting(type,i)){score+=st.score;gradedTotal+=st.total}rows.push({type,label:m.label,zh:m.zh,section:arr[i].title.replace(/^.*?·\s*/,''),range:arr[i].range,...st,graded:type!=='writing'})}}return {total,answered,score,gradedTotal,pct:total?Math.round(answered/total*100):0,scorePct:gradedTotal?Math.round(score/gradedTotal*100):0,rows}}
+function packageStats(code){let total=0,answered=0,score=0,gradedTotal=0;const rows=[];for(const [type,m] of Object.entries(META)){const arr=DB[code]?.[type]||[];for(let i=0;i<arr.length;i++){const st=sectionStats(code,type,i);total+=st.total;answered+=st.answered;if(type!=='writing'||isSequenceWriting(type,i)){score+=st.score;gradedTotal+=st.total}rows.push({type,label:m.label,zh:m.zh,section:arr[i].title.replace(/^.*?·\s*/,''),range:arr[i].range,...st,graded:type!=='writing'||isSequenceWriting(type,i)})}}return {total,answered,score,gradedTotal,pct:total?Math.round(answered/total*100):0,scorePct:gradedTotal?Math.round(score/gradedTotal*100):0,rows}}
 function progressHTML(st,label='Progres'){return `<div class="progressWrap"><div class="progressMeta"><span>${label}</span><span>${st.answered}/${st.total} · ${st.pct}%</span></div><div class="progressBar"><div class="fill" style="width:${st.pct}%"></div></div></div>`}
 function renderPackageProgress(code){const st=packageStats(code);return progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket')}
 function renderContext(){let c=$('context');let tb=$('topBack');const top=document.querySelector('.top');if(top)top.classList.toggle('homeTopHidden',route.screen==='home');if(tb)tb.style.display=route.screen==='home'?'none':'inline-flex';if(route.screen==='home'){c.classList.remove('show');c.innerHTML='';return}c.classList.add('show');let arr=[];if(route.packageCode){arr.push(`<button class="pill" onclick="goHome()">${svg('home')} Beranda</button>`);arr.push(`<button class="pill primary" onclick="showPackageScore('${route.packageCode}')">${svg('check')} Nilai Paket</button>`)}if(route.screen==='exercise'||route.screen==='result'){arr.push(`<span style="margin-left:auto"></span>`);arr.push(`<button class="pill soft" onclick="repeat()">↻ Ulangi</button>`);arr.push(`<button class="pill" onclick="grade()">${svg('check')} Nilai Bagian</button>`)}c.innerHTML=arr.join('')}
 function armHome(){if(!history.state||!history.state.homeGuard){history.replaceState({screen:'home',homeGuard:true},'',location.pathname+location.search+'#home');history.pushState({screen:'home',homeGuard:true},'',location.pathname+location.search+'#home')}}
 function goHome(push=true){route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;setScreen('home',push);armHome()}
 function backRoute(){if(route.screen==='package'){openPackages()}else if(route.screen==='parts'){openPackage(route.packageCode)}else if(route.screen==='exercise'||route.screen==='result'){openSections(route.packageCode,route.type)}else goHome()}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushCloudSync()});
+window.addEventListener('pagehide',()=>flushCloudSync());
 window.addEventListener('popstate',e=>{if(!currentUsername){showAuthScreen();return}if(allowExit){allowExit=false;return}if(e.state&&e.state.homeGuard&&route.screen==='home'){showExit(true);return}if(!e.state){goHome(false);return}restore(e.state)});
 function restore(s){route={screen:s.screen||'home',packageCode:s.packageCode||null,type:s.type||null,sectionIndex:s.sectionIndex??null};if(route.screen==='home'){renderHome();setScreen('home',false);armHome();return}if(route.screen==='packages'){renderPackagesScreen();setScreen('packagesScreen',false)}else if(route.screen==='scores'){renderScores();setScreen('scores',false)}else if(route.screen==='package'){renderPackage();setScreen('package',false)}else if(route.screen==='parts'){renderSections();setScreen('partsScreen',false)}else if(route.screen==='exercise'){loadCurrentSectionState();renderExercise();setScreen('exercise',false)}else if(route.screen==='result'){renderResult();setScreen('result',false)}}
 function openPackage(code,push=true){if(!DB[code]){goHome(false);return}route={screen:'package',packageCode:code,type:null,sectionIndex:null};renderPackage();setScreen('package',push)}
