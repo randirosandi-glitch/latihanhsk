@@ -1,4 +1,4 @@
-<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#f4f5fb"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"><title>Latihan HSK 4</title><style>
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#ffffff"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"><title>Latihan HSK 4</title><style>
 :root{--blue:#3b82f6;--blue2:#60a5fa;--purple:#8b5cf6;--orange:#f59e0b;--green:#10b981;--red:#ef4444;--pink:#ec4899;--text:#182033;--muted:#667085;--line:#dfe4ec;--bg:#f6f8fc;--surface:#fff;--top:rgba(255,255,255,.92);--shadow:0 10px 30px rgba(30,41,59,.08),0 2px 7px rgba(30,41,59,.05)}
 body.dark{--blue:#7db2ff;--blue2:#9cc7ff;--purple:#b197ff;--orange:#ffc766;--green:#66d9b0;--red:#ff8e86;--pink:#f6a1d2;--text:#f2f4f8;--muted:#aeb7c6;--line:#3a4050;--bg:#17191f;--surface:#23262e;--top:rgba(23,25,31,.94);--shadow:0 14px 35px rgba(0,0,0,.24),0 2px 8px rgba(0,0,0,.18)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:"Plus Jakarta Sans","Noto Sans SC",Arial,sans-serif}body{transition:background .2s,color .2s}button,input{font:inherit}button{-webkit-tap-highlight-color:transparent}button:focus-visible,input:focus-visible{outline:3px solid color-mix(in srgb,var(--blue) 35%,transparent);outline-offset:2px}.ico{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
@@ -109,63 +109,18 @@ body.dark .statusPill{background:color-mix(in srgb,var(--accent) 15%,#20232d);bo
 body.dark .homeContinue{background:rgba(31,34,44,.86);box-shadow:0 20px 50px rgba(0,0,0,.24)}
 body.dark .homeEmpty{background:rgba(31,34,44,.70)}
 @media(max-width:760px){.homeLastSection{margin-top:27px}.homeLastHeading h2{font-size:27px}.homeContinue{padding:21px 19px;border-radius:23px}.homeContinueTitle{font-size:20px}.homeContinuePct{font-size:23px}.homeContinueBtn{width:100%;min-height:48px}.homeContinueActions{justify-content:stretch}.homeEmpty{padding:21px;border-radius:22px}}
-
-/* === FINAL AUDIT FIXES === */
-html{background:var(--bg);min-height:100%;}
-html.dark{background:#14161e;}
-.top.homeTopHidden{display:none;}
-.mainNav{background:rgba(255,255,255,.42)!important;border-color:rgba(145,155,180,.24)!important;backdrop-filter:blur(22px) saturate(145%)!important;-webkit-backdrop-filter:blur(22px) saturate(145%)!important;box-shadow:0 14px 38px rgba(15,23,42,.14)!important;}
-body.dark .mainNav{background:rgba(31,34,44,.42)!important;border-color:rgba(170,180,205,.18)!important;box-shadow:0 14px 40px rgba(0,0,0,.30)!important;}
-body.dark .homeEmpty{background:rgba(31,34,44,.72)!important;border-color:#3b4152!important;color:var(--muted);}
-.authScreen{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:24px 16px;background:radial-gradient(700px 420px at 10% 0%,rgba(119,91,234,.16),transparent 65%),radial-gradient(700px 420px at 90% 100%,rgba(91,143,237,.14),transparent 65%),var(--bg);}
-.authCard{width:min(470px,100%);padding:30px;border:1px solid var(--line);border-radius:30px;background:color-mix(in srgb,var(--surface) 92%,transparent);box-shadow:0 24px 70px rgba(30,41,59,.12);text-align:center;}
-body.dark .authCard{box-shadow:0 24px 70px rgba(0,0,0,.30);}
-.authMark{width:68px;height:68px;margin:0 auto 17px;border-radius:20px;display:grid;place-items:center;background:linear-gradient(145deg,#edf3ff,#e9e3ff);color:var(--blue);font:italic 52px Georgia,serif;font-weight:700;box-shadow:0 10px 25px color-mix(in srgb,var(--blue) 16%,transparent);}
-body.dark .authMark{background:linear-gradient(145deg,#29334b,#312b46);}
-.authEyebrow{font-size:11px;letter-spacing:2.2px;font-weight:800;color:var(--blue);}
-.authCard h1{margin:7px 0 8px;font-size:31px;letter-spacing:-1px;}
-.authIntro{margin:0 auto 22px;max-width:350px;color:var(--muted);line-height:1.55;}
-.authChoices{display:grid;gap:11px;text-align:left;}
-.authChoice{border:1px solid var(--line);border-radius:18px;background:var(--surface);color:var(--text);padding:17px;cursor:pointer;display:flex;flex-direction:column;gap:4px;text-align:left;transition:.18s;}
-.authChoice:hover{transform:translateY(-2px);border-color:var(--blue);}
-.authChoice.primary{background:linear-gradient(135deg,var(--blue),var(--purple));border-color:transparent;color:#fff;}
-.authChoice strong{font-size:16px}.authChoice span{font-size:12px;opacity:.78;}
-.authForm{text-align:left}.authBack{border:0;background:transparent;color:var(--blue);padding:0;margin:0 0 18px;cursor:pointer;font-weight:700;}
-.authFormTitle{font-size:20px;font-weight:800;margin-bottom:13px;}
-.authForm label{display:block;font-size:12px;font-weight:800;color:var(--muted);margin-bottom:7px;}
-.authForm .usernameInput{width:100%;margin-bottom:7px;}
-.authHint{font-size:11px;color:var(--muted);line-height:1.55;margin-bottom:17px;}
-.authSubmit{width:100%;justify-content:center;min-height:48px;}
-.authError{min-height:20px;margin-top:8px;color:var(--red);font-size:12px;font-weight:700;}
-.authFoot{margin-top:20px;color:var(--muted);font-size:10px;line-height:1.5;}
-.homeEmpty{display:flex;flex-direction:column;gap:17px;align-items:stretch;}
-.homeEmpty strong{font-size:16px;color:var(--text);}
-.homeEmpty .homeContinueBtn{width:100%;min-height:48px;}
-@media(max-width:760px){.authScreen{padding:16px}.authCard{padding:25px 19px;border-radius:25px}.authCard h1{font-size:28px}.mainNav{background:rgba(255,255,255,.34)!important}.body.dark .mainNav{background:rgba(31,34,44,.34)!important}}
+</style><script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<style>
+body.is-login .top,body.is-login .mainNav{display:none!important}
+body.is-home .top{display:none!important}
+.mainNav{position:fixed!important;left:50%!important;right:auto!important;top:auto!important;bottom:14px!important;transform:translateX(-50%)!important;z-index:100}
+@media(max-width:760px){.mainNav{left:12px!important;right:12px!important;bottom:calc(10px + env(safe-area-inset-bottom))!important;transform:none!important}}
+main{padding-bottom:112px}
+.loginShell{width:min(560px,100%);margin:7vh auto 0;padding:34px;border:1px solid var(--line);border-radius:32px;background:var(--surface);box-shadow:var(--shadow)}
+.loginBrand{display:flex;align-items:center;gap:17px}.loginLogo{width:72px;height:72px;border-radius:22px;display:grid;place-items:center;background:linear-gradient(145deg,#edf3ff,#e9e3ff);border:1px solid rgba(85,120,210,.28);font-family:Georgia,serif;font-size:54px;font-style:italic;font-weight:700;color:#2e73dc}.loginEyebrow{font-size:11px;letter-spacing:2.5px;color:var(--blue);font-weight:800}.loginBrand h1{font-size:30px;letter-spacing:-1px;margin:4px 0 0}.loginIntro{margin:35px 0 20px}.loginIntro h2{font-size:27px;letter-spacing:-.8px;margin:0 0 8px}.loginIntro p{color:var(--muted);line-height:1.6;margin:0}.loginChoices{display:grid;gap:12px}.loginChoice{width:100%;display:grid;grid-template-columns:46px 1fr auto;align-items:center;gap:13px;text-align:left;padding:16px;border:1px solid var(--line);border-radius:19px;background:var(--surface);color:var(--text);cursor:pointer;transition:.18s}.loginChoice:hover{transform:translateY(-1px);border-color:var(--blue)}.loginChoice.primary{background:linear-gradient(135deg,color-mix(in srgb,var(--blue) 11%,var(--surface)),color-mix(in srgb,var(--purple) 9%,var(--surface)))}.choiceIcon{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--blue) 12%,var(--surface));color:var(--blue);font-size:25px}.loginChoice b{display:block;font-size:15px}.loginChoice small{display:block;color:var(--muted);font-size:11px;line-height:1.45;margin-top:3px}.usernamePanel{margin-top:14px;padding:20px;border:1px solid var(--line);border-radius:22px;background:color-mix(in srgb,var(--blue) 4%,var(--surface))}.loginBack{border:0;background:none;color:var(--blue);font-weight:750;cursor:pointer;padding:0;margin-bottom:18px}.usernameSubmit{width:100%;justify-content:center;margin-top:17px;min-height:48px}.homeProgressSection{margin-top:30px}.homeProgressHead{margin-bottom:15px}.homeProgressHead h2{margin:0;font-size:30px;letter-spacing:-.9px}.homeContinue{padding:26px 29px;border-radius:28px;background:var(--surface);border:1px solid rgba(132,145,180,.30);box-shadow:var(--shadow);position:relative;overflow:hidden}.homeContinue:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,var(--blue),var(--purple))}.homeContinueHead{display:flex;justify-content:space-between;align-items:flex-start;gap:15px}.homeContinueTitle{font-size:25px;font-weight:800}.homeContinueMeta{color:var(--muted);font-size:13px;margin-top:7px}.homeContinuePct{font-size:30px;font-weight:800;color:var(--blue)}.homeContinue .progressWrap{margin:21px 0}.homeContinueActions{display:flex;justify-content:flex-start}.homeContinueBtn{min-width:180px;border:0;border-radius:14px;padding:13px 18px;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;font-weight:800;cursor:pointer;box-shadow:0 9px 22px color-mix(in srgb,var(--blue) 22%,transparent)}.homeEmpty{padding:24px;border:1px dashed var(--line);background:color-mix(in srgb,var(--surface) 92%,var(--blue) 8%);border-radius:22px;color:var(--muted);line-height:1.6}.syncStatus{font-size:10px;color:var(--muted);margin-top:10px}.syncStatus strong{color:var(--green)}.syncStatus.warn strong{color:var(--orange)}
+@media(max-width:760px){.loginShell{margin:4vh auto 0;padding:23px;border-radius:26px}.loginBrand h1{font-size:26px}.loginIntro{margin:28px 0 18px}.loginIntro h2{font-size:23px}.homeContinue{padding:21px 19px;border-radius:23px}.homeContinueTitle{font-size:20px}.homeContinuePct{font-size:23px}.homeContinueBtn{width:100%;min-height:48px}.homeContinueActions{justify-content:stretch}.homeProgressHead h2{font-size:27px}}
 </style></head><body>
-<section id="authScreen" class="authScreen" aria-label="Login Latihan HSK 4">
-  <div class="authCard">
-    <div class="authMark">e</div>
-    <div class="authEyebrow">LATIHAN HSK 4 · KELAS E</div>
-    <h1>Mulai belajar</h1>
-    <p class="authIntro">Masuk untuk menyimpan dan melanjutkan progres belajarmu.</p>
-    <div class="authChoices" id="authChoices">
-      <button class="authChoice primary" type="button" onclick="showAuthForm('register')"><strong>Buat akun baru</strong><span>Buat username untuk mulai belajar</span></button>
-      <button class="authChoice" type="button" onclick="showAuthForm('login')"><strong>Login</strong><span>Lanjutkan progres dengan username</span></button>
-    </div>
-    <div class="authForm" id="authForm" hidden>
-      <button class="authBack" type="button" onclick="resetAuthChoices()">← Pilih cara masuk</button>
-      <div class="authFormTitle" id="authFormTitle">Buat akun baru</div>
-      <label for="authUsername">Username</label>
-      <input id="authUsername" class="write usernameInput" type="text" inputmode="text" autocomplete="username" maxlength="24" placeholder="contoh: randi">
-      <div class="authHint">Username digunakan untuk menyimpan progres kamu. <b>Tidak perlu password.</b></div>
-      <button class="btn primary authSubmit" type="button" onclick="submitAuth()" id="authSubmit">Buat akun & mulai</button>
-      <div class="authError" id="authError" role="alert"></div>
-    </div>
-    <div class="authFoot">Username 3–24 karakter · huruf, angka, titik, garis bawah, atau tanda hubung.</div>
-  </div>
-</section>
-<header class="top"><div class="topin"><div class="toprow"><div class="brand">Latihan HSK 4 <span>by Kelas E</span></div><button class="topBack" id="topBack" type="button" onclick="backRoute()" aria-label="Kembali"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg><span>Kembali</span></button></div><div class="context" id="context"></div></div></header>
+<header class="top"><div class="topin"><div class="toprow"><div class="brand">Latihan HSK 4</div><button class="topBack" id="topBack" type="button" onclick="backRoute()" aria-label="Kembali"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg><span>Kembali</span></button></div><div class="context" id="context"></div></div></header>
 <nav class="mainNav" aria-label="Navigasi utama">
 <button class="navItem" data-nav="home" onclick="goHome()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg>Beranda</button>
 <button class="navItem" data-nav="packages" onclick="openPackages()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m4 7 8-4 8 4-8 4-8-4Z"/><path d="M4 7v10l8 4 8-4V7"/><path d="M12 11v10"/></svg>Paket Soal</button>
@@ -173,32 +128,43 @@ body.dark .authMark{background:linear-gradient(145deg,#29334b,#312b46);}
 <button class="navItem" data-nav="theme" onclick="toggleTheme()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.1A8.5 8.5 0 0 1 8.9 3.8 8.6 8.6 0 1 0 20.2 15.1Z"/></svg>Tema</button>
 </nav>
 <div class="modal" id="exitModal"><div class="modalBox"><h3>Keluar dari aplikasi?</h3><p>Apakah kamu yakin ingin keluar?</p><div class="modalBtns"><button class="btn" onclick="cancelExit()">Tidak</button><button class="btn primary" onclick="confirmExit()">Ya</button></div></div></div><div class="modal" id="packageModal"><div class="modalBox wide"><h3 id="packageModalTitle">Nilai Paket</h3><div id="packageModalBody"></div><div class="stickyActions"><div class="modalBtns"><button class="btn" onclick="closePackageScore()">Tutup</button></div></div></div></div>
-<div class="modal" id="usernameModal" aria-hidden="true"><div class="modalBox usernameBox"><div class="usernameIcon">@</div><h3>Siapkan username</h3><p>Username ini dipakai untuk menyimpan progres belajarmu. Tidak perlu password.</p><label class="usernameLabel" for="usernameInput">Username</label><input id="usernameInput" class="write usernameInput" type="text" inputmode="text" autocomplete="off" maxlength="24" placeholder="contoh: randi"><div class="usernameHint" id="usernameHint">Gunakan 3–24 karakter: huruf, angka, titik, garis bawah, atau tanda hubung.</div><div class="modalBtns"><button class="btn primary" type="button" onclick="saveUsername()">Mulai belajar</button></div></div></div>
+</div>
 <main>
-<section id="home" class="screen active">
-  <div class="hero homeHero">
-    <div class="heroGlow heroGlowA"></div><div class="heroGlow heroGlowB"></div><div class="heroGlow heroGlowC"></div>
-    <div class="heroIn">
-      <div class="markWrap"><div class="mark">e</div></div>
-      <div class="heroCopy">
-        <div class="eyebrow">DARI KELAS E · UNTUK SEMUA</div>
-        <h1>Latihan HSK 4</h1>
-        <p>Belajar, berlatih, dan ukur progresmu.</p>
-      </div>
-    </div>
-    <div class="heroBadge"><span class="badgeDot"></span> HSK 4 · Practice Workspace</div>
+<section id="login" class="screen active">
+<div class="loginShell">
+  <div class="loginBrand"><div class="loginLogo">e</div><div><div class="loginEyebrow">KELAS E</div><h1>Latihan HSK 4</h1></div></div>
+  <div class="loginIntro"><h2>Mulai dari username kamu</h2><p>Username digunakan untuk menyimpan progres belajarmu. Tidak perlu password.</p></div>
+  <div class="loginChoices" id="loginChoices">
+    <button class="loginChoice primary" type="button" onclick="showUsernameForm('create')"><span class="choiceIcon">＋</span><span><b>Buat Akun Baru</b><small>Buat username untuk menyimpan progres.</small></span><span>→</span></button>
+    <button class="loginChoice" type="button" onclick="showUsernameForm('login')"><span class="choiceIcon">↪</span><span><b>Login</b><small>Masuk dengan username yang sudah kamu gunakan.</small></span><span>→</span></button>
   </div>
-
-  <div class="homeLastSection">
-    <div class="homeLastHeading">
-      <div>
-        <div class="sectionKicker">PROGRES TERAKHIR</div>
-        <h2>Progres Terakhirmu</h2>
-        <div class="sub" id="homeLastSub">Belum ada latihan yang dimulai.</div>
-      </div>
-    </div>
-    <div id="homeLastPackage"></div>
+  <div class="usernamePanel" id="usernamePanel" hidden>
+    <button class="loginBack" type="button" onclick="hideUsernameForm()">← Pilih lagi</button>
+    <div class="usernameIcon">@</div><h3 id="usernameFormTitle">Buat Akun Baru</h3>
+    <p id="usernameFormText">Username digunakan untuk menyimpan progres belajarmu.</p>
+    <label class="usernameLabel" for="usernameInput">Username</label>
+    <input id="usernameInput" class="write usernameInput" type="text" inputmode="text" autocomplete="username" autocapitalize="none" maxlength="24" placeholder="contoh: randi" onkeydown="if(event.key==='Enter')submitUsername()">
+    <div class="usernameHint" id="usernameHint">3–24 karakter: huruf, angka, titik, garis bawah, atau tanda hubung.</div>
+    <button class="btn primary usernameSubmit" type="button" onclick="submitUsername()" id="usernameSubmit">Buat username & mulai</button>
   </div>
+</div>
+</section>
+<section id="home" class="screen">
+<div class="homeHero">
+  <div class="heroGlow heroGlowA"></div><div class="heroGlow heroGlowB"></div><div class="heroGlow heroGlowC"></div>
+  <div class="homeHeroInner">
+    <div class="homeLogo" aria-hidden="true"><div class="mark">e</div></div>
+    <div class="homeCopy">
+      <div class="homeEyebrow">DARI KELAS E · UNTUK SEMUA</div>
+      <h1>Latihan HSK 4</h1>
+      <p>Belajar, berlatih, dan ukur progresmu.</p>
+    </div>
+  </div>
+</div>
+<div class="homeProgressSection">
+  <div class="homeProgressHead"><div><div class="homeKicker">PROGRES TERAKHIR</div><h2>Progres Terakhirmu</h2></div></div>
+  <div id="homeLastPackage"></div>
+</div>
 </section>
 <section id="scores" class="screen"><div class="section"><h2>Nilai</h2><div class="sub">Lihat hasil latihan setiap paket yang tersimpan di perangkat ini.</div></div><div class="grid" id="scoresGrid"></div></section>
 <section id="packagesScreen" class="screen"><div class="section"><h2>Paket Soal</h2><div class="sub">Pilih paket untuk mulai atau melanjutkan latihan.</div></div><div class="grid" id="packagesGrid"></div></section>
@@ -217,7 +183,7 @@ const READING_PASSAGES={"H41001":{"66":"刷牙的时候，水太冷或者太热�
 function norm(s){return String(s??'').replace(/[\s。！？!?，,]/g,'').toLowerCase()}
 
 <!-- CLOUD SETUP (Supabase): isi CLOUD_CONFIG.url dan CLOUD_CONFIG.anonKey. Buat tabel hsk_progress(username text primary key, data jsonb not null default '{}'::jsonb, updated_at timestamptz default now()). Karena aplikasi memakai username tanpa password, jangan simpan data sensitif. -->
-const CLOUD_CONFIG={url:'',anonKey:''};
+const CLOUD_CONFIG={url:'https://gwgfvfctwzvoapingmtw.supabase.co',anonKey:'sb_publishable_1iEIQjsWhx4qkdKI0ARxTA__1bHVJWt'};
 const USERNAME_KEY='hsk4-kelas-e-username-v1';
 let currentUsername='';
 let cloudSyncTimer=null;
@@ -227,24 +193,29 @@ function validUsername(v){return /^[a-z0-9._-]{3,24}$/.test(v)}
 function cloudEnabled(){return /^https:\/\/[^\s]+$/.test(CLOUD_CONFIG.url)&&CLOUD_CONFIG.anonKey.length>20}
 function getUsername(){try{return normalizeUsername(localStorage.getItem(USERNAME_KEY)||'')}catch(e){return ''}}
 function setUsernameLocal(v){try{localStorage.setItem(USERNAME_KEY,v)}catch(e){}}
-function showUsernameModal(){const m=$('usernameModal');if(!m)return;m.classList.add('show');m.setAttribute('aria-hidden','false');setTimeout(()=>{$('usernameInput')?.focus()},60)}
-function hideUsernameModal(){const m=$('usernameModal');if(!m)return;m.classList.remove('show');m.setAttribute('aria-hidden','true')}
-function saveUsername(){const v=normalizeUsername($('usernameInput')?.value);const hint=$('usernameHint');if(!validUsername(v)){if(hint)hint.textContent='Username harus 3–24 karakter dan hanya boleh memakai huruf kecil, angka, titik, garis bawah, atau tanda hubung.';return}currentUsername=v;setUsernameLocal(v);hideUsernameModal();renderUserPill();renderContext();renderHome();renderScores();renderPackagesScreen();pullCloudState(true)}
-function changeUsername(){if($('usernameInput'))$('usernameInput').value=currentUsername;showUsernameModal()}
+let usernameMode='create';
+function showUsernameForm(mode){usernameMode=mode;const panel=$('usernamePanel'),choices=$('loginChoices');if(!panel||!choices)return;choices.hidden=true;panel.hidden=false;$('usernameFormTitle').textContent=mode==='create'?'Buat Akun Baru':'Login';$('usernameFormText').textContent=mode==='create'?'Buat username untuk menyimpan progres belajarmu. Tidak perlu password.':'Masukkan username yang sebelumnya kamu gunakan untuk mengambil progresmu. Tidak perlu password.';$('usernameSubmit').textContent=mode==='create'?'Buat username & mulai':'Login & lanjut belajar';$('usernameInput').value='';$('usernameHint').textContent='3–24 karakter: huruf, angka, titik, garis bawah, atau tanda hubung.';setTimeout(()=>$('usernameInput')?.focus(),60)}
+function hideUsernameForm(){const panel=$('usernamePanel'),choices=$('loginChoices');if(panel)panel.hidden=true;if(choices)choices.hidden=false}
+async function submitUsername(){const v=normalizeUsername($('usernameInput')?.value);const hint=$('usernameHint');if(!validUsername(v)){if(hint)hint.textContent='Username harus 3–24 karakter dan hanya boleh memakai huruf kecil, angka, titik, garis bawah, atau tanda hubung.';return}currentUsername=v;setUsernameLocal(v);migrateLegacyStoreForUser();renderUserPill();await pullCloudState(true);route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;showAppScreen('home');renderHome();armHome()}
+function changeUsername(){showLoginScreen(true);showUsernameForm('login');if($('usernameInput'))$('usernameInput').value=currentUsername}
+function showLoginScreen(showForm=false){document.body.classList.add('is-login');document.body.classList.remove('is-home');route={screen:'login',packageCode:null,type:null,sectionIndex:null};document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$('login')?.classList.add('active');if(showForm)showUsernameForm('login');else hideUsernameForm()}
+function showAppScreen(screen){document.body.classList.remove('is-login');document.body.classList.toggle('is-home',screen==='home');document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));const el=$(screen);if(el)el.classList.add('active');renderContext();renderNavState();const tb=$('topBack');if(tb)tb.style.display=screen==='home'||screen==='login'?'none':'inline-flex'}
 function renderUserPill(){let old=$('usernamePill');if(old)old.remove();const top=$('.toprow');if(!top||!currentUsername)return;const b=document.createElement('button');b.id='usernamePill';b.className='usernamePill';b.type='button';b.title='Ganti username';b.innerHTML='<span>@</span><b>'+esc(currentUsername)+'</b>';b.onclick=changeUsername;top.appendChild(b)}
 function cloudHeaders(extra={}){return {'apikey':CLOUD_CONFIG.anonKey,'Authorization':'Bearer '+CLOUD_CONFIG.anonKey,'Content-Type':'application/json',...extra}}
 async function pullCloudState(force=false){if(!currentUsername||!cloudEnabled())return false;try{const url=CLOUD_CONFIG.url.replace(/\/$/,'')+'/rest/v1/hsk_progress?username=eq.'+encodeURIComponent(currentUsername)+'&select=username,data,updated_at';const r=await fetch(url,{headers:cloudHeaders()});if(!r.ok)throw new Error('HTTP '+r.status);const rows=await r.json();if(!rows.length){await pushCloudState(readStore());return true}const remote=rows[0].data||{};const local=readStore();const merged={...remote};let localNewer=false;Object.entries(local).forEach(([k,v])=>{if(!merged[k]||Number(v.updatedAt||0)>Number(merged[k].updatedAt||0)){merged[k]=v;localNewer=true}});writeStore(merged);if(localNewer)await pushCloudState(merged);renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();return true}catch(e){console.warn('Cloud sync pull failed',e);return false}}
 async function pushCloudState(store){if(!currentUsername||!cloudEnabled())return false;if(cloudSyncBusy)return false;cloudSyncBusy=true;try{const url=CLOUD_CONFIG.url.replace(/\/$/,'')+'/rest/v1/hsk_progress';const r=await fetch(url,{method:'POST',headers:cloudHeaders({'Prefer':'resolution=merge-duplicates,return=minimal'}),body:JSON.stringify({username:currentUsername,data:store,updated_at:new Date().toISOString()})});if(!r.ok)throw new Error('HTTP '+r.status);return true}catch(e){console.warn('Cloud sync push failed',e);return false}finally{cloudSyncBusy=false}}
 function scheduleCloudSync(){if(!currentUsername||!cloudEnabled())return;clearTimeout(cloudSyncTimer);cloudSyncTimer=setTimeout(()=>pushCloudState(readStore()),700)}
-async function initUsernameAndCloud(){currentUsername=getUsername();renderUserPill();if(!currentUsername){showUsernameModal();return}await pullCloudState()}
+async function initUsernameAndCloud(){currentUsername=getUsername();renderUserPill();if(!currentUsername){showLoginScreen(false);return false}await pullCloudState();return true}
 function svg(k){return {'home':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg>','back':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/><path d="M9 12h12"/></svg>','sun':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>','moon':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.1A8.5 8.5 0 0 1 8.9 3.8 8.6 8.6 0 1 0 20.2 15.1Z"/></svg>','check':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>','listen':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13a8 8 0 0 1 16 0"/><path d="M4 13v4a2 2 0 0 0 2 2h1v-7H6a2 2 0 0 0-2 1Z"/><path d="M20 13v4a2 2 0 0 1-2 2h-1v-7h1a2 2 0 0 1 2 1Z"/><path d="M12 21h2"/></svg>','read':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5A2.5 2.5 0 0 1 7.5 2H19v17H7.5A2.5 2.5 0 0 0 5 21V4.5Z"/><path d="M5 19.5A2.5 2.5 0 0 1 7.5 17H19"/></svg>','write':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m4 20 4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z"/><path d="m14.5 7.5 2 2"/></svg>','box':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m4 7 8-4 8 4-8 4-8-4Z"/><path d="M4 7v10l8 4 8-4V7"/><path d="M12 11v10"/></svg>','chart':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5"/><path d="M4 19h17"/><path d="m7 15 3-4 3 2 5-7"/></svg>','file':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M14 3v5h5"/><path d="M8 12h8M8 16h6"/></svg>','headphones':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13a8 8 0 0 1 16 0"/><path d="M4 13v4a2 2 0 0 0 2 2h1v-7H6a2 2 0 0 0-2 1Z"/><path d="M20 13v4a2 2 0 0 1-2 2h-1v-7h1a2 2 0 0 1 2 1Z"/></svg>','checkSquare':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8 12 2.5 2.5L16 9"/></svg>'}[k]}
 function renderNavState(){document.querySelectorAll('.mainNav .navItem').forEach(b=>b.classList.toggle('active',b.dataset.nav===route.screen||((route.screen==='package'||route.screen==='parts'||route.screen==='exercise'||route.screen==='result')&&b.dataset.nav==='packages')))}
 function setScreen(name,push=true){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$(name).classList.add('active');renderContext();renderNavState();if(push){history.pushState({...route},'',location.pathname+location.search+'#'+name)}}
 function saveState(){history.replaceState({...route},'',location.pathname+location.search+'#'+route.screen)}
-const STORAGE_PREFIX='hsk4-kelas-e-progress-v4:';
-function storageKey(){return STORAGE_PREFIX+(currentUsername||'guest')}
-function readStore(){try{return JSON.parse(localStorage.getItem(storageKey())||'{}')||{}}catch(e){return {}}}
-function writeStore(s){try{localStorage.setItem(storageKey(),JSON.stringify(s))}catch(e){}}
+const STORAGE_KEY='hsk4-kelas-e-progress-v4';
+const LEGACY_STORAGE_KEY='hsk4-kelas-e-progress-v3';
+function userStorageKey(){return currentUsername?STORAGE_KEY+'|'+currentUsername:STORAGE_KEY+'|guest'}
+function readStore(){try{return JSON.parse(localStorage.getItem(userStorageKey())||'{}')||{}}catch(e){return {}}}
+function writeStore(s){try{localStorage.setItem(userStorageKey(),JSON.stringify(s))}catch(e){}}
+function migrateLegacyStoreForUser(){if(!currentUsername)return;try{const target=userStorageKey();if(localStorage.getItem(target))return;const legacy=localStorage.getItem(LEGACY_STORAGE_KEY);if(legacy){localStorage.setItem(target,legacy);localStorage.removeItem(LEGACY_STORAGE_KEY)}}catch(e){}}
 function stateKey(code,type,idx){return code+'|'+type+'|'+idx}
 function getSectionState(code,type,idx){const st=readStore()[stateKey(code,type,idx)]||{};return {answers:st.answers||{},checked:st.checked||{}}}
 function saveSectionState(code,type,idx,a=answers,c=checked){const st=readStore();st[stateKey(code,type,idx)]={answers:{...a},checked:{...c},updatedAt:Date.now()};writeStore(st);scheduleCloudSync()}
@@ -252,19 +223,20 @@ function clearSectionState(code,type,idx){const st=readStore();delete st[stateKe
 function sectionStats(code,type,idx){const sec=DB[code]?.[type]?.[idx];if(!sec)return {answered:0,total:0,pct:0,score:0};const saved=getSectionState(code,type,idx);let answered=0,score=0;for(const q of sec.questions){const id=String(q[0]);const u=saved.answers[id];if(u!==undefined&&String(u).trim()!==''){answered++;if(isCorrect(q,u,type))score++}}const total=sec.questions.length;return {answered,total,pct:total?Math.round(answered/total*100):0,score}}
 function correctIndex(q,type){const id=Number(q[0]);const key=String(q[3]??'').trim();if(type==='reading'&&id>=56&&id<=65)return permutations().indexOf(key);if(type==='listening'&&id<=10)return key==='√'?0:1;if(/^[A-F]$/.test(key))return key.charCodeAt(0)-65;const opts=q[2]||[];return opts.findIndex(o=>norm(o)===norm(key))}
 function isCorrect(q,u,type){if(type==='writing')return String(q[2]||'').split('/').some(a=>norm(u)===norm(a));const ci=correctIndex(q,type);return Number(u)===ci}
-function packageStats(code){let total=0,answered=0,score=0;const rows=[];for(const [type,m] of Object.entries(META)){const arr=DB[code]?.[type]||[];for(let i=0;i<arr.length;i++){const st=sectionStats(code,type,i);total+=st.total;answered+=st.answered;score+=st.score;rows.push({type,label:m.label,zh:m.zh,section:arr[i].title.replace(/^.*?·\s*/,''),range:arr[i].range,...st})}}return {total,answered,score,pct:total?Math.round(answered/total*100):0,scorePct:total?Math.round(score/total*100):0,rows}}
+function packageStats(code){let total=0,answered=0,score=0;const rows=[];for(const [type,m] of Object.entries(META)){const arr=DB[code]?.[type]||[];for(let i=0;i<arr.length;i++){if(!sectionUsable(type,arr[i]))continue;const st=sectionStats(code,type,i);total+=st.total;answered+=st.answered;score+=st.score;rows.push({type,label:m.label,zh:m.zh,section:arr[i].title.replace(/^.*?·\s*/,''),range:arr[i].range,...st})}}return {total,answered,score,pct:total?Math.round(answered/total*100):0,scorePct:total?Math.round(score/total*100):0,rows}}
 function progressHTML(st,label='Progres'){return `<div class="progressWrap"><div class="progressMeta"><span>${label}</span><span>${st.answered}/${st.total} · ${st.pct}%</span></div><div class="progressBar"><div class="fill" style="width:${st.pct}%"></div></div></div>`}
 function renderPackageProgress(code){const st=packageStats(code);return progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket')}
-function renderContext(){let c=$('context');let tb=$('topBack');const top=document.querySelector('.top');if(top)top.classList.toggle('homeTopHidden',route.screen==='home');if(tb)tb.style.display=route.screen==='home'?'none':'inline-flex';if(route.screen==='home'){c.classList.remove('show');c.innerHTML='';return}c.classList.add('show');let arr=[];if(route.packageCode){arr.push(`<button class="pill" onclick="goHome()">${svg('home')} Beranda</button>`);arr.push(`<button class="pill primary" onclick="showPackageScore('${route.packageCode}')">${svg('check')} Nilai Paket</button>`)}if(route.screen==='exercise'||route.screen==='result'){arr.push(`<span style="margin-left:auto"></span>`);arr.push(`<button class="pill soft" onclick="repeat()">↻ Ulangi</button>`);arr.push(`<button class="pill" onclick="grade()">${svg('check')} Nilai Bagian</button>`)}c.innerHTML=arr.join('')}
+function renderContext(){let c=$('context');let tb=$('topBack');if(tb)tb.style.display=route.screen==='home'?'none':'inline-flex';if(route.screen==='home'){c.classList.remove('show');c.innerHTML='';return}c.classList.add('show');let arr=[];if(route.packageCode){arr.push(`<button class="pill" onclick="goHome()">${svg('home')} Beranda</button>`);arr.push(`<button class="pill primary" onclick="showPackageScore('${route.packageCode}')">${svg('check')} Nilai Paket</button>`)}if(route.screen==='exercise'||route.screen==='result'){arr.push(`<span style="margin-left:auto"></span>`);arr.push(`<button class="pill soft" onclick="repeat()">↻ Ulangi</button>`);arr.push(`<button class="pill" onclick="grade()">${svg('check')} Nilai Bagian</button>`)}c.innerHTML=arr.join('')}
 function armHome(){if(!history.state||!history.state.homeGuard){history.replaceState({screen:'home',homeGuard:true},'',location.pathname+location.search+'#home');history.pushState({screen:'home',homeGuard:true},'',location.pathname+location.search+'#home')}}
-function goHome(push=true){route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;setScreen('home',push);armHome()}
-function backRoute(){if(route.screen==='package'){openPackages()}else if(route.screen==='parts'){openPackage(route.packageCode)}else if(route.screen==='exercise'||route.screen==='result'){openSections(route.packageCode,route.type)}else goHome()}
+function goHome(push=true){if(!currentUsername){showLoginScreen(false);return}route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;renderHome();showAppScreen('home');if(push)history.pushState({...route},'',location.pathname+location.search+'#home')}
+function backRoute(){if(route.screen==='package'){openPackages()}else if(route.screen==='parts'){openPackage(route.packageCode)}else if(route.screen==='exercise'||route.screen==='result'){openSections(route.packageCode,route.type)}else if(route.screen!=='home')goHome()}
 window.addEventListener('popstate',e=>{if(allowExit){allowExit=false;return}if(e.state&&e.state.homeGuard&&route.screen==='home'){showExit();return}if(!e.state){goHome(false);return}restore(e.state)});
 function restore(s){route={screen:s.screen||'home',packageCode:s.packageCode||null,type:s.type||null,sectionIndex:s.sectionIndex??null};if(route.screen==='home'){renderHome();setScreen('home',false);armHome();return}if(route.screen==='packages'){renderPackagesScreen();setScreen('packagesScreen',false)}else if(route.screen==='scores'){renderScores();setScreen('scores',false)}else if(route.screen==='package'){renderPackage();setScreen('package',false)}else if(route.screen==='parts'){renderSections();setScreen('partsScreen',false)}else if(route.screen==='exercise'){loadCurrentSectionState();renderExercise();setScreen('exercise',false)}else if(route.screen==='result'){renderResult();setScreen('result',false)}}
+function sectionUsable(type,sec){if(!sec||!Array.isArray(sec.questions)||!sec.questions.length)return false;if(type==='writing')return true;return sec.questions.every(q=>Array.isArray(q[2])&&q[2].length>0)}
 function openPackage(code,push=true){if(!DB[code]){goHome(false);return}route={screen:'package',packageCode:code,type:null,sectionIndex:null};renderPackage();setScreen('package',push)}
-function renderPackage(){let code=route.packageCode;let d=DB[code]||{};$('pkgCrumb').textContent=code;$('pkgTitle').textContent='Paket '+code;let sourceNote=code==='H41006'?'<div class="notice" style="grid-column:1/-1"><strong>Catatan sumber H41006</strong><br>Reading tersedia dan telah dimasukkan dari PDF. Writing belum dimasukkan karena data soal pada sumber tidak tersedia dalam basis data aplikasi.</div>':'';$('parts').innerHTML=Object.entries(META).map(([t,m])=>{let arr=d[t]||[];let total=arr.reduce((a,s)=>a+s.questions.length,0);let ps=arr.reduce((a,s,i)=>{let st=sectionStats(code,t,i);return {answered:a.answered+st.answered,total:a.total+st.total}}, {answered:0,total:0});ps.pct=ps.total?Math.round(ps.answered/ps.total*100):0;let ok=total>0;return ok?`<button class="tile" onclick="openSections('${code}','${t}')"><div class="tileIcon">${m.icon}</div><b>${m.zh} · ${m.label}</b><small>${total} soal tersedia</small>${progressHTML(ps,'Progres bagian')}</button>`:`<div class="tile tile-disabled" aria-disabled="true"><div class="tileIcon">${m.icon}</div><b>${m.zh} · ${m.label}</b><small>Belum tersedia dari sumber paket</small></div>`}).join('')+sourceNote+`<div style="grid-column:1/-1">${renderPackageProgress(code)}</div>`}
+function renderPackage(){let code=route.packageCode;let d=DB[code]||{};$('pkgCrumb').textContent=code;$('pkgTitle').textContent='Paket '+code;let sourceNote=code==='H41006'?'<div class="notice" style="grid-column:1/-1"><strong>Catatan sumber H41006</strong><br>Reading tersedia dan telah dimasukkan dari PDF. Writing belum dimasukkan karena data soal pada sumber tidak tersedia dalam basis data aplikasi.</div>':'';$('parts').innerHTML=Object.entries(META).map(([t,m])=>{let arr=d[t]||[];let total=arr.filter(s=>sectionUsable(t,s)).reduce((a,s)=>a+s.questions.length,0);let ps=arr.reduce((a,s,i)=>{let st=sectionStats(code,t,i);return {answered:a.answered+st.answered,total:a.total+st.total}}, {answered:0,total:0});ps.pct=ps.total?Math.round(ps.answered/ps.total*100):0;let ok=total>0;return ok?`<button class="tile" onclick="openSections('${code}','${t}')"><div class="tileIcon">${m.icon}</div><b>${m.zh} · ${m.label}</b><small>${total} soal tersedia</small>${progressHTML(ps,'Progres bagian')}</button>`:`<div class="tile tile-disabled" aria-disabled="true"><div class="tileIcon">${m.icon}</div><b>${m.zh} · ${m.label}</b><small>Belum tersedia dari sumber paket</small></div>`}).join('')+sourceNote+`<div style="grid-column:1/-1">${renderPackageProgress(code)}</div>`}
 function openSections(code,type,push=true){if(!DB[code]||!META[type]){goHome(false);return}route={screen:'parts',packageCode:code,type,sectionIndex:null};renderSections();setScreen('partsScreen',push)}
-function renderSections(){const d=DB[route.packageCode]?.[route.type]||[];const m=META[route.type];if(!m){goHome(false);return}$('partsPkg').textContent=route.packageCode;$('partsCrumb').textContent=m.label;$('partsTitle').textContent=m.zh+' · '+m.label;const available=d.map((s,i)=>({s,i})).filter(x=>Array.isArray(x.s.questions)&&x.s.questions.length>0);let arr=available.map(({s,i})=>{let st=sectionStats(route.packageCode,route.type,i);return `<button class="tile" onclick="startSection(${i})"><div class="tileIcon">${m.icon}</div><b>${esc(s.title.replace(/^.*?·\s*/,''))}</b><small>Soal ${esc(s.range)} · ${s.questions.length} soal</small>${progressHTML(st,'Progres bagian')}</button>`});$('sections').innerHTML=arr.length?arr.join(''):`<div class="notice"><strong>${route.packageCode} · ${m.label}</strong><br>Bagian ini belum tersedia sebagai teks soal pada paket ini.</div>`}
+function renderSections(){const d=DB[route.packageCode]?.[route.type]||[];const m=META[route.type];if(!m){goHome(false);return}$('partsPkg').textContent=route.packageCode;$('partsCrumb').textContent=m.label;$('partsTitle').textContent=m.zh+' · '+m.label;let arr=d.map((s,i)=>({s,i})).filter(x=>sectionUsable(route.type,x.s)).map(({s,i})=>{let st=sectionStats(route.packageCode,route.type,i);return `<button class="tile" type="button" onclick="startSection(${i})"><div class="tileIcon">${m.icon}</div><b>${esc(s.title.replace(/^.*?·\s*/,''))}</b><small>Soal ${esc(s.range)} · ${s.questions.length} soal</small>${progressHTML(st,'Progres bagian')}</button>`});let incomplete=d.map((s,i)=>({s,i})).filter(x=>Array.isArray(x.s.questions)&&x.s.questions.length&&!sectionUsable(route.type,x.s));const note=incomplete.length?`<div class="notice"><strong>Bagian yang belum lengkap</strong><br>Beberapa bagian pada sumber ini belum memiliki pilihan jawaban lengkap, sehingga belum bisa dikerjakan.</div>`:'';$('sections').innerHTML=(arr.length?arr.join(''):`<div class="notice"><strong>${route.packageCode} · ${m.label}</strong><br>Bagian ini belum tersedia sebagai soal interaktif yang lengkap.</div>`)+note}
 function loadCurrentSectionState(){const st=getSectionState(route.packageCode,route.type,route.sectionIndex);answers={...st.answers};checked={...st.checked};resultState=null}
 function startSection(i,push=true){const arr=DB[route.packageCode]?.[route.type]||[];if(!arr[i])return;route={screen:'exercise',packageCode:route.packageCode,type:route.type,sectionIndex:i};loadCurrentSectionState();renderExercise();setScreen('exercise',push)}
 function instructionFor(type,idx){if(type==='listening')return idx===0?'Dengarkan pernyataan lalu pilih apakah kalimat tersebut benar atau salah.':idx===1?'Dengarkan percakapan dengan saksama lalu pilih jawaban yang paling sesuai.':'Dengarkan percakapan lalu tentukan jawaban yang paling tepat berdasarkan informasi yang kamu dengar.';if(type==='reading')return idx===0?'Baca kalimat dan pilihan jawaban, lalu pilih kata atau ungkapan yang paling tepat.':idx===1?'Baca setiap kalimat dan pilih jawaban yang paling sesuai dengan maknanya.':idx===2?'Susun bagian-bagian kalimat menjadi urutan yang benar dengan memilih kombinasi yang tepat.':'Baca teks dengan saksama lalu pilih jawaban yang paling sesuai dengan informasi dalam bacaan.';return idx===0?'Susun kata-kata yang tersedia menjadi kalimat Mandarin yang benar, lalu ketik jawabanmu.':'Gunakan kata yang diberikan untuk membuat kalimat Mandarin yang benar, lalu ketik jawabanmu.'}
@@ -287,8 +259,24 @@ function repeat(){if(!route.packageCode)return;if(!confirm('Hapus semua jawaban 
 function showPackageScore(code){const st=packageStats(code);$('packageModalTitle').textContent='Nilai Paket '+code;let rows=st.rows.map(r=>{const pct=r.total?Math.round(r.score/r.total*100):0;return `<div class="scoreRow"><div class="scoreHead"><span>${esc(r.zh)} · ${esc(r.section)}</span><span>${r.score}/${r.total} · ${pct}%</span></div><div class="scoreSub">Soal ${esc(r.range)} · ${r.answered}/${r.total} terjawab</div><div class="scoreMini"><i style="width:${pct}%"></i></div></div>`}).join('');$('packageModalBody').innerHTML=`<div class="modalNote">Nilai dihitung dari semua jawaban yang tersimpan di seluruh bagian paket. Soal yang belum dijawab tidak dihitung sebagai benar.</div><div class="packageScore">${st.scorePct}%</div><div class="scoreSub">${st.score}/${st.total} benar · ${st.answered}/${st.total} terjawab</div><div style="margin:16px 0">${progressHTML(st,'Progres paket')}</div>${rows||'<div class="notice">Belum ada bagian soal yang tersedia.</div>'}`;$('packageModal').classList.add('show')}
 function closePackageScore(){$('packageModal').classList.remove('show')}
 function toggleTheme(){applyTheme(document.body.classList.contains('dark')?'light':'dark')}
-function applyTheme(t){document.body.classList.toggle('dark',t==='dark');document.documentElement.classList.toggle('dark',t==='dark');const b=document.querySelector('.mainNav [data-nav="theme"]');if(b)b.innerHTML=(t==='dark'?svg('sun'):svg('moon'))+'<span>Tema</span>';document.querySelector('meta[name="theme-color"]').content=t==='dark'?'#0c1020':'#f4f5fb';localStorage.setItem('hsk-theme',t);if(typeof route!=='undefined'&&route)renderNavState()}
+function applyTheme(t){document.body.classList.toggle('dark',t==='dark');const b=document.querySelector('.mainNav [data-nav="theme"]');if(b)b.innerHTML=(t==='dark'?svg('sun'):svg('moon'))+'<span>Tema</span>';document.querySelector('meta[name="theme-color"]').content=t==='dark'?'#0c1020':'#f4f5fb';localStorage.setItem('hsk-theme',t);if(typeof route!=='undefined'&&route)renderNavState()}
 function showExit(){$('exitModal').classList.add('show')}function cancelExit(){$('exitModal').classList.remove('show');history.pushState({screen:'home',homeGuard:true},'',location.pathname+location.search+'#home')}function confirmExit(){$('exitModal').classList.remove('show');allowExit=true;history.go(-1)}
+function setScreen(name,push=true){showAppScreen(name);if(push)history.pushState({...route},'',location.pathname+location.search+'#'+name)}
+function saveState(){history.replaceState({...route},'',location.pathname+location.search+'#'+route.screen)}
+function stateKey(code,type,idx){return code+'|'+type+'|'+idx}
+function getSectionState(code,type,idx){const st=readStore()[stateKey(code,type,idx)]||{};return {answers:st.answers||{},checked:st.checked||{}}}
+function saveSectionState(code,type,idx,a=answers,c=checked){const st=readStore();st[stateKey(code,type,idx)]={answers:{...a},checked:{...c},updatedAt:Date.now()};writeStore(st)}
+function clearSectionState(code,type,idx){const st=readStore();delete st[stateKey(code,type,idx)];writeStore(st)}
+function sectionStats(code,type,idx){const sec=DB[code]?.[type]?.[idx];if(!sec)return {answered:0,total:0,pct:0,score:0};const saved=getSectionState(code,type,idx);let answered=0,score=0;for(const q of sec.questions){const id=String(q[0]);const u=saved.answers[id];if(u!==undefined&&String(u).trim()!==''){answered++;if(isCorrect(q,u,type))score++}}const total=sec.questions.length;return {answered,total,pct:total?Math.round(answered/total*100):0,score}}
+function isCorrect(q,u,type){if(type==='writing')return String(q[2]||'').split('/').some(a=>norm(u)===norm(a));const ci=correctIndex(q,type);return Number(u)===ci}
+function packageStats(code){let total=0,answered=0,score=0;const rows=[];for(const [type,m] of Object.entries(META)){const arr=DB[code]?.[type]||[];for(let i=0;i<arr.length;i++){const st=sectionStats(code,type,i);total+=st.total;answered+=st.answered;score+=st.score;rows.push({type,label:m.label,zh:m.zh,section:arr[i].title.replace(/^.*?·\s*/,''),range:arr[i].range,...st})}}return {total,answered,score,pct:total?Math.round(answered/total*100):0,scorePct:total?Math.round(score/total*100):0,rows}}
+function progressHTML(st,label='Progres'){return `<div class="progressWrap"><div class="progressMeta"><span>${label}</span><span>${st.answered}/${st.total} · ${st.pct}%</span></div><div class="progressBar"><div class="fill" style="width:${st.pct}%"></div></div></div>`}
+function renderPackageProgress(code){const st=packageStats(code);return progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket')}
+function renderContext(){let c=$('context');let tb=$('topBack');if(tb)tb.style.display=route.screen==='home'?'none':'inline-flex';if(route.screen==='home'){c.classList.remove('show');c.innerHTML='';return}c.classList.add('show');let arr=[];if(route.packageCode){arr.push(`<button class="pill" onclick="goHome()">${svg('home')} Beranda</button>`);arr.push(`<button class="pill primary" onclick="showPackageScore('${route.packageCode}')">${svg('check')} Nilai Paket</button>`)}if(route.screen==='exercise'||route.screen==='result'){arr.push(`<span style="margin-left:auto"></span>`);arr.push(`<button class="pill soft" onclick="repeat()">↻ Ulangi</button>`);arr.push(`<button class="pill" onclick="grade()">${svg('check')} Nilai Bagian</button>`)}c.innerHTML=arr.join('')}
+function armHome(){if(!history.state||!history.state.homeGuard){history.replaceState({screen:'home',homeGuard:true},'',location.pathname+location.search+'#home');history.pushState({screen:'home',homeGuard:true},'',location.pathname+location.search+'#home')}}
+function goHome(push=true){if(!currentUsername){showLoginScreen(false);return}route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;renderHome();showAppScreen('home');if(push)history.pushState({...route},'',location.pathname+location.search+'#home')}
+function backRoute(){if(route.screen==='package'){goHome()}else if(route.screen==='parts'){openPackage(route.packageCode)}else if(route.screen==='exercise'||route.screen==='result'){openSections(route.packageCode,route.type)}else goHome()}
+window.addEventListener('popstate',e=>{if(allowExit){allowExit=false;return}if(e.state&&e.state.homeGuard&&route.screen==='home'){showExit();return}if(!e.state){goHome(false);return}restore(e.state)});
 function openPackages(push=true){route={screen:'packages',packageCode:null,type:null,sectionIndex:null};renderPackagesScreen();setScreen('packagesScreen',push)}
 function openScores(push=true){route={screen:'scores',packageCode:null,type:null,sectionIndex:null};renderScores();setScreen('scores',push)}
 function renderPackagesScreen(){const el=$('packagesGrid');if(!el)return;const codes=Object.keys(DB);el.innerHTML=codes.map((code,idx)=>renderPackageTile(code,idx)).join('')}
@@ -300,26 +288,44 @@ function getLastProgress(){
   items.sort((a,b)=>b.latest-a.latest);return items[0]||null;
 }
 function renderHome(){
-  const el=$('homeLastPackage');const sub=$('homeLastSub');if(!el)return;
+  const el=$('homeLastPackage'); if(!el)return;
   const last=getLastProgress();
-  if(!last){sub.textContent='';el.innerHTML='<div class="homeEmpty"><strong>Kamu belum mengerjakan soal apapun.</strong><button class="homeContinueBtn" type="button" onclick="openPackages()">Mulai belajar <span>→</span></button></div>';return}
-  const code=last.code,st=last.st,pct=st.pct||0,status=pct>=100?'Selesai':'Sedang berjalan';
-  sub.textContent='';
-  el.innerHTML=`<div class="homeContinue"><div class="homeContinueHead"><div><div class="homeContinueTitle">Paket ${esc(code)}</div><div class="homeContinueMeta">${st.answered}/${st.total} soal terjawab · ${st.score} benar</div></div><div class="homeContinuePct">${pct}%</div></div>${progressHTML({answered:st.answered,total:st.total,pct},'Progres paket')}<div class="homeContinueActions"><button class="homeContinueBtn" type="button" onclick="continueLastPackage('${esc(code)}')">${pct>=100?'Lihat paket':'Lanjut belajar'} <span>→</span></button></div><div class="syncStatus ${cloudEnabled()?'':'warn'}"><strong>${cloudEnabled()?'Tersinkron':'Tersimpan di perangkat'}</strong>${cloudEnabled()?' · progres mengikuti username @'+esc(currentUsername):' · sinkronisasi cloud belum dikonfigurasi'}</div></div>`;
+  if(!last){
+    el.innerHTML='<div class="homeEmpty">Kamu belum mengerjakan soal apapun.<div class="homeContinueActions" style="margin-top:17px"><button class="homeContinueBtn" type="button" onclick="openPackages()">Mulai belajar →</button></div></div>';
+    return;
+  }
+  const code=last.code,st=last.st,pct=st.pct||0;
+  el.innerHTML=`<div class="homeContinue"><div class="homeContinueHead"><div><div class="homeContinueTitle">Paket ${esc(code)}</div><div class="homeContinueMeta">${st.answered}/${st.total} soal terjawab · ${st.score} benar</div></div><div class="homeContinuePct">${pct}%</div></div>${progressHTML({answered:st.answered,total:st.total,pct},'Progres paket')}<div class="homeContinueActions"><button class="homeContinueBtn" type="button" onclick="continueLastPackage('${esc(code)}')">${pct>=100?'Lihat paket':'Lanjut belajar'} →</button></div></div>`;
 }
-function continueLastPackage(code){if(!DB[code])return;openPackage(code)}
 
-let authMode='';
-function showAuthForm(mode){authMode=mode;$('authChoices').hidden=true;$('authForm').hidden=false;$('authFormTitle').textContent=mode==='register'?'Buat akun baru':'Login';$('authSubmit').textContent=mode==='register'?'Buat akun & mulai':'Login & lanjut belajar';$('authUsername').value='';$('authError').textContent='';setTimeout(()=>$('authUsername')?.focus(),60)}
-function resetAuthChoices(){authMode='';$('authChoices').hidden=false;$('authForm').hidden=true;$('authError').textContent=''}
-async function submitAuth(){const input=$('authUsername');const v=normalizeUsername(input?.value);const err=$('authError');if(!validUsername(v)){err.textContent='Username harus 3–24 karakter dan hanya boleh memakai huruf, angka, titik, garis bawah, atau tanda hubung.';return}currentUsername=v;setUsernameLocal(v);$('authScreen').style.display='none';renderUserPill();renderContext();renderHome();renderPackagesScreen();renderScores();await pullCloudState(true);renderHome();renderPackagesScreen();renderScores()}
-function showAuthScreen(){const a=$('authScreen');if(a){a.style.display='flex';resetAuthChoices()}}
+function continueLastPackage(code){if(!DB[code])return;const store=readStore();let latest={time:0,type:null,idx:null};for(const [type] of Object.entries(META)){(DB[code]?.[type]||[]).forEach((_,i)=>{const raw=store[stateKey(code,type,i)];if(raw?.updatedAt&&Number(raw.updatedAt)>latest.time)latest={time:Number(raw.updatedAt),type,idx:i}})}if(latest.type!==null){route={screen:'exercise',packageCode:code,type:latest.type,sectionIndex:latest.idx};loadCurrentSectionState();renderExercise();showAppScreen('exercise');history.pushState({...route},'',location.pathname+location.search+'#exercise')}else openPackage(code)}
+
 async function initApp(){
   try{const savedTheme=localStorage.getItem('hsk-theme');applyTheme(savedTheme==='dark'?'dark':'light')}catch(e){applyTheme('light')}
-  route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;currentUsername=getUsername();
-  document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$('home').classList.add('active');
-  history.replaceState({screen:'home',homeGuard:true},'',location.pathname+location.search+'#home');history.pushState({screen:'home',homeGuard:true},'',location.pathname+location.search+'#home');
-  if(!currentUsername){showAuthScreen();document.querySelector('.top')?.classList.add('homeTopHidden');}else{const a=$('authScreen');if(a)a.style.display='none';await pullCloudState();renderHome();renderPackagesScreen();renderScores();renderContext();renderNavState();}
+  route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;
+  const hasUser=await initUsernameAndCloud();
+  if(hasUser){showAppScreen('home');renderHome();renderPackagesScreen();renderScores();history.replaceState({...route},'',location.pathname+location.search+'#home')}
 }
+
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initApp);else initApp();
-</script></body></html>
+</script>
+<style>
+/* FINAL AUDIT / HOME */
+.top{transition:.18s ease}.top.home-hidden{display:none}
+.homeHero{position:relative;overflow:hidden;min-height:300px;padding:42px 46px;border-radius:34px;border:1px solid rgba(132,145,180,.32);background:rgba(255,255,255,.86);box-shadow:0 22px 55px rgba(66,77,108,.13);isolation:isolate}
+body.dark .homeHero{background:rgba(31,34,44,.88)}
+.homeHeroInner{position:relative;z-index:2;display:flex;align-items:center;gap:28px}.homeLogo{width:106px;height:106px;border-radius:28px;display:grid;place-items:center;background:linear-gradient(145deg,#edf3ff,#e9e3ff);border:1px solid rgba(85,120,210,.28);box-shadow:inset 0 1px 0 #fff,0 12px 28px rgba(74,104,185,.12);flex:0 0 auto}.homeLogo .mark{font-family:Georgia,serif;font-size:82px;font-style:italic;font-weight:700;color:#2e73dc;line-height:1}
+.homeCopy{min-width:0}.homeEyebrow{font-size:13px;letter-spacing:2.7px;color:#5d8fe8;font-weight:700}.homeCopy h1{font-size:44px;letter-spacing:-1.8px;margin:6px 0 0}.homeCopy p{font-size:21px;line-height:1.45;max-width:540px;margin:10px 0 0;color:var(--muted);font-weight:600}
+.homeProgressSection{margin-top:28px}.homeProgressHead{margin-bottom:15px}.homeKicker{font-size:11px;letter-spacing:2.5px;font-weight:800;color:#6c8ed4}.homeProgressHead h2{font-size:30px;letter-spacing:-.9px;margin:4px 0}.homeProgressHead p{margin:0;color:var(--muted);font-size:14px}
+.homeContinue{border:1px solid rgba(132,145,180,.30);background:rgba(255,255,255,.88);border-radius:26px;padding:24px;box-shadow:0 14px 34px rgba(66,77,108,.09);position:relative;overflow:hidden}.homeContinue:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,var(--blue),var(--purple))}.homeContinueHead{display:flex;justify-content:space-between;align-items:flex-start;gap:18px}.homeContinueTitle{font-size:23px;font-weight:800;letter-spacing:-.5px}.homeContinueMeta{color:var(--muted);font-size:13px;margin-top:6px}.homeContinuePct{font-size:28px;font-weight:800;color:var(--blue)}.homeContinue .progressWrap{margin:20px 0 16px}.homeContinueActions{display:flex;justify-content:flex-end}.homeContinueBtn{border:0;border-radius:14px;padding:12px 18px;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;font-weight:800;cursor:pointer;box-shadow:0 9px 22px color-mix(in srgb,var(--blue) 22%,transparent)}.homeEmpty{border:1px dashed var(--line);background:rgba(255,255,255,.62);border-radius:22px;padding:24px;color:var(--muted);line-height:1.6}.syncStatus{font-size:10px;color:var(--muted);margin-top:11px}.syncStatus strong{color:var(--green)}.syncStatus.warn strong{color:var(--orange)}
+body.dark .homeContinue,body.dark .homeEmpty{background:rgba(31,34,44,.86)}
+@media(max-width:760px){.homeHero{min-height:275px;padding:27px 21px;border-radius:27px}.homeHeroInner{gap:17px;align-items:flex-start}.homeLogo{width:76px;height:76px;border-radius:20px}.homeLogo .mark{font-size:58px}.homeEyebrow{font-size:10px;letter-spacing:2px}.homeCopy h1{font-size:30px;letter-spacing:-1px}.homeCopy p{font-size:16px;margin-top:8px}.homeProgressSection{margin-top:24px}.homeProgressHead h2{font-size:26px}.homeProgressHead p{font-size:13px}.homeContinue{padding:19px;border-radius:22px}.homeContinueTitle{font-size:19px}.homeContinuePct{font-size:22px}.homeContinueActions{justify-content:stretch}.homeContinueBtn{width:100%}}
+/* Hide app header completely on Home; bottom nav remains on every device. */
+body.is-home .top{display:none}.mainNav{position:fixed!important;left:50%!important;right:auto!important;top:auto!important;bottom:14px!important;transform:translateX(-50%)!important}
+@media(max-width:760px){.mainNav{left:12px!important;right:12px!important;bottom:calc(10px + env(safe-area-inset-bottom))!important;transform:none!important}}
+main{padding-bottom:110px}
+/* More reliable answer states */
+.opt.correct{border-color:var(--green)!important;background:color-mix(in srgb,var(--green) 12%,var(--surface))!important}.opt.wrong{border-color:var(--red)!important;background:color-mix(in srgb,var(--red) 10%,var(--surface))!important}
+</style>
+
+</body></html>
