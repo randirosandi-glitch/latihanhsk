@@ -27,12 +27,12 @@ main{max-width:1100px;margin:auto;padding:26px 16px 76px}.screen{display:none}.s
   .toprow{min-height:42px}
   .actions{display:none}
   .topBack{display:inline-flex}
-  .mainNav{left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));transform:none;display:grid;grid-template-columns:repeat(4,1fr);gap:3px}
-  .navItem{min-width:0;min-height:52px;padding:6px 4px;border-radius:17px;display:flex;flex-direction:column;gap:3px;font-size:10px}
+  .mainNav{left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));transform:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px}
+  .navItem{min-width:0;min-height:50px;padding:6px 2px;border-radius:16px;display:flex;flex-direction:column;gap:3px;font-size:9px}
   .navItem .ico{width:20px;height:20px}
   main{padding-bottom:105px}
 }
-@media(max-width:760px){.topin{padding:8px 12px}.brand{font-size:18px}.context{padding:8px 0 2px}.context .pill{flex:0 0 auto}.hero{padding:25px 21px}.hero h1{font-size:29px}.heroIn{gap:15px}.mark{font-size:58px}.grid{grid-template-columns:1fr}.section h2{font-size:23px}.opts{grid-template-columns:1fr}.sequence{grid-template-columns:1fr}.qtext{font-size:18px}.question{padding:18px}.tile{padding:18px}.instruction{padding:15px 16px 15px 19px}.wordBank{gap:9px 10px}.wordChip{font-size:16px}}
+@media(max-width:760px){.topin{padding:8px 12px}.brand{font-size:18px}.topBack{min-height:36px;padding:0 10px;font-size:12px;gap:5px}.topBack .ico{width:16px;height:16px}.context{padding:6px 0 1px;gap:6px}.context .pill{flex:0 0 auto;padding:7px 10px;border-radius:13px;font-size:11px;gap:5px}.context .pill .ico{width:16px;height:16px}.hero{padding:25px 21px}.hero h1{font-size:29px}.heroIn{gap:15px}.mark{font-size:58px}.grid{grid-template-columns:1fr}.section h2{font-size:23px}.opts{grid-template-columns:1fr}.sequence{grid-template-columns:1fr}.qtext{font-size:18px}.question{padding:18px}.tile{padding:18px}.instruction{padding:15px 16px 15px 19px}.wordBank{gap:9px 10px}.wordChip{font-size:16px}}
 
 /* === Fluid Dashboard Home Refresh === */
 :root{
@@ -75,7 +75,7 @@ body.dark .homeHero{background:rgba(31,34,44,.82);box-shadow:0 24px 60px rgba(0,
 .markWrap{width:106px;height:106px;border-radius:27px;display:grid;place-items:center;background:linear-gradient(145deg,#edf3ff,#e9e3ff);border:1px solid rgba(85,120,210,.28);box-shadow:inset 0 1px 0 #fff,0 12px 28px rgba(74,104,185,.12);flex:0 0 auto}
 body.dark .markWrap{background:linear-gradient(145deg,#29334b,#312b46);border-color:#4b5770;box-shadow:none}
 .mark{font-size:82px;color:#2e73dc;text-shadow:0 8px 22px rgba(46,115,220,.18)}
-.heroCopy{min-width:0}.eyebrow{font-size:13px;letter-spacing:2.8px;color:#5d8fe8}.hero h1{font-size:44px;letter-spacing:-1.8px;margin:6px 0 0}.hero p{font-size:21px;line-height:1.45;max-width:540px;margin:10px 0 17px}
+.heroCopy{min-width:0}.eyebrow{font-size:13px;letter-spacing:2.8px;color:#5d8fe8}.hero h1{font-size:44px;letter-spacing:-1.8px;margin:6px 0 0}.hero p{font-size:21px;line-height:1.45;max-width:540px;margin:10px 0 17px}.homeGreeting{margin:13px 0 0;font-size:15px;line-height:1.55;font-weight:800;color:var(--text)}.homeGreeting b{color:var(--blue)}
 .heroCta{border:0;border-radius:13px;padding:11px 16px;background:linear-gradient(135deg,#4c83eb,#7c59e7);color:#fff;font-weight:750;cursor:pointer;box-shadow:0 10px 22px rgba(80,103,214,.22);transition:.18s}.heroCta span{margin-left:8px;font-size:18px}.heroCta:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(80,103,214,.28)}
 .heroBadge{position:absolute;right:26px;top:24px;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.68);border:1px solid rgba(125,137,166,.22);font-size:11px;font-weight:750;color:var(--muted);backdrop-filter:blur(12px)}
 body.dark .heroBadge{background:rgba(38,42,53,.7)}.badgeDot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#5b8fed;box-shadow:0 0 0 4px rgba(91,143,237,.12);margin-right:5px}
@@ -93,7 +93,7 @@ body.dark .tileIcon{box-shadow:0 10px 28px color-mix(in srgb,var(--accent) 30%,t
 body.dark .statusPill{background:color-mix(in srgb,var(--accent) 15%,#20232d);border-color:color-mix(in srgb,var(--accent) 22%,transparent)}
 .pkgTitleRow{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-top:18px}.pkgTitleRow b{font-size:21px;letter-spacing:-.45px}.pkgTitleRow small{font-size:12px;margin-top:5px}.pkgArrow{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--accentSoft);color:var(--accent);font-size:20px;flex:0 0 auto}.packageTile .progressWrap{margin-top:18px}.packageTile .progressMeta{font-size:11px}.packageTile .progressBar{height:7px}.packageTile .progressBar .fill{background:linear-gradient(90deg,var(--accent),#a78bfa)}.pkgFooter{display:flex;justify-content:space-between;gap:12px;margin-top:13px;color:var(--muted);font-size:10px}.pkgFooter span:last-child{font-weight:800;color:var(--accent)}
 @media(max-width:760px){
-  main{padding:22px 14px 64px}.topin{padding:9px 13px}.brand{font-size:18px}.homeHero{padding:27px 22px;min-height:300px;border-radius:27px}.heroIn{gap:17px;align-items:flex-start}.markWrap{width:76px;height:76px;border-radius:20px}.mark{font-size:58px}.hero h1{font-size:30px;letter-spacing:-1px}.hero p{font-size:16px;margin-top:8px}.eyebrow{font-size:10px;letter-spacing:2px}.heroBadge{left:22px;right:auto;top:auto;bottom:20px;font-size:9px}.heroCta{font-size:12px;padding:10px 13px}.heroGlowA{width:240px;height:240px;right:-100px;bottom:-110px}.heroGlowB{width:150px;height:150px;right:30px;top:-90px}.homeStats{grid-template-columns:1fr;gap:9px;margin:12px 0 27px}.statCard{min-height:64px;border-radius:17px}.homeSection{display:block;margin-bottom:14px}.homeSection h2{font-size:26px}.sectionHint{margin-top:5px;font-size:11px}.homeGrid{grid-template-columns:1fr;gap:13px}.packageTile{min-height:204px;padding:19px;border-radius:21px}.pkgTitleRow b{font-size:19px}.pkgFooter{font-size:9px}
+  main{padding:22px 14px 64px}.topin{padding:9px 13px}.brand{font-size:18px}.homeHero{padding:27px 22px;min-height:300px;border-radius:27px}.heroIn{gap:17px;align-items:flex-start}.markWrap{width:76px;height:76px;border-radius:20px}.mark{font-size:58px}.hero h1{font-size:30px;letter-spacing:-1px}.hero p{font-size:16px;margin-top:8px}.eyebrow{font-size:10px;letter-spacing:2px}.heroBadge{left:22px;right:auto;top:auto;bottom:20px;font-size:9px}.heroCta{font-size:12px;padding:10px 13px}.homeGreeting{font-size:13px;margin-top:11px}.heroGlowA{width:240px;height:240px;right:-100px;bottom:-110px}.heroGlowB{width:150px;height:150px;right:30px;top:-90px}.homeStats{grid-template-columns:1fr;gap:9px;margin:12px 0 27px}.statCard{min-height:64px;border-radius:17px}.homeSection{display:block;margin-bottom:14px}.homeSection h2{font-size:26px}.sectionHint{margin-top:5px;font-size:11px}.homeGrid{grid-template-columns:1fr;gap:13px}.packageTile{min-height:204px;padding:19px;border-radius:21px}.pkgTitleRow b{font-size:19px}.pkgFooter{font-size:9px}
 }
 
 /* NAV FIX v2 — keep navigation at the bottom on every device */
@@ -186,7 +186,7 @@ body.dark .authMark{background:linear-gradient(145deg,#29334b,#312b46);}
       <div class="heroCopy">
         <div class="eyebrow">DARI KELAS E · UNTUK SEMUA</div>
         <h1>Latihan HSK 4</h1>
-        <p>Belajar, berlatih, dan ukur progresmu.</p>
+        <p>Belajar, berlatih, dan ukur progresmu.</p><div class="homeGreeting" id="homeGreeting">Halo, <b>—</b>, Ayo lanjut, waktu semakin sempit.</div>
       </div>
     </div>
     <div class="heroBadge"><span class="badgeDot"></span> HSK 4 · Practice Workspace</div>
@@ -336,6 +336,7 @@ function getLastProgress(){
 }
 function renderHome(){
   const el=$('homeLastPackage');const sub=$('homeLastSub');if(!el)return;
+  const greeting=$('homeGreeting');if(greeting)greeting.innerHTML='Halo, <b>'+esc(currentUsername||'—')+'</b>, Ayo lanjut, waktu semakin sempit.';
   const last=getLastProgress();
   if(!last){sub.textContent='';el.innerHTML='<div class="homeEmpty"><strong>Kamu belum mengerjakan soal apapun.</strong><button class="homeContinueBtn" type="button" onclick="openPackages()">Mulai belajar <span>→</span></button></div>';return}
   const code=last.code,st=last.st,pct=st.pct||0,status=pct>=100?'Selesai':'Sedang berjalan';
