@@ -241,7 +241,7 @@ function cloudErrorMessage(status){if(status===401||status===403)return 'Supabas
 function cloudHeaders(extra={}){return {'apikey':CLOUD_CONFIG.anonKey,'Authorization':'Bearer '+CLOUD_CONFIG.anonKey,'Content-Type':'application/json',...extra}}
 async function cloudFindUser(username){
   if(!cloudEnabled())return null;
-  const url=cloudUrl('?username=eq.'+encodeURIComponent(username)+'&select=id,username,data,created_at,updated_at&limit=1');
+  const url=cloudUrl('?username=eq.'+encodeURIComponent(username)+'&select=id,username,data,created_at&limit=1');
   const r=await fetch(url,{headers:cloudHeaders()});
   if(!r.ok)throw new Error(cloudErrorMessage(r.status));
   const rows=await r.json();
@@ -252,7 +252,7 @@ async function cloudUpsertUser(username,store){
   const r=await fetch(cloudUrl(),{
     method:'POST',
     headers:cloudHeaders({'Prefer':'resolution=merge-duplicates,return=minimal'}),
-    body:JSON.stringify({username,data:store,updated_at:new Date().toISOString()})
+    body:JSON.stringify({username,data:store})
   });
   if(!r.ok)throw new Error(cloudErrorMessage(r.status));
   return true;
