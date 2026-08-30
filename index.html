@@ -242,22 +242,32 @@ function cloudHeaders(extra={}){return {'apikey':CLOUD_CONFIG.anonKey,'Authoriza
 async function cloudFindUser(username){
   if(!cloudEnabled())return null;
   const url=cloudUrl('?username=eq.'+encodeURIComponent(username)+'&select=id,username,data,created_at&limit=1');
-  const r=await fetch(url,{headers:cloudHeaders()});
+  const r=await fetch(url,{headers:cloudHeaders(),cache:'no-store'});
   if(!r.ok)throw new Error(cloudErrorMessage(r.status));
   const rows=await r.json();
   return rows[0]||null;
 }
-async function cloudUpsertUser(username,store){
+async function cloudCreateUser(username){
   if(!cloudEnabled())return true;
   const r=await fetch(cloudUrl(),{
     method:'POST',
-    headers:cloudHeaders({'Prefer':'resolution=merge-duplicates,return=minimal'}),
-    body:JSON.stringify({username,data:store})
+    headers:cloudHeaders({'Prefer':'return=minimal'}),
+    body:JSON.stringify({username,data:{}})
   });
   if(!r.ok)throw new Error(cloudErrorMessage(r.status));
   return true;
 }
-async function cloudUpdateUser(username,store){return cloudUpsertUser(username,store)}
+async function cloudUpdateUser(username,store){
+  if(!cloudEnabled())return true;
+  const url=cloudUrl('?username=eq.'+encodeURIComponent(username));
+  const r=await fetch(url,{
+    method:'PATCH',
+    headers:cloudHeaders({'Prefer':'return=minimal'}),
+    body:JSON.stringify({data:store})
+  });
+  if(!r.ok)throw new Error(cloudErrorMessage(r.status));
+  return true;
+}
 async function pullCloudState(force=false){
   if(!currentUsername||!cloudEnabled())return false;
   try{
@@ -265,7 +275,7 @@ async function pullCloudState(force=false){
     const row=await cloudFindUser(currentUsername);
     if(!row){
       // Akun belum punya row cloud. Jangan pernah menghapus progres lokal; upload sekarang.
-      await cloudUpsertUser(currentUsername,local);
+      await cloudCreateUser(currentUsername);
       renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();
       return true;
     }
@@ -276,7 +286,7 @@ async function pullCloudState(force=false){
       if(!merged[k]||Number(v.updatedAt||0)>Number(merged[k].updatedAt||0)){merged[k]=v;localNewer=true}
     });
     writeStore(merged);
-    if(localNewer)await cloudUpsertUser(currentUsername,merged);
+    if(localNewer)await cloudUpdateUser(currentUsername,merged);
     renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();
     return true;
   }catch(e){console.warn('Cloud sync pull failed',e);return false}
@@ -285,7 +295,7 @@ async function pushCloudState(store){
   if(!currentUsername||!cloudEnabled())return false;
   if(cloudSyncBusy){cloudSyncPending=true;return false}
   cloudSyncBusy=true;
-  try{await cloudUpsertUser(currentUsername,store);return true}
+  try{await cloudUpdateUser(currentUsername,store);return true}
   catch(e){console.warn('Cloud sync push failed',e);cloudSyncPending=true;return false}
   finally{
     cloudSyncBusy=false;
@@ -318,6 +328,7 @@ function svg(k){return {'home':'<svg class="ico" viewBox="0 0 24 24" aria-hidden
 let exitFromBack=false;
 function logout(){if(!currentUsername)return;showExit(false)}
 function performLogout(){
+  flushCloudSync();
   clearTimeout(cloudSyncTimer);
   try{localStorage.removeItem(USERNAME_KEY)}catch(e){}
   currentUsername='';
@@ -360,6 +371,8 @@ function goHome(push=true){route={screen:'home',packageCode:null,type:null,secti
 function backRoute(){if(route.screen==='package'){openPackages()}else if(route.screen==='parts'){openPackage(route.packageCode)}else if(route.screen==='exercise'||route.screen==='result'){openSections(route.packageCode,route.type)}else goHome()}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushCloudSync()});
 window.addEventListener('pagehide',()=>flushCloudSync());
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&currentUsername){pullCloudState(true)}});
+window.addEventListener('focus',()=>{if(currentUsername)pullCloudState(true)});
 window.addEventListener('popstate',e=>{if(!currentUsername){showAuthScreen();return}if(allowExit){allowExit=false;return}if(e.state&&e.state.homeGuard&&route.screen==='home'){showExit(true);return}if(!e.state){goHome(false);return}restore(e.state)});
 function restore(s){route={screen:s.screen||'home',packageCode:s.packageCode||null,type:s.type||null,sectionIndex:s.sectionIndex??null};if(route.screen==='home'){renderHome();setScreen('home',false);armHome();return}if(route.screen==='packages'){renderPackagesScreen();setScreen('packagesScreen',false)}else if(route.screen==='scores'){renderScores();setScreen('scores',false)}else if(route.screen==='package'){renderPackage();setScreen('package',false)}else if(route.screen==='parts'){renderSections();setScreen('partsScreen',false)}else if(route.screen==='exercise'){loadCurrentSectionState();renderExercise();setScreen('exercise',false)}else if(route.screen==='result'){renderResult();setScreen('result',false)}}
 function openPackage(code,push=true){if(!DB[code]){goHome(false);return}route={screen:'package',packageCode:code,type:null,sectionIndex:null};renderPackage();setScreen('package',push)}
@@ -419,7 +432,7 @@ function renderHome(){
   if(!last){sub.textContent='';el.innerHTML='<div class="homeEmpty"><strong>Kamu belum mengerjakan soal apapun.</strong><button class="homeContinueBtn" type="button" onclick="openPackages()">Mulai belajar <span>→</span></button></div>';return}
   const code=last.code,st=last.st,pct=st.pct||0,status=pct>=100?'Selesai':'Sedang berjalan';
   sub.textContent='';
-  el.innerHTML=`<div class="homeContinue"><div class="homeContinueHead"><div><div class="homeContinueTitle">Paket ${esc(code)}</div><div class="homeContinueMeta">${st.answered}/${st.total} soal terjawab · ${st.score} benar</div></div><div class="homeContinuePct">${pct}%</div></div>${progressHTML({answered:st.answered,total:st.total,pct},'Progres paket')}<div class="homeContinueActions"><button class="homeContinueBtn" type="button" onclick="continueLastPackage('${esc(code)}')">${pct>=100?'Lihat paket':'Lanjut belajar'} <span>→</span></button></div><div class="syncStatus ${cloudEnabled()?'':'warn'}"><strong>${cloudEnabled()?'Tersinkron':'Tersimpan di perangkat'}</strong>${cloudEnabled()?' · progres mengikuti username @'+esc(currentUsername):' · sinkronisasi cloud belum dikonfigurasi'}</div></div>`;
+  el.innerHTML=`<div class="homeContinue"><div class="homeContinueHead"><div><div class="homeContinueTitle">Paket ${esc(code)}</div><div class="homeContinueMeta">${st.answered}/${st.total} soal terjawab · ${st.score} benar</div></div><div class="homeContinuePct">${pct}%</div></div>${progressHTML({answered:st.answered,total:st.total,pct},'Progres paket')}<div class="homeContinueActions"><button class="homeContinueBtn" type="button" onclick="continueLastPackage('${esc(code)}')">${pct>=100?'Lihat paket':'Lanjut belajar'} <span>→</span></button></div><div class="syncStatus ${cloudEnabled()?'':'warn'}"><strong>${cloudEnabled()?'Tersinkron ke cloud':'Tersimpan di perangkat'}</strong>${cloudEnabled()?' · progres mengikuti username @'+esc(currentUsername):' · sinkronisasi cloud belum dikonfigurasi'}</div></div>`;
 }
 function continueLastPackage(code){if(!DB[code])return;openPackage(code)}
 
