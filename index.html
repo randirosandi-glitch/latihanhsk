@@ -144,10 +144,6 @@ body.dark .authMark{background:linear-gradient(145deg,#29334b,#312b46);}
 .homeEmpty strong{font-size:16px;color:var(--text);}
 .homeEmpty .homeContinueBtn{width:100%;min-height:48px;}
 @media(max-width:760px){.authScreen{padding:16px}.authCard{padding:25px 19px;border-radius:25px}.authCard h1{font-size:28px}.mainNav{background:rgba(255,255,255,.34)!important}.body.dark .mainNav{background:rgba(31,34,44,.34)!important}}
-
-.heroAccountGreeting{margin-top:14px;font-size:17px;font-weight:800;line-height:1.45;color:var(--text);letter-spacing:-.2px}
-.heroAccountGreeting span{color:var(--blue)}
-@media(max-width:760px){.heroAccountGreeting{font-size:15px;margin-top:11px}}
 </style></head><body>
 <section id="authScreen" class="authScreen" aria-label="Login Latihan HSK 4">
   <div class="authCard">
@@ -190,7 +186,7 @@ body.dark .authMark{background:linear-gradient(145deg,#29334b,#312b46);}
       <div class="heroCopy">
         <div class="eyebrow">DARI KELAS E · UNTUK SEMUA</div>
         <h1>Latihan HSK 4</h1>
-        <p>Belajar, berlatih, dan ukur progresmu.</p><div id="heroAccountGreeting" class="heroAccountGreeting" aria-live="polite">Halo <span id="heroAccountName"></span>, Ayo lanjut, waktu semakin sempit.</div>
+        <p>Belajar, berlatih, dan ukur progresmu.</p>
       </div>
     </div>
     <div class="heroBadge"><span class="badgeDot"></span> HSK 4 · Practice Workspace</div>
@@ -228,25 +224,15 @@ const CLOUD_CONFIG={url:'https://gwgfvfctwzvoapingmtw.supabase.co',anonKey:'sb_p
 const CLOUD_TABLE='namasiswa';
 const USERNAME_KEY='hsk4-kelas-e-username-v1';
 let currentUsername='';
-updateHeroAccountGreeting();
-function updateHeroAccountGreeting(){
-  const greeting = document.getElementById('heroAccountGreeting');
-  const nameEl = document.getElementById('heroAccountName');
-  if(!greeting || !nameEl) return;
-  const name = (currentUsername || '').trim();
-  nameEl.textContent = name;
-  greeting.style.display = name ? '' : 'none';
-}
-
 let cloudSyncTimer=null;
 let cloudSyncBusy=false;
 function normalizeUsername(v){return String(v||'').trim().toLowerCase()}
 function validUsername(v){return /^[a-z0-9._-]{3,24}$/.test(v)}
 function cloudEnabled(){return /^https:\/\/[^\s]+$/.test(CLOUD_CONFIG.url)&&CLOUD_CONFIG.anonKey.length>20}
-// LOGIN BERSIFAT SESI: username sengaja TIDAK disimpan di localStorage.
-// Setiap kali halaman dibuka/di-refresh, pengguna wajib login lagi.
-function getUsername(){return ''}
-function setUsernameLocal(v){/* intentionally not persisted */}
+// LOGIN PERSISTEN: username disimpan di localStorage sampai pengguna memilih Keluar.
+// Data progres tetap dipisahkan berdasarkan username dan disinkronkan ke Supabase.
+function getUsername(){try{const v=normalizeUsername(localStorage.getItem(USERNAME_KEY)||'');return validUsername(v)?v:''}catch(e){return ''}}
+function setUsernameLocal(v){try{localStorage.setItem(USERNAME_KEY,normalizeUsername(v))}catch(e){}}
 function showUsernameModal(){const m=$('usernameModal');if(!m)return;m.classList.add('show');m.setAttribute('aria-hidden','false');setTimeout(()=>{$('usernameInput')?.focus()},60)}
 function hideUsernameModal(){const m=$('usernameModal');if(!m)return;m.classList.remove('show');m.setAttribute('aria-hidden','true')}
 function cloudUrl(path=''){return CLOUD_CONFIG.url.replace(/\/$/,'')+'/rest/v1/'+CLOUD_TABLE+path}
@@ -258,8 +244,7 @@ async function cloudUpdateUser(username,store){if(!cloudEnabled())return true;co
 async function pullCloudState(force=false){if(!currentUsername||!cloudEnabled())return false;try{const row=await cloudFindUser(currentUsername);if(!row){await cloudCreateUser(currentUsername);writeStore({});return true}const remote=row.data||{};const local=readStore();const merged={...remote};let localNewer=false;Object.entries(local).forEach(([k,v])=>{if(!merged[k]||Number(v.updatedAt||0)>Number(merged[k].updatedAt||0)){merged[k]=v;localNewer=true}});writeStore(merged);if(localNewer)await cloudUpdateUser(currentUsername,merged);renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();return true}catch(e){console.warn('Cloud sync pull failed',e);return false}}
 async function pushCloudState(store){if(!currentUsername||!cloudEnabled())return false;if(cloudSyncBusy)return false;cloudSyncBusy=true;try{await cloudUpdateUser(currentUsername,store);return true}catch(e){console.warn('Cloud sync push failed',e);return false}finally{cloudSyncBusy=false}}
 function scheduleCloudSync(){if(!currentUsername||!cloudEnabled())return;clearTimeout(cloudSyncTimer);cloudSyncTimer=setTimeout(()=>pushCloudState(readStore()),700)}
-function saveUsername(){const v=normalizeUsername($('usernameInput')?.value);const hint=$('usernameHint');if(!validUsername(v)){if(hint)hint.textContent='Username harus 3–24 karakter dan hanya boleh memakai huruf kecil, angka, titik, garis bawah, atau tanda hubung.';return}currentUsername=v;
-updateHeroAccountGreeting();setUsernameLocal(v);hideUsernameModal();renderUserPill();renderContext();renderHome();renderScores();renderPackagesScreen();pullCloudState(true)}
+function saveUsername(){const v=normalizeUsername($('usernameInput')?.value);const hint=$('usernameHint');if(!validUsername(v)){if(hint)hint.textContent='Username harus 3–24 karakter dan hanya boleh memakai huruf kecil, angka, titik, garis bawah, atau tanda hubung.';return}currentUsername=v;setUsernameLocal(v);hideUsernameModal();renderUserPill();renderContext();renderHome();renderScores();renderPackagesScreen();pullCloudState(true)}
 function changeUsername(){if($('usernameInput'))$('usernameInput').value=currentUsername;showUsernameModal()}
 function renderUserPill(){
   let old=$('usernamePill');if(old)old.remove();
@@ -269,14 +254,15 @@ function renderUserPill(){
   const b=document.createElement('button');b.id='usernamePill';b.className='usernamePill';b.type='button';b.title='Ganti username';b.innerHTML='<span>@</span><b>'+esc(currentUsername)+'</b>';b.onclick=changeUsername;top.appendChild(b);
   const l=document.createElement('button');l.id='topLogout';l.className='topBack logoutTop';l.type='button';l.textContent='Keluar';l.onclick=logout;top.appendChild(l);
 }
-function initUsernameAndCloud(){currentUsername=getUsername();
-updateHeroAccountGreeting();renderUserPill();if(!currentUsername){showUsernameModal();return}pullCloudState()}
+function initUsernameAndCloud(){currentUsername=getUsername();renderUserPill();if(!currentUsername){showUsernameModal();return}pullCloudState()}
 
 function svg(k){return {'home':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg>','back':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/><path d="M9 12h12"/></svg>','sun':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>','moon':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.1A8.5 8.5 0 0 1 8.9 3.8 8.6 8.6 0 1 0 20.2 15.1Z"/></svg>','check':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>','listen':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13a8 8 0 0 1 16 0"/><path d="M4 13v4a2 2 0 0 0 2 2h1v-7H6a2 2 0 0 0-2 1Z"/><path d="M20 13v4a2 2 0 0 1-2 2h-1v-7h1a2 2 0 0 1 2 1Z"/><path d="M12 21h2"/></svg>','read':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5A2.5 2.5 0 0 1 7.5 2H19v17H7.5A2.5 2.5 0 0 0 5 21V4.5Z"/><path d="M5 19.5A2.5 2.5 0 0 1 7.5 17H19"/></svg>','write':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m4 20 4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z"/><path d="m14.5 7.5 2 2"/></svg>','box':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m4 7 8-4 8 4-8 4-8-4Z"/><path d="M4 7v10l8 4 8-4V7"/><path d="M12 11v10"/></svg>','chart':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5"/><path d="M4 19h17"/><path d="m7 15 3-4 3 2 5-7"/></svg>','file':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M14 3v5h5"/><path d="M8 12h8M8 16h6"/></svg>','headphones':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13a8 8 0 0 1 16 0"/><path d="M4 13v4a2 2 0 0 0 2 2h1v-7H6a2 2 0 0 0-2 1Z"/><path d="M20 13v4a2 2 0 0 1-2 2h-1v-7h1a2 2 0 0 1 2 1Z"/></svg>','checkSquare':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8 12 2.5 2.5L16 9"/></svg>'}[k]}
-function logout(){
+let exitFromBack=false;
+function logout(){if(!currentUsername)return;showExit(false)}
+function performLogout(){
   clearTimeout(cloudSyncTimer);
+  try{localStorage.removeItem(USERNAME_KEY)}catch(e){}
   currentUsername='';
-updateHeroAccountGreeting();
   answers={};checked={};resultState=null;
   route={screen:'home',packageCode:null,type:null,sectionIndex:null};
   document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
@@ -288,7 +274,7 @@ updateHeroAccountGreeting();
   history.replaceState({screen:'home',authRequired:true},'',location.pathname+location.search+'#home');
 }
 function renderNavState(){document.querySelectorAll('.mainNav .navItem').forEach(b=>b.classList.toggle('active',b.dataset.nav===route.screen||((route.screen==='package'||route.screen==='parts'||route.screen==='exercise'||route.screen==='result')&&b.dataset.nav==='packages')))}
-function setScreen(name,push=true){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$(name).classList.add('active');renderContext();renderNavState();if(push){history.pushState({...route},'',location.pathname+location.search+'#'+name)}}
+function setScreen(name,push=true){if(!currentUsername){showAuthScreen();return}document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));const target=$(name);if(!target)return;target.classList.add('active');renderContext();renderNavState();if(push){history.pushState({...route},'',location.pathname+location.search+'#'+name)}}
 function saveState(){history.replaceState({...route},'',location.pathname+location.search+'#'+route.screen)}
 const STORAGE_PREFIX='hsk4-kelas-e-progress-v4:';
 function storageKey(){return STORAGE_PREFIX+(currentUsername||'guest')}
@@ -308,7 +294,7 @@ function renderContext(){let c=$('context');let tb=$('topBack');const top=docume
 function armHome(){if(!history.state||!history.state.homeGuard){history.replaceState({screen:'home',homeGuard:true},'',location.pathname+location.search+'#home');history.pushState({screen:'home',homeGuard:true},'',location.pathname+location.search+'#home')}}
 function goHome(push=true){route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;setScreen('home',push);armHome()}
 function backRoute(){if(route.screen==='package'){openPackages()}else if(route.screen==='parts'){openPackage(route.packageCode)}else if(route.screen==='exercise'||route.screen==='result'){openSections(route.packageCode,route.type)}else goHome()}
-window.addEventListener('popstate',e=>{if(allowExit){allowExit=false;return}if(e.state&&e.state.homeGuard&&route.screen==='home'){showExit();return}if(!e.state){goHome(false);return}restore(e.state)});
+window.addEventListener('popstate',e=>{if(!currentUsername){showAuthScreen();return}if(allowExit){allowExit=false;return}if(e.state&&e.state.homeGuard&&route.screen==='home'){showExit(true);return}if(!e.state){goHome(false);return}restore(e.state)});
 function restore(s){route={screen:s.screen||'home',packageCode:s.packageCode||null,type:s.type||null,sectionIndex:s.sectionIndex??null};if(route.screen==='home'){renderHome();setScreen('home',false);armHome();return}if(route.screen==='packages'){renderPackagesScreen();setScreen('packagesScreen',false)}else if(route.screen==='scores'){renderScores();setScreen('scores',false)}else if(route.screen==='package'){renderPackage();setScreen('package',false)}else if(route.screen==='parts'){renderSections();setScreen('partsScreen',false)}else if(route.screen==='exercise'){loadCurrentSectionState();renderExercise();setScreen('exercise',false)}else if(route.screen==='result'){renderResult();setScreen('result',false)}}
 function openPackage(code,push=true){if(!DB[code]){goHome(false);return}route={screen:'package',packageCode:code,type:null,sectionIndex:null};renderPackage();setScreen('package',push)}
 function renderPackage(){let code=route.packageCode;let d=DB[code]||{};$('pkgCrumb').textContent=code;$('pkgTitle').textContent='Paket '+code;let sourceNote=code==='H41006'?'<div class="notice" style="grid-column:1/-1"><strong>Catatan sumber H41006</strong><br>Reading tersedia dan telah dimasukkan dari PDF. Writing belum dimasukkan karena data soal pada sumber tidak tersedia dalam basis data aplikasi.</div>':'';$('parts').innerHTML=Object.entries(META).map(([t,m])=>{let arr=d[t]||[];let total=arr.reduce((a,s)=>a+s.questions.length,0);let ps=arr.reduce((a,s,i)=>{let st=sectionStats(code,t,i);return {answered:a.answered+st.answered,total:a.total+st.total}}, {answered:0,total:0});ps.pct=ps.total?Math.round(ps.answered/ps.total*100):0;let ok=total>0;return ok?`<button class="tile" onclick="openSections('${code}','${t}')"><div class="tileIcon">${m.icon}</div><b>${m.zh} · ${m.label}</b><small>${total} soal tersedia</small>${progressHTML(ps,'Progres bagian')}</button>`:`<div class="tile tile-disabled" aria-disabled="true"><div class="tileIcon">${m.icon}</div><b>${m.zh} · ${m.label}</b><small>Belum tersedia dari sumber paket</small></div>`}).join('')+sourceNote+`<div style="grid-column:1/-1">${renderPackageProgress(code)}</div>`}
@@ -337,7 +323,7 @@ function showPackageScore(code){const st=packageStats(code);$('packageModalTitle
 function closePackageScore(){$('packageModal').classList.remove('show')}
 function toggleTheme(){applyTheme(document.body.classList.contains('dark')?'light':'dark')}
 function applyTheme(t){document.body.classList.toggle('dark',t==='dark');document.documentElement.classList.toggle('dark',t==='dark');const b=document.querySelector('.mainNav [data-nav="theme"]');if(b)b.innerHTML=(t==='dark'?svg('sun'):svg('moon'))+'<span>Tema</span>';document.querySelector('meta[name="theme-color"]').content=t==='dark'?'#0c1020':'#f4f5fb';localStorage.setItem('hsk-theme',t);if(typeof route!=='undefined'&&route)renderNavState()}
-function showExit(){$('exitModal').classList.add('show')}function cancelExit(){$('exitModal').classList.remove('show');history.pushState({screen:'home',homeGuard:true},'',location.pathname+location.search+'#home')}function confirmExit(){$('exitModal').classList.remove('show');allowExit=true;history.go(-1)}
+function showExit(fromBack=false){if(!currentUsername)return;exitFromBack=fromBack;$('exitModal').classList.add('show')}function cancelExit(){$('exitModal').classList.remove('show');if(exitFromBack){exitFromBack=false;history.pushState({screen:'home',homeGuard:true},'',location.pathname+location.search+'#home')}}function confirmExit(){$('exitModal').classList.remove('show');exitFromBack=false;performLogout()}
 function openPackages(push=true){route={screen:'packages',packageCode:null,type:null,sectionIndex:null};renderPackagesScreen();setScreen('packagesScreen',push)}
 function openScores(push=true){route={screen:'scores',packageCode:null,type:null,sectionIndex:null};renderScores();setScreen('scores',push)}
 function renderPackagesScreen(){const el=$('packagesGrid');if(!el)return;const codes=Object.keys(DB);el.innerHTML=codes.map((code,idx)=>renderPackageTile(code,idx)).join('')}
@@ -361,23 +347,30 @@ function continueLastPackage(code){if(!DB[code])return;openPackage(code)}
 let authMode='';
 function showAuthForm(mode){authMode=mode;$('authChoices').hidden=true;$('authForm').hidden=false;$('authFormTitle').textContent=mode==='register'?'Buat akun baru':'Login';$('authSubmit').textContent=mode==='register'?'Buat akun & mulai':'Login & lanjut belajar';$('authUsername').value='';$('authError').textContent='';setTimeout(()=>$('authUsername')?.focus(),60)}
 function resetAuthChoices(){authMode='';$('authChoices').hidden=false;$('authForm').hidden=true;$('authError').textContent=''}
-async function submitAuth(){const input=$('authUsername');const v=normalizeUsername(input?.value);const err=$('authError');if(!validUsername(v)){err.textContent='Username harus 3–24 karakter dan hanya boleh memakai huruf, angka, titik, garis bawah, atau tanda hubung.';return}err.textContent='';const btn=$('authSubmit');if(btn)btn.disabled=true;try{if(cloudEnabled()){const existing=await cloudFindUser(v);if(authMode==='register'){if(existing){err.textContent='Username tersebut sudah terdaftar. Silakan pilih username lain atau gunakan Login.';return}await cloudCreateUser(v)}else{if(!existing){err.textContent='Username tidak ditemukan. Silakan pilih Buat akun baru terlebih dahulu.';return}}}currentUsername=v;
-updateHeroAccountGreeting();setUsernameLocal(v);$('authScreen').style.display='none';document.querySelector('.mainNav')?.classList.remove('authLocked');renderUserPill();renderContext();renderHome();renderPackagesScreen();renderScores();await pullCloudState(true);renderHome();renderPackagesScreen();renderScores()}catch(e){err.textContent=e?.message||'Terjadi kesalahan saat menghubungkan ke server.'}finally{if(btn)btn.disabled=false}}
+async function submitAuth(){const input=$('authUsername');const v=normalizeUsername(input?.value);const err=$('authError');if(!validUsername(v)){err.textContent='Username harus 3–24 karakter dan hanya boleh memakai huruf, angka, titik, garis bawah, atau tanda hubung.';return}err.textContent='';const btn=$('authSubmit');if(btn)btn.disabled=true;try{if(cloudEnabled()){const existing=await cloudFindUser(v);if(authMode==='register'){if(existing){err.textContent='Username tersebut sudah terdaftar. Silakan pilih username lain atau gunakan Login.';return}await cloudCreateUser(v)}else{if(!existing){err.textContent='Username tidak ditemukan. Silakan pilih Buat akun baru terlebih dahulu.';return}}}currentUsername=v;setUsernameLocal(v);route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;$('authScreen').style.display='none';document.querySelector('.mainNav')?.classList.remove('authLocked');document.querySelector('.top')?.classList.remove('homeTopHidden');document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$('home')?.classList.add('active');history.replaceState({screen:'home',homeGuard:true},'',location.pathname+location.search+'#home');renderUserPill();renderContext();renderNavState();renderHome();renderPackagesScreen();renderScores();await pullCloudState(true);renderHome();renderPackagesScreen();renderScores()}catch(e){err.textContent=e?.message||'Terjadi kesalahan saat menghubungkan ke server.'}finally{if(btn)btn.disabled=false}}
 function showAuthScreen(){const a=$('authScreen');if(a){a.style.display='flex';resetAuthChoices()}}
 async function initApp(){
   try{const savedTheme=localStorage.getItem('hsk-theme');applyTheme(savedTheme==='dark'?'dark':'light')}catch(e){applyTheme('light')}
   route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;
-  // Jangan pernah memulihkan username dari localStorage. Login harus dilakukan setiap kali halaman dibuka.
-  currentUsername='';
-updateHeroAccountGreeting();
+  currentUsername=getUsername();
   document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
-  const a=$('authScreen');if(a)a.style.display='flex';
-  document.querySelector('.top')?.classList.add('homeTopHidden');
-  document.querySelector('.mainNav')?.classList.add('authLocked');
-  renderUserPill();
-  resetAuthChoices();
-  history.replaceState({screen:'home',authRequired:true},'',location.pathname+location.search+'#home');
+  if(currentUsername){
+    const a=$('authScreen');if(a)a.style.display='none';
+    document.querySelector('.top')?.classList.remove('homeTopHidden');
+    document.querySelector('.mainNav')?.classList.remove('authLocked');
+    $('home')?.classList.add('active');
+    renderUserPill();renderContext();renderNavState();
+    renderHome();renderPackagesScreen();renderScores();
+    history.replaceState({screen:'home',homeGuard:true},'',location.pathname+location.search+'#home');
+    await pullCloudState(true);
+    renderHome();renderPackagesScreen();renderScores();
+  }else{
+    const a=$('authScreen');if(a)a.style.display='flex';
+    document.querySelector('.top')?.classList.add('homeTopHidden');
+    document.querySelector('.mainNav')?.classList.add('authLocked');
+    renderUserPill();resetAuthChoices();
+    history.replaceState({screen:'home',authRequired:true},'',location.pathname+location.search+'#home');
+  }
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initApp);else initApp();
-updateHeroAccountGreeting();
 </script></body></html>
