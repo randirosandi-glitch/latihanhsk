@@ -350,31 +350,11 @@ function storageKey(){return STORAGE_PREFIX+(currentUsername||'guest')}
 function readStore(){try{return JSON.parse(localStorage.getItem(storageKey())||'{}')||{}}catch(e){return {}}}
 function writeStore(s){try{localStorage.setItem(storageKey(),JSON.stringify(s))}catch(e){}}
 function isSequenceWriting(type,idx){return type==='writing'&&Number(idx)===0}
-function normalizeSequenceAnswer(v){
-  // Susun kata menggunakan Hanzi Mandarin. Normalisasi hanya membersihkan
-  // spasi, tanda baca, dan karakter tak terlihat; Hanzi TIDAK diubah ke bentuk
-  // bahasa lain sehingga Mandarin dan Jepang tidak tercampur.
-  return String(v??'')
-    .normalize('NFKC')
-    .replace(/[\u200B\u200C\u200D\uFEFF]/gu,'')
-    .replace(/[\s\u3000，。！？；：、,.!?;:'\"“”‘’()（）【】\[\]{}<>《》]/gu,'')
-    .trim();
-}
+function normalizeSequenceAnswer(v){return String(v??'').normalize('NFKC').replace(/[\s\u3000，。！？；：、,.!?;:'"“”‘’()（）【】\[\]{}<>《》]/gu,'').replace(/[\u200B\uFEFF]/g,'').trim()}
 function sequenceKeys(q){
-  return String(q?.[2]??'')
-    .split('/')
-    .map(normalizeSequenceAnswer)
-    .filter(Boolean);
+  return String(q?.[2]||'').split('/').map(normalizeSequenceAnswer).filter(Boolean)
 }
-function isSequenceAnswerCorrect(q,u){
-  const answer=normalizeSequenceAnswer(u);
-  if(!answer)return false;
-  const keys=sequenceKeys(q);
-  // Utamakan kunci resmi. Perbandingan karakter-per-karakter membuat
-  // jawaban Mandarin yang sama tetap benar meskipun pengguna mengetik
-  // spasi atau tanda baca berbeda.
-  return keys.some(key=>key===answer);
-}
+function isSequenceAnswerCorrect(q,u){const a=normalizeSequenceAnswer(u);return !!a&&sequenceKeys(q).includes(a)}
 function stateKey(code,type,idx){return code+'|'+type+'|'+idx}
 function getSectionState(code,type,idx){const st=readStore()[stateKey(code,type,idx)]||{};return {answers:st.answers||{},checked:st.checked||{}}}
 function saveSectionState(code,type,idx,a=answers,c=checked){const st=readStore();st[stateKey(code,type,idx)]={answers:{...a},checked:{...c},updatedAt:Date.now()};writeStore(st);scheduleCloudSync()}
@@ -412,7 +392,7 @@ if(currentMode==='writing'){
 out+=`<article class="question"><div class="qtop"><span>第 ${esc(id)} 题</span><span>${i+1}/${currentQuestions.length}</span></div><div class="qtext">${esc(q[1])}</div>${renderWordBank(q,id)}<input class="write" id="w${id}" value="${esc(answers[id]||'')}" placeholder="Ketik jawaban di sini" autocomplete="off" oninput="saveWriting(this)"><div class="writingDisclaimer">💡 Jawaban membuat kalimat dapat memiliki banyak bentuk yang benar. Jawaban ini tidak dinilai benar atau salah secara otomatis. Periksa kembali penggunaan kata dan tata bahasa kalimatmu.</div><div class="row"><button class="btn soft" onclick="saveWritingAnswer('${id}')">${svg('check')} Simpan jawaban</button><button class="btn" onclick="showReference('${id}')">Lihat contoh jawaban</button></div><div class="feedback" id="f${id}"></div><div class="reference" id="r${id}">Contoh jawaban: ${esc(q[2]||'Tidak tersedia')}</div></article>`;return}
 let isReadingPassage=route.type==='reading'&&Number(id)>=66&&Number(id)<=85;let pid=String(id);if(!READING_PASSAGES[route.packageCode]?.[pid]){if(Number(id)>=80&&Number(id)<=81)pid='80-81';else if(Number(id)>=82&&Number(id)<=83)pid='82-83';else if(Number(id)>=84&&Number(id)<=85)pid='84-85'}let passage=READING_PASSAGES[route.packageCode]?.[pid]||'';if(isReadingPassage&&passage&&passage!==lastPassage){out+=renderReadingPassage(pid);lastPassage=passage}let opts=q[2]||[];let sequenceSource='';if(route.type==='reading'&&Number(id)>=56&&Number(id)<=65){sequenceSource='<div class="sequenceSource">'+(q[2]||[]).map(escapeSequence).join('')+'</div>';opts=permutations()}let labels=opts.map((o,j)=>{let label=(route.type==='reading'&&Number(id)>=56&&Number(id)<=65)?o:String.fromCharCode(65+j);return `<button class="opt" data-q="${id}" data-i="${j}" onclick="choose(this)">${esc(label)}${(route.type==='reading'&&Number(id)>=56&&Number(id)<=65)?'':' . '+esc(o)}</button>`}).join('');out+=`<article class="question"><div class="qtop"><span>第 ${esc(id)} 题</span><span>${i+1}/${currentQuestions.length}</span></div><div class="qtext">${esc(q[1])}</div>${sequenceSource}<div class="opts ${route.type==='reading'&&Number(id)>=56&&Number(id)<=65?'sequence':''}">${labels}</div><div class="row"><button class="btn soft" onclick="checkOne('${id}')">${svg('check')} Periksa</button>${route.type==='listening'?`<button class="btn" onclick="toggleTranscript('${id}')">Lihat teks</button>`:''}</div>${route.type==='listening'?`<div class="transcript" id="t${id}">${esc(q[4]||'Teks dengar tidak tersedia di sumber.')}</div>`:''}<div class="feedback" id="f${id}"></div></article>`});return out}
 function restoreQuestionUI(){for(const q of currentQuestions){const id=String(q[0]);if(currentMode==='writing'){const e=$('w'+id);if(e)e.value=answers[id]??''}else if(answers[id]!==undefined){const b=document.querySelector(`.opt[data-q="${id}"][data-i="${answers[id]}"]`);if(b)b.classList.add('selected')}if(checked[id])checkOne(id,true)}}
-function saveWriting(el){const id=String(el.id).slice(1);answers[id]=el.value;checked[id]=false;const f=$('f'+id);if(f)f.className='feedback';saveSectionState(route.packageCode,route.type,route.sectionIndex);refreshCurrentProgress()}
+function saveWriting(el){answers[String(el.id).slice(1)]=el.value;saveSectionState(route.packageCode,route.type,route.sectionIndex);refreshCurrentProgress()}
 function refreshCurrentProgress(){const wrap=document.querySelector('.sectionProgress');if(!wrap)return;const st=sectionStats(route.packageCode,route.type,route.sectionIndex);const meta=wrap.querySelector('.progressMeta');if(meta)meta.innerHTML=`<strong>Progres bagian</strong><span>${st.answered}/${st.total} terjawab · ${st.pct}%</span>`;const fill=wrap.querySelector('.fill');if(fill)fill.style.width=st.pct+'%'}
 function choose(btn){let id=String(btn.dataset.q);answers[id]=btn.dataset.i;checked[id]=false;document.querySelectorAll(`.opt[data-q="${id}"]`).forEach(x=>x.classList.remove('selected','correct','wrong'));btn.classList.add('selected');let f=$('f'+id);if(f)f.className='feedback';saveSectionState(route.packageCode,route.type,route.sectionIndex);refreshCurrentProgress()}
 function permutations(){return ['ABC','ACB','BAC','BCA','CAB','CBA']}
