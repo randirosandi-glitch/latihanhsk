@@ -1033,6 +1033,52 @@ body.auth-active .appFooter{
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot,{once:true}); else boot();
 })();
 </script>
+<style id="midrange-performance-final">
+/* Mobile performance layer: preserve the visual language while reducing GPU-heavy compositing. */
+@media (max-width: 900px) and (pointer: coarse){
+  html,body{overflow-x:clip!important;max-width:100%!important}
+  .top,.mainNav,.modalBox,.heroBadge,.statCard,.homeContinue,.section,.tile,.question,.questionCard,.resultCard,.levelCard,.packageTile,.comingSoonPanel,.crumb,.readingPassage{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+  .top{box-shadow:0 3px 12px rgba(0,0,0,.10)!important}
+  .mainNav{box-shadow:0 7px 18px rgba(0,0,0,.14)!important}
+  .section,.homeContinue,.tile,.question,.questionCard,.resultCard,.levelCard,.packageTile,.comingSoonPanel{box-shadow:0 7px 18px rgba(0,0,0,.10)!important}
+  .modalBox{box-shadow:0 14px 34px rgba(0,0,0,.22)!important}
+  .heroGlow,.hero:before,.hero:after,body:before,body:after{filter:none!important;-webkit-filter:none!important}
+  .heroGlow{opacity:.28!important}
+  .question,.questionCard{content-visibility:auto;contain:layout paint style;contain-intrinsic-size:0 300px}
+  .transcript{content-visibility:auto;contain:paint;contain-intrinsic-size:0 180px}
+  .grid{contain:layout style}
+  .tile:hover,.topBack:hover,.round:hover,.pill:hover,.wordChip:hover{transform:none!important}
+  *{scroll-behavior:auto}
+}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+</style>
+<script id="midrange-performance-final-js">(function(){try{var mobile=window.matchMedia&&window.matchMedia('(max-width:900px) and (pointer:coarse)').matches;var lowMemory=(navigator.deviceMemory&&navigator.deviceMemory<=6)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=6);if(mobile||lowMemory)document.documentElement.classList.add('perfMidrange')}catch(e){}})();</script>
+
+<style id="restoreNavBlurFinal">
+/* RESTORE NAV BLUR — keep the frosted bottom bar visible on Redmi Pad 2 / touch devices. */
+.mainNav{
+  background:rgba(253,254,255,.64)!important;
+  -webkit-backdrop-filter:blur(20px) saturate(135%)!important;
+  backdrop-filter:blur(20px) saturate(135%)!important;
+  border-color:rgba(130,147,164,.22)!important;
+}
+body.dark .mainNav{
+  background:rgba(34,39,51,.64)!important;
+  -webkit-backdrop-filter:blur(20px) saturate(125%)!important;
+  backdrop-filter:blur(20px) saturate(125%)!important;
+  border-color:rgba(210,220,235,.15)!important;
+}
+@media(max-width:900px) and (pointer:coarse){
+  .mainNav{
+    -webkit-backdrop-filter:blur(20px) saturate(135%)!important;
+    backdrop-filter:blur(20px) saturate(135%)!important;
+  }
+  body.dark .mainNav{
+    -webkit-backdrop-filter:blur(20px) saturate(125%)!important;
+    backdrop-filter:blur(20px) saturate(125%)!important;
+  }
+}
+</style>
 </head><body>
 <section id="authScreen" class="authScreen" aria-label="Login Latihan HSK 4">
   <div class="authCard">
@@ -1653,65 +1699,40 @@ html.dark body .feedback {
   -webkit-tap-highlight-color:transparent;
 }
 </style>
-
-<style id="smoothMidRangeFinal">
-/* Final mobile scroll pass: prioritize continuous touch scrolling over decorative compositing. */
-html,body{overscroll-behavior-x:none;overflow-x:hidden}
-/* Never defer painting question cards: fast flings must not reveal blank/unpainted regions. */
-.question,.question *,.questions,.packageTile,.tile{content-visibility:visible!important}
-@media (max-width:768px){
-  .screen{overflow-x:clip}
-  .questions{contain:layout style}
-  .question{contain:layout paint;box-shadow:0 5px 16px rgba(15,23,42,.10)!important}
-  .question:before{box-shadow:none!important;filter:none!important}
-  .opt,.btn,.write,.wordChip{transition:none!important}
-  .opt.selected,.opt.correct,.opt.wrong,.feedback,.readingPassage{box-shadow:none!important}
-  .packageTile,.tile,.sectionProgress,.result,.notice,.instruction,.homeContinue{box-shadow:0 5px 16px rgba(15,23,42,.09)!important}
-  .tileIcon,.pkgArrow,.statusPill{box-shadow:none!important;filter:none!important}
-  /* Keep the frosted appearance without forcing a large blur layer on every frame. */
-  .mainNav{backdrop-filter:blur(10px)!important;-webkit-backdrop-filter:blur(10px)!important;box-shadow:0 5px 18px rgba(15,23,42,.12)!important}
-  body.dark .mainNav{backdrop-filter:blur(10px)!important;-webkit-backdrop-filter:blur(10px)!important;box-shadow:0 5px 18px rgba(0,0,0,.24)!important}
-  .top{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-  .topBack,.round{box-shadow:none!important;transform:none!important}
-  .packageTile:hover,.tile:hover,.btn:hover,.opt:hover,.wordChip:hover,.topBack:hover,.round:hover{transform:none!important}
-  .progressBar .fill,.progressFill{transition:none!important}
-}
-@media (prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+<style id="stable-result-pagination-theme">
+.question{contain:layout paint}
+.questionPager{display:flex;align-items:center;justify-content:center;gap:10px;margin:16px 0 4px}
+.questionPager .btn{min-height:44px}.pageIndicator{min-width:92px;text-align:center;color:var(--muted);font-size:12px;font-weight:700}
+.resultList{display:grid;gap:12px;margin-top:18px}.resultQuestion{border:1px solid var(--line);border-radius:18px;padding:15px 16px;background:var(--surface)}
+.resultQuestionHead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:9px;font-size:13px;font-weight:800}.resultStatus{font-size:12px;font-weight:800;padding:5px 9px;border-radius:999px;border:1px solid var(--line)}
+.resultStatus.good{color:var(--green);background:color-mix(in srgb,var(--green) 10%,var(--surface))}.resultStatus.bad{color:var(--red);background:color-mix(in srgb,var(--red) 10%,var(--surface))}.resultStatus.empty{color:var(--muted);background:color-mix(in srgb,var(--muted) 8%,var(--surface))}
+.resultQuestionText{font-family:'Noto Sans SC','Plus Jakarta Sans',sans-serif;line-height:1.65;color:var(--text)}.resultAnswer{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:13px;line-height:1.55;color:var(--muted)}.resultAnswer b{color:var(--text)}
+.resultActions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}.resultActions .btn{flex:1 1 210px;min-height:46px}
+body.dark .questionPager,body.dark .resultQuestion{background:#191e27!important;border-color:#343b49!important;box-shadow:0 8px 20px rgba(0,0,0,.20)!important}
+body.dark .section h2,body.dark .section h3,body.dark .section p,body.dark .section .sub,body.dark .tile,body.dark .tile b,body.dark .tile strong,body.dark .tile small,body.dark .homeEditorial,body.dark .homeEditorial h1,body.dark .homeEditorial p,body.dark .homeGreeting,body.dark .homeGreeting b,body.dark .homeContinue,body.dark .packagePageHead,body.dark .packagePageHead h1,body.dark .packagePageHead p,body.dark .instruction,body.dark .instruction h2,body.dark .instruction p,body.dark .question,body.dark .qtop,body.dark .qtext,body.dark .writingHint,body.dark .writingDisclaimer,body.dark .wordBankLabel,body.dark .result,body.dark .result h2,body.dark .result p,body.dark .resultQuestionText,body.dark .resultAnswer,body.dark .scoreRow,body.dark .scoreHead,body.dark .scoreSub,body.dark .levelCard,body.dark .levelCardBody strong,body.dark .levelCardBody p,body.dark label,body.dark input,body.dark textarea{color:var(--text)!important}
+body.dark .section .sub,body.dark .tile small,body.dark .sectionHint,body.dark .resultAnswer,body.dark .scoreSub,body.dark .levelCardBody p,body.dark .writingDisclaimer{color:var(--muted)!important}body.dark input::placeholder,body.dark textarea::placeholder{color:#8f99a8!important}
+@media(max-width:760px){.questionPager{position:sticky;bottom:10px;z-index:5;justify-content:space-between;padding:9px;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:0 8px 20px rgba(30,41,59,.10);margin-top:14px}.questionPager .btn{flex:1}.pageIndicator{min-width:76px}.question{box-shadow:0 7px 18px rgba(30,41,59,.07)!important}body.dark .question{box-shadow:0 7px 18px rgba(0,0,0,.22)!important}}
 </style>
-<script>
-/* Cache progress JSON in memory. The previous renderer repeatedly parsed the same
-   localStorage payload while painting package/score/home lists. */
+<script id="stable-result-pagination-theme-js">
 (function(){
-  if(typeof readStore!=='function'||typeof writeStore!=='function')return;
-  const rawRead=readStore, rawWrite=writeStore;
-  let cacheKey=null, cacheValue=null;
-  window.__hskProgressCache={clear:function(){cacheKey=null;cacheValue=null}};
-  readStore=function(){
-    const key=typeof storageKey==='function'?storageKey():'';
-    if(cacheKey===key&&cacheValue)return cacheValue;
-    cacheKey=key;
-    cacheValue=rawRead()||{};
-    return cacheValue;
-  };
-  writeStore=function(value){
-    rawWrite(value);
-    cacheKey=typeof storageKey==='function'?storageKey():'';
-    cacheValue=value||{};
-  };
+  const PAGE_SIZE=10;
+  let page=0;
+  const originalCards=renderQuestionCards;
+  const originalBack=backRoute;
+  function pageCount(){return Math.max(1,Math.ceil(currentQuestions.length/PAGE_SIZE));}
+  function visible(){return currentQuestions.slice(page*PAGE_SIZE,Math.min(currentQuestions.length,(page+1)*PAGE_SIZE));}
+  function cardsForVisible(){const all=currentQuestions;currentQuestions=visible();const h=originalCards();currentQuestions=all;return h;}
+  function restoreVisible(){const all=currentQuestions;currentQuestions=visible();restoreQuestionUI();if(currentMode==='writing'&&isSequenceWriting(route.type,route.sectionIndex))currentQuestions.forEach(q=>refreshWordBank(String(q[0])));currentQuestions=all;}
+  function pager(){const n=pageCount();if(n<=1)return '';return '<div class="questionPager"><button class="btn" type="button" onclick="changeQuestionPage(-1)" '+(page===0?'disabled':'')+'>‹ Sebelumnya</button><span class="pageIndicator">Halaman '+(page+1)+' / '+n+'</span><button class="btn" type="button" onclick="changeQuestionPage(1)" '+(page>=n-1?'disabled':'')+'>Berikutnya ›</button></div>';}
+  window.changeQuestionPage=function(delta){const n=pageCount(),next=Math.max(0,Math.min(n-1,page+delta));if(next===page)return;page=next;const qwrap=$('questions');if(!qwrap)return;const instruction=qwrap.querySelector('.instruction'),progress=qwrap.querySelector('.sectionProgress');const prefix=(instruction?instruction.outerHTML:'')+(progress?progress.outerHTML:'');qwrap.innerHTML=prefix+cardsForVisible()+pager();restoreVisible();window.scrollTo({top:Math.max(0,qwrap.getBoundingClientRect().top+window.scrollY-12),behavior:'auto'});};
+  window.renderExercise=function(){page=0;const sec=DB[route.packageCode]?.[route.type]?.[route.sectionIndex];if(!sec){openSections(route.packageCode,route.type,false);return;}currentQuestions=Array.isArray(sec.questions)?sec.questions:[];currentMode=route.type==='writing'?'writing':'choice';$('exPkg').textContent=route.packageCode;$('exType').textContent=META[route.type]?.label||route.type;$('exPart').textContent=sec.title.replace(/^.*?·\s*/,'');$('exTitle').textContent=sec.title;const st=sectionStats(route.packageCode,route.type,route.sectionIndex);const instruction=instructionFor(route.type,route.sectionIndex);$('questions').innerHTML='<div class="instruction"><h2>Petunjuk</h2><p>'+esc(instruction)+'</p></div><div class="sectionProgress"><div class="progressMeta"><strong>Progres bagian</strong><span>'+st.answered+'/'+st.total+' terjawab · '+st.pct+'%</span></div><div class="progressBar"><div class="fill" style="width:'+st.pct+'%"></div></div></div>'+cardsForVisible()+pager();restoreVisible();};
+  window.startSection=(function(fn){return function(i,push=true){page=0;return fn(i,push)}})(startSection);
+  window.repeat=(function(fn){return function(){page=0;return fn()}})(repeat);
+  function userText(q){const id=String(q[0]),u=answers[id];if(u===undefined||String(u).trim()==='')return 'Belum dijawab';if(route.type==='reading'&&Number(id)>=56&&Number(id)<=65)return String((q[2]||[])[Number(u)]??u);if(route.type!=='writing')return String.fromCharCode(65+Number(u))+'. '+String((q[2]||[])[Number(u)]??'');return String(u);}
+  function correctText(q){const id=Number(q[0]);if(route.type==='writing'&&isSequenceWriting(route.type,route.sectionIndex)){const k=sequenceKeys(q);return k.length?k.join(' / '):'Tidak tersedia';}if(route.type==='writing')return String(q[2]||'Tidak tersedia');const ci=correctIndex(q,route.type);if(route.type==='reading'&&id>=56&&id<=65)return String(q[3]||'');const opts=q[2]||[];return (opts[ci]!==undefined?String.fromCharCode(65+ci)+'. '+opts[ci]:String.fromCharCode(65+ci));}
+  window.renderResult=function(){const r=resultState||{score:0,total:currentQuestions.length,answered:0},seq=isSequenceWriting(route.type,route.sectionIndex),pct=r.total?Math.round(r.score/r.total*100):0;const list=currentQuestions.map((q,i)=>{const id=String(q[0]),u=answers[id],has=u!==undefined&&String(u).trim()!=='';if(route.type==='writing'&&!seq)return '<article class="resultQuestion"><div class="resultQuestionHead"><span>Soal '+(i+1)+' · 第 '+esc(id)+' 题</span><span class="resultStatus empty">Tidak dinilai</span></div><div class="resultQuestionText">'+esc(q[1]||'')+'</div><div class="resultAnswer"><b>Jawabanmu:</b> '+esc(userText(q))+'<br><b>Contoh jawaban:</b> '+esc(correctText(q))+'</div></article>';const ok=has&&isCorrect(q,u,route.type,route.sectionIndex);return '<article class="resultQuestion"><div class="resultQuestionHead"><span>Soal '+(i+1)+' · 第 '+esc(id)+' 题</span><span class="resultStatus '+(ok?'good':has?'bad':'empty')+'">'+(ok?'✓ Benar':has?'✗ Salah':'Belum dijawab')+'</span></div><div class="resultQuestionText">'+esc(q[1]||'')+'</div><div class="resultAnswer"><b>Jawabanmu:</b> '+esc(userText(q))+(has&&!ok?'<br><b>Jawaban benar:</b> '+esc(correctText(q)):'')+'</div></article>';}).join('');const title=DB[route.packageCode][route.type][route.sectionIndex]?.title||'Hasil';const summary=(route.type==='writing'&&!seq)?'<p><b>'+r.answered+'/'+r.total+'</b> jawaban tersimpan.</p>':'<div class="score">'+pct+'%</div><div class="bar"><div class="fill" style="width:'+pct+'%"></div></div><p><b>'+r.score+'/'+r.total+'</b> benar · '+r.answered+' dijawab · '+(r.total-r.answered)+' belum dijawab</p>';$('result').innerHTML='<div class="result"><div class="sub">'+esc(title)+'</div>'+summary+'<div class="resultList">'+list+'</div><div class="resultActions"><button class="btn soft" onclick="returnToQuestions()">← Kembali ke Soal</button><button class="btn" onclick="returnToParts()">← Kembali ke List Bagian</button><button class="btn" onclick="repeat()">↻ Ulangi</button></div></div>';};
+  window.returnToQuestions=function(){page=0;route={...route,screen:'exercise'};loadCurrentSectionState();renderExercise();setScreen('exercise');};
+  window.returnToParts=function(){openSections(route.packageCode,route.type);};
+  window.backRoute=function(){if(route.screen==='result')return returnToQuestions();if(route.screen==='exercise')return openSections(route.packageCode,route.type);return originalBack();};
 })();
-
-/* If cloud/local state changes outside writeStore, invalidate once before the next render. */
-(function(){
-  const originalSetItem=Storage.prototype.setItem;
-  Storage.prototype.setItem=function(k,v){
-    const r=originalSetItem.call(this,k,v);
-    try{
-      if(typeof STORAGE_PREFIX!=='undefined' && typeof k==='string' && k.indexOf(STORAGE_PREFIX)===0){
-        window.__hskProgressCache?.clear();
-      }
-    }catch(e){}
-    return r;
-  };
-})();
-</script>
-</body></html>
+</script></body></html>
