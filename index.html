@@ -1654,84 +1654,64 @@ html.dark body .feedback {
 }
 </style>
 
-<style id="midrangeSmoothScrollRelease">
-/* ============================================================
-   MID-RANGE MOBILE PERFORMANCE — visual-preserving release pass
-   Goal: smoother touch scrolling without touching the question bank.
-   ============================================================ */
-html{scroll-behavior:auto!important;overscroll-behavior-x:none}
-body{-webkit-tap-highlight-color:transparent;touch-action:pan-y;overscroll-behavior-x:none}
-
-/* Fixed translucent surfaces are expensive when heavily blurred on phones.
-   Keep the frosted appearance, but use a much lighter blur only on mobile. */
-@media(max-width:760px){
-  .top,
-  .mainNav{
-    -webkit-backdrop-filter:blur(9px) saturate(125%)!important;
-    backdrop-filter:blur(9px) saturate(125%)!important;
-  }
-  .top{box-shadow:0 4px 16px rgba(15,23,42,.08)!important}
-  .mainNav{box-shadow:0 10px 26px rgba(15,23,42,.13)!important;will-change:transform}
-  .modal{-webkit-backdrop-filter:blur(5px)!important;backdrop-filter:blur(5px)!important}
+<style id="smoothMidRangeFinal">
+/* Final mobile scroll pass: prioritize continuous touch scrolling over decorative compositing. */
+html,body{overscroll-behavior-x:none;overflow-x:hidden}
+/* Never defer painting question cards: fast flings must not reveal blank/unpainted regions. */
+.question,.question *,.questions,.packageTile,.tile{content-visibility:visible!important}
+@media (max-width:768px){
+  .screen{overflow-x:clip}
+  .questions{contain:layout style}
+  .question{contain:layout paint;box-shadow:0 5px 16px rgba(15,23,42,.10)!important}
+  .question:before{box-shadow:none!important;filter:none!important}
+  .opt,.btn,.write,.wordChip{transition:none!important}
+  .opt.selected,.opt.correct,.opt.wrong,.feedback,.readingPassage{box-shadow:none!important}
+  .packageTile,.tile,.sectionProgress,.result,.notice,.instruction,.homeContinue{box-shadow:0 5px 16px rgba(15,23,42,.09)!important}
+  .tileIcon,.pkgArrow,.statusPill{box-shadow:none!important;filter:none!important}
+  /* Keep the frosted appearance without forcing a large blur layer on every frame. */
+  .mainNav{backdrop-filter:blur(10px)!important;-webkit-backdrop-filter:blur(10px)!important;box-shadow:0 5px 18px rgba(15,23,42,.12)!important}
+  body.dark .mainNav{backdrop-filter:blur(10px)!important;-webkit-backdrop-filter:blur(10px)!important;box-shadow:0 5px 18px rgba(0,0,0,.24)!important}
+  .top{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .topBack,.round{box-shadow:none!important;transform:none!important}
+  .packageTile:hover,.tile:hover,.btn:hover,.opt:hover,.wordChip:hover,.topBack:hover,.round:hover{transform:none!important}
+  .progressBar .fill,.progressFill{transition:none!important}
 }
-
-/* Let the browser skip layout/paint work for cards that are far below the
-   viewport. This is especially useful on the 25-package and question lists. */
-.packageTile,
-.tile,
-.question,
-.readingPassage,
-.instruction,
-.sectionProgress,
-.homeContinue,
-.homeMetric,
-.homeOverall{
-  contain:layout paint;
-}
-.packageTile,
-.question{
-  content-visibility:auto;
-  contain-intrinsic-size:220px;
-}
-.question{contain-intrinsic-size:420px}
-
-/* Avoid expensive hover motion on touch devices; there is no hover state to
-   preserve on a phone, so scrolling stays visually stable. */
-@media(hover:none) and (pointer:coarse){
-  .tile:hover,
-  .packageTile:hover,
-  .btn:hover,
-  .pill:hover,
-  .round:hover,
-  .topBack:hover,
-  .wordChip:hover{
-    transform:none!important;
-  }
-}
-
-/* Images in writing exercises should not compete with the first paint. */
-.writingImage{content-visibility:auto}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
 </style>
-
-<script id="midrangeSmoothScrollJS">
+<script>
+/* Cache progress JSON in memory. The previous renderer repeatedly parsed the same
+   localStorage payload while painting package/score/home lists. */
 (function(){
-  // Writing images are loaded only when they approach the viewport.
-  function lazyWritingImages(){
-    document.querySelectorAll('.writingImage').forEach(function(img){
-      if(!img.loading) img.loading='lazy';
-      if(!img.decoding) img.decoding='async';
-    });
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',lazyWritingImages,{once:true});
-  else lazyWritingImages();
-  const oldRenderExercise=window.renderExercise;
-  if(typeof oldRenderExercise==='function'){
-    window.renderExercise=function(){
-      const result=oldRenderExercise.apply(this,arguments);
-      requestAnimationFrame(lazyWritingImages);
-      return result;
-    };
-  }
+  if(typeof readStore!=='function'||typeof writeStore!=='function')return;
+  const rawRead=readStore, rawWrite=writeStore;
+  let cacheKey=null, cacheValue=null;
+  window.__hskProgressCache={clear:function(){cacheKey=null;cacheValue=null}};
+  readStore=function(){
+    const key=typeof storageKey==='function'?storageKey():'';
+    if(cacheKey===key&&cacheValue)return cacheValue;
+    cacheKey=key;
+    cacheValue=rawRead()||{};
+    return cacheValue;
+  };
+  writeStore=function(value){
+    rawWrite(value);
+    cacheKey=typeof storageKey==='function'?storageKey():'';
+    cacheValue=value||{};
+  };
+})();
+
+/* If cloud/local state changes outside writeStore, invalidate once before the next render. */
+(function(){
+  const originalSetItem=Storage.prototype.setItem;
+  Storage.prototype.setItem=function(k,v){
+    const r=originalSetItem.call(this,k,v);
+    try{
+      if(typeof STORAGE_PREFIX!=='undefined' && typeof k==='string' && k.indexOf(STORAGE_PREFIX)===0){
+        window.__hskProgressCache?.clear();
+      }
+    }catch(e){}
+    return r;
+  };
 })();
 </script>
 </body></html>
