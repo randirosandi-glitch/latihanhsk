@@ -1033,6 +1033,26 @@ body.auth-active .appFooter{
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot,{once:true}); else boot();
 })();
 </script>
+<style id="midrange-performance-final">
+/* Mobile performance layer: preserve the visual language while reducing GPU-heavy compositing. */
+@media (max-width: 900px) and (pointer: coarse){
+  html,body{overflow-x:clip!important;max-width:100%!important}
+  .top,.mainNav,.modalBox,.heroBadge,.statCard,.homeContinue,.section,.tile,.question,.questionCard,.resultCard,.levelCard,.packageTile,.comingSoonPanel,.crumb,.readingPassage{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+  .top{box-shadow:0 3px 12px rgba(0,0,0,.10)!important}
+  .mainNav{box-shadow:0 7px 18px rgba(0,0,0,.14)!important}
+  .section,.homeContinue,.tile,.question,.questionCard,.resultCard,.levelCard,.packageTile,.comingSoonPanel{box-shadow:0 7px 18px rgba(0,0,0,.10)!important}
+  .modalBox{box-shadow:0 14px 34px rgba(0,0,0,.22)!important}
+  .heroGlow,.hero:before,.hero:after,body:before,body:after{filter:none!important;-webkit-filter:none!important}
+  .heroGlow{opacity:.28!important}
+  .question,.questionCard{content-visibility:auto;contain:layout paint style;contain-intrinsic-size:0 300px}
+  .transcript{content-visibility:auto;contain:paint;contain-intrinsic-size:0 180px}
+  .grid{contain:layout style}
+  .tile:hover,.topBack:hover,.round:hover,.pill:hover,.wordChip:hover{transform:none!important}
+  *{scroll-behavior:auto}
+}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+</style>
+<script id="midrange-performance-final-js">(function(){try{var mobile=window.matchMedia&&window.matchMedia('(max-width:900px) and (pointer:coarse)').matches;var lowMemory=(navigator.deviceMemory&&navigator.deviceMemory<=6)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=6);if(mobile||lowMemory)document.documentElement.classList.add('perfMidrange')}catch(e){}})();</script>
 </head><body>
 <section id="authScreen" class="authScreen" aria-label="Login Latihan HSK 4">
   <div class="authCard">
@@ -1651,6 +1671,100 @@ html.dark body .choiceCard,
 body.dark .feedback,
 html.dark body .feedback {
   -webkit-tap-highlight-color:transparent;
+}
+</style>
+
+<style id="final-release-surface-correction">
+/* RELEASE FINAL — restore true frosted navigation on mobile without making it heavy. */
+@media (max-width:900px) and (pointer:coarse){
+  .mainNav{
+    background:
+      radial-gradient(110px 64px at 12% 50%,color-mix(in srgb,var(--nav-blue) 15%,transparent),transparent 78%),
+      radial-gradient(110px 64px at 38% 50%,color-mix(in srgb,var(--nav-purple) 12%,transparent),transparent 78%),
+      radial-gradient(110px 64px at 64% 50%,color-mix(in srgb,var(--nav-green) 8%,transparent),transparent 78%),
+      radial-gradient(110px 64px at 88% 50%,color-mix(in srgb,var(--nav-orange) 8%,transparent),transparent 78%),
+      color-mix(in srgb,var(--surface) 62%,transparent)!important;
+    -webkit-backdrop-filter:blur(16px) saturate(135%)!important;
+    backdrop-filter:blur(16px) saturate(135%)!important;
+    box-shadow:0 8px 20px rgba(15,23,42,.11)!important;
+  }
+  body.dark .mainNav{
+    background:
+      radial-gradient(110px 64px at 12% 50%,color-mix(in srgb,var(--nav-blue) 14%,transparent),transparent 78%),
+      radial-gradient(110px 64px at 38% 50%,color-mix(in srgb,var(--nav-purple) 12%,transparent),transparent 78%),
+      radial-gradient(110px 64px at 64% 50%,color-mix(in srgb,var(--nav-green) 7%,transparent),transparent 78%),
+      radial-gradient(110px 64px at 88% 50%,color-mix(in srgb,var(--nav-orange) 7%,transparent),transparent 78%),
+      rgba(24,30,41,.66)!important;
+    -webkit-backdrop-filter:blur(16px) saturate(135%)!important;
+    backdrop-filter:blur(16px) saturate(135%)!important;
+    box-shadow:0 9px 22px rgba(0,0,0,.30)!important;
+  }
+}
+
+/* The level/package heading is editorial content, not a raised card. */
+.levelLandingHead,
+.packagePageHead{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+/* Keep this header compact and clean on small screens. */
+@media(max-width:760px){
+  .levelLandingHead,.packagePageHead{
+    padding-left:0!important;
+    padding-right:0!important;
+  }
+}
+
+/* Dark mode: no artificial white lift/halo anywhere in the major surfaces. */
+@media (prefers-color-scheme:dark), (min-width:0){
+  body.dark .homeContinue,
+  body.dark .packageTile,
+  body.dark .tile,
+  body.dark .question,
+  body.dark .sectionProgress,
+  body.dark .result,
+  body.dark .notice,
+  body.dark .instruction,
+  body.dark .questionCard,
+  body.dark .resultCard,
+  body.dark .partCard,
+  body.dark .sectionCard,
+  body.dark .statCard,
+  body.dark .levelCard,
+  body.dark .comingSoonPanel,
+  html.dark body .homeContinue,
+  html.dark body .packageTile,
+  html.dark body .tile,
+  html.dark body .question,
+  html.dark body .sectionProgress,
+  html.dark body .result,
+  html.dark body .notice,
+  html.dark body .instruction,
+  html.dark body .questionCard,
+  html.dark body .resultCard,
+  html.dark body .partCard,
+  html.dark body .sectionCard,
+  html.dark body .statCard,
+  html.dark body .levelCard,
+  html.dark body .comingSoonPanel{
+    box-shadow:0 12px 28px rgba(0,0,0,.27)!important;
+  }
+  body.dark .btn:not(.primary),
+  body.dark .pill:not(.primary),
+  body.dark .round,
+  body.dark .topBack,
+  body.dark .searchToggle,
+  html.dark body .btn:not(.primary),
+  html.dark body .pill:not(.primary),
+  html.dark body .round,
+  html.dark body .topBack,
+  html.dark body .searchToggle{
+    box-shadow:0 7px 17px rgba(0,0,0,.25)!important;
+  }
 }
 </style>
 </body></html>
