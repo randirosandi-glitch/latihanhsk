@@ -1033,26 +1033,6 @@ body.auth-active .appFooter{
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot,{once:true}); else boot();
 })();
 </script>
-<style id="midrange-performance-final">
-/* Mobile performance layer: preserve the visual language while reducing GPU-heavy compositing. */
-@media (max-width: 900px) and (pointer: coarse){
-  html,body{overflow-x:clip!important;max-width:100%!important}
-  .top,.mainNav,.modalBox,.heroBadge,.statCard,.homeContinue,.section,.tile,.question,.questionCard,.resultCard,.levelCard,.packageTile,.comingSoonPanel,.crumb,.readingPassage{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
-  .top{box-shadow:0 3px 12px rgba(0,0,0,.10)!important}
-  .mainNav{box-shadow:0 7px 18px rgba(0,0,0,.14)!important}
-  .section,.homeContinue,.tile,.question,.questionCard,.resultCard,.levelCard,.packageTile,.comingSoonPanel{box-shadow:0 7px 18px rgba(0,0,0,.10)!important}
-  .modalBox{box-shadow:0 14px 34px rgba(0,0,0,.22)!important}
-  .heroGlow,.hero:before,.hero:after,body:before,body:after{filter:none!important;-webkit-filter:none!important}
-  .heroGlow{opacity:.28!important}
-  .question,.questionCard{content-visibility:auto;contain:layout paint style;contain-intrinsic-size:0 300px}
-  .transcript{content-visibility:auto;contain:paint;contain-intrinsic-size:0 180px}
-  .grid{contain:layout style}
-  .tile:hover,.topBack:hover,.round:hover,.pill:hover,.wordChip:hover{transform:none!important}
-  *{scroll-behavior:auto}
-}
-@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
-</style>
-<script id="midrange-performance-final-js">(function(){try{var mobile=window.matchMedia&&window.matchMedia('(max-width:900px) and (pointer:coarse)').matches;var lowMemory=(navigator.deviceMemory&&navigator.deviceMemory<=6)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=6);if(mobile||lowMemory)document.documentElement.classList.add('perfMidrange')}catch(e){}})();</script>
 </head><body>
 <section id="authScreen" class="authScreen" aria-label="Login Latihan HSK 4">
   <div class="authCard">
@@ -1674,97 +1654,84 @@ html.dark body .feedback {
 }
 </style>
 
-<style id="final-release-surface-correction">
-/* RELEASE FINAL — restore true frosted navigation on mobile without making it heavy. */
-@media (max-width:900px) and (pointer:coarse){
-  .mainNav{
-    background:
-      radial-gradient(110px 64px at 12% 50%,color-mix(in srgb,var(--nav-blue) 15%,transparent),transparent 78%),
-      radial-gradient(110px 64px at 38% 50%,color-mix(in srgb,var(--nav-purple) 12%,transparent),transparent 78%),
-      radial-gradient(110px 64px at 64% 50%,color-mix(in srgb,var(--nav-green) 8%,transparent),transparent 78%),
-      radial-gradient(110px 64px at 88% 50%,color-mix(in srgb,var(--nav-orange) 8%,transparent),transparent 78%),
-      color-mix(in srgb,var(--surface) 62%,transparent)!important;
-    -webkit-backdrop-filter:blur(16px) saturate(135%)!important;
-    backdrop-filter:blur(16px) saturate(135%)!important;
-    box-shadow:0 8px 20px rgba(15,23,42,.11)!important;
-  }
-  body.dark .mainNav{
-    background:
-      radial-gradient(110px 64px at 12% 50%,color-mix(in srgb,var(--nav-blue) 14%,transparent),transparent 78%),
-      radial-gradient(110px 64px at 38% 50%,color-mix(in srgb,var(--nav-purple) 12%,transparent),transparent 78%),
-      radial-gradient(110px 64px at 64% 50%,color-mix(in srgb,var(--nav-green) 7%,transparent),transparent 78%),
-      radial-gradient(110px 64px at 88% 50%,color-mix(in srgb,var(--nav-orange) 7%,transparent),transparent 78%),
-      rgba(24,30,41,.66)!important;
-    -webkit-backdrop-filter:blur(16px) saturate(135%)!important;
-    backdrop-filter:blur(16px) saturate(135%)!important;
-    box-shadow:0 9px 22px rgba(0,0,0,.30)!important;
-  }
-}
+<style id="midrangeSmoothScrollRelease">
+/* ============================================================
+   MID-RANGE MOBILE PERFORMANCE — visual-preserving release pass
+   Goal: smoother touch scrolling without touching the question bank.
+   ============================================================ */
+html{scroll-behavior:auto!important;overscroll-behavior-x:none}
+body{-webkit-tap-highlight-color:transparent;touch-action:pan-y;overscroll-behavior-x:none}
 
-/* The level/package heading is editorial content, not a raised card. */
-.levelLandingHead,
-.packagePageHead{
-  background:transparent!important;
-  border:0!important;
-  box-shadow:none!important;
-  -webkit-backdrop-filter:none!important;
-  backdrop-filter:none!important;
-}
-
-/* Keep this header compact and clean on small screens. */
+/* Fixed translucent surfaces are expensive when heavily blurred on phones.
+   Keep the frosted appearance, but use a much lighter blur only on mobile. */
 @media(max-width:760px){
-  .levelLandingHead,.packagePageHead{
-    padding-left:0!important;
-    padding-right:0!important;
+  .top,
+  .mainNav{
+    -webkit-backdrop-filter:blur(9px) saturate(125%)!important;
+    backdrop-filter:blur(9px) saturate(125%)!important;
+  }
+  .top{box-shadow:0 4px 16px rgba(15,23,42,.08)!important}
+  .mainNav{box-shadow:0 10px 26px rgba(15,23,42,.13)!important;will-change:transform}
+  .modal{-webkit-backdrop-filter:blur(5px)!important;backdrop-filter:blur(5px)!important}
+}
+
+/* Let the browser skip layout/paint work for cards that are far below the
+   viewport. This is especially useful on the 25-package and question lists. */
+.packageTile,
+.tile,
+.question,
+.readingPassage,
+.instruction,
+.sectionProgress,
+.homeContinue,
+.homeMetric,
+.homeOverall{
+  contain:layout paint;
+}
+.packageTile,
+.question{
+  content-visibility:auto;
+  contain-intrinsic-size:220px;
+}
+.question{contain-intrinsic-size:420px}
+
+/* Avoid expensive hover motion on touch devices; there is no hover state to
+   preserve on a phone, so scrolling stays visually stable. */
+@media(hover:none) and (pointer:coarse){
+  .tile:hover,
+  .packageTile:hover,
+  .btn:hover,
+  .pill:hover,
+  .round:hover,
+  .topBack:hover,
+  .wordChip:hover{
+    transform:none!important;
   }
 }
 
-/* Dark mode: no artificial white lift/halo anywhere in the major surfaces. */
-@media (prefers-color-scheme:dark), (min-width:0){
-  body.dark .homeContinue,
-  body.dark .packageTile,
-  body.dark .tile,
-  body.dark .question,
-  body.dark .sectionProgress,
-  body.dark .result,
-  body.dark .notice,
-  body.dark .instruction,
-  body.dark .questionCard,
-  body.dark .resultCard,
-  body.dark .partCard,
-  body.dark .sectionCard,
-  body.dark .statCard,
-  body.dark .levelCard,
-  body.dark .comingSoonPanel,
-  html.dark body .homeContinue,
-  html.dark body .packageTile,
-  html.dark body .tile,
-  html.dark body .question,
-  html.dark body .sectionProgress,
-  html.dark body .result,
-  html.dark body .notice,
-  html.dark body .instruction,
-  html.dark body .questionCard,
-  html.dark body .resultCard,
-  html.dark body .partCard,
-  html.dark body .sectionCard,
-  html.dark body .statCard,
-  html.dark body .levelCard,
-  html.dark body .comingSoonPanel{
-    box-shadow:0 12px 28px rgba(0,0,0,.27)!important;
-  }
-  body.dark .btn:not(.primary),
-  body.dark .pill:not(.primary),
-  body.dark .round,
-  body.dark .topBack,
-  body.dark .searchToggle,
-  html.dark body .btn:not(.primary),
-  html.dark body .pill:not(.primary),
-  html.dark body .round,
-  html.dark body .topBack,
-  html.dark body .searchToggle{
-    box-shadow:0 7px 17px rgba(0,0,0,.25)!important;
-  }
-}
+/* Images in writing exercises should not compete with the first paint. */
+.writingImage{content-visibility:auto}
 </style>
+
+<script id="midrangeSmoothScrollJS">
+(function(){
+  // Writing images are loaded only when they approach the viewport.
+  function lazyWritingImages(){
+    document.querySelectorAll('.writingImage').forEach(function(img){
+      if(!img.loading) img.loading='lazy';
+      if(!img.decoding) img.decoding='async';
+    });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',lazyWritingImages,{once:true});
+  else lazyWritingImages();
+  const oldRenderExercise=window.renderExercise;
+  if(typeof oldRenderExercise==='function'){
+    window.renderExercise=function(){
+      const result=oldRenderExercise.apply(this,arguments);
+      requestAnimationFrame(lazyWritingImages);
+      return result;
+    };
+  }
+})();
+</script>
 </body></html>
