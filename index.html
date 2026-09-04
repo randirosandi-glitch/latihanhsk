@@ -1342,8 +1342,8 @@ if(currentMode==='writing'&&isSequenceWriting(route.type,route.sectionIndex)){cu
 function wordBankWords(id){const q=currentQuestions.find(x=>String(x[0])===String(id));return q?String(q[1]||'').trim().split(/\s+/).filter(Boolean):[]}
 function getWordChipMap(id){const input=$('w'+id);const words=wordBankWords(id);if(!input)return [];const tokens=String(input.value||'').trim().split(/\s+/).filter(Boolean);const used=new Set();const map=[];tokens.forEach((token,ti)=>{let found=-1;for(let i=0;i<words.length;i++){if(!used.has(i)&&words[i]===token){found=i;break}}if(found>=0){used.add(found);map.push({chipIndex:found,tokenIndex:ti})}});return map}
 function refreshWordBank(id){const used=new Set(getWordChipMap(id).map(x=>x.chipIndex));document.querySelectorAll(`.wordChip[data-q="${id}"]`).forEach(chip=>{const i=Number(chip.dataset.i);const on=used.has(i);chip.classList.toggle('used',on);chip.setAttribute('aria-pressed',on?'true':'false')})}
-function wordChipClick(id,index){const input=$('w'+id);if(!input)return;const words=wordBankWords(id);const word=words[index];if(word===undefined)return;const map=getWordChipMap(id);const selected=map.find(x=>x.chipIndex===index);let tokens=String(input.value||'').trim().split(/\s+/).filter(Boolean);if(selected)tokens.splice(selected.tokenIndex,1);else tokens.push(word);input.value=tokens.join(' ');input.dispatchEvent(new Event('input',{bubbles:true}));input.focus();refreshWordBank(id)}
-function clearWordBankAnswer(id){const input=$('w'+id);if(!input)return;input.value='';input.dispatchEvent(new Event('input',{bubbles:true}));input.focus();refreshWordBank(id)}
+function wordChipClick(id,index){const input=$('w'+id);if(!input)return;const words=wordBankWords(id);const word=words[index];if(word===undefined)return;const map=getWordChipMap(id);const selected=map.find(x=>x.chipIndex===index);let tokens=String(input.value||'').trim().split(/\s+/).filter(Boolean);if(selected)tokens.splice(selected.tokenIndex,1);else tokens.push(word);input.value=tokens.join(' ');input.dispatchEvent(new Event('input',{bubbles:true}));if(document.activeElement===input)input.blur();refreshWordBank(id)}
+function clearWordBankAnswer(id){const input=$('w'+id);if(!input)return;input.value='';input.dispatchEvent(new Event('input',{bubbles:true}));if(document.activeElement===input)input.blur();refreshWordBank(id)}
 function renderWordBank(q,id){if(currentMode!=='writing')return '';const n=Number(id);if(n<86||n>95)return '';const words=String(q[1]||'').trim().split(/\s+/).filter(Boolean);return '<div class="wordBank"><div class="wordBankLabel">Klik kata untuk memasukkannya ke kolom jawaban. Klik lagi untuk membatalkan.</div>'+words.map((w,i)=>'<button type="button" class="wordChip" data-q="'+esc(id)+'" data-i="'+i+'" aria-pressed="false" onclick="wordChipClick(\''+esc(id)+'\','+i+')">'+esc(w)+'</button>').join('')+'<div class="wordBankTools"><button type="button" class="wordBankClear" onclick="clearWordBankAnswer(\''+esc(id)+'\')">Hapus susunan</button></div></div>'}
 function renderReadingPassage(id){const map=READING_PASSAGES[route.packageCode]||{};const text=map[String(id)];if(!text)return '';return `<div class="readingPassage"><div class="rpLabel">Teks bacaan</div><div class="rpText">${esc(text)}</div></div>`}
 function renderQuestionCards(){let out='';let lastPassage='';currentQuestions.forEach((q,i)=>{let id=String(q[0]);
@@ -1867,4 +1867,7 @@ body.dark .packagePager{
   };
 })();
 </script>
+<style id="wordBankKeyboardFix">
+.wordChip,.wordBankClear{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+</style>
 </body></html>
