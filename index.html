@@ -1010,6 +1010,9 @@ body.auth-active .appFooter{
     min-height:calc(100dvh - 48px)!important;
   }
 }
+<style id="sequenceLabelsFix">
+.sequenceSource .sequenceLine{display:flex;align-items:flex-start;gap:10px;margin:9px 0}.sequenceSource .sequenceLine b{flex:0 0 28px;width:28px;height:28px;margin:0}.sequenceSource .sequenceLine span{flex:1;min-width:0;line-height:1.75}
+</style>
 </style>
 <script>
 (function(){
@@ -1348,13 +1351,13 @@ if(currentMode==='writing'&&isSequenceWriting(route.type,route.sectionIndex)){
 out+=`<article class="question"><div class="qtop"><span>第 ${esc(id)} 题</span><span>${i+1}/${currentQuestions.length}</span></div><div class="qtext">Susun kata berikut menjadi kalimat yang benar:</div>${renderWordBank(q,id)}<input class="write" id="w${id}" value="${esc(answers[id]||'')}" placeholder="Ketik atau pilih susunan kata di sini" autocomplete="off" oninput="saveWriting(this);refreshWordBank('${id}')"><div class="writingHint">✓ Bagian ini dinilai benar atau salah berdasarkan kunci jawaban. Urutan kata harus sesuai kunci.</div><div class="row"><button class="btn soft" onclick="checkOne('${id}')">${svg('check')} Periksa</button><button class="btn" onclick="showReference('${id}')">Lihat kunci jawaban</button></div><div class="feedback" id="f${id}"></div><div class="reference" id="r${id}">Kunci jawaban: ${esc(q[2]||'Tidak tersedia')}</div></article>`;return}
 if(currentMode==='writing'){
 out+=`<article class="question"><div class="qtop"><span>第 ${esc(id)} 题</span><span>${i+1}/${currentQuestions.length}</span></div><div class="qtext">${esc(q[1])}</div>${q[3]?`<div class="writingImageWrap"><img class="writingImage" src="${q[3]}" alt="Gambar soal ${esc(id)}"></div>`:''}${renderWordBank(q,id)}<input class="write" id="w${id}" value="${esc(answers[id]||'')}" placeholder="Ketik jawaban di sini" autocomplete="off" oninput="saveWriting(this)"><div class="writingDisclaimer">💡 Jawaban membuat kalimat dapat memiliki banyak bentuk yang benar. Jawaban ini tidak dinilai benar atau salah secara otomatis. Periksa kembali penggunaan kata dan tata bahasa kalimatmu.</div><div class="row"><button class="btn soft" onclick="saveWritingAnswer('${id}')">${svg('check')} Simpan jawaban</button><button class="btn" onclick="showReference('${id}')">Lihat contoh jawaban</button></div><div class="feedback" id="f${id}"></div><div class="reference" id="r${id}">Contoh jawaban: ${esc(q[2]||'Tidak tersedia')}</div></article>`;return}
-let isReadingPassage=route.type==='reading'&&Number(id)>=66&&Number(id)<=85;let pid=String(id);if(!READING_PASSAGES[route.packageCode]?.[pid]){if(Number(id)>=80&&Number(id)<=81)pid='80-81';else if(Number(id)>=82&&Number(id)<=83)pid='82-83';else if(Number(id)>=84&&Number(id)<=85)pid='84-85'}let passage=READING_PASSAGES[route.packageCode]?.[pid]||'';if(isReadingPassage&&passage&&passage!==lastPassage){out+=renderReadingPassage(pid);lastPassage=passage}let opts=q[2]||[];let sequenceSource='';if(route.type==='reading'&&Number(id)>=56&&Number(id)<=65){sequenceSource='<div class="sequenceSource">'+(q[2]||[]).map(escapeSequence).join('')+'</div>';opts=permutations()}let labels=opts.map((o,j)=>{let label=(route.type==='reading'&&Number(id)>=56&&Number(id)<=65)?o:String.fromCharCode(65+j);return `<button class="opt" data-q="${id}" data-i="${j}" onclick="choose(this)">${esc(label)}${(route.type==='reading'&&Number(id)>=56&&Number(id)<=65)?'':' . '+esc(o)}</button>`}).join('');out+=`<article class="question"><div class="qtop"><span>第 ${esc(id)} 题</span><span>${i+1}/${currentQuestions.length}</span></div><div class="qtext">${esc(q[1])}</div>${sequenceSource}<div class="opts ${route.type==='reading'&&Number(id)>=56&&Number(id)<=65?'sequence':''}">${labels}</div><div class="row"><button class="btn soft" onclick="checkOne('${id}')">${svg('check')} Periksa</button>${route.type==='listening'?`<button class="btn" onclick="toggleTranscript('${id}')">Lihat teks</button>`:''}</div>${route.type==='listening'?`<div class="transcript" id="t${id}">${esc(q[4]||'Teks dengar tidak tersedia di sumber.')}</div>`:''}<div class="feedback" id="f${id}"></div></article>`});return out}
+let isReadingPassage=route.type==='reading'&&Number(id)>=66&&Number(id)<=85;let pid=String(id);if(!READING_PASSAGES[route.packageCode]?.[pid]){if(Number(id)>=80&&Number(id)<=81)pid='80-81';else if(Number(id)>=82&&Number(id)<=83)pid='82-83';else if(Number(id)>=84&&Number(id)<=85)pid='84-85'}let passage=READING_PASSAGES[route.packageCode]?.[pid]||'';if(isReadingPassage&&passage&&passage!==lastPassage){out+=renderReadingPassage(pid);lastPassage=passage}let opts=q[2]||[];let sequenceSource='';if(route.type==='reading'&&Number(id)>=56&&Number(id)<=65){sequenceSource='<div class="sequenceSource">'+(q[2]||[]).map((item,idx)=>escapeSequence(item,idx)).join('')+'</div>';opts=permutations()}let labels=opts.map((o,j)=>{let label=(route.type==='reading'&&Number(id)>=56&&Number(id)<=65)?o:String.fromCharCode(65+j);return `<button class="opt" data-q="${id}" data-i="${j}" onclick="choose(this)">${esc(label)}${(route.type==='reading'&&Number(id)>=56&&Number(id)<=65)?'':' . '+esc(o)}</button>`}).join('');out+=`<article class="question"><div class="qtop"><span>第 ${esc(id)} 题</span><span>${i+1}/${currentQuestions.length}</span></div><div class="qtext">${esc(q[1])}</div>${sequenceSource}<div class="opts ${route.type==='reading'&&Number(id)>=56&&Number(id)<=65?'sequence':''}">${labels}</div><div class="row"><button class="btn soft" onclick="checkOne('${id}')">${svg('check')} Periksa</button>${route.type==='listening'?`<button class="btn" onclick="toggleTranscript('${id}')">Lihat teks</button>`:''}</div>${route.type==='listening'?`<div class="transcript" id="t${id}">${esc(q[4]||'Teks dengar tidak tersedia di sumber.')}</div>`:''}<div class="feedback" id="f${id}"></div></article>`});return out}
 function restoreQuestionUI(){for(const q of currentQuestions){const id=String(q[0]);if(currentMode==='writing'){const e=$('w'+id);if(e)e.value=answers[id]??''}else if(answers[id]!==undefined){const b=document.querySelector(`.opt[data-q="${id}"][data-i="${answers[id]}"]`);if(b)b.classList.add('selected')}if(checked[id])checkOne(id,true)}}
 function saveWriting(el){const id=String(el.id).slice(1);answers[id]=el.value;checked[id]=false;const f=$('f'+id);if(f)f.className='feedback';saveSectionState(route.packageCode,route.type,route.sectionIndex);refreshCurrentProgress()}
 function refreshCurrentProgress(){const wrap=document.querySelector('.sectionProgress');if(!wrap)return;const st=sectionStats(route.packageCode,route.type,route.sectionIndex);const meta=wrap.querySelector('.progressMeta');if(meta)meta.innerHTML=`<strong>Progres bagian</strong><span>${st.answered}/${st.total} terjawab · ${st.pct}%</span>`;const fill=wrap.querySelector('.fill');if(fill)fill.style.width=st.pct+'%'}
 function choose(btn){let id=String(btn.dataset.q);answers[id]=btn.dataset.i;checked[id]=false;document.querySelectorAll(`.opt[data-q="${id}"]`).forEach(x=>x.classList.remove('selected','correct','wrong'));btn.classList.add('selected');let f=$('f'+id);if(f)f.className='feedback';saveSectionState(route.packageCode,route.type,route.sectionIndex);refreshCurrentProgress()}
 function permutations(){return ['ABC','ACB','BAC','BCA','CAB','CBA']}
-function escapeSequence(o){let m=String(o).match(/^([ABC])\s+(.*)$/);return m?'<div><b>'+m[1]+'</b> '+esc(m[2])+'</div>':'<div>'+esc(o)+'</div>'}
+function escapeSequence(o,idx){let text=String(o);let m=text.match(/^([ABC])\s+(.*)$/);if(m)text=m[2];let label=['A','B','C'][idx]||'';return '<div class="sequenceLine"><b>'+label+'</b><span>'+esc(text)+'</span></div>'}
 function saveWritingAnswer(id){const e=$('w'+id);const v=e?e.value.trim():String(answers[id]??'');if(!v){alert('Ketik jawaban terlebih dahulu.');return}answers[id]=v;checked[id]=true;const f=$('f'+id);if(f){f.className='feedback show good';f.textContent='✓ Jawaban tersimpan. Silakan periksa kembali kalimatmu sendiri.'}saveSectionState(route.packageCode,route.type,route.sectionIndex);refreshCurrentProgress()}
 function checkOne(id,silent=false){const q=currentQuestions.find(x=>String(x[0])===String(id));if(!q)return;
 if(currentMode==='writing'){
@@ -1723,7 +1726,7 @@ body.dark .section .sub,body.dark .tile small,body.dark .sectionHint,body.dark .
   function visible(){return currentQuestions.slice(page*PAGE_SIZE,Math.min(currentQuestions.length,(page+1)*PAGE_SIZE));}
   function cardsForVisible(){const all=currentQuestions;currentQuestions=visible();const h=originalCards();currentQuestions=all;return h;}
   function restoreVisible(){const all=currentQuestions;currentQuestions=visible();restoreQuestionUI();if(currentMode==='writing'&&isSequenceWriting(route.type,route.sectionIndex))currentQuestions.forEach(q=>refreshWordBank(String(q[0])));currentQuestions=all;}
-  function pager(){const n=pageCount();if(n<=1)return '';return '<div class="questionPager"><button class="btn" type="button" onclick="changeQuestionPage(-1)" '+(page===0?'disabled':'')+'>‹ Sebelumnya</button><span class="pageIndicator">Halaman '+(page+1)+' / '+n+'</span><button class="btn" type="button" onclick="changeQuestionPage(1)" '+(page>=n-1?'disabled':'')+'>Berikutnya ›</button></div>';}
+  function pager(){const n=pageCount();if(n<=1)return '';const prev=page>0?'<button class="btn" type="button" onclick="changeQuestionPage(-1)">‹ Sebelumnya</button>':'';const next=page<n-1?'<button class="btn" type="button" onclick="changeQuestionPage(1)">Berikutnya ›</button>':'';return '<div class="questionPager">'+prev+'<span class="pageIndicator">Halaman '+(page+1)+' / '+n+'</span>'+next+'</div>';}
   window.changeQuestionPage=function(delta){const n=pageCount(),next=Math.max(0,Math.min(n-1,page+delta));if(next===page)return;page=next;const qwrap=$('questions');if(!qwrap)return;const instruction=qwrap.querySelector('.instruction'),progress=qwrap.querySelector('.sectionProgress');const prefix=(instruction?instruction.outerHTML:'')+(progress?progress.outerHTML:'');qwrap.innerHTML=prefix+cardsForVisible()+pager();restoreVisible();window.scrollTo({top:Math.max(0,qwrap.getBoundingClientRect().top+window.scrollY-12),behavior:'auto'});};
   window.renderExercise=function(){page=0;const sec=DB[route.packageCode]?.[route.type]?.[route.sectionIndex];if(!sec){openSections(route.packageCode,route.type,false);return;}currentQuestions=Array.isArray(sec.questions)?sec.questions:[];currentMode=route.type==='writing'?'writing':'choice';$('exPkg').textContent=route.packageCode;$('exType').textContent=META[route.type]?.label||route.type;$('exPart').textContent=sec.title.replace(/^.*?·\s*/,'');$('exTitle').textContent=sec.title;const st=sectionStats(route.packageCode,route.type,route.sectionIndex);const instruction=instructionFor(route.type,route.sectionIndex);$('questions').innerHTML='<div class="instruction"><h2>Petunjuk</h2><p>'+esc(instruction)+'</p></div><div class="sectionProgress"><div class="progressMeta"><strong>Progres bagian</strong><span>'+st.answered+'/'+st.total+' terjawab · '+st.pct+'%</span></div><div class="progressBar"><div class="fill" style="width:'+st.pct+'%"></div></div></div>'+cardsForVisible()+pager();restoreVisible();};
   window.startSection=(function(fn){return function(i,push=true){page=0;return fn(i,push)}})(startSection);
@@ -1735,4 +1738,133 @@ body.dark .section .sub,body.dark .tile small,body.dark .sectionHint,body.dark .
   window.returnToParts=function(){openSections(route.packageCode,route.type);};
   window.backRoute=function(){if(route.screen==='result')return returnToQuestions();if(route.screen==='exercise')return openSections(route.packageCode,route.type);return originalBack();};
 })();
-</script></body></html>
+</script>
+<style id="packagePaginationFinalCSS">
+.packagePager{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  margin:18px 0 4px;
+}
+.packagePager .btn{min-height:44px}
+.packagePageIndicator{
+  min-width:92px;text-align:center;color:var(--muted);
+  font-size:12px;font-weight:700;
+}
+@media(max-width:760px){
+  .packagePager{
+    position:sticky;bottom:10px;z-index:5;
+    padding:9px;border:1px solid var(--line);border-radius:18px;
+    background:var(--surface);box-shadow:0 8px 20px rgba(30,41,59,.10);
+  }
+  .packagePager .btn{flex:1}
+  .packagePageIndicator{min-width:76px}
+}
+body.dark .packagePager{
+  background:#191e27!important;border-color:#343b49!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.20)!important;
+}
+</style>
+
+<script id="packagePaginationFinalJS">
+(function(){
+  const PACKAGE_PAGE_SIZE=10;
+  let packagePage=0;
+
+  function packageFilteredCodes(){
+    const input=$('packageSearchInput');
+    const q=String(input?.value||'').trim().toUpperCase();
+    return Object.keys(DB).filter(code=>!q||code.includes(q));
+  }
+
+  function packagePager(total){
+    const n=Math.max(1,Math.ceil(total/PACKAGE_PAGE_SIZE));
+    if(n<=1)return '';
+    const prev=packagePage>0
+      ? '<button class="btn" type="button" onclick="changePackagePage(-1)">‹ Sebelumnya</button>'
+      : '';
+    const next=packagePage<n-1
+      ? '<button class="btn" type="button" onclick="changePackagePage(1)">Berikutnya ›</button>'
+      : '';
+    return '<div class="packagePager">'+prev+
+      '<span class="packagePageIndicator">Halaman '+(packagePage+1)+' / '+n+'</span>'+
+      next+'</div>';
+  }
+
+  function renderPackageList(){
+    if(selectedHSKLevel!==4)return;
+    const el=$('packagesGrid');
+    if(!el)return;
+
+    const codes=packageFilteredCodes();
+    const totalPages=Math.max(1,Math.ceil(codes.length/PACKAGE_PAGE_SIZE));
+    if(packagePage>=totalPages)packagePage=totalPages-1;
+    if(packagePage<0)packagePage=0;
+
+    if(!codes.length){
+      el.innerHTML='<div class="emptySearch"><strong>Paket tidak ditemukan</strong><span>Coba cari dengan kode seperti H41001.</span></div>';
+      const oldPager=document.querySelector('.packagePager');
+      if(oldPager)oldPager.remove();
+      return;
+    }
+
+    const start=packagePage*PACKAGE_PAGE_SIZE;
+    const visible=codes.slice(start,start+PACKAGE_PAGE_SIZE);
+    el.innerHTML=visible.map(code=>{
+      const originalIndex=Object.keys(DB).indexOf(code);
+      return renderPackageTile(code,originalIndex);
+    }).join('');
+
+    const oldPager=document.querySelector('.packagePager');
+    if(oldPager)oldPager.remove();
+
+    const pagerHTML=packagePager(codes.length);
+    if(pagerHTML){
+      el.insertAdjacentHTML('afterend',pagerHTML);
+    }
+  }
+
+  window.changePackagePage=function(delta){
+    const codes=packageFilteredCodes();
+    const n=Math.max(1,Math.ceil(codes.length/PACKAGE_PAGE_SIZE));
+    const next=Math.max(0,Math.min(n-1,packagePage+delta));
+    if(next===packagePage)return;
+    packagePage=next;
+    renderPackageList();
+    window.scrollTo({top:Math.max(0,document.querySelector('#packagesGrid')?.getBoundingClientRect().top+window.scrollY-12),behavior:'auto'});
+  };
+
+  window.filterPackages=function(value){
+    if(selectedHSKLevel!==4)return;
+    packagePage=0;
+    const input=$('packageSearchInput');
+    if(input && input.value!==String(value??''))input.value=String(value??'');
+    renderPackageList();
+  };
+
+  window.renderPackagesScreen=function(){
+    const el=$('packagesGrid');
+    if(!el)return;
+    const panel=$('hsk5Panel'),head=$('packageLevelKicker'),
+          title=$('packagePageTitle'),sub=$('packagePageSub');
+    const is5=selectedHSKLevel===5;
+    el.hidden=is5;
+    if(panel)panel.hidden=!is5;
+    if(head)head.textContent=is5?'HSK 5':'HSK 4';
+    if(title)title.textContent=is5?'HSK 5':'Pilih paket';
+    if(sub)sub.textContent=is5?'Paket HSK 5 sedang dipersiapkan.':'25 paket latihan tersedia.';
+    const oldPager=document.querySelector('.packagePager');
+    if(oldPager)oldPager.remove();
+    if(is5){el.innerHTML='';return;}
+    packagePage=0;
+    renderPackageList();
+  };
+
+  window.clearPackageSearch=function(){
+    const i=$('packageSearchInput');
+    if(i)i.value='';
+    packagePage=0;
+    renderPackageList();
+    i?.focus();
+  };
+})();
+</script>
+</body></html>
