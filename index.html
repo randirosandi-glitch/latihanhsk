@@ -1178,7 +1178,14 @@ body.dark .focusBack{background:var(--surface);border-color:var(--line)}
     <div id="homeLastPackage"></div>
   </div>
 </section>
-<section id="scores" class="screen"><div class="section"><h2>Nilai</h2><div class="sub">Lihat hasil latihan setiap paket yang tersimpan di perangkat ini.</div></div><div class="grid" id="scoresGrid"></div></section>
+<section id="scores" class="screen">
+  <div class="section scoreLandingHead">
+    <div class="sectionKicker">HASIL LATIHAN</div>
+    <h2>Nilai</h2>
+    <div class="sub">Pilih level HSK untuk melihat hasil latihanmu.</div>
+  </div>
+  <div class="levelGrid scoreLevelGrid" id="scoresGrid"></div>
+</section>
 <section id="levelsScreen" class="screen">
   <div class="section levelLandingHead"><div class="sectionKicker">PAKET SOAL</div><h2>Pilih level HSK</h2><div class="sub">Mulai dari level yang ingin kamu latih.</div></div>
   <div class="levelGrid">
@@ -1416,10 +1423,40 @@ function selectHSKLevel(level){openLevelPackages(level)}
 function togglePackageSearch(){const wrap=$('packageSearchWrap'),btn=$('packageSearchToggle');if(!wrap||!btn)return;const show=wrap.hidden;wrap.hidden=!show;btn.setAttribute('aria-expanded',String(show));if(show){setTimeout(()=>$('packageSearchInput')?.focus(),40)}}
 function clearPackageSearch(){const i=$('packageSearchInput');if(i)i.value='';filterPackages('');i?.focus()}
 function filterPackages(value){if(selectedHSKLevel!==4)return;const q=String(value||'').trim().toUpperCase();const el=$('packagesGrid');if(!el)return;const codes=Object.keys(DB).filter(code=>!q||code.includes(q));el.innerHTML=codes.map((code,idx)=>renderPackageTile(code,Object.keys(DB).indexOf(code))).join('');if(!codes.length)el.innerHTML='<div class="emptySearch"><strong>Paket tidak ditemukan</strong><span>Coba cari dengan kode seperti H41001.</span></div>'}
-function openScores(push=true){route={screen:'scores',packageCode:null,type:null,sectionIndex:null};renderScores();setScreen('scores',push)}
+function openScores(push=true){route={screen:'scores',packageCode:null,type:null,sectionIndex:null};renderScores();setScreen('scores',push);window.scrollTo({top:0,left:0,behavior:'auto'})}
 function renderPackagesScreen(){const el=$('packagesGrid');if(!el)return;const panel=$('hsk5Panel'),head=$('packageLevelKicker'),title=$('packagePageTitle'),sub=$('packagePageSub');const is5=selectedHSKLevel===5;el.hidden=is5;if(panel)panel.hidden=!is5;if(head)head.textContent=is5?'HSK 5':'HSK 4';if(title)title.textContent=is5?'HSK 5':'Pilih paket';if(sub)sub.textContent=is5?'Paket HSK 5 sedang dipersiapkan.':'25 paket latihan tersedia.';if(is5){el.innerHTML='';return}const input=$('packageSearchInput');const q=input?input.value:'';const codes=Object.keys(DB).filter(code=>!q||code.includes(String(q).trim().toUpperCase()));el.innerHTML=codes.map((code)=>renderPackageTile(code,Object.keys(DB).indexOf(code))).join('');if(!codes.length)el.innerHTML='<div class="emptySearch"><strong>Paket tidak ditemukan</strong><span>Coba cari dengan kode seperti H41001.</span></div>'}
 function renderPackageTile(code,idx){const st=packageStats(code),total=st.total||0,metaParts=Object.entries(META).filter(([t])=>(DB[code]?.[t]||[]).length>0).map(([t,m])=>m.label),desc=metaParts.length?`${total} soal · ${metaParts.join(' · ')}`:'Belum ada soal interaktif',palette=['blue','purple','orange','pink','green'][idx%5],pct=st.pct||0,status=pct>=100?'Selesai':pct>0?'Sedang berjalan':'Belum dimulai';return `<button class="tile packageTile packageTile-${palette}" type="button" onclick="openPackage('${esc(code)}')"><div class="pkgTop"><div class="tileIcon" aria-hidden="true">${svg('box')}</div><span class="statusPill">${status}</span></div><div class="pkgTitleRow"><div><b>Paket ${esc(code)}</b><small>${esc(desc)}</small></div><span class="pkgArrow">→</span></div>${total?progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket'):''}<div class="pkgFooter"><span>Listening · Reading · Writing</span><span>${pct}%</span></div></button>`}
-function renderScores(){const el=$('scoresGrid');if(!el)return;const codes=Object.keys(DB);el.innerHTML=codes.map((code,idx)=>{const st=packageStats(code);const score=st.total?st.scorePct:0;const status=st.answered===0?'Belum dikerjakan':st.answered===st.total?'Selesai':'Sedang berjalan';const accent=['blue','purple','orange','pink','green'][idx%5];return `<button class="tile packageTile packageTile-${accent}" type="button" onclick="showPackageScore('${esc(code)}')"><div class="pkgTop"><div class="tileIcon" aria-hidden="true">${svg('chart')}</div><span class="statusPill">${status}</span></div><div class="pkgTitleRow"><div><b>Paket ${esc(code)}</b><small>${st.score}/${st.total} benar · ${st.answered}/${st.total} terjawab</small></div><span class="pkgArrow">${score}%</span></div>${progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres pengerjaan')}<div class="pkgFooter"><span>Nilai paket</span><span>${score}%</span></div></button>`}).join('')}
+let selectedScoreLevel=4;
+function renderScores(){
+  const el=$('scoresGrid');if(!el)return;
+  selectedScoreLevel=4;
+  el.className='levelGrid scoreLevelGrid';
+  el.innerHTML=`
+    <button class="levelCard levelCard4 scoreLevelCard" type="button" onclick="openScoreLevel(4)">
+      <div class="levelCardIcon">4</div>
+      <div class="levelCardBody"><span class="levelEyebrow">HSK LEVEL</span><strong>HSK 4</strong><p>25 paket latihan tersedia</p></div>
+      <span class="levelCardArrow">→</span>
+    </button>
+    <button class="levelCard levelCard5 scoreLevelCard" type="button" onclick="openScoreLevel(5)">
+      <div class="levelCardIcon">5</div>
+      <div class="levelCardBody"><span class="levelEyebrow">HSK LEVEL</span><strong>HSK 5</strong><p>Coming soon · sedang dipersiapkan</p></div>
+      <span class="levelCardArrow">→</span>
+    </button>`;
+}
+function openScoreLevel(level){
+  selectedScoreLevel=Number(level)===5?5:4;
+  const el=$('scoresGrid');if(!el)return;
+  if(selectedScoreLevel===5){
+    el.className='scorePackagesView';
+    el.innerHTML=`<div class="scoreBackRow"><button class="btn" type="button" onclick="renderScores()">← Kembali ke level</button></div><div class="scoreLevelTitle"><div class="sectionKicker">HSK 5</div><h3>Nilai HSK 5</h3><p>Belum ada paket yang tersedia.</p></div><div class="comingSoonPanel scoreComing"><div class="comingIcon">5</div><div><strong>HSK 5</strong><span>Coming soon</span><small>Paket HSK 5 sedang dipersiapkan.</small></div></div>`;
+    window.scrollTo({top:0,left:0,behavior:'smooth'});return;
+  }
+  const codes=Object.keys(DB);
+  el.className='grid scorePackagesGrid';
+  const cards=codes.map((code,idx)=>{const st=packageStats(code);const score=st.total?st.scorePct:0;const status=st.answered===0?'Belum dikerjakan':st.answered===st.total?'Selesai':'Sedang berjalan';const accent=['blue','purple','orange','pink','green'][idx%5];return `<button class="tile packageTile packageTile-${accent}" type="button" onclick="showPackageScore('${esc(code)}')"><div class="pkgTop"><div class="tileIcon" aria-hidden="true">${svg('chart')}</div><span class="statusPill">${status}</span></div><div class="pkgTitleRow"><div><b>Paket ${esc(code)}</b><small>${st.score}/${st.total} benar · ${st.answered}/${st.total} terjawab</small></div><span class="pkgArrow">${score}%</span></div>${progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres pengerjaan')}<div class="pkgFooter"><span>Nilai paket</span><span>${score}%</span></div></button>`}).join('');
+  el.innerHTML=`<div class="scoreBackRow"><button class="btn" type="button" onclick="renderScores()">← Kembali ke level</button></div><div class="scoreLevelTitle"><div class="sectionKicker">HSK 4</div><h3>Nilai HSK 4</h3><p>Pilih paket untuk melihat rincian nilainya.</p></div>${cards||'<div class="notice">Belum ada paket latihan.</div>'}`;
+  window.scrollTo({top:0,left:0,behavior:'smooth'});
+}
 function getLastProgress(){
   const items=[];
   const store=readStore();
@@ -2031,5 +2068,38 @@ body.dark .finishCardBtn{box-shadow:5px 7px 15px rgba(0,0,0,.25)}
   .finishCardBtn{min-height:52px;margin-top:13px;border-radius:14px;font-size:14px}
 }
 
+</style>
+
+<style id="finalUxShadowAndScorePolish">
+/* Clean editorial surfaces: no rectangular shadows behind transparent section headings. */
+.section,#levelsScreen .section,#scores .section,.scoreLandingHead,.levelLandingHead{box-shadow:none!important;background:transparent!important;border:0!important;}
+/* Level cards keep only a soft, rounded depth — never a rectangular container shadow. */
+.levelCard{box-shadow:0 8px 24px rgba(32,45,70,.055)!important;}
+.levelCard:hover{box-shadow:0 12px 28px rgba(32,45,70,.075)!important;}
+.levelCardIcon{box-shadow:0 6px 14px color-mix(in srgb,var(--blue) 12%,transparent)!important;}
+body.dark .levelCard{box-shadow:0 10px 26px rgba(0,0,0,.16)!important;}
+body.dark .levelCardIcon{box-shadow:0 6px 14px color-mix(in srgb,var(--blue) 15%,transparent)!important;}
+/* Modal footer must not paint a white rectangular sticky block behind the close button. */
+.stickyActions{position:static!important;background:transparent!important;padding:12px 0 0!important;margin:8px 0 0!important;}
+.stickyActions .modalBtns{margin-top:0!important;}
+/* Score level chooser follows the same visual language as Paket Soal > Pilih level HSK. */
+.scoreLandingHead{max-width:760px!important;margin-bottom:20px!important;}
+.scoreLevelGrid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;}
+.scoreLevelCard{min-height:126px;}
+.scorePackagesView{display:block!important;}
+.scorePackagesView .scoreBackRow{margin:0 0 18px;}
+.scoreLevelTitle{margin:0 0 18px;}
+.scoreLevelTitle h3{margin:6px 0 0;font-size:28px;letter-spacing:-1px;color:var(--text)!important;}
+.scoreLevelTitle p{margin:5px 0 0;color:var(--muted);font-size:13px;}
+.scorePackagesGrid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;}
+.scorePackagesGrid .scoreBackRow,.scorePackagesGrid .scoreLevelTitle{grid-column:1/-1;}
+.scoreComing{margin-top:8px;}
+@media(max-width:760px){
+  .scoreLevelGrid{grid-template-columns:1fr;gap:12px;}
+  .scoreLevelCard{min-height:112px;}
+  .scorePackagesGrid{grid-template-columns:1fr;}
+  .scorePackagesGrid .scoreBackRow,.scorePackagesGrid .scoreLevelTitle{grid-column:auto;}
+  .scoreLevelTitle h3{font-size:24px;}
+}
 </style>
 </body></html>
