@@ -1413,7 +1413,133 @@ body.dark .levelCard,body.dark .tile,body.dark .packageTile,body.dark .sectionPr
 .listeningNotice strong{color:var(--text)}
 .question .row{align-items:center}
 @media(max-width:760px){.question .row .btn{flex:1 1 auto;justify-content:center;min-height:44px}.listeningNotice{font-size:11px;padding:11px 12px}}
-</style></head><body>
+</style>
+<style id="adaptiveFloatingNav2026">
+/* Adaptive floating navigation: bottom dock on compact screens, left dock on wide landscape. */
+@media (min-width: 761px) and (orientation: landscape){
+  .mainNav{
+    left:18px!important;
+    right:auto!important;
+    top:50%!important;
+    bottom:auto!important;
+    transform:translateY(-50%)!important;
+    width:72px!important;
+    max-width:72px!important;
+    min-width:72px!important;
+    padding:7px!important;
+    border-radius:26px!important;
+    display:flex!important;
+    flex-direction:column!important;
+    gap:5px!important;
+  }
+  .navItem{
+    min-height:58px!important;
+    width:100%!important;
+    padding:7px 4px!important;
+    border-radius:20px!important;
+    gap:4px!important;
+    font-size:9.5px!important;
+  }
+  .navItem .ico{width:21px!important;height:21px!important}
+  /* Reserve a clean lane for the floating dock so it never covers the main content. */
+  main{padding-left:110px!important}
+  .appFooter{padding-left:110px!important}
+  .topin{padding-left:110px!important}
+}
+
+/* Subtle native-style motion for the active navigation state. */
+.mainNav .navItem{
+  transition:color .20s ease,background .20s ease,transform .16s cubic-bezier(.2,.8,.2,1),opacity .20s ease!important;
+}
+.mainNav .navItem .ico{
+  transition:transform .20s cubic-bezier(.2,.8,.2,1),stroke-width .20s ease!important;
+}
+.mainNav .navItem.active .ico{transform:scale(1.06)}
+.mainNav .navItem:active{transform:scale(.95)!important}
+
+@media (prefers-reduced-motion: no-preference){
+  .mainNav .navItem.navJustActivated .ico{animation:navIconSettle .28s cubic-bezier(.2,.8,.2,1)}
+  @keyframes navIconSettle{0%{transform:scale(.94)}60%{transform:scale(1.09)}100%{transform:scale(1.06)}}
+}
+
+/* Keep the content area stable on resize/orientation changes. */
+@media (min-width: 761px) and (orientation: landscape){
+  .mainNav{will-change:transform}
+}
+</style>
+
+<script id="adaptiveFloatingNavMotion2026">
+(function(){
+  const nav=()=>document.querySelector('.mainNav');
+  let lastActive=null;
+  function syncNavMotion(){
+    const n=nav(); if(!n)return;
+    const active=n.querySelector('.navItem.active');
+    if(!active)return;
+    if(active!==lastActive){
+      active.classList.remove('navJustActivated');
+      void active.offsetWidth;
+      active.classList.add('navJustActivated');
+      lastActive=active;
+    }
+  }
+  const original=window.renderNavState;
+  if(typeof original==='function'){
+    window.renderNavState=function(){
+      const r=original.apply(this,arguments);
+      requestAnimationFrame(syncNavMotion);
+      return r;
+    };
+  }
+  window.addEventListener('resize',()=>requestAnimationFrame(syncNavMotion),{passive:true});
+  window.addEventListener('orientationchange',()=>setTimeout(syncNavMotion,80),{passive:true});
+  document.addEventListener('DOMContentLoaded',()=>requestAnimationFrame(syncNavMotion));
+  setTimeout(syncNavMotion,120);
+})();
+</script>
+
+<style id="verticalNavFinalFix">
+/* FINAL: vertical floating dock for wide landscape only. Navbar-only override. */
+@media (min-width:761px) and (orientation:landscape){
+  .mainNav{
+    position:fixed!important;
+    left:18px!important; right:auto!important;
+    top:50%!important; bottom:auto!important;
+    transform:translateY(-50%)!important;
+    width:76px!important; min-width:76px!important; max-width:76px!important;
+    height:auto!important; min-height:0!important; max-height:none!important;
+    margin:0!important; padding:7px!important;
+    display:flex!important; flex-direction:column!important;
+    align-items:stretch!important; justify-content:center!important;
+    gap:5px!important;
+    border-radius:26px!important;
+    overflow:hidden!important;
+  }
+  .mainNav .navItem{
+    position:relative!important;
+    display:flex!important;
+    flex:0 0 58px!important;
+    width:100%!important; min-width:0!important;
+    min-height:58px!important; height:58px!important;
+    max-height:58px!important;
+    margin:0!important; padding:7px 3px!important;
+    flex-direction:column!important;
+    align-items:center!important; justify-content:center!important;
+    gap:4px!important;
+    border-radius:20px!important;
+    transform:none!important;
+  }
+  .mainNav .navItem .ico{
+    display:block!important; width:21px!important; height:21px!important;
+    flex:0 0 21px!important;
+  }
+  .mainNav .navItem span{display:block!important; line-height:1.1!important;}
+  main{padding-left:112px!important;}
+  .appFooter{padding-left:112px!important;}
+  .topin{padding-left:112px!important;}
+}
+</style>
+</head><body>
 <section id="authScreen" class="authScreen" aria-label="Login Latihan HSK by Kelas E">
   <div class="authCard">
     <div class="authMark">e</div>
@@ -1438,11 +1564,11 @@ body.dark .levelCard,body.dark .tile,body.dark .packageTile,body.dark .sectionPr
 </section>
 <header class="top"><div class="topin"><div class="toprow"><div class="brand">Latihan HSK <span>by Kelas E</span></div><button class="topBack" id="topBack" type="button" onclick="backRoute()" aria-label="Kembali"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg><span>Kembali</span></button></div><div class="context" id="context"></div></div></header>
 <nav class="mainNav" aria-label="Navigasi utama">
-<button class="navItem" data-nav="home" onclick="goHome()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg>Beranda</button>
-<button class="navItem" data-nav="packages" onclick="openPackages()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m4 7 8-4 8 4-8 4-8-4Z"/><path d="M4 7v10l8 4 8-4V7"/><path d="M12 11v10"/></svg>Paket Soal</button>
-<button class="navItem" data-nav="scores" onclick="openScores()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5"/><path d="M4 19h17"/><path d="m7 15 3-4 3 2 5-7"/></svg>Nilai</button>
-<button class="navItem" data-nav="theme" onclick="toggleTheme()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.1A8.5 8.5 0 0 1 8.9 3.8 8.6 8.6 0 1 0 20.2 15.1Z"/></svg>Tema</button>
-<button class="navItem logoutNav" data-nav="logout" onclick="logout()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M21 3v18"/></svg>Keluar</button>
+<button class="navItem" data-nav="home" onclick="goHome()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg><span class="navLabel">Beranda</span></button>
+<button class="navItem" data-nav="packages" onclick="openPackages()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m4 7 8-4 8 4-8 4-8-4Z"/><path d="M4 7v10l8 4 8-4V7"/><path d="M12 11v10"/></svg><span class="navLabel">Paket Soal</span></button>
+<button class="navItem" data-nav="scores" onclick="openScores()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5"/><path d="M4 19h17"/><path d="m7 15 3-4 3 2 5-7"/></svg><span class="navLabel">Nilai</span></button>
+<button class="navItem" data-nav="theme" onclick="toggleTheme()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.1A8.5 8.5 0 0 1 8.9 3.8 8.6 8.6 0 1 0 20.2 15.1Z"/></svg><span class="navLabel">Tema</span></button>
+<button class="navItem logoutNav" data-nav="logout" onclick="logout()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M21 3v18"/></svg><span class="navLabel">Keluar</span></button>
 </nav>
 <div class="modal" id="exitModal"><div class="modalBox"><h3>Keluar dari aplikasi?</h3><p>Apakah kamu yakin ingin keluar?</p><div class="modalBtns"><button class="btn" onclick="cancelExit()">Tidak</button><button class="btn primary" onclick="confirmExit()">Ya</button></div></div></div><div class="modal" id="packageModal"><div class="modalBox wide"><h3 id="packageModalTitle">Nilai Paket</h3><div id="packageModalBody"></div><div class="stickyActions"><div class="modalBtns"><button class="btn" onclick="closePackageScore()">Tutup</button></div></div></div></div>
 <div class="modal" id="usernameModal" aria-hidden="true"><div class="modalBox usernameBox"><div class="usernameIcon">@</div><h3>Siapkan username</h3><p>Username ini dipakai untuk menyimpan progres belajarmu. Tidak perlu password.</p><label class="usernameLabel" for="usernameInput">Username</label><input id="usernameInput" class="write usernameInput" type="text" inputmode="text" autocomplete="off" maxlength="24" placeholder="contoh: randi"><div class="usernameHint" id="usernameHint">Gunakan 3–24 karakter: huruf, angka, titik, garis bawah, atau tanda hubung.</div><div class="modalBtns"><button class="btn primary" type="button" onclick="saveUsername()">Mulai belajar</button></div></div></div>
@@ -1653,7 +1779,7 @@ function getSectionState(code,type,idx){const st=readStore()[stateKey(code,type,
 function saveSectionState(code,type,idx,a=answers,c=checked){const st=readStore();const now=Date.now();st[stateKey(code,type,idx)]={answers:{...a},checked:{...c},updatedAt:now};if(route.screen==='exercise'&&route.packageCode===code&&route.type===type&&Number(route.sectionIndex)===Number(idx)){st._resume={code,type,sectionIndex:Number(idx),questionId:resumeQuestionId||null,page:Number(window.__hskResumePage||0),updatedAt:now}}writeStore(st);scheduleCloudSync()}
 function clearSectionState(code,type,idx){const st=readStore();delete st[stateKey(code,type,idx)];if(st._resume&&st._resume.code===code&&st._resume.type===type&&Number(st._resume.sectionIndex)===Number(idx))delete st._resume;writeStore(st);scheduleCloudSync()}
 function sectionStats(code,type,idx){const sec=DB[code]?.[type]?.[idx];if(!sec)return {answered:0,total:0,pct:0,score:0};const saved=getSectionState(code,type,idx);let answered=0,score=0;for(const q of sec.questions){const id=String(q[0]);const u=saved.answers[id];if(u!==undefined&&String(u).trim()!==''){answered++;if(isCorrect(q,u,type,idx))score++}}const total=sec.questions.length;return {answered,total,pct:total?Math.round(answered/total*100):0,score}}
-function isSequenceReadingQuestion(id){return route&&route.type==='reading'&&(Number(id)>=56&&Number(id)<=65||(String(route.packageCode||'').startsWith('WB4A')&&Number(route.sectionIndex)===2));}
+function isSequenceReadingQuestion(id){return route&&route.type==='reading'&&(Number(id)>=56&&Number(id)<=65||((String(route.packageCode||'').startsWith('WB4A')||String(route.packageCode||'').startsWith('WB4B'))&&Number(route.sectionIndex)===2));}
 function correctIndex(q,type){const id=Number(q[0]);const key=String(q[3]??'').trim();if(type==='reading'&&id>=56&&id<=65)return permutations().indexOf(key);if(type==='listening'&&id<=10)return key==='√'?0:1;if(/^[A-F]$/.test(key))return key.charCodeAt(0)-65;const opts=q[2]||[];return opts.findIndex(o=>norm(o)===norm(key))}
 function isCorrect(q,u,type,idx){if(type==='writing')return isSequenceWriting(type,idx)?isSequenceAnswerCorrect(q,u):false;const ci=correctIndex(q,type);return Number(u)===ci}
 function packageStats(code){let total=0,answered=0,score=0,gradedTotal=0;const rows=[];for(const [type,m] of Object.entries(META)){const arr=DB[code]?.[type]||[];for(let i=0;i<arr.length;i++){const st=sectionStats(code,type,i);total+=st.total;answered+=st.answered;if(type!=='writing'||isSequenceWriting(type,i)){score+=st.score;gradedTotal+=st.total}rows.push({type,label:m.label,zh:m.zh,section:arr[i].title.replace(/^.*?·\s*/,''),range:arr[i].range,...st,graded:type!=='writing'||isSequenceWriting(type,i)})}}return {total,answered,score,gradedTotal,pct:total?Math.round(answered/total*100):0,scorePct:gradedTotal?Math.round(score/gradedTotal*100):0,rows}}
@@ -1714,7 +1840,7 @@ function repeat(){if(!route.packageCode)return;if(!confirm('Hapus semua jawaban 
 function showPackageScore(code){const st=packageStats(code);$('packageModalTitle').textContent='Nilai Paket '+code;let rows=st.rows.map(r=>{if(!r.graded)return `<div class="scoreRow"><div class="scoreHead"><span>${esc(r.zh)} · ${esc(r.section)}</span><span>—</span></div><div class="scoreSub">Soal ${esc(r.range)} · ${r.answered}/${r.total} terjawab · Tidak dinilai otomatis</div></div>`;const pct=r.total?Math.round(r.score/r.total*100):0;return `<div class="scoreRow"><div class="scoreHead"><span>${esc(r.zh)} · ${esc(r.section)}</span><span>${r.score}/${r.total} · ${pct}%</span></div><div class="scoreSub">Soal ${esc(r.range)} · ${r.answered}/${r.total} terjawab</div><div class="scoreMini"><i style="width:${pct}%"></i></div></div>`}).join('');$('packageModalBody').innerHTML=`<div class="modalNote">Nilai otomatis dihitung untuk pilihan ganda dan susun kata yang memiliki kunci jawaban. Soal membuat kalimat tetap tercatat sebagai progres, tetapi tidak dinilai benar/salah.</div><div class="packageScore">${st.gradedTotal?st.scorePct+'%':'—'}</div><div class="scoreSub">${st.gradedTotal?st.score+'/'+st.gradedTotal+' benar · ':''}${st.answered}/${st.total} terjawab</div><div style="margin:16px 0">${progressHTML(st,'Progres paket')}</div>${rows||'<div class="notice">Belum ada bagian soal yang tersedia.</div>'}`;$('packageModal').classList.add('show')}
 function closePackageScore(){$('packageModal').classList.remove('show')}
 function toggleTheme(){applyTheme(document.body.classList.contains('dark')?'light':'dark')}
-function applyTheme(t){document.body.classList.toggle('dark',t==='dark');document.documentElement.classList.toggle('dark',t==='dark');const b=document.querySelector('.mainNav [data-nav="theme"]');if(b)b.innerHTML=(t==='dark'?svg('sun'):svg('moon'))+'<span>Tema</span>';document.querySelector('meta[name="theme-color"]').content=t==='dark'?'#0c1020':'#f4f5fb';localStorage.setItem('hsk-theme',t);if(typeof route!=='undefined'&&route)renderNavState()}
+function applyTheme(t){document.body.classList.toggle('dark',t==='dark');document.documentElement.classList.toggle('dark',t==='dark');const b=document.querySelector('.mainNav [data-nav="theme"]');if(b)b.innerHTML=(t==='dark'?svg('sun'):svg('moon'))+'<span class="navLabel">Tema</span>';document.querySelector('meta[name="theme-color"]').content=t==='dark'?'#0c1020':'#f4f5fb';localStorage.setItem('hsk-theme',t);if(typeof route!=='undefined'&&route)renderNavState()}
 function showExit(fromBack=false){if(!currentUsername)return;exitFromBack=fromBack;$('exitModal').classList.add('show')}function cancelExit(){$('exitModal').classList.remove('show');if(exitFromBack){exitFromBack=false;history.pushState({screen:'home',homeGuard:true},'',location.pathname+location.search+'#home')}}function confirmExit(){$('exitModal').classList.remove('show');exitFromBack=false;performLogout()}
 let selectedHSKLevel=4;
 function openPackages(push=true){route={screen:'levels',packageCode:null,type:null,sectionIndex:null};selectedHSKLevel=4;renderLevelsScreen();setScreen('levelsScreen',push)}
@@ -2816,4 +2942,335 @@ window.addEventListener('load',()=>{ensureWorkbook4bLevelCard();refreshHomeStats
 ensureWorkbook4bLevelCard();
 })();
 </script>
+
+
+
+
+<script id="workbookAnswerSyncAuditFix">
+(function(){
+ const PATCH={"WB4A01":[{"id":31,"opts":["茶不仅仅是一种饮料","它在中国有着几千年的历史","而且还是一种文化"],"ans":"ACB"},{"id":32,"opts":["所以我对她的印象很深","她就对我特别热情","第一次和王小姐见面"],"ans":"CBA"},{"id":33,"opts":["我觉得他很多地方都不错","这一点是他吸引我的主要原因","特别是脾气、性格很好"],"ans":"ACB"},{"id":34,"opts":["它更需要两个人互相理解和接受","结婚我认为只有爱情是远远不够的","不但要接受他的优点，还要接受他的缺点"],"ans":"BAC"}],"WB4A02":[{"id":31,"opts":["我慢慢适应了这里的生活","来北京半年多了","也交到了许多朋友"],"ans":"BAC"},{"id":32,"opts":["这个城市的空气却好了很多","昨天中午下了一小会儿雨","虽然不大"],"ans":"BCA"},{"id":33,"opts":["当大多数人都在关心你飞得高不高时","这少数人，才是你的朋友","只有少数人关心你飞得累不累"],"ans":"ACB"},{"id":34,"opts":["只有朋友会在你最困难的时候帮助你","但金钱却买不来友情","尽管金钱是不可少的"],"ans":"CBA"}],"WB4A03":[{"id":31,"opts":["时间太长也会影响健康","医生说，午饭后不要马上睡午觉","另外，午睡的时间不要过长"],"ans":"BCA"},{"id":32,"opts":["不管在外面的世界遇到什么困难","家都是我们心中最幸福的地方","因为我们总是能够在家里找到爱"],"ans":"ABC"},{"id":33,"opts":["我觉得他这个人挺不错的","这一点是他受大家欢迎的主要原因","首先是他非常愿意帮助人"],"ans":"ACB"},{"id":34,"opts":["首先，你要学好你的法律专业","你想以后当一名律师吗","其次，你要有一个好的身体"],"ans":"BAC"}],"WB4A04":[{"id":31,"opts":["可是早上突然下起了大雨","我本来准备今天上午和朋友一起去踢足球","我们不得不改变了计划"],"ans":"BAC"},{"id":32,"opts":["我打算毕业以后","先在叔叔开的公司里工作一段时间","为以后自己做生意积累一些经验"],"ans":"ACB"},{"id":33,"opts":["因为大家今年工作完成得非常好","所以按照经理的要求，每人发8000元奖金","另外每人还发给一个电脑"],"ans":"ABC"},{"id":34,"opts":["意思是不管多远的路，都要从脚下这一步开始","人们常说“千里之行，始于足下”","也就是说，一切成功都是慢慢积累起来的"],"ans":"BAC"}],"WB4A05":[{"id":31,"opts":["而且价格还便宜","现在网上购物很流行","你在网上买的东西会送到你办公室或者家里"],"ans":"BCA"},{"id":32,"opts":["这儿离地铁站很近，附近也有很多公共汽车站","但房价可不便宜","所以，别看房子有点儿旧"],"ans":"ACB"},{"id":33,"opts":["但我还是一眼就认出了他","虽然毕业以后我们有20多年没见面了","因为他的样子几乎没什么变化"],"ans":"BAC"},{"id":34,"opts":["我打算送她一个","妹妹很早之前就想买个照相机","下个月一号正好她过生日"],"ans":"BCA"}],"WB4A06":[{"id":31,"opts":["现在只卖300块","原价是现在的两倍多呢，我找一件您试试吧","这种裙子今年非常流行，质量很好"],"ans":"CAB"},{"id":32,"opts":["他是我大学时的同学","毕业后我们就再也没联系过","没想到中午我去取护照时竟然遇到他了"],"ans":"ABC"},{"id":33,"opts":["但是他很诚实","小关的脾气有时候是有点儿差","是个值得相信的人"],"ans":"BAC"},{"id":34,"opts":["这种情况下，就需要及时交流","两个人在一起，总会遇到问题","如果不这样的话，关系就可能会越来越远"],"ans":"BAC"}],"WB4A07":[{"id":31,"opts":["我晚点儿才能回去，桌子上有早上没吃完的面包","就先吃点儿","冰箱里还有面条，你要是饿了"],"ans":"ACB"},{"id":32,"opts":["如果你没有准备好","它也会离开你去找别人","那么就算机会走到了你面前"],"ans":"ACB"},{"id":33,"opts":["嘴上就会马上说出来","意思是说一个人心里有什么想法","“心直口快”常用来说明人的性格"],"ans":"CBA"},{"id":34,"opts":["秋冬季节，皮肤容易变得很干","这是让很多人烦恼的事","为了远离这个烦恼，我们要注意多喝水"],"ans":"ABC"}],"WB4A08":[{"id":31,"opts":["小说《红楼梦》在中国非常有名","只要是中国人","我相信没有不知道它的"],"ans":"ABC"},{"id":32,"opts":["让阳光和新鲜的空气进入室内","可以使您的心情变得更好","早上起床后，打开窗户"],"ans":"CAB"},{"id":33,"opts":["也感谢他们这么多年来给我的爱","有了女儿以后，我才知道做妈妈有多么不容易","因此，我更加理解我的爸爸妈妈了"],"ans":"BCA"},{"id":34,"opts":["还与人的生活环境、经历等有关","有人认为年龄越大，经验就越丰富","其实，经验不但与年龄有关"],"ans":"BCA"}],"WB4A09":[{"id":31,"opts":["所以今天早上才告诉你","可是又怕打扰你休息","我本来想昨天晚上就通知你的"],"ans":"CBA"},{"id":32,"opts":["但过程比结果更重要","而且你还年轻，一切都可以重新开始","尽管这个计划失败了"],"ans":"CAB"},{"id":33,"opts":["至少我们努力过","即使失败了也没关系","机会来了，就该试一试"],"ans":"CBA"},{"id":34,"opts":["后来他见我做得很好，才慢慢改变了自己的看法","我爱人当时反对我选择这个工作","他觉得这个工作太辛苦了"],"ans":"BCA"}],"WB4A10":[{"id":31,"opts":["不过这里以前比较安静","我对这里当然熟悉了，我家原来就住这儿附近","不像现在人这么多"],"ans":"BAC"},{"id":32,"opts":["你也有这样的特点吗","比如说，做事努力、对自己要求很高等","调查发现，优秀的人都有一些共同点"],"ans":"CBA"},{"id":33,"opts":["不管哪个同事遇到了困难","他都愿意帮忙","小王确实是个热情的人"],"ans":"CAB"},{"id":34,"opts":["那种既兴奋又紧张的感觉到现在还很难忘记","由于那是我第一次参加国际比赛","大学三年级时，我参加了世界大学生汉语比赛"],"ans":"CBA"}],"WB4B01":[{"id":31,"opts":["我们身边的图书越来越多","只好选择其中特别感兴趣的来阅读","而每个人时间是有限的"],"ans":"ACB"},{"id":32,"opts":["否则读书对自己就没有什么帮助了","不能完全相信书本","看书时应该有自己的想法和判断"],"ans":"CBA"},{"id":33,"opts":["有些书可以很快地读","读书应该有选择","然而，有些书却需要多花时间来认真读"],"ans":"BAC"},{"id":34,"opts":["这样不但能使学生增长知识","还能提高他们的理解能力和写作水平","养成课外阅读的习惯很重要"],"ans":"CAB"}],"WB4B02":[{"id":31,"opts":["这种事情一直在发生，谁也不能改变","地球上每分钟都有新的生命出现","也有老的生命死去"],"ans":"BCA"},{"id":32,"opts":["很多人以为误会是小事，不去解决它","其实相反，误会需要我们及时解释清楚","两个人在一起，总会出现一些误会"],"ans":"CAB"},{"id":33,"opts":["以上就是我们这次啤酒节的活动内容","对于这个活动安排，我们可以一起商量","大家还有什么好的主意或意见尽管提"],"ans":"ACB"},{"id":34,"opts":["人们常说“友谊地久天长”","能够一直继续下去，直到永远","意思是希望友好关系"],"ans":"ACB"}],"WB4B03":[{"id":31,"opts":["写得特别详细，而且十分有趣","这本杂志介绍了中国很多著名的景点","其中介绍黄河的那一篇"],"ans":"BCA"},{"id":32,"opts":["随着科技的发展，人与人的联系越来越方便","上网发电子邮件越来越普遍","相反，写信的人变得越来越少了"],"ans":"ABC"},{"id":33,"opts":["不仅内容十分丰富","观众普遍认为这部电影不错","演员们演得也非常好"],"ans":"BAC"},{"id":34,"opts":["上次的春游活动小夏组织得不错","这次还是由她来负责安排吧","大家都玩儿得很高兴"],"ans":"ACB"}],"WB4B04":[{"id":31,"opts":["我本来不太愿意做这件事","只能尽力去做了","可既然已经答应别人了"],"ans":"ACB"},{"id":32,"opts":["一定不要到处乱扔","小朋友，你们都吃完了吗","吃完了就把盒子、瓶子、塑料袋都扔垃圾桶里"],"ans":"BCA"},{"id":33,"opts":["那儿的花儿都开了，非常漂亮","这几天植物园特别热闹，随着天气变暖","吸引了很多人"],"ans":"BAC"},{"id":34,"opts":["所以我们必须节约用水、保护环境","地球提供给我们的水","并不是永远用不完的"],"ans":"BCA"}],"WB4B05":[{"id":31,"opts":["有些人会因为听到了真话而感到高兴","直接说出反对意见或者看法","而另一些人却会认为是批评而十分难过"],"ans":"BAC"},{"id":32,"opts":["妈妈说我小时候特别害怕去医院打针","我长大后竟然会选择当一名护士","一看见医生就哭，她怎么都没想到"],"ans":"ACB"},{"id":33,"opts":["我们的眼睛也可能会骗人","其实，有时候实际情况要复杂得多","人们往往相信自己眼睛看到的"],"ans":"CBA"},{"id":34,"opts":["许多父母会直接告诉他们解决办法或者正确答案","孩子在学习、生活中遇到问题的时候","实际上，留出时间让他们自己去发现会更好"],"ans":"BAC"}],"WB4B06":[{"id":31,"opts":["因此，预习是学习的第一步","上课的时候，学习效果才会更好","提前对要学的内容有个大概的了解"],"ans":"CBA"},{"id":32,"opts":["结果眼睛越来越不好","所以现在我不敢再躺着看书了","拿我来说，小时候我总喜欢躺在床上看书"],"ans":"CAB"},{"id":33,"opts":["我们还是把它推到里面去吧","沙发太大了，放这儿容易堵着门，进出不方便","把这个地方空出来"],"ans":"BAC"},{"id":34,"opts":["也许你会发现，这些事情其实用不着烦恼","每次发脾气前，请先给自己几分钟","冷静地想一想，是不是值得为此生气"],"ans":"BCA"}],"WB4B07":[{"id":31,"opts":["不但能看到小鱼在河里游来游去","这儿的河水仍然非常干净，站在河边","还能看到河底绿绿的水草"],"ans":"BAC"},{"id":32,"opts":["这次艺术节吸引了3000多人参加","是参加人数最多的一次","京剧艺术节于9月21日在北京举办"],"ans":"CAB"},{"id":33,"opts":["森林是大自然不可缺少的一部分","我觉得这张画主要是想告诉人们","保护森林就是在保护地球，保护我们共同的家"],"ans":"BAC"},{"id":34,"opts":["我来北京两年了，却还没去过长城","所以我打算这个周末去一趟","有人说没去过长城就不算来过北京"],"ans":"CAB"}],"WB4B08":[{"id":31,"opts":["因为无论对自己还是对其他人","司机喝酒后不允许开车","酒后开车都是非常危险的"],"ans":"BAC"},{"id":32,"opts":["即使已经过去了几个世纪","仍然受到读者们的喜爱","这个美丽的爱情故事，感动过无数人"],"ans":"CAB"},{"id":33,"opts":["祝他们在今后的生活中","让我们一起举杯","一切顺利，永远幸福"],"ans":"BAC"},{"id":34,"opts":["只要找出文中的关键信息","就可以在短时间内了解文章的大意","做到快速阅读其实不难，简单来说"],"ans":"CAB"}],"WB4B09":[{"id":31,"opts":["但在校长的鼓励下，她还是坚持了下来","学舞蹈是一件很辛苦的事","每天都要对着镜子练习同样的动作"],"ans":"BCA"},{"id":32,"opts":["开车千万别喝酒，喝酒千万别开车","每个人都应该记住这句话","法律禁止司机酒后开车"],"ans":"CAB"},{"id":33,"opts":["今天的晚会太精彩了","动作既标准又好看，非常棒","特别是那些外国留学生表演的中国功夫"],"ans":"ACB"},{"id":34,"opts":["道歉时应该让人感觉到你真心的诚意","道歉并不仅仅是一句简单的“对不起”","那样才有可能获得别人的原谅"],"ans":"BAC"}],"WB4B10":[{"id":31,"opts":["老高最爱和儿子一起做游戏","谈起他，大家都认为他是个合格的好父亲","还能耐心回答儿子的所有问题"],"ans":"ACB"},{"id":32,"opts":["而各民族的共同语是汉语普通话","中国是一个多民族的国家","各民族大多有自己的语言"],"ans":"BCA"},{"id":33,"opts":["我代表学校向今年毕业的同学表示祝贺","也希望你们以后有时间多回学校来看看","祝你们在今后取得更大的成绩"],"ans":"ACB"},{"id":34,"opts":["人一定要旅行，旅行能丰富你的经历","还能让你变得更自信","不仅会让你对很多事情有新的认识和看法"],"ans":"ACB"}]};
+ const INSTRUCTION='请排列下列句子的正确顺序。';
+ Object.keys(PATCH).forEach(code=>{
+   const pkg=DB[code]; if(!pkg || !pkg.reading || !pkg.reading[2]) return;
+   const qs=pkg.reading[2].questions||[];
+   PATCH[code].forEach(p=>{
+     const q=qs.find(x=>String(x[0])===String(p.id));
+     if(!q) return;
+     q[1]=INSTRUCTION;
+     q[2]=p.opts.slice();
+     q[3]=p.ans;
+   });
+ });
+ // Source-confirmed HSK 4B Lesson 20 answer key corrections.
+ const l20=DB.WB4B10;
+ if(l20 && l20.listening && l20.listening[2]){
+   const fixed={15:'D',16:'B',18:'C',19:'D',21:'A',22:'C'};
+   l20.listening[2].questions.forEach(q=>{if(fixed[q[0]]) q[3]=fixed[q[0]];});
+ }
+ if(l20 && l20.reading && l20.reading[0]){
+   const fixed={25:'C',26:'A'};
+   l20.reading[0].questions.forEach(q=>{if(fixed[q[0]]) q[3]=fixed[q[0]];});
+ }
+})();
+</script>
+
+<style id="responsive-nav-final-v2">
+/* FINAL NAVIGATION — mobile bottom bar / landscape full-height sidebar */
+@media (min-width:761px) and (orientation:landscape){
+  .mainNav{
+    position:fixed!important;
+    inset:0 auto 0 0!important;
+    width:72px!important;
+    min-width:72px!important;
+    max-width:72px!important;
+    height:100vh!important;
+    margin:0!important;
+    padding:18px 8px!important;
+    box-sizing:border-box!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:12px!important;
+    border:0!important;
+    border-radius:0!important;
+    background:rgba(20,26,39,.94)!important;
+    box-shadow:1px 0 0 rgba(255,255,255,.055), 8px 0 28px rgba(0,0,0,.08)!important;
+    overflow:hidden!important;
+    z-index:1000!important;
+    transform:none!important;
+  }
+  body.dark .mainNav{
+    background:rgba(13,18,29,.96)!important;
+    box-shadow:1px 0 0 rgba(255,255,255,.045), 8px 0 30px rgba(0,0,0,.16)!important;
+  }
+  .mainNav .navItem{
+    position:relative!important;
+    width:48px!important;
+    min-width:48px!important;
+    max-width:48px!important;
+    height:48px!important;
+    min-height:48px!important;
+    max-height:48px!important;
+    flex:0 0 48px!important;
+    padding:0!important;
+    margin:0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    flex-direction:column!important;
+    gap:0!important;
+    border:0!important;
+    border-radius:15px!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    transform:none!important;
+    color:var(--muted,#9aa3b5)!important;
+  }
+  .mainNav .navItem:hover{transform:none!important;}
+  .mainNav .navItem:active{transform:scale(.94)!important;}
+  .mainNav .navItem.active,
+  .mainNav .navItem[aria-current="page"]{
+    background:rgba(91,141,255,.16)!important;
+    color:#72a3ff!important;
+    box-shadow:inset 0 0 0 1px rgba(114,163,255,.05)!important;
+  }
+  .mainNav .navItem.active::before,
+  .mainNav .navItem[aria-current="page"]::before{
+    content:""!important;
+    position:absolute!important;
+    left:-8px!important;
+    top:50%!important;
+    width:3px!important;
+    height:22px!important;
+    border-radius:0 3px 3px 0!important;
+    background:currentColor!important;
+    transform:translateY(-50%)!important;
+  }
+  .mainNav .navLabel{display:none!important;}
+  .mainNav svg.ico{
+    width:22px!important;
+    height:22px!important;
+    flex:0 0 22px!important;
+  }
+  /* Reserve a clean gutter so content never sits beneath the sidebar. */
+  main,.appFooter,.topin{
+    margin-left:72px!important;
+  }
+  .appFooter{padding-left:0!important;}
+}
+
+/* Mobile portrait: keep the familiar labeled bottom navigation. */
+@media (max-width:760px), (orientation:portrait){
+  .mainNav .navLabel{display:block!important;}
+  .mainNav [data-nav="theme"] .navLabel{display:block!important;}
+}
+
+/* Small, quiet version footer. */
+.appFooter{
+  min-height:0!important;
+  height:auto!important;
+  padding-top:5px!important;
+  padding-bottom:5px!important;
+}
+</style>
+
+<style id="sidebar-editorial-refinement">
+/* Editorial navigation refinement: full-height sidebar on landscape, labeled bottom bar on portrait. */
+@media (min-width:761px) and (orientation:landscape){
+  .mainNav{
+    position:fixed!important;
+    left:0!important; right:auto!important; top:0!important; bottom:0!important;
+    width:84px!important; min-width:84px!important; max-width:84px!important;
+    height:100dvh!important;
+    margin:0!important; padding:20px 14px!important;
+    box-sizing:border-box!important;
+    display:flex!important; flex-direction:column!important;
+    align-items:center!important; justify-content:center!important;
+    gap:10px!important;
+    border:0!important; border-right:1px solid rgba(120,135,160,.10)!important;
+    border-radius:0!important;
+    background:color-mix(in srgb,var(--bg) 94%,var(--surface))!important;
+    box-shadow:1px 0 0 rgba(255,255,255,.035)!important;
+    backdrop-filter:none!important; -webkit-backdrop-filter:none!important;
+    overflow:hidden!important; transform:none!important;
+    z-index:1000!important;
+  }
+  body.dark .mainNav{
+    background:color-mix(in srgb,var(--bg) 94%,#151b28)!important;
+    border-right-color:rgba(210,220,235,.08)!important;
+    box-shadow:1px 0 0 rgba(255,255,255,.025)!important;
+  }
+  .mainNav .navItem{
+    position:relative!important;
+    width:48px!important; min-width:48px!important; max-width:48px!important;
+    height:48px!important; min-height:48px!important; max-height:48px!important;
+    flex:0 0 48px!important;
+    margin:0!important; padding:0!important;
+    display:flex!important; align-items:center!important; justify-content:center!important;
+    flex-direction:column!important; gap:0!important;
+    border:0!important; border-radius:14px!important;
+    background:transparent!important; box-shadow:none!important;
+    color:var(--muted,#8f99aa)!important;
+    transform:none!important;
+  }
+  .mainNav .navItem .ico{
+    width:22px!important; height:22px!important; flex:0 0 22px!important;
+    stroke:currentColor!important;
+  }
+  .mainNav .navLabel{display:none!important;}
+  .mainNav .navItem:hover{background:color-mix(in srgb,var(--text) 5%,transparent)!important;color:var(--text)!important;transform:none!important;}
+  .mainNav .navItem:active{transform:scale(.94)!important;}
+  .mainNav .navItem.active,
+  .mainNav .navItem[aria-current="page"]{
+    background:color-mix(in srgb,var(--blue) 13%,transparent)!important;
+    color:var(--blue)!important;
+    box-shadow:none!important;
+  }
+  .mainNav .navItem.active::before,
+  .mainNav .navItem[aria-current="page"]::before{
+    content:""!important;
+    position:absolute!important;
+    left:-14px!important; top:50%!important;
+    width:3px!important; height:22px!important;
+    border-radius:0 3px 3px 0!important;
+    background:currentColor!important;
+    transform:translateY(-50%)!important;
+  }
+
+  /* Content occupies the area to the right of the sidebar, with a centered reading column. */
+  main{
+    width:calc(100% - 84px)!important;
+    max-width:none!important;
+    margin-left:84px!important; margin-right:0!important;
+    padding:0 32px 88px!important;
+    box-sizing:border-box!important;
+  }
+  main > .screen.active,
+  main > section.screen.active{
+    width:100%!important;
+    max-width:1180px!important;
+    margin-left:auto!important; margin-right:auto!important;
+  }
+  .topin{
+    width:calc(100% - 84px)!important;
+    max-width:none!important;
+    margin-left:84px!important; margin-right:0!important;
+    padding-left:32px!important; padding-right:32px!important;
+    box-sizing:border-box!important;
+  }
+  .appFooter{
+    width:calc(100% - 84px)!important;
+    max-width:none!important;
+    margin-left:84px!important; margin-right:0!important;
+    padding:8px 32px 10px!important;
+    box-sizing:border-box!important;
+    min-height:0!important; height:auto!important;
+    font-size:10px!important;
+  }
+}
+
+/* Portrait stays a labeled bottom navigation. */
+@media (max-width:760px), (orientation:portrait){
+  .mainNav .navLabel{display:block!important;}
+  .mainNav [data-nav="theme"] .navLabel{display:block!important;}
+}
+
+/* Quiet version footer. */
+.appFooter{min-height:0!important;height:auto!important;padding-top:6px!important;padding-bottom:8px!important;}
+</style>
+
+
+<style id="navbar-line-indicator-final">
+/* FINAL NAVBAR: landscape sidebar uses icon-only navigation with a slim active line. */
+@media (min-width:761px) and (orientation:landscape){
+  .mainNav{
+    position:fixed!important;
+    left:0!important; right:auto!important; top:0!important; bottom:0!important;
+    width:84px!important; min-width:84px!important; max-width:84px!important;
+    height:100dvh!important;
+    margin:0!important; padding:20px 14px!important;
+    box-sizing:border-box!important;
+    display:flex!important; flex-direction:column!important;
+    align-items:center!important; justify-content:center!important;
+    gap:10px!important;
+    border:0!important; border-right:1px solid color-mix(in srgb,var(--text) 7%,transparent)!important;
+    border-radius:0!important;
+    background:color-mix(in srgb,var(--bg) 96%,var(--surface))!important;
+    box-shadow:none!important;
+    backdrop-filter:none!important; -webkit-backdrop-filter:none!important;
+    overflow:visible!important; transform:none!important;
+    z-index:1000!important;
+  }
+  .mainNav .navItem,
+  .mainNav .navItem.active,
+  .mainNav .navItem[aria-current="page"]{
+    position:relative!important;
+    width:48px!important; min-width:48px!important; max-width:48px!important;
+    height:48px!important; min-height:48px!important; max-height:48px!important;
+    flex:0 0 48px!important;
+    margin:0!important; padding:0!important;
+    display:flex!important; align-items:center!important; justify-content:center!important;
+    flex-direction:column!important; gap:0!important;
+    border:0!important; border-radius:12px!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    transform:none!important;
+    color:var(--muted,#8f99aa)!important;
+  }
+  .mainNav .navItem .navLabel{display:none!important; visibility:hidden!important;}
+  .mainNav .navItem .ico{
+    width:22px!important; height:22px!important; flex:0 0 22px!important;
+    stroke:currentColor!important;
+  }
+  .mainNav .navItem:hover{
+    background:color-mix(in srgb,var(--text) 4%,transparent)!important;
+    color:var(--text)!important;
+    transform:none!important;
+  }
+  .mainNav .navItem:active{transform:scale(.94)!important;}
+  .mainNav .navItem.active,
+  .mainNav .navItem[aria-current="page"]{
+    color:var(--blue)!important;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+  /* The only active-state indicator: a slim vertical line on the sidebar edge. */
+  .mainNav .navItem.active::before,
+  .mainNav .navItem[aria-current="page"]::before{
+    content:""!important;
+    position:absolute!important;
+    left:-14px!important;
+    top:50%!important;
+    width:3px!important;
+    height:26px!important;
+    border-radius:0 3px 3px 0!important;
+    background:currentColor!important;
+    transform:translateY(-50%)!important;
+  }
+  /* Keep the application content clear of the full-height sidebar. */
+  main{
+    width:calc(100% - 84px)!important;
+    margin-left:84px!important; margin-right:0!important;
+    box-sizing:border-box!important;
+  }
+  .topin{
+    width:calc(100% - 84px)!important;
+    margin-left:84px!important; margin-right:0!important;
+    box-sizing:border-box!important;
+  }
+  .appFooter{
+    width:calc(100% - 84px)!important;
+    margin-left:84px!important; margin-right:0!important;
+    box-sizing:border-box!important;
+  }
+}
+
+/* Portrait/mobile remains the labeled bottom navigation. */
+@media (max-width:760px){
+  .mainNav .navItem .navLabel{display:block!important; visibility:visible!important;}
+  .mainNav [data-nav="theme"] .navLabel{display:block!important; visibility:visible!important;}
+}
+</style>
+
 </body></html>
