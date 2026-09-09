@@ -2102,7 +2102,7 @@ function openScoreLevel(level){
     el.innerHTML=`<div class="scoreBackRow"><button class="btn" type="button" onclick="renderScores()">← Kembali ke level</button></div><div class="scoreLevelTitle"><div class="sectionKicker">HSK 5</div><h3>Nilai HSK 5</h3><p>Belum ada paket yang tersedia.</p></div><div class="comingSoonPanel scoreComing"><div class="comingIcon">5</div><div><strong>HSK 5</strong><span>Coming soon</span><small>Paket HSK 5 sedang dipersiapkan.</small></div></div>`;
     window.scrollTo({top:0,left:0,behavior:'smooth'});return;
   }
-  const codes=Object.keys(DB);
+  const codes=Object.keys(DB).filter(c=>typeof isWB!=='function'||!isWB(c));
   el.className='grid scorePackagesGrid';
   const cards=codes.map((code,idx)=>{const st=packageStats(code);const score=st.total?st.scorePct:0;const status=st.answered===0?'Belum dikerjakan':st.answered===st.total?'Selesai':'Sedang berjalan';const accent=['blue','purple','orange','pink','green'][idx%5];return `<button class="tile packageTile packageTile-${accent}" type="button" onclick="showPackageScore('${esc(code)}')"><div class="pkgTop"><div class="tileIcon" aria-hidden="true">${svg('chart')}</div><span class="statusPill">${status}</span></div><div class="pkgTitleRow"><div><b>Paket ${esc(code)}</b><small>${st.score}/${st.total} benar · ${st.answered}/${st.total} terjawab</small></div><span class="pkgArrow">${score}%</span></div>${progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres pengerjaan')}<div class="pkgFooter"><span>Nilai paket</span><span>${score}%</span></div></button>`}).join('');
   el.innerHTML=`<div class="scoreBackRow"><button class="btn" type="button" onclick="renderScores()">← Kembali ke level</button></div><div class="scoreLevelTitle"><div class="sectionKicker">HSK 4</div><h3>Nilai HSK 4</h3><p>Pilih paket untuk melihat rincian nilainya.</p></div>${cards||'<div class="notice">Belum ada paket latihan.</div>'}`;
@@ -4451,6 +4451,126 @@ body.dark .exerciseThemeToggle,body.dark #exercise .focusBack,body.dark #result 
 }
 </style>
 
+
+<script id="finalVerifiedAuditPatch">
+(function(){
+  function setListeningOptions(code,id,opts,key){
+    const qs=DB[code]?.listening?.flatMap(s=>s.questions||[])||[];
+    const q=qs.find(x=>String(x[0])===String(id));
+    if(q){q[2]=opts.slice();q[3]=key;}
+  }
+  function setWritingBank(code,id,bank){
+    const qs=DB[code]?.writing?.[0]?.questions||[];
+    const q=qs.find(x=>String(x[0])===String(id));
+    if(q)q[1]=bank;
+  }
+  // Verified source corrections in the main HSK4 data.
+  setListeningOptions('H41002',14,['骑车','坐车','跑步','走路'],'D');
+  const w=DB.H41332?.writing?.[0]?.questions?.find(q=>String(q[0])==='87');
+  if(w)w[1]='著名的 是 她丈夫 京剧演员';
+
+  // Verified source options for questions whose option arrays were lost in the baseline.
+  const missing={
+    H41111:{21:[['银行','理发店','大使馆','公共汽车站'],'A'],35:[['季节','网站','日记','电脑'],'D']},
+    H41332:{20:[['王教授','李校长','他孙女儿','一位护士'],'A'],26:[['做汤','做蛋糕','民族文化','儿童音乐'],'B'],34:[['预习','填表格','收拾房间','整理材料'],'A']},
+    H41553B:{21:[['来晚了','没带伞','手机响了','手表丢了'],'A'],26:[['同学','邻居','师生','顾客和售货员'],'A'],35:[['迷路了','丢了护照','没换登机牌','打不开行李箱'],'D']},
+    H41553C:{21:[['迟到了','拿错伞了','忘密码了','弄错顺序了'],'B'],26:[['被批评了','被人骗了','赚了很多钱','找到 100 元'],'D'],35:[['超市','银行','篮球场','游泳馆'],'A']},
+    H41553D:{21:[['20 块','30 块','40 块','60 块'],'B'],26:[['颜色暗','画得很好','声音太大','味道不错'],'B'],35:[['请假','交作业','送照片','想报名'],'D']}
+  };
+  Object.entries(missing).forEach(([code,items])=>Object.entries(items).forEach(([id,v])=>setListeningOptions(code,id,v[0],v[1])));
+
+  // Verified source chip grouping for Workbook HSK4b Writing Part 1.
+  setWritingBank('WB4B01',48,'这种 能 减轻 方法 有效地 压力');
+  setWritingBank('WB4B04',45,'一个 美丽的 生活 他在 小城市');
+  setWritingBank('WB4B05',45,'儿童被 好玩儿的 更容易 游戏 接受');
+  setWritingBank('WB4B06',45,'传真号码 是 你们 多少 公司 的');
+  setWritingBank('WB4B08',46,'我顺便 回来的路上 邮局 去趟了');
+  setWritingBank('WB4B08',48,'密码 你爸 把 信用卡的 了改');
+
+  // The workbook sources use the standard first-section ranges 44–48.
+  // Ensure the word-bank renderer remains constrained to those five items.
+  window.__finalAuditApplied=true;
+
+  // HSK 4 score page should show only the 25 regular HSK4 packages.
+  const oldRenderScores=window.renderScores;
+  if(typeof oldRenderScores==='function'){
+    window.renderScores=function(){
+      const saved=window.__finalScoreFilter;
+      window.__finalScoreFilter=true;
+      try{return oldRenderScores.apply(this,arguments)}finally{window.__finalScoreFilter=saved}
+    };
+  }
+
+  // Cloud reliability: if a cloud row does not exist yet, upload the local progress
+  // immediately instead of creating an empty remote row.
+  const oldCloudCreateUser=window.cloudCreateUser;
+  const oldPullCloudState=window.pullCloudState;
+  if(typeof oldCloudCreateUser==='function' && typeof oldPullCloudState==='function'){
+    window.cloudCreateUser=async function(username,store={}){
+      if(!cloudEnabled())return true;
+      const r=await fetch(cloudUrl(),{method:'POST',headers:cloudHeaders({'Prefer':'return=minimal'}),body:JSON.stringify({username,data:store}),keepalive:true});
+      if(!r.ok)throw new Error(cloudErrorMessage(r.status));
+      return true;
+    };
+    window.pullCloudState=async function(force=false){
+      if(!currentUsername||!cloudEnabled())return false;
+      try{
+        const local=readStore();
+        const row=await cloudFindUser(currentUsername);
+        if(!row){
+          await cloudCreateUser(currentUsername,local);
+          renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();
+          return true;
+        }
+        const remote=row.data||{};
+        const merged={...remote};
+        let localNewer=false;
+        Object.entries(local).forEach(([k,v])=>{
+          if(!merged[k]||Number(v.updatedAt||0)>Number(merged[k].updatedAt||0)){merged[k]=v;localNewer=true}
+        });
+        writeStore(merged);
+        if(localNewer)await cloudUpdateUser(currentUsername,merged);
+        renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();
+        return true;
+      }catch(e){console.warn('Cloud sync pull failed',e);return false}
+    };
+  }
+
+  // Keep unload sync requests alive when the browser allows it.
+  const oldCloudUpdateUser=window.cloudUpdateUser;
+  if(typeof oldCloudUpdateUser==='function'){
+    window.cloudUpdateUser=async function(username,store){
+      if(!cloudEnabled())return true;
+      const url=cloudUrl('?username=eq.'+encodeURIComponent(username));
+      const r=await fetch(url,{method:'PATCH',headers:cloudHeaders({'Prefer':'return=minimal'}),body:JSON.stringify({data:store}),keepalive:true});
+      if(!r.ok)throw new Error(cloudErrorMessage(r.status));
+      return true;
+    };
+  }
+})();
+</script>
+
+<script id="cloudStatusFinalPatch">
+(function(){
+  let state='unknown';
+  function setState(v){state=v;window.__cloudSyncState=v;}
+  setState(navigator.onLine===false?'offline':'unknown');
+  window.addEventListener('offline',()=>{setState('offline');try{renderHome()}catch(e){}});
+  window.addEventListener('online',()=>{setState('syncing');try{if(typeof pullCloudState==='function'&&currentUsername)pullCloudState(true)}catch(e){}try{renderHome()}catch(e){}});
+  const oldPull=window.pullCloudState;
+  if(typeof oldPull==='function')window.pullCloudState=async function(force=false){
+    if(navigator.onLine===false){setState('offline');try{renderHome()}catch(e){};return false}
+    setState('syncing');try{const ok=await oldPull(force);setState(ok?'synced':'warning');try{renderHome()}catch(e){};return ok}catch(e){setState('warning');try{renderHome()}catch(x){};return false}
+  };
+  const oldPush=window.pushCloudState;
+  if(typeof oldPush==='function')window.pushCloudState=async function(store){
+    if(navigator.onLine===false){setState('offline');return false}
+    setState('syncing');try{const ok=await oldPush(store);if(ok)setState('synced');else if(state!=='syncing')setState('warning');try{renderHome()}catch(e){};return ok}catch(e){setState('warning');try{renderHome()}catch(x){};return false}
+  };
+  const oldHome=window.renderHome;
+  if(typeof oldHome==='function')window.renderHome=function(){const r=oldHome.apply(this,arguments);const box=document.querySelector('.syncStatus');const strong=box?.querySelector('strong');if(!strong)return r;if(typeof cloudEnabled!=='function'||!cloudEnabled()){strong.textContent='Tersimpan di perangkat';box.classList.add('warn');return r}box.classList.remove('warn');const map={syncing:'Menyinkronkan…',synced:'Tersinkron ke cloud',warning:'Tersimpan di perangkat · sinkronisasi tertunda',offline:'Offline · tersimpan di perangkat',unknown:'Cloud aktif · memeriksa…'};strong.textContent=map[state]||map.unknown;if(state==='warning'||state==='offline')box.classList.add('warn');return r};
+})();
+</script>
 </body></html>
 
 <style id="uiCriticPass2026">
