@@ -4864,7 +4864,7 @@ body.dark .exerciseThemeToggle,body.dark #exercise .focusBack,body.dark #result 
     // Level yang belum tersedia tidak perlu ditampilkan di picker.
     const availableHsk=new Set();
     dbCodes.forEach(code=>{
-      const m=String(code).trim().match(/^H(\d+)\d+$/i);
+      const m=String(code).trim().match(/^H(\d{1,2})\d{4}$/i);
       if(m) availableHsk.add(Number(m[1]));
     });
     [...availableHsk].sort((a,b)=>a-b).forEach(n=>{
@@ -6369,6 +6369,110 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     audit.checked=true;
   }catch(e){audit.errors.push(String(e));}
 })();
+</script>
+
+<script id="finalMaterialNavigationFix">
+(function(){
+  'use strict';
+  const $=id=>document.getElementById(id);
+  const escV=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const db=()=>((typeof DB!=='undefined'&&DB)?DB:{});
+  const regularCodes=level=>Object.keys(db()).filter(c=>new RegExp('^H'+level+'\\d{4}$','i').test(c));
+  const wbFamilies=()=>{
+    const m=new Map();
+    Object.keys(db()).forEach(c=>{
+      const x=String(c).match(/^WB(\d+)([A-Za-z]+)(\d+)$/i); if(!x)return;
+      const key='wb:WB'+x[1]+x[2].toUpperCase();
+      if(!m.has(key))m.set(key,{key,level:+x[1],suffix:x[2].toLowerCase(),label:'Workbook HSK'+x[1]+x[2].toLowerCase(),codes:[]});
+      m.get(key).codes.push(c);
+    });
+    m.forEach(x=>x.codes.sort((a,b)=>a.localeCompare(b,undefined,{numeric:true})));
+    return [...m.values()].sort((a,b)=>a.level-b.level||a.suffix.localeCompare(b.suffix));
+  };
+  function materialKeys(){
+    const levels=[...new Set(Object.keys(db()).map(c=>{const m=String(c).match(/^H(\d{1,2})\d{4}$/i);return m?+m[1]:null}).filter(x=>x!==null))].sort((a,b)=>a-b);
+    const out=levels.map(n=>({key:'hsk:'+n,kind:'hsk',level:n,label:'HSK '+n,codes:regularCodes(n).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}))}));
+    return out.concat(wbFamilies());
+  }
+  function tile(code,idx,shortcut=false){
+    const d=db()[code]||{};
+    const title=d.title||('Paket '+code);
+    let st={answered:0,total:0,pct:0}; try{st=packageStats(code)||st}catch(e){}
+    const pct=st.pct||0;
+    const status=pct>=100?'Selesai':pct>0?'Sedang berjalan':'Belum dimulai';
+    const pal=['blue','purple','orange','pink','green'][idx%5];
+    const desc=typeof packageDescription==='function'?packageDescription(code):'';
+    return `<button class="tile packageTile ${shortcut?'shortcutPackageTile ':''}packageTile-${pal}" type="button" data-package-code="${escV(code)}" aria-label="Buka ${escV(title)}">`+
+      `<div class="pkgTop"><div class="tileIcon" aria-hidden="true">${typeof svg==='function'?svg(shortcut?'read':'box'):''}</div><span class="statusPill">${status}</span></div>`+
+      `<div class="pkgTitleRow"><div><b>${escV(title)}</b><small>${escV(desc)}</small></div><span class="pkgArrow"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span></span></div>`+
+      `${st.total?progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket'):''}`+
+      `<div class="pkgFooter"><span>${shortcut?'Shortcut HSK 4':'Materi'}</span><span>${pct}%</span></div></button>`;
+  }
+  function renderLevelsFixed(){
+    const grid=document.querySelector('#levelsScreen .levelGrid'); if(!grid)return;
+    const mats=materialKeys();
+    const hsk=mats.filter(m=>m.kind==='hsk');
+    const wb=mats.filter(m=>m.kind==='workbook');
+    const ordered=[...hsk,...wb];
+    grid.innerHTML=ordered.map(m=>{
+      const isH=m.kind==='hsk';
+      const desc=isH?`${m.codes.length} paket latihan tersedia`:`${m.codes.length} lesson tersedia`;
+      const cls=isH?(m.level===4?'levelCard4':'levelCard5'):`levelCardWorkbook ${m.key==='wb:WB4A'?'levelCardWorkbook4a':''} ${m.key==='wb:WB4B'?'levelCardWorkbook4b':''}`;
+      return `<button class="levelCard ${cls}" type="button" data-material-key="${escV(m.key)}" onclick="openLevelPackages('${escV(m.key)}')"><div class="levelCardIcon">${isH?m.level:'WB'}</div><div class="levelCardBody"><span class="levelEyebrow">${isH?'HSK LEVEL':'WORKBOOK'}</span><strong>${escV(m.label)}</strong><p>${escV(desc)}</p></div><span class="levelCardArrow"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span></span></button>`;
+    }).join('');
+  }
+  function renderPackagesFixed(){
+    const grid=$('packagesGrid'); if(!grid)return;
+    const key=String((typeof selectedHSKLevel!=='undefined'&&selectedHSKLevel)||'hsk:4');
+    const mats=materialKeys();
+    const m=mats.find(x=>x.key===key)||mats.find(x=>x.key==='hsk:4')||mats[0];
+    if(!m){grid.innerHTML='<div class="notice">Belum ada materi.</div>';return;}
+    selectedHSKLevel=m.key;
+    const head=$('packageLevelKicker'),title=$('packagePageTitle'),sub=$('packagePageSub'),panel=$('hsk5Panel');
+    if(panel)panel.hidden=true;
+    if(head)head.textContent=m.label;
+    if(title)title.textContent=m.kind==='workbook'?'Pilih lesson':'Pilih paket';
+    const regular=m.codes.slice();
+    let codes=regular;
+    let shortcuts=[];
+    if(m.key==='hsk:4'){
+      shortcuts=['H4SC','H4SK'].filter(c=>db()[c]);
+      codes=shortcuts.concat(regular.filter(c=>!shortcuts.includes(c)));
+    }
+    const q=String($('packageSearchInput')?.value||'').trim().toLowerCase();
+    codes=codes.filter(c=>{const d=db()[c]||{};return !q||c.toLowerCase().includes(q)||String(d.title||'').toLowerCase().includes(q)||String(d.meta?.lessonTitle||'').toLowerCase().includes(q)});
+    if(sub)sub.textContent=m.kind==='workbook'?`${m.codes.length} lesson tersedia.`:m.key==='hsk:4'?`${m.codes.length} paket latihan + 2 shortcut belajar.`:`${m.codes.length} paket latihan tersedia.`;
+    document.querySelectorAll('.packagePager').forEach(x=>x.remove());
+    if(!codes.length){grid.innerHTML='<div class="emptySearch"><strong>Paket tidak ditemukan</strong><span>Coba kata kunci lain.</span></div>';return;}
+    const shortcutSet=new Set(shortcuts);
+    grid.innerHTML=codes.map((c,i)=>tile(c,i,shortcutSet.has(c))).join('');
+  }
+  window.openPackages=function(push=true){selectedHSKLevel='hsk:4';route={screen:'levels',packageCode:null,type:null,sectionIndex:null};renderLevelsFixed();setScreen('levelsScreen',push);window.scrollTo({top:0,left:0,behavior:'auto'});};
+  window.openLevelPackages=function(level,push=true){
+    let key=String(level??'').trim();
+    if(/^\\d+$/.test(key))key='hsk:'+Number(key);
+    else if(/^wb4a$/i.test(key))key='wb:WB4A';
+    else if(/^wb4b$/i.test(key))key='wb:WB4B';
+    if(!materialKeys().some(m=>m.key===key))key='hsk:4';
+    selectedHSKLevel=key;route={screen:'packages',packageCode:null,type:null,sectionIndex:null};
+    const i=$('packageSearchInput');if(i)i.value='';
+    renderPackagesFixed();setScreen('packagesScreen',push);window.scrollTo({top:0,left:0,behavior:'auto'});
+  };
+  window.renderLevelsScreen=renderLevelsFixed;
+  window.renderPackagesScreen=renderPackagesFixed;
+  window.filterPackages=function(value){const i=$('packageSearchInput');if(i)i.value=String(value??'');renderPackagesFixed();};
+  window.clearPackageSearch=function(){const i=$('packageSearchInput');if(i)i.value='';renderPackagesFixed();i?.focus();};
+  document.addEventListener('click',function(e){
+    const t=e.target.closest?.('#packagesScreen .packageTile[data-package-code]');
+    if(!t)return;
+    e.preventDefault();e.stopImmediatePropagation();
+    const c=t.dataset.packageCode;
+    if(typeof window.openPackage==='function')window.openPackage(c,true);
+  },true);
+  try{renderLevelsFixed()}catch(e){console.error('HSK4 final navigation fix',e)}
+  if(window.route?.screen==='packages')try{renderPackagesFixed()}catch(e){}
+})();
+
 </script>
 </body></html>
 
