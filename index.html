@@ -6804,6 +6804,118 @@ body.dark .levelGroupDivider{color:#aeb7c6}
 })();
 </script>
 
+<script id="finalNavigationAndSyncHardeningV3">
+(function(){
+  'use strict';
+  const M=window.__masterReliabilityFix=window.__masterReliabilityFix||{};
+  const safeJson=v=>{try{return JSON.stringify(v??null)}catch(e){return String(v)}};
+  const planSignature=v=>safeJson(Array.isArray(v)?v:[]);
+  const planStamp=s=>{const d=Number(s?._studyPlansUpdatedAt||0);if(d)return d;return (Array.isArray(s?._studyPlans)?s._studyPlans:[]).reduce((n,p)=>Math.max(n,Number(p?.updatedAt||0)),0)};
+
+  if(!M.planWriteWrappedV3&&typeof window.writeStore==='function'){
+    const originalWriteStore=window.writeStore; M.planWriteWrappedV3=true;
+    window.writeStore=function(store){
+      const next=(store&&typeof store==='object')?store:{};
+      if(!M.applyingCloudStore){
+        try{
+          const before=typeof window.readStore==='function'?window.readStore():{};
+          if(planSignature(before._studyPlans)!==planSignature(next._studyPlans)) next._studyPlansUpdatedAt=Date.now();
+          else if(next._studyPlansUpdatedAt==null&&before._studyPlansUpdatedAt!=null) next._studyPlansUpdatedAt=before._studyPlansUpdatedAt;
+        }catch(e){}
+      }
+      return originalWriteStore.call(this,next);
+    };
+  }
+  try{
+    const s=readStore(); const t=planStamp(s);
+    if(Array.isArray(s._studyPlans)&&t&&!s._studyPlansUpdatedAt){s._studyPlansUpdatedAt=t;M.applyingCloudStore=true;writeStore(s);M.applyingCloudStore=false;}
+  }catch(e){M.applyingCloudStore=false}
+
+  async function reliablePullCloudState(){
+    if(!currentUsername||typeof cloudEnabled!=='function'||!cloudEnabled()||navigator.onLine===false)return false;
+    try{
+      const row=await cloudFindUser(currentUsername);
+      if(!row){const local=readStore();await cloudCreateUser(currentUsername);await cloudUpdateUser(currentUsername,local);return true;}
+      const remote=row.data||{}; const local=readStore(); const merged={...remote}; let localNewer=false;
+      Object.entries(local).forEach(([k,v])=>{
+        if(k==='_studyPlans'||k==='_studyPlansUpdatedAt')return;
+        if(!merged[k]||Number(v?.updatedAt||0)>Number(merged[k]?.updatedAt||0)){merged[k]=v;localNewer=true;}
+      });
+      const lt=planStamp(local),rt=planStamp(remote);
+      if(lt>=rt){
+        if(Array.isArray(local._studyPlans))merged._studyPlans=local._studyPlans;
+        merged._studyPlansUpdatedAt=lt||rt||0;
+        if(lt>rt)localNewer=true;
+      }else{
+        if(Array.isArray(remote._studyPlans))merged._studyPlans=remote._studyPlans;
+        merged._studyPlansUpdatedAt=rt;
+      }
+      M.applyingCloudStore=true;writeStore(merged);M.applyingCloudStore=false;
+      if(localNewer)await cloudUpdateUser(currentUsername,merged);
+      try{renderHome();renderScores();if(route.screen==='levels')window.renderLevelsScreen?.();if(route.screen==='packages')window.renderPackagesScreen?.();if(route.screen==='studyPlans')window.renderStudyPlans?.();if(route.screen==='studyPlanDetail')window.renderStudyPlanDetail?.();refreshCurrentProgress?.();}catch(e){}
+      return true;
+    }catch(e){console.warn('Reliable cloud pull failed',e);return false}
+    finally{M.applyingCloudStore=false}
+  }
+  let pushBusy=false,pushQueued=false;
+  async function reliablePushCloudState(){
+    if(!currentUsername||typeof cloudEnabled!=='function'||!cloudEnabled()||navigator.onLine===false)return false;
+    if(pushBusy){pushQueued=true;return false} pushBusy=true;
+    try{await cloudUpdateUser(currentUsername,readStore());return true}
+    catch(e){console.warn('Reliable cloud push failed',e);return false}
+    finally{pushBusy=false;if(pushQueued){pushQueued=false;clearTimeout(M.syncTimer);M.syncTimer=setTimeout(()=>reliablePushCloudState(),250)}}
+  }
+  window.pullCloudState=reliablePullCloudState; window.pushCloudState=reliablePushCloudState;
+
+  /* Android/Chrome Back: consume history instead of creating a new history entry. */
+  window.backRoute=function(){
+    if(route.screen==='home'){try{window.showExit?.(true)}catch(e){}return;}
+    if(history.length>1&&history.state){history.back();return;}
+    try{window.goHome?.(false)}catch(e){}
+  };
+
+  const originalSetScreen=window.setScreen;
+  if(typeof originalSetScreen==='function'&&!M.setScreenWrappedV3){
+    M.setScreenWrappedV3=true;
+    window.setScreen=function(name,push=true){
+      if(push)route.materialKey=route.materialKey||String(window.__cleanMaterialKey||selectedHSKLevel||'hsk:4');
+      return originalSetScreen.call(this,name,push);
+    };
+  }
+  const originalOpenLevelPackages=window.openLevelPackages;
+  if(typeof originalOpenLevelPackages==='function'&&!M.levelOpenWrappedV3){
+    M.levelOpenWrappedV3=true;
+    window.openLevelPackages=function(level,push=true){
+      let k=String(level??'').trim();if(/^\d+$/.test(k))k='hsk:'+Number(k);if(/^wb4a$/i.test(k))k='wb:WB4A';if(/^wb4b$/i.test(k))k='wb:WB4B';
+      route.materialKey=k;return originalOpenLevelPackages.call(this,k,push);
+    };
+  }
+  window.restore=function(st){
+    const s=st||{};route={screen:s.screen||'home',packageCode:s.packageCode||null,type:s.type||null,sectionIndex:s.sectionIndex??null,studyPlanId:s.studyPlanId||null,materialKey:s.materialKey||null};
+    if(route.materialKey){window.__cleanMaterialKey=route.materialKey;selectedHSKLevel=route.materialKey;}
+    if(route.screen==='home'){renderHome();setScreen('home',false);return;}
+    if(route.screen==='levels'){window.__cleanMaterialKey='hsk:4';selectedHSKLevel='hsk:4';window.renderLevelsScreen?.();setScreen('levelsScreen',false);return;}
+    if(route.screen==='packages'){const k=route.materialKey||String(selectedHSKLevel||'hsk:4');window.__cleanMaterialKey=k;selectedHSKLevel=k;window.renderPackagesScreen?.();setScreen('packagesScreen',false);return;}
+    if(route.screen==='package'){renderPackage();setScreen('package',false);return;}
+    if(route.screen==='parts'){renderSections();setScreen('partsScreen',false);return;}
+    if(route.screen==='exercise'){loadCurrentSectionState();renderExercise();setScreen('exercise',false);return;}
+    if(route.screen==='result'){renderResult();setScreen('result',false);return;}
+    if(route.screen==='studyPlans'){window.renderStudyPlans?.();setScreen('studyPlans',false);return;}
+    if(route.screen==='studyPlanDetail'){window.renderStudyPlanDetail?.();setScreen('studyPlanDetail',false);return;}
+    window.goHome?.(false);
+  };
+  /* Final capture listener. It prevents older bubble-phase legacy listeners from rendering stale screens. */
+  window.addEventListener('popstate',function(e){
+    if(!currentUsername){showAuthScreen();return;}
+    if(typeof allowExit!=='undefined'&&allowExit){allowExit=false;return;}
+    if(e.state&&e.state.homeGuard&&route.screen==='home'){showExit(true);return;}
+    if(!e.state){window.goHome?.(false);return;}
+    e.stopImmediatePropagation();window.restore(e.state);
+  },true);
+  M.navigationSyncHardeningV3=true;
+})();
+</script>
+
 </body></html>
 
 
