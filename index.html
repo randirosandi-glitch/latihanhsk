@@ -1794,6 +1794,136 @@ body.dark .studyPlanPickerActions{background:linear-gradient(to bottom,transpare
 .packageTile,.levelCard,.studyPlanCard,.studyPlanPackage,.studyPlanPick,.btn,.navItem,.topBack{touch-action:manipulation;}
 .packageTile{cursor:pointer;-webkit-user-select:none;user-select:none;}
 </style>
+<style id="uiCriticPass2026">
+/* UI CRITIC PASS 2026 — visual-only refinement for Levels + Package List. */
+
+/* ---- Level landing: stronger hierarchy, less "card wall" ---- */
+#levelsScreen .levelLandingHead{margin-bottom:22px!important}
+#levelsScreen .levelLandingHead h2{letter-spacing:-1.8px!important}
+#levelsScreen .levelLandingHead .sub{max-width:520px!important}
+#levelsScreen .levelGrid{gap:12px!important}
+#levelsScreen .levelCard{
+  min-height:118px!important;
+  padding:18px 19px!important;
+  border-radius:20px!important;
+  background:color-mix(in srgb,var(--surface) 90%,transparent)!important;
+  border-color:color-mix(in srgb,var(--text) 8%,var(--line))!important;
+  box-shadow:0 5px 16px color-mix(in srgb,var(--text) 5%,transparent)!important;
+}
+#levelsScreen .levelCard4{
+  border-color:color-mix(in srgb,var(--blue) 20%,var(--line))!important;
+  box-shadow:0 7px 20px color-mix(in srgb,var(--blue) 8%,transparent)!important;
+}
+#levelsScreen .levelCard5{opacity:.58!important}
+#levelsScreen .levelCard:hover{transform:translateY(-1px)!important}
+#levelsScreen .levelCardIcon{
+  width:56px!important;height:56px!important;flex-basis:56px!important;
+  border-radius:17px!important;font-size:26px!important;
+}
+#levelsScreen .levelCardBody{gap:1px!important}
+#levelsScreen .levelEyebrow{font-size:9px!important;letter-spacing:.19em!important}
+#levelsScreen .levelCardBody strong{font-size:21px!important;line-height:1.15!important}
+#levelsScreen .levelCardBody p{font-size:12px!important;line-height:1.35!important;margin-top:3px!important}
+#levelsScreen .levelCardArrow{
+  width:32px!important;height:32px!important;flex-basis:32px!important;
+  border-radius:50%!important;
+  background:color-mix(in srgb,var(--blue) 7%,var(--surface))!important;
+  color:var(--blue)!important;
+}
+#levelsScreen .levelCard5 .levelCardArrow{color:var(--muted)!important;background:color-mix(in srgb,var(--text) 4%,var(--surface))!important}
+
+/* Workbook divider: quieter and more editorial. */
+#levelsScreen .levelGrid:has(.levelCardWorkbook)::before{
+  margin:12px 0 0!important;
+  padding-top:9px!important;
+  border-top-color:color-mix(in srgb,var(--text) 11%,var(--line))!important;
+  font-size:9px!important;
+  letter-spacing:2.4px!important;
+}
+#levelsScreen .levelCardWorkbook,
+#levelsScreen .levelCardWorkbook4b{min-height:112px!important}
+#levelsScreen .levelCardWorkbook .levelCardIcon,
+#levelsScreen .levelCardWorkbook4b .levelCardIcon{
+  width:54px!important;height:54px!important;flex-basis:54px!important;border-radius:16px!important;
+}
+#levelsScreen .levelCardWorkbook strong,
+#levelsScreen .levelCardWorkbook4b strong{font-size:18px!important}
+#levelsScreen .levelCardWorkbook .levelCardArrow,
+#levelsScreen .levelCardWorkbook4b .levelCardArrow{background:color-mix(in srgb,var(--blue) 6%,var(--surface))!important}
+
+/* ---- Package list: compact, readable, less pill-heavy ---- */
+#packagesScreen .packagePageHead{margin-bottom:18px!important}
+#packagesScreen .packagePageHead h2{letter-spacing:-1.5px!important}
+#packagesScreen .packageTools{margin-bottom:13px!important}
+#packagesScreen .packageSearchBox{
+  min-height:48px!important;height:48px!important;border-radius:14px!important;
+  padding:0 13px!important;
+}
+#packagesScreen .packageSearchBox> .ico{font-size:20px!important}
+#packagesScreen .packageSearchBox button .ico{display:none!important}
+#packagesScreen #packagesGrid{gap:10px!important}
+#packagesScreen .packageTile{
+  display:grid!important;
+  grid-template-columns:50px minmax(0,1fr) 36px!important;
+  grid-template-rows:auto auto auto!important;
+  column-gap:12px!important;
+  padding:14px 15px 13px!important;
+  border-radius:19px!important;
+  box-shadow:0 5px 16px color-mix(in srgb,var(--text) 5%,transparent)!important;
+}
+#packagesScreen .pkgTop{display:contents!important}
+#packagesScreen .tileIcon{
+  grid-column:1!important;grid-row:1 / span 2!important;
+  width:50px!important;height:50px!important;border-radius:15px!important;
+}
+#packagesScreen .tileIcon .ico{font-size:23px!important}
+#packagesScreen .statusPill{
+  grid-column:2 / 4!important;grid-row:1!important;
+  justify-self:end!important;align-self:start!important;
+  padding:2px 0!important;
+  background:transparent!important;border:0!important;box-shadow:none!important;
+  font-size:9px!important;font-weight:650!important;color:var(--muted)!important;
+}
+#packagesScreen .statusPill::before{
+  content:"";display:inline-block;width:5px;height:5px;border-radius:50%;margin:0 5px 1px 0;
+  background:var(--accent)!important;vertical-align:middle;
+}
+#packagesScreen .pkgTitleRow{display:contents!important}
+#packagesScreen .pkgTitleRow>div{grid-column:2!important;grid-row:2!important;min-width:0!important}
+#packagesScreen .pkgTitleRow b{font-size:18px!important;line-height:1.15!important;letter-spacing:-.4px!important}
+#packagesScreen .pkgTitleRow small{font-size:10.5px!important;line-height:1.3!important;margin-top:4px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+#packagesScreen .pkgArrow{
+  grid-column:3!important;grid-row:2!important;align-self:center!important;
+  width:34px!important;height:34px!important;flex-basis:34px!important;
+  border-radius:50%!important;
+  background:color-mix(in srgb,var(--accent) 5%,var(--surface))!important;
+  border-color:color-mix(in srgb,var(--accent) 14%,var(--line))!important;
+}
+#packagesScreen .packageTile .progressWrap{grid-column:1 / -1!important;grid-row:3!important;margin-top:11px!important}
+#packagesScreen .packageTile .progressMeta{font-size:9.5px!important}
+#packagesScreen .packageTile .progressBar{height:5px!important;margin-top:5px!important}
+#packagesScreen .pkgFooter{display:none!important}
+
+/* Make the fixed bottom navigation non-obstructive: content can scroll fully above it. */
+@media(max-width:760px){
+  #levelsScreen,#packagesScreen{scroll-margin-bottom:120px!important;padding-bottom:150px!important}
+  #levelsScreen .levelGrid{gap:10px!important}
+  #levelsScreen .levelCard{min-height:112px!important;padding:16px 17px!important;border-radius:19px!important}
+  #levelsScreen .levelCardIcon{width:52px!important;height:52px!important;flex-basis:52px!important;border-radius:16px!important;font-size:24px!important}
+  #levelsScreen .levelCardBody strong{font-size:20px!important}
+  #levelsScreen .levelCardBody p{font-size:11.5px!important}
+  #levelsScreen .levelCardArrow{width:32px!important;height:32px!important;flex-basis:32px!important}
+  #levelsScreen .levelCardWorkbook,#levelsScreen .levelCardWorkbook4b{min-height:106px!important}
+  #levelsScreen .levelCardWorkbook .levelCardIcon,#levelsScreen .levelCardWorkbook4b .levelCardIcon{width:52px!important;height:52px!important;flex-basis:52px!important}
+  #packagesScreen .packageTile{grid-template-columns:48px minmax(0,1fr) 35px!important;column-gap:11px!important;padding:13px 14px 12px!important}
+  #packagesScreen .tileIcon{width:48px!important;height:48px!important}
+  #packagesScreen .pkgTitleRow b{font-size:17px!important}
+  #packagesScreen .pkgTitleRow small{font-size:10px!important}
+  #packagesScreen .statusPill{font-size:8.5px!important}
+  #packagesScreen .packageTile .progressWrap{margin-top:10px!important}
+}
+body.dark #levelsScreen .levelCard4{border-color:color-mix(in srgb,var(--blue) 28%,var(--line))!important;box-shadow:0 8px 22px color-mix(in srgb,var(--blue) 10%,transparent)!important}
+</style>
 </head><body><div id="appBootLoader" role="status" aria-live="polite"><div class="bootCard"><div class="bootMark" aria-hidden="true">e</div><div class="bootTitle">Menyiapkan Latihan HSK</div><div class="bootText">Memuat materi dan progres belajar…</div><div class="bootDots" aria-hidden="true"><i></i><i></i><i></i></div></div></div>
 <section id="authScreen" class="authScreen" aria-label="Login Latihan HSK by Kelas E">
   <div class="authCard">
@@ -4794,135 +4924,884 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   const originalOpenStudyPlan=openStudyPlan;
   window.openStudyPlan=function(id,push=true){studyPlanDetailId=id;route={screen:'studyPlanDetail',packageCode:null,type:null,sectionIndex:null,studyPlanId:id};renderStudyPlanDetail();setScreen('studyPlanDetail',push);window.scrollTo({top:0,left:0,behavior:'auto'})};
 })();
-</script></body></html>
+</script>
+<script id="masterReliabilityFix2026">
+(function(){
+  'use strict';
 
-<style id="uiCriticPass2026">
-/* UI CRITIC PASS 2026 — visual-only refinement for Levels + Package List. */
+  /* ============================================================
+     MASTER RELIABILITY LAYER
+     One source of truth for material navigation, package lists,
+     study-plan picker, navigation/back behavior and scores.
+     It intentionally sits last so older patches cannot overwrite
+     these critical interactions.
+     ============================================================ */
 
-/* ---- Level landing: stronger hierarchy, less "card wall" ---- */
-#levelsScreen .levelLandingHead{margin-bottom:22px!important}
-#levelsScreen .levelLandingHead h2{letter-spacing:-1.8px!important}
-#levelsScreen .levelLandingHead .sub{max-width:520px!important}
-#levelsScreen .levelGrid{gap:12px!important}
-#levelsScreen .levelCard{
-  min-height:118px!important;
-  padding:18px 19px!important;
-  border-radius:20px!important;
-  background:color-mix(in srgb,var(--surface) 90%,transparent)!important;
-  border-color:color-mix(in srgb,var(--text) 8%,var(--line))!important;
-  box-shadow:0 5px 16px color-mix(in srgb,var(--text) 5%,transparent)!important;
-}
-#levelsScreen .levelCard4{
-  border-color:color-mix(in srgb,var(--blue) 20%,var(--line))!important;
-  box-shadow:0 7px 20px color-mix(in srgb,var(--blue) 8%,transparent)!important;
-}
-#levelsScreen .levelCard5{opacity:.58!important}
-#levelsScreen .levelCard:hover{transform:translateY(-1px)!important}
-#levelsScreen .levelCardIcon{
-  width:56px!important;height:56px!important;flex-basis:56px!important;
-  border-radius:17px!important;font-size:26px!important;
-}
-#levelsScreen .levelCardBody{gap:1px!important}
-#levelsScreen .levelEyebrow{font-size:9px!important;letter-spacing:.19em!important}
-#levelsScreen .levelCardBody strong{font-size:21px!important;line-height:1.15!important}
-#levelsScreen .levelCardBody p{font-size:12px!important;line-height:1.35!important;margin-top:3px!important}
-#levelsScreen .levelCardArrow{
-  width:32px!important;height:32px!important;flex-basis:32px!important;
-  border-radius:50%!important;
-  background:color-mix(in srgb,var(--blue) 7%,var(--surface))!important;
-  color:var(--blue)!important;
-}
-#levelsScreen .levelCard5 .levelCardArrow{color:var(--muted)!important;background:color-mix(in srgb,var(--text) 4%,var(--surface))!important}
+  const MASTER = window.__masterReliabilityFix = window.__masterReliabilityFix || {};
+  const has = id => document.getElementById(id);
 
-/* Workbook divider: quieter and more editorial. */
-#levelsScreen .levelGrid:has(.levelCardWorkbook)::before{
-  margin:12px 0 0!important;
-  padding-top:9px!important;
-  border-top-color:color-mix(in srgb,var(--text) 11%,var(--line))!important;
-  font-size:9px!important;
-  letter-spacing:2.4px!important;
-}
-#levelsScreen .levelCardWorkbook,
-#levelsScreen .levelCardWorkbook4b{min-height:112px!important}
-#levelsScreen .levelCardWorkbook .levelCardIcon,
-#levelsScreen .levelCardWorkbook4b .levelCardIcon{
-  width:54px!important;height:54px!important;flex-basis:54px!important;border-radius:16px!important;
-}
-#levelsScreen .levelCardWorkbook strong,
-#levelsScreen .levelCardWorkbook4b strong{font-size:18px!important}
-#levelsScreen .levelCardWorkbook .levelCardArrow,
-#levelsScreen .levelCardWorkbook4b .levelCardArrow{background:color-mix(in srgb,var(--blue) 6%,var(--surface))!important}
+  function escHtml(v){
+    if(typeof esc === 'function') return esc(String(v ?? ''));
+    return String(v ?? '').replace(/[&<>"']/g,c=>({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[c]));
+  }
 
-/* ---- Package list: compact, readable, less pill-heavy ---- */
-#packagesScreen .packagePageHead{margin-bottom:18px!important}
-#packagesScreen .packagePageHead h2{letter-spacing:-1.5px!important}
-#packagesScreen .packageTools{margin-bottom:13px!important}
-#packagesScreen .packageSearchBox{
-  min-height:48px!important;height:48px!important;border-radius:14px!important;
-  padding:0 13px!important;
-}
-#packagesScreen .packageSearchBox> .ico{font-size:20px!important}
-#packagesScreen .packageSearchBox button .ico{display:none!important}
-#packagesScreen #packagesGrid{gap:10px!important}
-#packagesScreen .packageTile{
-  display:grid!important;
-  grid-template-columns:50px minmax(0,1fr) 36px!important;
-  grid-template-rows:auto auto auto!important;
-  column-gap:12px!important;
-  padding:14px 15px 13px!important;
-  border-radius:19px!important;
-  box-shadow:0 5px 16px color-mix(in srgb,var(--text) 5%,transparent)!important;
-}
-#packagesScreen .pkgTop{display:contents!important}
-#packagesScreen .tileIcon{
-  grid-column:1!important;grid-row:1 / span 2!important;
-  width:50px!important;height:50px!important;border-radius:15px!important;
-}
-#packagesScreen .tileIcon .ico{font-size:23px!important}
-#packagesScreen .statusPill{
-  grid-column:2 / 4!important;grid-row:1!important;
-  justify-self:end!important;align-self:start!important;
-  padding:2px 0!important;
-  background:transparent!important;border:0!important;box-shadow:none!important;
-  font-size:9px!important;font-weight:650!important;color:var(--muted)!important;
-}
-#packagesScreen .statusPill::before{
-  content:"";display:inline-block;width:5px;height:5px;border-radius:50%;margin:0 5px 1px 0;
-  background:var(--accent)!important;vertical-align:middle;
-}
-#packagesScreen .pkgTitleRow{display:contents!important}
-#packagesScreen .pkgTitleRow>div{grid-column:2!important;grid-row:2!important;min-width:0!important}
-#packagesScreen .pkgTitleRow b{font-size:18px!important;line-height:1.15!important;letter-spacing:-.4px!important}
-#packagesScreen .pkgTitleRow small{font-size:10.5px!important;line-height:1.3!important;margin-top:4px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
-#packagesScreen .pkgArrow{
-  grid-column:3!important;grid-row:2!important;align-self:center!important;
-  width:34px!important;height:34px!important;flex-basis:34px!important;
-  border-radius:50%!important;
-  background:color-mix(in srgb,var(--accent) 5%,var(--surface))!important;
-  border-color:color-mix(in srgb,var(--accent) 14%,var(--line))!important;
-}
-#packagesScreen .packageTile .progressWrap{grid-column:1 / -1!important;grid-row:3!important;margin-top:11px!important}
-#packagesScreen .packageTile .progressMeta{font-size:9.5px!important}
-#packagesScreen .packageTile .progressBar{height:5px!important;margin-top:5px!important}
-#packagesScreen .pkgFooter{display:none!important}
+  function regularLevel(code){
+    const m=String(code||'').trim().match(/^H(\d+)\d{4}[A-Za-z]?$/i);
+    return m ? Number(m[1]) : null;
+  }
 
-/* Make the fixed bottom navigation non-obstructive: content can scroll fully above it. */
-@media(max-width:760px){
-  #levelsScreen,#packagesScreen{scroll-margin-bottom:120px!important;padding-bottom:150px!important}
-  #levelsScreen .levelGrid{gap:10px!important}
-  #levelsScreen .levelCard{min-height:112px!important;padding:16px 17px!important;border-radius:19px!important}
-  #levelsScreen .levelCardIcon{width:52px!important;height:52px!important;flex-basis:52px!important;border-radius:16px!important;font-size:24px!important}
-  #levelsScreen .levelCardBody strong{font-size:20px!important}
-  #levelsScreen .levelCardBody p{font-size:11.5px!important}
-  #levelsScreen .levelCardArrow{width:32px!important;height:32px!important;flex-basis:32px!important}
-  #levelsScreen .levelCardWorkbook,#levelsScreen .levelCardWorkbook4b{min-height:106px!important}
-  #levelsScreen .levelCardWorkbook .levelCardIcon,#levelsScreen .levelCardWorkbook4b .levelCardIcon{width:52px!important;height:52px!important;flex-basis:52px!important}
-  #packagesScreen .packageTile{grid-template-columns:48px minmax(0,1fr) 35px!important;column-gap:11px!important;padding:13px 14px 12px!important}
-  #packagesScreen .tileIcon{width:48px!important;height:48px!important}
-  #packagesScreen .pkgTitleRow b{font-size:17px!important}
-  #packagesScreen .pkgTitleRow small{font-size:10px!important}
-  #packagesScreen .statusPill{font-size:8.5px!important}
-  #packagesScreen .packageTile .progressWrap{margin-top:10px!important}
-}
-body.dark #levelsScreen .levelCard4{border-color:color-mix(in srgb,var(--blue) 28%,var(--line))!important;box-shadow:0 8px 22px color-mix(in srgb,var(--blue) 10%,transparent)!important}
-</style>
+  function workbookFamily(code){
+    const m=String(code||'').trim().match(/^WB(\d+)([A-Za-z]+)\d+$/i);
+    if(!m) return null;
+    return {
+      key:'WB'+m[1]+m[2].toUpperCase(),
+      level:Number(m[1]),
+      suffix:m[2].toLowerCase(),
+      label:'Workbook HSK'+m[1]+m[2].toLowerCase()
+    };
+  }
+
+  function materialCatalog(){
+    const dbCodes=(typeof DB!=='undefined' && DB) ? Object.keys(DB) : [];
+    const hsk=new Map();
+    const wb=new Map();
+
+    dbCodes.forEach(code=>{
+      const level=regularLevel(code);
+      if(level!==null){
+        if(!hsk.has(level)) hsk.set(level,[]);
+        hsk.get(level).push(code);
+        return;
+      }
+      const family=workbookFamily(code);
+      if(family){
+        if(!wb.has(family.key)) wb.set(family.key,{...family,codes:[]});
+        wb.get(family.key).codes.push(code);
+      }
+    });
+
+    hsk.forEach(v=>v.sort());
+    wb.forEach(v=>v.codes.sort((a,b)=>{
+      const na=Number((a.match(/\d+$/)||['0'])[0]);
+      const nb=Number((b.match(/\d+$/)||['0'])[0]);
+      return na-nb || a.localeCompare(b);
+    }));
+
+    return {
+      hsk:[...hsk.entries()].sort((a,b)=>a[0]-b[0]).map(([level,codes])=>({
+        kind:'hsk',key:'hsk:'+level,level,label:'HSK '+level,codes
+      })),
+      workbook:[...wb.values()].sort((a,b)=>
+        a.level-b.level || a.suffix.localeCompare(b.suffix)
+      ).map(x=>({kind:'workbook',key:'wb:'+x.key,label:x.label,codes:x.codes}))
+    };
+  }
+
+  function allMaterials(){
+    const c=materialCatalog();
+    return [...c.hsk,...c.workbook];
+  }
+
+  function materialForKey(key){
+    return allMaterials().find(m=>m.key===key) || null;
+  }
+
+  function defaultMaterialKey(){
+    const all=allMaterials();
+    return all.find(m=>m.key==='hsk:4')?.key || all[0]?.key || 'hsk:4';
+  }
+
+  function codesForMaterial(key){
+    return materialForKey(key)?.codes.slice() || [];
+  }
+
+  function packageDescription(code){
+    const d=DB[code]||{};
+    const total=packageStats(code)?.total||0;
+    const parts=Object.entries(META||{})
+      .filter(([t])=>(d[t]||[]).length>0)
+      .map(([t,m])=>m.label);
+    if(parts.length) return `${total} soal · ${parts.join(' · ')}`;
+    return 'Belum ada soal interaktif';
+  }
+
+  function packageStatus(code){
+    const st=packageStats(code),pct=st.pct||0;
+    return pct>=100?'Selesai':pct>0?'Sedang berjalan':'Belum dimulai';
+  }
+
+  /* ---------- Package / level navigation ---------- */
+
+  function renderLevelsScreenMaster(){
+    const grid=document.querySelector('#levelsScreen .levelGrid');
+    if(!grid) return;
+
+    const all=allMaterials();
+    if(!all.length){
+      grid.innerHTML='<div class="notice"><strong>Belum ada materi.</strong><br>Belum ada paket latihan yang tersedia.</div>';
+      return;
+    }
+
+    grid.innerHTML=all.map((m,idx)=>{
+      const isHsk=m.kind==='hsk';
+      const label=isHsk?m.label:m.label;
+      const count=m.codes.length;
+      const icon=isHsk?String(m.level):'WB';
+      const desc=isHsk
+        ? `${count} paket latihan tersedia`
+        : `${count} lesson tersedia`;
+      const cls=isHsk && m.level===4?'levelCard4':'levelCardWorkbook';
+      return `<button class="levelCard ${cls}" type="button"
+        data-material-key="${escHtml(m.key)}"
+        onclick="openLevelPackages('${escHtml(m.key)}')">
+        <div class="levelCardIcon">${icon}</div>
+        <div class="levelCardBody">
+          <span class="levelEyebrow">${isHsk?'HSK LEVEL':'WORKBOOK'}</span>
+          <strong>${escHtml(label)}</strong>
+          <p>${escHtml(desc)}</p>
+        </div>
+        <span class="levelCardArrow"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span></span>
+      </button>`;
+    }).join('');
+  }
+
+  window.openPackages=function(push=true){
+    const key=defaultMaterialKey();
+    selectedHSKLevel=key;
+    route={screen:'levels',packageCode:null,type:null,sectionIndex:null};
+    renderLevelsScreenMaster();
+    setScreen('levelsScreen',push);
+    window.scrollTo({top:0,left:0,behavior:'auto'});
+  };
+
+  window.openLevelPackages=function(level,push=true){
+    let key=String(level??'').trim();
+    if(!/^hsk:/i.test(key) && !/^wb:/i.test(key)){
+      if(/^wb4a$/i.test(key)) key='wb:WB4A';
+      else if(/^wb4b$/i.test(key)) key='wb:WB4B';
+      else if(/^\d+$/.test(key)) key='hsk:'+Number(key);
+    }
+    if(!materialForKey(key)) key=defaultMaterialKey();
+    selectedHSKLevel=key;
+    route={screen:'packages',packageCode:null,type:null,sectionIndex:null};
+    const input=has('packageSearchInput');
+    if(input) input.value='';
+    window.__masterPackagePage=0;
+    renderPackagesScreenMaster();
+    setScreen('packagesScreen',push);
+    window.scrollTo({top:0,left:0,behavior:'auto'});
+  };
+
+  window.renderLevelsScreen=renderLevelsScreenMaster;
+
+  function renderPackageTileMaster(code,idx){
+    const st=packageStats(code);
+    const total=st.total||0;
+    const pct=st.pct||0;
+    const palette=['blue','purple','orange','pink','green'][Math.max(0,idx)%5];
+    const status=packageStatus(code);
+    const d=DB[code]||{};
+    const title=d.title || ('Paket '+code);
+    return `<button class="tile packageTile packageTile-${palette}" type="button"
+      data-package-code="${escHtml(code)}"
+      onclick="openPackageFromTile('${escHtml(code)}')"
+      aria-label="Buka ${escHtml(title)}">
+      <div class="pkgTop">
+        <div class="tileIcon" aria-hidden="true">${typeof svg==='function'?svg('box'):''}</div>
+        <span class="statusPill">${escHtml(status)}</span>
+      </div>
+      <div class="pkgTitleRow">
+        <div>
+          <b>${escHtml(title)}</b>
+          <small>${escHtml(packageDescription(code))}</small>
+        </div>
+        <span class="pkgArrow"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span></span>
+      </div>
+      ${total?progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket'):''}
+      <div class="pkgFooter"><span>${materialForCodeLabel(code)}</span><span>${pct}%</span></div>
+    </button>`;
+  }
+
+  function materialForCodeLabel(code){
+    const level=regularLevel(code);
+    if(level!==null) return 'HSK '+level;
+    const wb=workbookFamily(code);
+    return wb?wb.label:'Materi';
+  }
+
+  window.renderPackageTile=renderPackageTileMaster;
+
+  window.filterPackages=function(value){
+    const input=has('packageSearchInput');
+    if(input && input.value!==String(value??'')) input.value=String(value??'');
+    window.__masterPackagePage=0;
+    renderPackagesScreenMaster();
+  };
+
+  window.clearPackageSearch=function(){
+    const input=has('packageSearchInput');
+    if(input) input.value='';
+    window.__masterPackagePage=0;
+    renderPackagesScreenMaster();
+    input?.focus();
+  };
+
+  function renderPackagesScreenMaster(){
+    const el=has('packagesGrid');
+    if(!el) return;
+
+    const key=String(selectedHSKLevel||defaultMaterialKey());
+    const material=materialForKey(key) || materialForKey(defaultMaterialKey());
+    if(!material) {
+      el.innerHTML='<div class="notice"><strong>Belum ada paket.</strong></div>';
+      return;
+    }
+
+    selectedHSKLevel=material.key;
+
+    const head=has('packageLevelKicker');
+    const title=has('packagePageTitle');
+    const sub=has('packagePageSub');
+    const panel=has('hsk5Panel');
+    if(panel) panel.hidden=true;
+
+    const isHsk=material.kind==='hsk';
+    if(head) head.textContent=material.label;
+    if(title) title.textContent=isHsk?'Pilih paket':'Pilih lesson';
+    if(sub) sub.textContent=isHsk
+      ? `${material.codes.length} paket latihan tersedia.`
+      : `${material.codes.length} lesson tersedia.`;
+
+    const input=has('packageSearchInput');
+    const q=String(input?.value||'').trim().toLowerCase();
+    const codes=material.codes.filter(code=>{
+      if(!q) return true;
+      const d=DB[code]||{};
+      return code.toLowerCase().includes(q)
+        || String(d.title||'').toLowerCase().includes(q)
+        || String(d.meta?.lessonTitle||'').toLowerCase().includes(q);
+    });
+
+    document.querySelectorAll('.packagePager').forEach(x=>x.remove());
+
+    if(!codes.length){
+      el.innerHTML=`<div class="emptySearch"><strong>Paket tidak ditemukan</strong><span>Coba cari nama atau kode paket.</span></div>`;
+      return;
+    }
+
+    /* Deliberately render every available package. No hidden pages. */
+    el.innerHTML=codes.map((code,i)=>renderPackageTileMaster(code,i)).join('');
+  }
+
+  window.renderPackagesScreen=renderPackagesScreenMaster;
+
+  /* ---------- Scores: only available materials ---------- */
+
+  function renderScoresMaster(){
+    const el=has('scoresGrid');
+    if(!el) return;
+    const all=allMaterials();
+    if(!all.length){
+      el.className='levelGrid scoreLevelGrid';
+      el.innerHTML='<div class="notice">Belum ada materi yang bisa dinilai.</div>';
+      return;
+    }
+    el.className='levelGrid scoreLevelGrid';
+    el.innerHTML=all.map(m=>{
+      const isHsk=m.kind==='hsk';
+      return `<button class="levelCard ${isHsk&&m.level===4?'levelCard4':'levelCardWorkbook'} scoreLevelCard"
+        type="button" onclick="openScoreLevel('${escHtml(m.key)}')">
+        <div class="levelCardIcon">${isHsk?m.level:'WB'}</div>
+        <div class="levelCardBody">
+          <span class="levelEyebrow">${isHsk?'HSK LEVEL':'WORKBOOK'}</span>
+          <strong>${escHtml(m.label)}</strong>
+          <p>${m.codes.length} ${isHsk?'paket':'lesson'} tersedia</p>
+        </div>
+        <span class="levelCardArrow"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span></span>
+      </button>`;
+    }).join('');
+  }
+
+  window.renderScores=renderScoresMaster;
+
+  window.openScoreLevel=function(key){
+    let material=materialForKey(String(key??''));
+    if(!material){
+      const n=Number(key);
+      material=materialForKey('hsk:'+n);
+    }
+    if(!material){renderScoresMaster();return;}
+
+    const el=has('scoresGrid');
+    if(!el)return;
+    el.className='grid scorePackagesGrid';
+    const cards=material.codes.map((code,idx)=>{
+      const st=packageStats(code);
+      const score=st.gradedTotal?st.scorePct:0;
+      const status=st.answered===0?'Belum dikerjakan':st.answered>=st.total?'Selesai':'Sedang berjalan';
+      const accent=['blue','purple','orange','pink','green'][idx%5];
+      return `<button class="tile packageTile packageTile-${accent}" type="button"
+        onclick="showPackageScore('${escHtml(code)}')">
+        <div class="pkgTop"><div class="tileIcon" aria-hidden="true">${typeof svg==='function'?svg('chart'):''}</div><span class="statusPill">${status}</span></div>
+        <div class="pkgTitleRow"><div><b>${escHtml(DB[code]?.title||('Paket '+code))}</b><small>${st.score}/${st.gradedTotal||0} benar · ${st.answered}/${st.total} terjawab</small></div><span class="pkgArrow">${score}%</span></div>
+        ${progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres pengerjaan')}
+        <div class="pkgFooter"><span>${escHtml(material.label)}</span><span>${score}%</span></div>
+      </button>`;
+    }).join('');
+    el.innerHTML=`<div class="scoreBackRow"><button class="btn" type="button" onclick="renderScores()">← Kembali ke materi</button></div>
+      <div class="scoreLevelTitle"><div class="sectionKicker">${escHtml(material.label)}</div><h3>Nilai ${escHtml(material.label)}</h3><p>Pilih paket untuk melihat rincian nilainya.</p></div>
+      ${cards||'<div class="notice">Belum ada paket latihan.</div>'}`;
+    window.scrollTo({top:0,left:0,behavior:'auto'});
+  };
+
+  /* ---------- Navigation ---------- */
+
+  window.renderNavState=function(){
+    const packageScreens=new Set(['levels','packages','package','parts','exercise','result']);
+    const planScreens=new Set(['studyPlans','studyPlanDetail']);
+    document.querySelectorAll('.mainNav .navItem').forEach(b=>{
+      const nav=b.dataset.nav;
+      b.classList.toggle('active',
+        nav==='home' && route.screen==='home' ||
+        nav==='packages' && packageScreens.has(route.screen) ||
+        nav==='studyPlans' && planScreens.has(route.screen)
+      );
+    });
+  };
+
+  window.backRoute=function(){
+    switch(route.screen){
+      case 'studyPlanDetail': return window.openStudyPlans(true);
+      case 'studyPlans': return window.goHome();
+      case 'levels': return window.goHome();
+      case 'packages': return window.openPackages(true);
+      case 'package': return window.openLevelPackages(selectedHSKLevel,true);
+      case 'parts': return window.openPackage(route.packageCode,true);
+      case 'result':
+        if(typeof window.returnToQuestions==='function') return window.returnToQuestions();
+        return window.openSections(route.packageCode,route.type,true);
+      case 'exercise':
+        return window.openSections(route.packageCode,route.type,true);
+      default:
+        return window.goHome();
+    }
+  };
+
+  /* ---------- Study plans ---------- */
+
+  const planState=MASTER.planState || {
+    mode:'plan',
+    planId:null,
+    code:null,
+    source:defaultMaterialKey(),
+    query:'',
+    pendingCode:null
+  };
+  MASTER.planState=planState;
+
+  function plansStoreMaster(){
+    try{
+      const s=readStore();
+      return Array.isArray(s._studyPlans)?s._studyPlans:[];
+    }catch(e){return []}
+  }
+
+  function savePlansMaster(plans){
+    const s=readStore();
+    s._studyPlans=plans;
+    writeStore(s);
+    scheduleCloudSync();
+  }
+
+  function getPlanMaster(id){
+    return plansStoreMaster().find(p=>String(p.id)===String(id))||null;
+  }
+
+  function planStatsMaster(p){
+    const codes=Array.isArray(p?.packageCodes)?p.packageCodes:[];
+    let done=0,answered=0,questions=0;
+    codes.forEach(code=>{
+      const st=packageStats(code);
+      answered+=st.answered||0;
+      questions+=st.total||0;
+      if(st.total && st.answered>=st.total) done++;
+    });
+    return {total:codes.length,done,answered,questions,pct:codes.length?Math.round(done/codes.length*100):0};
+  }
+
+  function materialOptionsMaster(){
+    const all=allMaterials();
+    return [
+      {value:'all',label:'Semua materi',codes:all.flatMap(m=>m.codes)},
+      ...all.map(m=>({value:m.key,label:m.label,codes:m.codes}))
+    ];
+  }
+
+  function sourceCodesMaster(source){
+    const opts=materialOptionsMaster();
+    return opts.find(o=>o.value===source)?.codes.slice() || [];
+  }
+
+  function sourceLabelMaster(source){
+    return materialOptionsMaster().find(o=>o.value===source)?.label || 'Semua materi';
+  }
+
+  function renderSourceOptionsMaster(){
+    const sel=has('studyPlanPickerSource');
+    if(!sel)return;
+    const opts=materialOptionsMaster();
+    const hsk=opts.filter(o=>o.value.startsWith('hsk:'));
+    const wb=opts.filter(o=>o.value.startsWith('wb:'));
+    let html='<option value="all">Semua materi</option>';
+    if(hsk.length) html+='<optgroup label="HSK">'+hsk.map(o=>`<option value="${escHtml(o.value)}">${escHtml(o.label)}</option>`).join('')+'</optgroup>';
+    if(wb.length) html+='<optgroup label="Workbook">'+wb.map(o=>`<option value="${escHtml(o.value)}">${escHtml(o.label)}</option>`).join('')+'</optgroup>';
+    sel.innerHTML=html;
+    if(!opts.some(o=>o.value===planState.source)){
+      planState.source=opts.find(o=>o.value===defaultMaterialKey())?.value || 'all';
+    }
+    sel.value=planState.source;
+  }
+
+  function renderStudyPlanPickerMaster(){
+    const modal=has('studyPlanPickerModal');
+    const list=has('studyPlanPickerList');
+    const input=has('studyPlanPickerSearchInput');
+    if(!list)return;
+
+    if(planState.mode==='package'){
+      if(has('studyPlanPickerSourceWrap')) has('studyPlanPickerSourceWrap').hidden=true;
+      if(has('studyPlanPickerPackage')) has('studyPlanPickerPackage').textContent='Pilih rencana untuk '+(DB[planState.code]?.title||('Paket '+planState.code));
+      if(input){
+        input.placeholder='Cari rencana...';
+        input.value=planState.query||'';
+      }
+      const q=String(planState.query||'').trim().toLowerCase();
+      const plans=plansStoreMaster().filter(p=>
+        !q || String(p.name||'').toLowerCase().includes(q) || String(p.description||'').toLowerCase().includes(q)
+      );
+      if(!plans.length){
+        list.innerHTML=`<div class="studyPlanPickerEmpty">${q?'Rencana yang kamu cari tidak ditemukan.':'Belum ada rencana. Buat rencana dari menu Rencana.'}</div>`;
+        return;
+      }
+      list.innerHTML=plans.map(p=>{
+        const hasCode=Array.isArray(p.packageCodes)&&p.packageCodes.includes(planState.code);
+        const st=planStatsMaster(p);
+        return `<button class="studyPlanPick ${hasCode?'isAdded':''}" type="button"
+          aria-pressed="${hasCode?'true':'false'}"
+          onclick="togglePackageInStudyPlan('${escHtml(p.id)}','${escHtml(planState.code)}')">
+          <div class="studyPlanPickIcon">☷</div>
+          <div class="studyPlanPickMain"><strong>${escHtml(p.name)}</strong><span>${st.total} paket · ${st.pct}% selesai</span></div>
+          <span class="studyPlanPickState">${hasCode?'✓ Ditambahkan':'＋ Tambahkan'}</span>
+        </button>`;
+      }).join('');
+      return;
+    }
+
+    if(has('studyPlanPickerSourceWrap')) has('studyPlanPickerSourceWrap').hidden=false;
+    renderSourceOptionsMaster();
+    if(has('studyPlanPickerPackage')) has('studyPlanPickerPackage').textContent='Pilih paket untuk ditambahkan ke '+(getPlanMaster(planState.planId)?.name||'rencana ini');
+    if(input){
+      input.placeholder='Cari paket...';
+      input.value=planState.query||'';
+    }
+
+    const q=String(planState.query||'').trim().toLowerCase();
+    const codes=sourceCodesMaster(planState.source).filter(code=>{
+      const d=DB[code]||{};
+      return !q || code.toLowerCase().includes(q)
+        || String(d.title||'').toLowerCase().includes(q)
+        || String(d.meta?.lessonTitle||'').toLowerCase().includes(q);
+    });
+
+    if(!codes.length){
+      list.innerHTML=`<div class="studyPlanPickerEmpty">${q?'Paket yang kamu cari tidak ditemukan.':`Belum ada paket tersedia untuk ${escHtml(sourceLabelMaster(planState.source))}.`}</div>`;
+      return;
+    }
+
+    const p=getPlanMaster(planState.planId);
+    list.innerHTML=codes.map(code=>{
+      const st=packageStats(code);
+      const d=DB[code]||{};
+      const hasCode=Array.isArray(p?.packageCodes)&&p.packageCodes.includes(code);
+      const title=d.title||('Paket '+code);
+      return `<button class="studyPlanPick ${hasCode?'isAdded':''}" type="button"
+        aria-pressed="${hasCode?'true':'false'}"
+        onclick="addPackageDirectlyToStudyPlan('${escHtml(p?.id||'')}','${escHtml(code)}')">
+        <div class="studyPlanPickIcon">☷</div>
+        <div class="studyPlanPickMain"><strong>${escHtml(title)}</strong><span>${st.answered}/${st.total} soal terjawab · ${st.pct||0}%</span></div>
+        <span class="studyPlanPickState">${hasCode?'✓ Ditambahkan':'＋ Tambahkan'}</span>
+      </button>`;
+    }).join('');
+  }
+
+  window.openStudyPlans=function(push=true){
+    route={screen:'studyPlans',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
+    planState.mode='plan';
+    planState.planId=null;
+    planState.code=null;
+    planState.query='';
+    window.renderStudyPlans();
+    setScreen('studyPlans',push);
+    window.scrollTo({top:0,left:0,behavior:'auto'});
+  };
+
+  window.renderStudyPlans=function(){
+    const el=has('studyPlansGrid');
+    if(!el)return;
+    const plans=plansStoreMaster();
+    if(!plans.length){
+      el.innerHTML='<div class="studyPlanEmpty"><strong>Belum ada rencana belajar</strong><span>Kumpulkan paket penting untuk membuat playlist latihanmu sendiri.</span><br><button class="btn primary" type="button" onclick="openStudyPlanCreator()">＋ Buat Rencana Baru</button></div>';
+      return;
+    }
+    el.innerHTML=plans.map(p=>{
+      const st=planStatsMaster(p);
+      return `<article class="studyPlanCard" onclick="openStudyPlan('${escHtml(p.id)}')">
+        <div class="studyPlanCardTop"><div class="studyPlanIcon">☷</div>
+          <button class="studyPlanMenu" type="button" onclick="event.stopPropagation();toggleStudyPlanMenu('${escHtml(p.id)}')" aria-label="Menu rencana">⋯</button>
+        </div>
+        <div class="studyPlanCardMenu" id="planMenu_${escHtml(p.id)}">
+          <button type="button" onclick="event.stopPropagation();openStudyPlanEdit('${escHtml(p.id)}')">Edit rencana</button>
+          <button type="button" onclick="event.stopPropagation();deleteStudyPlan('${escHtml(p.id)}')">Hapus rencana</button>
+        </div>
+        <h3>${escHtml(p.name)}</h3>
+        <div class="studyPlanDesc">${escHtml(p.description||'Belum ada deskripsi.')}</div>
+        <div class="studyPlanMeta"><span>${st.total} paket · ${st.done} selesai</span><span class="studyPlanPct">${st.pct}%</span></div>
+        <div class="studyPlanBar"><i style="width:${st.pct}%"></i></div>
+      </article>`;
+    }).join('');
+  };
+
+  window.openStudyPlan=function(id,push=true){
+    const p=getPlanMaster(id);
+    if(!p){window.openStudyPlans(push);return}
+    route={screen:'studyPlanDetail',packageCode:null,type:null,sectionIndex:null,studyPlanId:p.id};
+    planState.mode='plan';
+    planState.planId=p.id;
+    planState.code=null;
+    planState.query='';
+    window.renderStudyPlanDetail();
+    setScreen('studyPlanDetail',push);
+    window.scrollTo({top:0,left:0,behavior:'auto'});
+  };
+
+  window.renderStudyPlanDetail=function(){
+    const p=getPlanMaster(route.studyPlanId||planState.planId);
+    const head=has('studyPlanDetailHead'),list=has('studyPlanPackages');
+    if(!p||!head||!list){window.openStudyPlans(false);return}
+    planState.planId=p.id;
+    const st=planStatsMaster(p);
+    if(has('studyPlanDetailCrumb')) has('studyPlanDetailCrumb').textContent=p.name;
+    head.innerHTML=`<div class="studyPlanDetailTop"><div>
+      <div class="sectionKicker">RENCANA BELAJAR</div>
+      <div class="studyPlanDetailTitle">${escHtml(p.name)}</div>
+      <div class="studyPlanDetailDesc">${escHtml(p.description||'Susun paket sesuai target belajarmu.')}</div>
+      <div class="studyPlanContextBadge">${st.total} paket · ${st.done} selesai · ${st.pct}%</div>
+    </div><div class="studyPlanDetailActions">
+      <button class="btn" type="button" onclick="openStudyPlanAddPicker('${escHtml(p.id)}')">＋ Tambah paket</button>
+      <button class="btn" type="button" onclick="openStudyPlanEdit('${escHtml(p.id)}')">✎ Edit</button>
+      <button class="btn primary" type="button" onclick="continueStudyPlan('${escHtml(p.id)}')">▶ Lanjutkan</button>
+    </div></div><div class="studyPlanBar" style="margin-top:19px"><i style="width:${st.pct}%"></i></div>`;
+
+    const codes=Array.isArray(p.packageCodes)?p.packageCodes:[];
+    if(!codes.length){
+      list.innerHTML=`<div class="studyPlanAddHint">Belum ada paket di rencana ini.</div>
+        <button type="button" class="studyPlanAddHint studyPlanAddButton" onclick="openStudyPlanAddPicker('${escHtml(p.id)}')">＋ Tambahkan paket ke rencana ini</button>`;
+      return;
+    }
+
+    list.innerHTML=codes.map((code,i)=>{
+      const x=packageStats(code);
+      const status=x.total&&x.answered>=x.total?'Selesai':x.answered?'Sedang berjalan':'Belum dimulai';
+      return `<div class="studyPlanPackage" role="button" tabindex="0"
+        onclick="openPackage('${escHtml(code)}')"
+        onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openPackage('${escHtml(code)}')}">
+        <div class="studyPlanPackageNum">${String(i+1).padStart(2,'0')}</div>
+        <div class="studyPlanPackageMain"><strong>${escHtml(DB[code]?.title||('Paket '+code))}</strong><span>${x.answered}/${x.total} soal terjawab · ${status}</span></div>
+        <span class="studyPlanPackagePct">${x.pct||0}%</span>
+        <div class="studyPlanPackageActions">
+          <button type="button" onclick="event.stopPropagation();openPackage('${escHtml(code)}')" title="Buka paket">→</button>
+          <button type="button" onclick="event.stopPropagation();removePackageFromStudyPlan('${escHtml(p.id)}','${escHtml(code)}')" title="Hapus dari rencana">×</button>
+        </div>
+      </div>`;
+    }).join('')+`<button type="button" class="studyPlanAddHint studyPlanAddButton" onclick="openStudyPlanAddPicker('${escHtml(p.id)}')">＋ Tambahkan paket ke rencana ini</button>`;
+  };
+
+  window.openStudyPlanAddPicker=function(planId){
+    const p=getPlanMaster(planId);
+    if(!p)return;
+    planState.mode='plan';
+    planState.planId=p.id;
+    planState.code=null;
+    planState.query='';
+    planState.source=materialForKey(defaultMaterialKey())?.key||'all';
+    renderStudyPlanPickerMaster();
+    const modal=has('studyPlanPickerModal');
+    if(modal){modal.classList.add('show');modal.setAttribute('aria-hidden','false');}
+  };
+
+  window.openStudyPlanPicker=function(code){
+    if(!DB[code])return;
+    planState.mode='package';
+    planState.code=code;
+    planState.planId=null;
+    planState.query='';
+    renderStudyPlanPickerMaster();
+    const modal=has('studyPlanPickerModal');
+    if(modal){modal.classList.add('show');modal.setAttribute('aria-hidden','false');}
+  };
+
+  window.renderStudyPlanPicker=renderStudyPlanPickerMaster;
+  window.renderStudyPlanAddPicker=renderStudyPlanPickerMaster;
+
+  window.selectStudyPlanPickerSource=function(source){
+    const opts=materialOptionsMaster();
+    const value=String(source||'all');
+    planState.source=opts.some(o=>o.value===value)?value:'all';
+    planState.query='';
+    renderStudyPlanPickerMaster();
+  };
+
+  window.filterStudyPlanPicker=function(value){
+    planState.query=String(value||'');
+    renderStudyPlanPickerMaster();
+  };
+
+  window.addPackageDirectlyToStudyPlan=function(id,code){
+    const p=getPlanMaster(id);
+    if(!p||!DB[code])return;
+    if(!Array.isArray(p.packageCodes))p.packageCodes=[];
+    const exists=p.packageCodes.includes(code);
+    p.packageCodes=exists?p.packageCodes.filter(x=>x!==code):[...p.packageCodes,code];
+    p.updatedAt=Date.now();
+    savePlansMaster(plansStoreMaster());
+    renderStudyPlanPickerMaster();
+    window.renderStudyPlans();
+    if(route.screen==='studyPlanDetail' && String(route.studyPlanId)===String(id)) window.renderStudyPlanDetail();
+  };
+
+  window.togglePackageInStudyPlan=function(id,code){
+    window.addPackageDirectlyToStudyPlan(id,code);
+  };
+
+  window.closeStudyPlanPicker=function(){
+    const modal=has('studyPlanPickerModal');
+    if(modal){modal.classList.remove('show');modal.setAttribute('aria-hidden','true');}
+    planState.mode='plan';
+    planState.planId=null;
+    planState.code=null;
+    planState.query='';
+  };
+
+  window.openStudyPlanCreator=function(){
+    planState.pendingCode=planState.mode==='package'?planState.code:null;
+    window.closeStudyPlanPicker();
+    const m=has('studyPlanCreatorModal');
+    if(!m)return;
+    if(has('studyPlanNameInput'))has('studyPlanNameInput').value='';
+    if(has('studyPlanDescInput'))has('studyPlanDescInput').value='';
+    if(has('studyPlanCreatorError'))has('studyPlanCreatorError').textContent='';
+    m.classList.add('show');m.setAttribute('aria-hidden','false');
+    setTimeout(()=>has('studyPlanNameInput')?.focus(),50);
+  };
+
+  window.closeStudyPlanCreator=function(){
+    const m=has('studyPlanCreatorModal');
+    if(m){m.classList.remove('show');m.setAttribute('aria-hidden','true');}
+  };
+
+  window.createStudyPlan=function(){
+    const name=String(has('studyPlanNameInput')?.value||'').trim();
+    const desc=String(has('studyPlanDescInput')?.value||'').trim();
+    const err=has('studyPlanCreatorError');
+    if(name.length<2){if(err)err.textContent='Nama rencana minimal 2 karakter.';return}
+    const plans=plansStoreMaster();
+    if(plans.some(p=>String(p.name||'').toLowerCase()===name.toLowerCase())){
+      if(err)err.textContent='Nama rencana tersebut sudah digunakan.';
+      return;
+    }
+    const p={id:'sp_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),name,description:desc,packageCodes:[],createdAt:Date.now(),updatedAt:Date.now()};
+    if(planState.pendingCode && DB[planState.pendingCode])p.packageCodes.push(planState.pendingCode);
+    plans.push(p);
+    savePlansMaster(plans);
+    planState.pendingCode=null;
+    window.closeStudyPlanCreator();
+    if(route.screen==='studyPlanDetail') window.renderStudyPlanDetail();
+    window.renderStudyPlans();
+  };
+
+  window.continueStudyPlan=function(id){
+    const p=getPlanMaster(id);
+    if(!p||!p.packageCodes?.length)return;
+    const target=p.packageCodes.find(code=>{
+      const st=packageStats(code);
+      return !st.total || st.answered<st.total;
+    })||p.packageCodes[0];
+    window.openPackage(target);
+  };
+
+  window.openStudyPlanEdit=function(id){
+    const p=getPlanMaster(id);if(!p)return;
+    MASTER.editId=id;
+    if(has('studyPlanEditName'))has('studyPlanEditName').value=p.name;
+    if(has('studyPlanEditDesc'))has('studyPlanEditDesc').value=p.description||'';
+    if(has('studyPlanEditError'))has('studyPlanEditError').textContent='';
+    const m=has('studyPlanEditModal');
+    if(m){m.classList.add('show');m.setAttribute('aria-hidden','false');}
+    setTimeout(()=>has('studyPlanEditName')?.focus(),50);
+  };
+
+  window.closeStudyPlanEdit=function(){
+    const m=has('studyPlanEditModal');
+    if(m){m.classList.remove('show');m.setAttribute('aria-hidden','true');}
+    MASTER.editId=null;
+  };
+
+  window.saveStudyPlanEdit=function(){
+    const id=MASTER.editId;
+    const p=getPlanMaster(id);if(!p)return;
+    const name=String(has('studyPlanEditName')?.value||'').trim();
+    const desc=String(has('studyPlanEditDesc')?.value||'').trim();
+    const err=has('studyPlanEditError');
+    if(name.length<2){if(err)err.textContent='Nama rencana minimal 2 karakter.';return}
+    const plans=plansStoreMaster();
+    if(plans.some(x=>String(x.id)!==String(id)&&String(x.name||'').toLowerCase()===name.toLowerCase())){
+      if(err)err.textContent='Nama rencana tersebut sudah digunakan.';return;
+    }
+    p.name=name;p.description=desc;p.updatedAt=Date.now();
+    savePlansMaster(plans);
+    window.closeStudyPlanEdit();
+    window.renderStudyPlans();
+    if(route.screen==='studyPlanDetail')window.renderStudyPlanDetail();
+  };
+
+  window.deleteStudyPlan=function(id){
+    const p=getPlanMaster(id);if(!p)return;
+    if(!confirm('Hapus rencana “'+p.name+'”? Paket dan progresnya tetap aman.'))return;
+    savePlansMaster(plansStoreMaster().filter(x=>String(x.id)!==String(id)));
+    if(route.screen==='studyPlanDetail'&&String(route.studyPlanId)===String(id))window.openStudyPlans(true);
+    else window.renderStudyPlans();
+  };
+
+  window.removePackageFromStudyPlan=function(id,code){
+    const p=getPlanMaster(id);if(!p)return;
+    p.packageCodes=(p.packageCodes||[]).filter(x=>x!==code);
+    p.updatedAt=Date.now();
+    savePlansMaster(plansStoreMaster());
+    if(route.screen==='studyPlanDetail'&&String(route.studyPlanId)===String(id))window.renderStudyPlanDetail();
+    window.renderStudyPlans();
+  };
+
+  window.toggleStudyPlanMenu=function(id){
+    const target=has('planMenu_'+id);if(!target)return;
+    const was=target.classList.contains('show');
+    document.querySelectorAll('.studyPlanCardMenu.show').forEach(x=>x.classList.remove('show'));
+    if(!was)target.classList.add('show');
+  };
+
+  /* ---------- History restore ---------- */
+
+  window.restore=function(s){
+    const st=s||{};
+    route={
+      screen:st.screen||'home',
+      packageCode:st.packageCode||null,
+      type:st.type||null,
+      sectionIndex:st.sectionIndex??null,
+      studyPlanId:st.studyPlanId||null
+    };
+    if(route.screen==='home'){renderHome();setScreen('home',false);return}
+    if(route.screen==='levels'){renderLevelsScreenMaster();setScreen('levelsScreen',false);return}
+    if(route.screen==='packages'){renderPackagesScreenMaster();setScreen('packagesScreen',false);return}
+    if(route.screen==='scores'){renderScoresMaster();setScreen('scores',false);return}
+    if(route.screen==='package'){renderPackage();setScreen('package',false);return}
+    if(route.screen==='parts'){renderSections();setScreen('partsScreen',false);return}
+    if(route.screen==='exercise'){loadCurrentSectionState();renderExercise();setScreen('exercise',false);return}
+    if(route.screen==='result'){renderResult();setScreen('result',false);return}
+    if(route.screen==='studyPlans'){renderStudyPlans();setScreen('studyPlans',false);return}
+    if(route.screen==='studyPlanDetail'){renderStudyPlanDetail();setScreen('studyPlanDetail',false);return}
+    window.goHome(false);
+  };
+
+  /* ---------- Long press package -> plan picker ---------- */
+
+  window.openPackageFromTile=function(code){
+    if(Date.now() < Number(MASTER.suppressPackageClickUntil||0)){
+      MASTER.suppressPackageClickUntil=0;
+      return;
+    }
+    if(DB[code]) window.openPackage(code);
+  };
+
+  MASTER.longPressTimer=null;
+  MASTER.longX=0;MASTER.longY=0;
+  MASTER.suppressPackageClickUntil=0;
+
+  function cancelLongPress(){
+    if(MASTER.longPressTimer){clearTimeout(MASTER.longPressTimer);MASTER.longPressTimer=null;}
+  }
+  document.addEventListener('pointerdown',e=>{
+    const tile=e.target.closest?.('#packagesScreen .packageTile[data-package-code]');
+    if(!tile || e.pointerType==='mouse')return;
+    MASTER.longX=e.clientX;MASTER.longY=e.clientY;
+    cancelLongPress();
+    const code=tile.dataset.packageCode;
+    MASTER.longPressTimer=setTimeout(()=>{
+      MASTER.longPressTimer=null;
+      MASTER.suppressPackageClickUntil=Date.now()+900;
+      window.openStudyPlanPicker(code);
+    },650);
+  },{passive:true});
+  document.addEventListener('pointermove',e=>{
+    if(!MASTER.longPressTimer)return;
+    if(Math.hypot(e.clientX-MASTER.longX,e.clientY-MASTER.longY)>14)cancelLongPress();
+  },{passive:true});
+  document.addEventListener('pointerup',cancelLongPress,{passive:true});
+  document.addEventListener('pointercancel',cancelLongPress,{passive:true});
+
+  /* ---------- Make picker selection / close behavior deterministic ---------- */
+
+  document.addEventListener('click',e=>{
+    const modal=e.target.closest?.('#studyPlanPickerModal');
+    if(!modal)return;
+    if(e.target===modal){
+      window.closeStudyPlanPicker();
+    }
+  });
+
+  /* Re-render source/list when cloud progress refreshes without breaking UI. */
+  const oldPullForMaster=window.pullCloudState;
+  if(typeof oldPullForMaster==='function' && !MASTER.pullWrapped){
+    MASTER.pullWrapped=true;
+    window.pullCloudState=async function(force=false){
+      const result=await oldPullForMaster(force);
+      try{
+        if(route.screen==='packages')renderPackagesScreenMaster();
+        if(route.screen==='studyPlans')window.renderStudyPlans();
+        if(route.screen==='studyPlanDetail')window.renderStudyPlanDetail();
+        if(route.screen==='home')renderHome();
+      }catch(e){}
+      return result;
+    };
+  }
+
+  /* Initial normalization after all previous patches/data integrations. */
+  try{
+    renderLevelsScreenMaster();
+    if(route.screen==='packages')renderPackagesScreenMaster();
+    else if(route.screen==='studyPlans')window.renderStudyPlans();
+    else if(route.screen==='studyPlanDetail')window.renderStudyPlanDetail();
+    renderScoresMaster();
+    window.renderNavState();
+  }catch(e){
+    console.warn('Master reliability initialization:',e);
+  }
+
+  MASTER.ready=true;
+})();
+</script>
+
+</body></html>
+
+
