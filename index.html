@@ -6304,6 +6304,220 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 })();
 </script>
 
+
+<script id="specialHSK4SequenceShortcuts">
+(function(){
+  'use strict';
+
+  const SPECIAL = {
+    SENTENCE: 'HSK4-SUSUN-KALIMAT',
+    WORD: 'HSK4-SUSUN-KATA'
+  };
+  const SPECIAL_CODES = [SPECIAL.SENTENCE, SPECIAL.WORD];
+
+  /* Build shortcut packages from the existing 25 regular HSK 4 packages.
+     No question text is duplicated in the source file: the arrays below are
+     assembled at runtime from the original DB entries. */
+  const regularHSK4Codes = Object.keys(DB).filter(code =>
+    /^H4\d/.test(code) && !code.startsWith('WB4')
+  );
+
+  function buildSentenceQuestions(){
+    let n=0;
+    const out=[];
+    for(const code of regularHSK4Codes){
+      const sec=DB[code]?.writing?.[0];
+      for(const q of (sec?.questions||[])){
+        if(!Array.isArray(q) || !String(q[1]??'').trim() || !String(q[2]??'').trim()) continue;
+        n++;
+        out.push([String(n),String(q[1]),String(q[2])]);
+      }
+    }
+    return out;
+  }
+
+  function buildWordQuestions(){
+    let n=0;
+    const out=[];
+    for(const code of regularHSK4Codes){
+      const sec=DB[code]?.reading?.[2];
+      for(const q of (sec?.questions||[])){
+        if(!Array.isArray(q) || !Array.isArray(q[2]) || q[2].length!==3) continue;
+        if(!/^[ABC]{3}$/.test(String(q[3]??''))) continue;
+        n++;
+        out.push([String(n),String(q[1]??'请排列下列句子的正确顺序。'),q[2].slice(),String(q[3])]);
+      }
+    }
+    return out;
+  }
+
+  const sentenceQuestions=buildSentenceQuestions();
+  const wordQuestions=buildWordQuestions();
+
+  Object.assign(DB,{
+    [SPECIAL.SENTENCE]:{
+      code:SPECIAL.SENTENCE,
+      title:'Kumpulan Soal Susun Kalimat HSK 4',
+      meta:{title:'Kumpulan Soal Susun Kalimat HSK 4',desc:'Semua soal susun kalimat dari 25 paket HSK 4 reguler.'},
+      writing:[{
+        title:'写作 · Susun Kalimat HSK 4',
+        range:`1–${sentenceQuestions.length}`,
+        questions:sentenceQuestions
+      }],
+      reading:[],listening:[]
+    },
+    [SPECIAL.WORD]:{
+      code:SPECIAL.WORD,
+      title:'Kumpulan Soal Susun Kata HSK 4',
+      meta:{title:'Kumpulan Soal Susun Kata HSK 4',desc:'Semua soal susun kata dari 25 paket HSK 4 reguler.'},
+      writing:[],listening:[],
+      reading:[{
+        title:'阅读 · Susun Kata HSK 4',
+        range:`1–${wordQuestions.length}`,
+        questions:wordQuestions
+      }]
+    }
+  });
+
+  /* Treat the shortcut reading section as a sequence question section. */
+  const baseSequenceReading=window.isSequenceReadingQuestion||isSequenceReadingQuestion;
+  window.isSequenceReadingQuestion=function(id){
+    if(route && (route.packageCode===SPECIAL.WORD || route.packageCode===SPECIAL.SENTENCE) && route.type==='reading') return true;
+    return baseSequenceReading(id);
+  };
+
+  /* Sequence keys in the original engine are permutations. */
+  const baseCorrectIndex=window.correctIndex||correctIndex;
+  window.correctIndex=function(q,type){
+    if(type==='reading' && route?.packageCode===SPECIAL.WORD){
+      return permutations().indexOf(String(q?.[3]??'').trim());
+    }
+    return baseCorrectIndex(q,type);
+  };
+
+  const baseInstructionFor=window.instructionFor||instructionFor;
+  window.instructionFor=function(type,idx){
+    if(route?.packageCode===SPECIAL.SENTENCE && type==='writing' && Number(idx)===0)
+      return 'Susun kata-kata menjadi kalimat Mandarin yang benar.';
+    if(route?.packageCode===SPECIAL.WORD && type==='reading' && Number(idx)===0)
+      return 'Susun bagian-bagian kalimat menjadi urutan yang benar dengan memilih kombinasi yang tepat.';
+    return baseInstructionFor(type,idx);
+  };
+
+  /* The existing exercise renderer already paginates 10 questions at a time.
+     Keep that behavior and make the shortcut sections start on page 1. */
+  const baseStartSection=window.startSection;
+  window.startSection=function(i,push=true){
+    window.__hskResumePage=0;
+    return baseStartSection(i,push);
+  };
+
+  /* Special cards in the HSK 4 package list. */
+  const baseRenderPackageTile=window.renderPackageTile;
+  window.renderPackageTile=function(code,idx){
+    if(code===SPECIAL.SENTENCE || code===SPECIAL.WORD){
+      const st=packageStats(code),total=st.total||0,pct=st.pct||0;
+      const status=pct>=100?'Selesai':pct>0?'Sedang berjalan':'Belum dimulai';
+      const title=DB[code].title;
+      const desc=code===SPECIAL.SENTENCE
+        ? `${total} soal · Writing · khusus susun kalimat`
+        : `${total} soal · Reading · khusus susun kata`;
+      return `<button class="tile packageTile sequenceShortcutTile sequenceShortcut-${code===SPECIAL.SENTENCE?'sentence':'word'}"
+        type="button" data-package-code="${esc(code)}" onclick="openPackage('${esc(code)}')">
+        <div class="pkgTop">
+          <div class="tileIcon" aria-hidden="true">${svg(code===SPECIAL.SENTENCE?'write':'read')}</div>
+          <span class="statusPill">${status}</span>
+        </div>
+        <div class="pkgTitleRow">
+          <div><b>${esc(title)}</b><small>${esc(desc)}</small></div>
+          <span class="pkgArrow"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span></span>
+        </div>
+        ${total?progressHTML({answered:st.answered,total,pct},'Progres shortcut'):''}
+        <div class="pkgFooter"><span>Shortcut belajar HSK 4</span><span>${pct}%</span></div>
+      </button>`;
+    }
+    return baseRenderPackageTile(code,idx);
+  };
+
+  const baseRenderPackagesScreen=window.renderPackagesScreen;
+  window.renderPackagesScreen=function(){
+    const el=$('packagesGrid');
+    if(!el)return;
+    const panel=$('hsk5Panel'),head=$('packageLevelKicker'),title=$('packagePageTitle'),sub=$('packagePageSub');
+    const is5=selectedHSKLevel===5;
+    el.hidden=is5;
+    if(panel)panel.hidden=!is5;
+    if(head)head.textContent=is5?'HSK 5':'HSK 4';
+    if(title)title.textContent=is5?'HSK 5':'Pilih paket';
+    if(sub)sub.textContent=is5
+      ? 'Paket HSK 5 sedang dipersiapkan.'
+      : '25 paket latihan + 2 shortcut belajar khusus susun kalimat dan susun kata.';
+
+    document.querySelector('.packagePager')?.remove();
+    if(is5){el.innerHTML='';return;}
+
+    const input=$('packageSearchInput');
+    const q=String(input?.value||'').trim().toUpperCase();
+    const regular=Object.keys(DB).filter(code=>/^H4\d/.test(code)&&!code.startsWith('WB4'));
+    const all=[...SPECIAL_CODES,...regular];
+    const codes=all.filter(code=>{
+      const t=String(DB[code]?.title||code).toUpperCase();
+      return !q || code.toUpperCase().includes(q) || t.includes(q);
+    });
+
+    if(!codes.length){
+      el.innerHTML='<div class="emptySearch"><strong>Paket tidak ditemukan</strong><span>Coba cari kode paket atau kata seperti “susun”.</span></div>';
+      return;
+    }
+    el.innerHTML=codes.map((code,i)=>window.renderPackageTile(code,i)).join('');
+  };
+
+  /* Make the package detail concise for the two shortcuts. */
+  const baseRenderPackage=window.renderPackage;
+  window.renderPackage=function(){
+    const code=route.packageCode;
+    if(code!==SPECIAL.SENTENCE && code!==SPECIAL.WORD){
+      return baseRenderPackage();
+    }
+    const d=DB[code], type=code===SPECIAL.SENTENCE?'writing':'reading';
+    const sec=d[type]?.[0];
+    const st=sectionStats(code,type,0);
+    $('pkgCrumb').textContent='HSK 4 · Shortcut';
+    $('pkgTitle').textContent=d.title;
+    $('parts').innerHTML=`<button class="tile sequenceShortcutDetail" type="button"
+      onclick="openSections('${esc(code)}','${type}')">
+      <div class="tileIcon" aria-hidden="true">${svg(type==='writing'?'edit':'list')}</div>
+      <b>${type==='writing'?'Susun Kalimat':'Susun Kata'}</b>
+      <small>${sec.questions.length} soal tersedia · ditampilkan 10 soal per halaman</small>
+      ${progressHTML(st,'Progres bagian')}
+    </button>
+    <div style="grid-column:1/-1">${renderPackageProgress(code)}</div>`;
+  };
+
+  /* Small visual distinction without changing the existing theme. */
+  const style=document.createElement('style');
+  style.id='specialHSK4SequenceShortcutStyle';
+  style.textContent=`
+    .sequenceShortcutTile{border-color:color-mix(in srgb,var(--blue) 30%,var(--line))!important;background:color-mix(in srgb,var(--blueSoft) 38%,var(--surface))!important}
+    .sequenceShortcutTile .tileIcon{background:var(--blueSoft)!important;color:var(--blue)!important}
+    .sequenceShortcutDetail{border-color:color-mix(in srgb,var(--blue) 30%,var(--line))!important}
+    body.dark .sequenceShortcutTile{background:color-mix(in srgb,var(--blueSoft) 55%,var(--surface))!important}
+  `;
+  document.head.appendChild(style);
+
+  /* Refresh the currently visible package list if this script loads after boot. */
+  try{
+    if(typeof route!=='undefined' && route?.screen==='packages') window.renderPackagesScreen();
+  }catch(e){ console.warn('HSK4 shortcut refresh:',e); }
+
+  window.HSK4_SEQUENCE_SHORTCUTS={
+    codes:SPECIAL_CODES.slice(),
+    sentenceCount:sentenceQuestions.length,
+    wordCount:wordQuestions.length
+  };
+})();
+</script>
+
 </body></html>
 
 
