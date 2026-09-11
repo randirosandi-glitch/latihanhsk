@@ -4685,19 +4685,49 @@ body.dark .exerciseThemeToggle,body.dark #exercise .focusBack,body.dark #result 
   function closeStudyPlanCreator(){$('studyPlanCreatorModal').classList.remove('show');$('studyPlanCreatorModal').setAttribute('aria-hidden','true')}
   function createStudyPlan(){const pendingCode=studyPlanPickerCode;const name=String($('studyPlanNameInput')?.value||'').trim();const desc=String($('studyPlanDescInput')?.value||'').trim();if(name.length<2){$('studyPlanCreatorError').textContent='Nama rencana minimal 2 karakter.';return}const plans=plansStore();if(plans.some(p=>p.name.toLowerCase()===name.toLowerCase())){$('studyPlanCreatorError').textContent='Nama rencana tersebut sudah digunakan.';return}const p={id:uid(),name,description:desc,packageCodes:[],createdAt:Date.now(),updatedAt:Date.now()};plans.push(p);if(pendingCode&&!p.packageCodes.includes(pendingCode))p.packageCodes.push(pendingCode);savePlans(plans);closeStudyPlanCreator();studyPlanPickerCode=pendingCode;if(pendingCode){renderStudyPlanPicker();}renderStudyPlans();if(route.screen==='studyPlanDetail')renderStudyPlanDetail()}
   function studyPlanSourceOptions(){
+    const dbCodes=Object.keys(DB);
     const out=[{value:'all',label:'Semua materi',group:'Semua'}];
-    for(let n=1;n<=6;n++) out.push({value:'hsk:'+n,label:'HSK '+n,group:'HSK'});
+
+    // Hanya tampilkan level HSK yang benar-benar memiliki paket di database.
+    // Level yang belum tersedia tidak perlu ditampilkan di picker.
+    const availableHsk=new Set();
+    dbCodes.forEach(code=>{
+      const m=String(code).trim().match(/^H(\d+)\d+$/i);
+      if(m) availableHsk.add(Number(m[1]));
+    });
+    [...availableHsk].sort((a,b)=>a-b).forEach(n=>{
+      out.push({value:'hsk:'+n,label:'HSK '+n,group:'HSK'});
+    });
+
+    // Workbook juga dibuat dinamis berdasarkan keluarga workbook yang benar-benar ada.
     const wb={};
-    Object.keys(DB).forEach(code=>{const m=String(code).match(/^WB(\d+)([A-Za-z]+?)(?:\d|$)/);if(m){const key='WB'+m[1]+m[2].toUpperCase();wb[key]='Workbook HSK'+m[1]+m[2].toLowerCase();}});
+    dbCodes.forEach(code=>{
+      const m=String(code).trim().match(/^WB(\d+)([A-Za-z]+?)(?:\d|$)/i);
+      if(m){
+        const key='WB'+m[1]+m[2].toUpperCase();
+        wb[key]='Workbook HSK'+m[1]+m[2].toLowerCase();
+      }
+    });
     Object.keys(wb).sort().forEach(key=>out.push({value:'wb:'+key,label:wb[key],group:'Workbook'}));
     return out;
   }
   function studyPlanSourceLabel(source){const hit=studyPlanSourceOptions().find(x=>x.value===source);return hit?hit.label:'Semua materi'}
   function studyPlanCodesForSource(source){
-    const key=String(source||'all');
-    if(key==='all') return Object.keys(DB);
-    if(key.startsWith('hsk:')){const n=key.slice(4);return Object.keys(DB).filter(code=>new RegExp('^H'+n+'\\d','i').test(code));}
-    if(key.startsWith('wb:')){const prefix=key.slice(3);return Object.keys(DB).filter(code=>String(code).toUpperCase().startsWith(prefix.toUpperCase()));}
+    const key=String(source||'all').trim();
+    const dbCodes=Object.keys(DB);
+    if(key==='all') return dbCodes;
+    if(/^hsk:\d+$/i.test(key)){
+      const n=key.slice(4);
+      return dbCodes.filter(code=>new RegExp('^H'+n+'\\d+$','i').test(String(code).trim()));
+    }
+    if(/^wb:[a-z0-9]+$/i.test(key)){
+      const prefix=key.slice(3).trim().toUpperCase();
+      // Workbook families use prefixes such as WB4A and WB4B.
+      // Require the remainder to be numeric so HSK packages can never leak into this list.
+      const escaped=prefix.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+      const re=new RegExp('^'+escaped+'\\d+$','i');
+      return dbCodes.filter(code=>re.test(String(code).trim()));
+    }
     return [];
   }
   function renderStudyPlanSourceOptions(){
@@ -4708,7 +4738,14 @@ body.dark .exerciseThemeToggle,body.dark #exercise .focusBack,body.dark #result 
     sel.value=opts.some(o=>o.value===current)?current:(opts.find(o=>o.value==='hsk:4')?.value||'all');
     studyPlanPickerSource=sel.value;
   }
-  function selectStudyPlanPickerSource(source){studyPlanPickerSource=String(source||'all');studyPlanPickerQuery='';const input=$('studyPlanPickerSearchInput');if(input)input.value='';renderStudyPlanAddPicker()}
+  function selectStudyPlanPickerSource(source){
+    const value=String(source||'all').trim();
+    studyPlanPickerSource=value;
+    studyPlanPickerQuery='';
+    const input=$('studyPlanPickerSearchInput');
+    if(input)input.value='';
+    renderStudyPlanAddPicker();
+  }
   function studyPlanLevelCodes(level){return studyPlanCodesForSource('hsk:'+Number(level));}
   function selectStudyPlanPickerLevel(level){selectStudyPlanPickerSource('hsk:'+Number(level));}
   function syncStudyPlanPickerLevel(){renderStudyPlanSourceOptions()}
