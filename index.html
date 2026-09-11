@@ -5802,6 +5802,139 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 })();
 </script>
 
+
+<script id="finalReliabilityRepair2026">
+(function(){
+  'use strict';
+
+  /* FINAL RELIABILITY REPAIR
+     This layer intentionally runs last so no older patch/override can hide
+     an available material or swallow the picker toggle. */
+  function escF(v){
+    return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function dbCodes(){return (typeof DB!=='undefined'&&DB)?Object.keys(DB):[];}
+  function materialFamilies(){
+    const codes=dbCodes();
+    const hsk=new Map(), wb=new Map();
+    codes.forEach(code=>{
+      const c=String(code).trim();
+      let m=c.match(/^H(\d+)\d{4}[A-Za-z]?$/i);
+      if(m){const k='hsk:'+Number(m[1]);(hsk.get(k)||hsk.set(k,{key:k,label:'HSK '+Number(m[1]),codes:[]}).get(k)).codes.push(c);return;}
+      m=c.match(/^WB(\d+)([A-Za-z]+)(\d+)$/i);
+      if(m){const key='wb:WB'+m[1]+m[2].toUpperCase();if(!wb.has(key))wb.set(key,{key,label:'Workbook HSK'+m[1]+m[2].toLowerCase(),codes:[]});wb.get(key).codes.push(c);}
+    });
+    [...hsk.values(),...wb.values()].forEach(x=>x.codes.sort((a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:'base'})));
+    return {hsk:[...hsk.values()].sort((a,b)=>a.key.localeCompare(b.key,{numeric:true})),workbook:[...wb.values()].sort((a,b)=>a.label.localeCompare(b.label,{numeric:true,sensitivity:'base'}))};
+  }
+  function allMat(){const f=materialFamilies();return [...f.hsk,...f.workbook];}
+  function matFor(key){return allMat().find(x=>x.key===key)||null;}
+  function defaultMat(){return matFor('hsk:4')?.key||allMat()[0]?.key||'all';}
+  function plans(){try{const x=readStore();return Array.isArray(x._studyPlans)?x._studyPlans:[]}catch(e){return[]}}
+  function persistPlans(v){
+    const x=readStore();x._studyPlans=v;writeStore(x);
+    try{if(typeof scheduleCloudSync==='function')scheduleCloudSync()}catch(e){}
+  }
+  function getPlanF(id){return plans().find(p=>String(p.id)===String(id))||null;}
+
+  /* Level page: render every actually available material, including both
+     Workbook HSK4a and Workbook HSK4b. */
+  window.renderLevelsScreen=function(push){
+    const grid=document.querySelector('#levelsScreen .levelGrid');if(!grid)return;
+    const mats=allMat();
+    if(!mats.length){grid.innerHTML='<div class="notice"><strong>Belum ada materi.</strong><br>Belum ada paket latihan yang tersedia.</div>';return;}
+    grid.innerHTML=mats.map(m=>{
+      const isH=m.kind==='hsk', icon=isH?String(m.label.replace('HSK ','')):'WB';
+      const cls=isH?'levelCard4':'levelCardWorkbook '+(m.key==='wb:WB4A'?'levelCardWorkbook4a':'')+' '+(m.key==='wb:WB4B'?'levelCardWorkbook4b':'');
+      return `<button class="levelCard ${cls}" type="button" data-material-key="${escF(m.key)}" onclick="openLevelPackages('${escF(m.key)}')"><div class="levelCardIcon">${icon}</div><div class="levelCardBody"><span class="levelEyebrow">${isH?'HSK LEVEL':'WORKBOOK'}</span><strong>${escF(m.label)}</strong><p>${m.codes.length} ${isH?'paket latihan':'lesson'} tersedia</p></div><span class="levelCardArrow"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span></span></button>`;
+    }).join('');
+  };
+
+  /* Packages page: filter only inside the currently selected material. */
+  window.renderPackagesScreen=function(){
+    const grid=document.getElementById('packagesGrid');if(!grid)return;
+    const panel=document.getElementById('hsk5Panel'); if(panel)panel.hidden=true;
+    const key=(typeof selectedHSKLevel!=='undefined'&&selectedHSKLevel)?String(selectedHSKLevel):defaultMat();
+    const m=matFor(key);
+    const head=document.getElementById('packageLevelKicker'),title=document.getElementById('packagePageTitle'),sub=document.getElementById('packagePageSub');
+    if(!m){grid.innerHTML='';return;}
+    if(head)head.textContent=m.label;
+    if(title)title.textContent=m.kind==='workbook'?'Pilih lesson':'Pilih paket';
+    if(sub)sub.textContent=`${m.codes.length} ${m.kind==='workbook'?'lesson':'paket latihan'} tersedia.`;
+    const q=String(document.getElementById('packageSearchInput')?.value||'').trim().toLowerCase();
+    const codes=m.codes.filter(code=>{const d=DB[code]||{};return !q||code.toLowerCase().includes(q)||String(d.title||'').toLowerCase().includes(q)||String(d.meta?.lessonTitle||'').toLowerCase().includes(q)});
+    grid.hidden=false;
+    if(!codes.length){grid.innerHTML='<div class="emptySearch"><strong>Paket tidak ditemukan</strong><span>Coba kata kunci lain.</span></div>';return;}
+    grid.innerHTML=codes.map((code,i)=>renderPackageTileMaster(code,i)).join('');
+  };
+
+  /* Picker source dropdown: exactly the currently available families. */
+  window.renderSourceOptionsMaster=function(){
+    const sel=document.getElementById('studyPlanPickerSource');if(!sel)return;
+    const mats=allMat();
+    let html='<option value="all">Semua materi</option>';
+    const h=mats.filter(x=>x.kind==='hsk'),w=mats.filter(x=>x.kind==='workbook');
+    if(h.length)html+='<optgroup label="HSK">'+h.map(x=>`<option value="${escF(x.key)}">${escF(x.label)}</option>`).join('')+'</optgroup>';
+    if(w.length)html+='<optgroup label="Workbook">'+w.map(x=>`<option value="${escF(x.key)}">${escF(x.label)}</option>`).join('')+'</optgroup>';
+    sel.innerHTML=html;
+    const desired=(window.__masterPlanState?.source)||defaultMat();
+    sel.value=[...sel.options].some(o=>o.value===desired)?desired:defaultMat();
+    if(window.__masterPlanState)window.__masterPlanState.source=sel.value;
+  };
+
+  /* Direct toggle: update state first, then persist, then repaint. This makes
+     the button visibly switch to ✓ Ditambahkan on the same tap. */
+  window.addPackageDirectlyToStudyPlan=function(id,code){
+    const p=getPlanF(id);if(!p||!DB[code])return;
+    if(!Array.isArray(p.packageCodes))p.packageCodes=[];
+    const idx=p.packageCodes.indexOf(code);
+    if(idx>=0)p.packageCodes.splice(idx,1);else p.packageCodes.push(code);
+    p.updatedAt=Date.now();
+    const all=plans();const pos=all.findIndex(x=>String(x.id)===String(id));
+    if(pos>=0)all[pos]=p;else all.push(p);
+    persistPlans(all);
+    try{if(typeof renderStudyPlanPickerMaster==='function')renderStudyPlanPickerMaster();}catch(e){}
+    try{if(typeof window.renderStudyPlans==='function')window.renderStudyPlans();}catch(e){}
+    try{if(typeof window.renderStudyPlanDetail==='function'&&typeof route!=='undefined'&&route.screen==='studyPlanDetail')window.renderStudyPlanDetail();}catch(e){}
+  };
+  window.togglePackageInStudyPlan=window.addPackageDirectlyToStudyPlan;
+
+  /* Prevent an old click handler from being able to leave a stale visual
+     state. The inline onclick remains supported; this is only a safety net. */
+  document.addEventListener('click',function(e){
+    const b=e.target.closest?.('#studyPlanPickerList .studyPlanPick[data-plan-id][data-package-code]');
+    if(!b)return;
+    e.preventDefault();e.stopImmediatePropagation();
+    window.addPackageDirectlyToStudyPlan(b.dataset.planId,b.dataset.packageCode);
+  },true);
+
+  /* Patch picker rendering once after every render so buttons carry explicit
+     data attributes and remain reliable even if inline handlers are changed. */
+  function decoratePicker(){
+    const list=document.getElementById('studyPlanPickerList');if(!list)return;
+    const state=window.__masterPlanState;
+    if(!state)return;
+    const buttons=[...list.querySelectorAll('.studyPlanPick')];
+    if(state.mode==='plan'){
+      const p=getPlanF(state.planId);if(!p)return;
+      const m=matFor(state.source);const q=String(state.query||'').trim().toLowerCase();
+      const codes=(m?.codes||[]).filter(code=>{const d=DB[code]||{};return !q||code.toLowerCase().includes(q)||String(d.title||'').toLowerCase().includes(q)||String(d.meta?.lessonTitle||'').toLowerCase().includes(q)});
+      buttons.forEach((b,i)=>{if(codes[i]){b.dataset.planId=p.id;b.dataset.packageCode=codes[i];}});
+    }
+  }
+  const oldRender=window.renderStudyPlanPicker;
+  if(typeof oldRender==='function'&&!oldRender.__finalRepairWrapped){
+    const wrapped=function(){const r=oldRender.apply(this,arguments);decoratePicker();return r};wrapped.__finalRepairWrapped=true;window.renderStudyPlanPicker=wrapped;
+  }
+  const oldAdd=window.renderStudyPlanAddPicker;
+  if(typeof oldAdd==='function'&&!oldAdd.__finalRepairWrapped){
+    const wrapped=function(){const r=oldAdd.apply(this,arguments);decoratePicker();return r};wrapped.__finalRepairWrapped=true;window.renderStudyPlanAddPicker=wrapped;
+  }
+
+  /* Final initial level paint. */
+  try{if(document.getElementById('levelsScreen'))window.renderLevelsScreen();}catch(e){}
+})();
+</script>
 </body></html>
 
 
