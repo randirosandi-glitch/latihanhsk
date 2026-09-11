@@ -6637,6 +6637,24 @@ body.dark .levelGroupDivider{color:#aeb7c6}
   }catch(err){console.warn('Package reliability hardening',err)}
 })();
 </script>
+<style id="finalLevelGridCleanup">
+/* FINAL: remove legacy grid row/column pinning and legacy WORKBOOK pseudo-heading.
+   Canonical renderer already provides the three real dividers in DOM order. */
+#levelsScreen .levelGrid{
+  grid-template-columns:1fr!important;
+  grid-auto-flow:row!important;
+  grid-auto-rows:auto!important;
+}
+#levelsScreen .levelGrid > .levelGroupDivider,
+#levelsScreen .levelGrid > .levelCard{
+  grid-column:auto!important;
+  grid-row:auto!important;
+}
+#levelsScreen .levelGrid:has(.levelCardWorkbook)::before{
+  content:none!important;
+  display:none!important;
+}
+</style>
 </body></html>
 
 
