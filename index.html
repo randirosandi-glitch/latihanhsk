@@ -6419,6 +6419,224 @@ body.dark .levelGroupDivider{color:#aeb7c6}
 })();
 </script>
 
+
+<script id="packageSystemReliabilityHardeningV2">
+(function(){
+  'use strict';
+
+  /*
+   * FINAL PACKAGE/LEVEL ROUTER HARDENING
+   *
+   * The app historically accumulated several renderers. Some old global
+   * listeners still call their lexical versions, so replacing only
+   * window.renderLevelsScreen/window.restore is not sufficient. This layer
+   * makes the visible level screen deterministic and intercepts Android/
+   * browser Back before the old popstate listener can render a stale list.
+   */
+  const SPECIAL_WORD='HSK4-SUSUN-KATA';
+  const SPECIAL_SENT='HSK4-SUSUN-KALIMAT';
+  const SPECIAL_CODES=[SPECIAL_WORD,SPECIAL_SENT];
+  const LEVEL_REQUIRED=['hsk:4','hsk:5','wb:WB4A','wb:WB4B'];
+  const $=id=>document.getElementById(id);
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  function regularHskCodes(level){
+    return Object.keys(DB||{}).filter(c=>{
+      if(SPECIAL_CODES.includes(c))return false;
+      const m=String(c).match(/^H(\d+)\d{4}[A-Za-z]?$/i);
+      return m&&Number(m[1])===level;
+    }).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
+  }
+  function workbookCodes(prefix){
+    const re=new RegExp('^'+prefix+'\\d+$','i');
+    return Object.keys(DB||{}).filter(c=>re.test(c)).sort((a,b)=>Number(a.match(/\d+$/)?.[0]||0)-Number(b.match(/\d+$/)?.[0]||0));
+  }
+  function materials(){
+    return {
+      h4:{key:'hsk:4',label:'HSK 4',kind:'hsk',level:4,codes:regularHskCodes(4)},
+      h5:{key:'hsk:5',label:'HSK 5',kind:'hsk',level:5,codes:regularHskCodes(5)},
+      a:{key:'wb:WB4A',label:'Workbook HSK4a',kind:'workbook',codes:workbookCodes('WB4A')},
+      b:{key:'wb:WB4B',label:'Workbook HSK4b',kind:'workbook',codes:workbookCodes('WB4B')}
+    };
+  }
+  function setMaterial(k){window.__cleanMaterialKey=k;selectedHSKLevel=k}
+  function currentMaterial(){
+    const k=String(window.__cleanMaterialKey||selectedHSKLevel||'hsk:4');
+    return k==='wb:WB4A'?'wb:WB4A':k==='wb:WB4B'?'wb:WB4B':k==='hsk:5'?'hsk:5':'hsk:4';
+  }
+  function divider(label){return `<div class="levelGroupDivider" data-level-divider="${esc(label)}">${esc(label)}</div>`}
+  function levelCard(m){
+    const coming=m.level===5;
+    const icon=m.kind==='hsk'?String(m.level):'WB';
+    const desc=coming?'Coming Soon · sedang dipersiapkan':`${m.codes.length} ${m.kind==='hsk'?'paket latihan':'lesson'} tersedia`;
+    const cls=m.kind==='hsk'?(m.level===4?'levelCard4':'levelCard5 levelCardComingSoon'):`levelCardWorkbook ${m.key==='wb:WB4A'?'levelCardWorkbook4a':''} ${m.key==='wb:WB4B'?'levelCardWorkbook4b':''}`;
+    return `<button class="levelCard ${cls}" type="button" ${coming?'disabled':''} data-material-key="${esc(m.key)}" onclick="openLevelPackages('${esc(m.key)}')">
+      <div class="levelCardIcon">${icon}</div>
+      <div class="levelCardBody"><span class="levelEyebrow">${m.kind==='hsk'?'HSK LEVEL':'WORKBOOK'}</span><strong>${esc(m.label)}</strong><p>${esc(desc)}</p></div>
+      <span class="levelCardArrow"><span class="material-symbols-rounded ico" aria-hidden="true">${coming?'lock':'arrow_forward'}</span></span>
+    </button>`;
+  }
+  function specialCard(code,title,desc,icon){
+    return `<button class="levelCard specialLevelCard levelCard4" type="button" data-special-code="${code}" onclick="openSpecialPackage('${code}')">
+      <div class="levelCardIcon">${icon}</div>
+      <div class="levelCardBody"><span class="levelEyebrow">SPESIAL</span><strong>${title}</strong><p>${desc}</p></div>
+      <span class="levelCardArrow"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span></span>
+    </button>`;
+  }
+
+  function renderCanonicalLevels(){
+    const grid=document.querySelector('#levelsScreen .levelGrid');
+    if(!grid)return;
+    const m=materials();
+    const wordCount=window.__cleanSpecialCounts?.susunKata||250;
+    const sentCount=window.__cleanSpecialCounts?.susunKalimat||250;
+    grid.innerHTML=
+      divider('HSK')+
+      levelCard(m.h4)+levelCard(m.h5)+
+      divider('Workbook')+
+      levelCard(m.a)+levelCard(m.b)+
+      divider('Spesial')+
+      specialCard(SPECIAL_WORD,'HSK4 Susun Kata',`${wordCount} soal · kata → kalimat`,'↔')+
+      specialCard(SPECIAL_SENT,'HSK4 Susun Kalimat',`${sentCount} soal · kalimat → paragraf`,'≡');
+  }
+
+  function levelsAreCanonical(){
+    const grid=document.querySelector('#levelsScreen .levelGrid');
+    if(!grid)return true;
+    const children=[...grid.children];
+    const divs=children.filter(x=>x.matches('.levelGroupDivider'));
+    const cards=children.filter(x=>x.matches('.levelCard'));
+    const keys=cards.map(x=>x.dataset.materialKey||'').filter(Boolean);
+    const specials=cards.map(x=>x.dataset.specialCode||'').filter(Boolean);
+    return children.length===9 && divs.length===3 &&
+      divs.map(x=>x.textContent.trim()).join('|')==='HSK|Workbook|Spesial' &&
+      LEVEL_REQUIRED.every(k=>keys.includes(k)) &&
+      SPECIAL_CODES.every(k=>specials.includes(k));
+  }
+
+  function canonicalOpenPackages(push=true){
+    setMaterial('hsk:4');
+    route={screen:'levels',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
+    renderCanonicalLevels();
+    setScreen('levelsScreen',push);
+    window.scrollTo({top:0,left:0,behavior:'auto'});
+  }
+  function canonicalOpenLevelPackages(level,push=true){
+    let k=String(level??'');
+    if(/^\d+$/.test(k))k='hsk:'+Number(k);
+    if(/^wb4a$/i.test(k))k='wb:WB4A';
+    if(/^wb4b$/i.test(k))k='wb:WB4B';
+    if(!['hsk:4','hsk:5','wb:WB4A','wb:WB4B'].includes(k))k='hsk:4';
+    setMaterial(k);
+    route={screen:'packages',packageCode:null,type:null,sectionIndex:null,studyPlanId:null,materialKey:k};
+    if($('packageSearchInput'))$('packageSearchInput').value='';
+    if(typeof renderCleanPackages==='function')renderCleanPackages();
+    else if(typeof window.renderPackagesScreen==='function')window.renderPackagesScreen();
+    setScreen('packagesScreen',push);
+    window.scrollTo({top:0,left:0,behavior:'auto'});
+  }
+
+  // Replace the public entry points.
+  window.openPackages=canonicalOpenPackages;
+  window.openLevelPackages=canonicalOpenLevelPackages;
+  window.renderLevelsScreen=renderCanonicalLevels;
+
+  // Canonical special exercise entry. These are not package-detail screens.
+  window.openSpecialPackage=function(code,push=true){
+    if(!DB[code])return;
+    const type=code===SPECIAL_WORD?'writing':'reading';
+    route={screen:'exercise',packageCode:code,type,sectionIndex:0,studyPlanId:null,materialKey:'special'};
+    resumeQuestionId=null;
+    window.__hskResumePage=0;
+    loadCurrentSectionState();
+    renderExercise();
+    setScreen('exercise',push);
+    window.scrollTo({top:0,left:0,behavior:'auto'});
+  };
+
+  // Keep the original HSK package contents untouched. Special packages are
+  // synthetic copies only; they are never removed from the source packages.
+  window.openPackageFromTile=function(code){
+    if(!DB[code])return;
+    const keep=route.studyPlanId||window.__cleanReturnPlanId||null;
+    window.__cleanReturnPlanId=null;
+    route={screen:'package',packageCode:code,type:null,sectionIndex:null,studyPlanId:keep,materialKey:currentMaterial()};
+    renderPackage();
+    setScreen('package',true);
+  };
+
+  // Android/Chrome Back: capture it before the original legacy popstate
+  // listener. The old listener is the source of stale/partial level lists.
+  window.addEventListener('popstate',function(e){
+    if(!currentUsername){showAuthScreen();return;}
+    if(typeof allowExit!=='undefined' && allowExit){allowExit=false;return;}
+    if(e.state&&e.state.homeGuard&&route.screen==='home'){
+      showExit(true);return;
+    }
+    e.stopImmediatePropagation();
+    if(!e.state){goHome(false);return;}
+    const s=e.state||{};
+    route={screen:s.screen||'home',packageCode:s.packageCode||null,type:s.type||null,sectionIndex:s.sectionIndex??null,studyPlanId:s.studyPlanId||null};
+    if(route.screen==='home'){renderHome();setScreen('home',false);return;}
+    if(route.screen==='levels'){
+      setMaterial('hsk:4');renderCanonicalLevels();setScreen('levelsScreen',false);window.scrollTo({top:0,left:0,behavior:'auto'});return;
+    }
+    if(route.screen==='packages'){
+      const k=s.materialKey||currentMaterial();setMaterial(k);renderCleanPackages();setScreen('packagesScreen',false);window.scrollTo({top:0,left:0,behavior:'auto'});return;
+    }
+    if(route.screen==='package'){renderPackage();setScreen('package',false);return;}
+    if(route.screen==='parts'){renderSections();setScreen('partsScreen',false);return;}
+    if(route.screen==='exercise'){loadCurrentSectionState();renderExercise();setScreen('exercise',false);return;}
+    if(route.screen==='result'){renderResult();setScreen('result',false);return;}
+    if(route.screen==='studyPlans'&&typeof window.renderStudyPlans==='function'){window.renderStudyPlans();setScreen('studyPlans',false);return;}
+    if(route.screen==='studyPlanDetail'&&typeof window.renderStudyPlanDetail==='function'){window.renderStudyPlanDetail();setScreen('studyPlanDetail',false);return;}
+    goHome(false);
+  },true);
+
+  // Back button in the app: avoid adding a second history entry.
+  window.backRoute=function(){
+    if(route.screen==='exercise' && SPECIAL_CODES.includes(String(route.packageCode||''))){
+      if(history.length>1){history.back();return;}
+      setMaterial('hsk:4');route={screen:'levels',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};renderCanonicalLevels();setScreen('levelsScreen',false);return;
+    }
+    if(route.screen==='result' || route.screen==='exercise' || route.screen==='parts' || route.screen==='package' || route.screen==='packages' || route.screen==='levels'){
+      if(history.length>1){history.back();return;}
+    }
+    goHome(false);
+  };
+
+  // Guard the level grid against late cloud/legacy renders. Any stale render
+  // is immediately replaced by the canonical 9-child structure.
+  const grid=document.querySelector('#levelsScreen .levelGrid');
+  if(grid){
+    let repairing=false;
+    const observer=new MutationObserver(()=>{
+      if(repairing||route.screen!=='levels')return;
+      if(!levelsAreCanonical()){
+        repairing=true;
+        renderCanonicalLevels();
+        repairing=false;
+      }
+    });
+    observer.observe(grid,{childList:true});
+    window.__canonicalLevelObserver=observer;
+  }
+
+  // Final initial render.
+  try{
+    if(route?.screen==='levels')renderCanonicalLevels();
+    window.__packageSystemReliabilityV2={
+      ready:true,
+      hsk4:regularHskCodes(4).length,
+      hsk5:regularHskCodes(5).length,
+      wb4a:workbookCodes('WB4A').length,
+      wb4b:workbookCodes('WB4B').length,
+      specialWord:window.__cleanSpecialCounts?.susunKata||0,
+      specialSentence:window.__cleanSpecialCounts?.susunKalimat||0
+    };
+  }catch(err){console.warn('Package reliability hardening',err)}
+})();
+</script>
 </body></html>
 
 
