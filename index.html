@@ -951,7 +951,7 @@ window.__hskDbReady=(async function(){
     Promise.all(files.map(getJSON)),
     getJSON(manifest.readingPassages||'reading-passages.json')
   ]);
-  packageData.forEach(group=>Object.assign(DB,group));
+  packageData.forEach(group=>{ if(group && group.code) DB[group.code]=group; else if(group && typeof group==='object') Object.assign(DB,group); });
   Object.assign(READING_PASSAGES,readingPassages||{});
   PACKAGES=Object.keys(DB);
   return {manifest,packageCount:PACKAGES.length};
