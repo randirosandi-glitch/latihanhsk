@@ -944,14 +944,38 @@ window.__hskDbReady=(async function(){
     return r.json();
   }
   const manifest=await getJSON('manifest.json');
-  const packageFiles=Array.isArray(manifest.packages)?manifest.packages:[];
-  const workbookFiles=Array.isArray(manifest.workbookFiles)?manifest.workbookFiles:[];
-  const files=packageFiles.concat(workbookFiles);
-  const [packageData,readingPassages]=await Promise.all([
-    Promise.all(files.map(getJSON)),
+
+  // Resolve the external database files from the repository manifest.
+  // This is database-loading logic only; UI and app behavior are untouched.
+  const packageFiles=Array.isArray(manifest.packages)
+    ? manifest.packages
+    : [
+        ...(Array.isArray(manifest.hsk4_codes)?manifest.hsk4_codes:[]),
+        ...(Array.isArray(manifest.hsk5_codes)?manifest.hsk5_codes:[])
+      ].map(code=>String(code)+'.json');
+
+  const workbookFiles=Array.isArray(manifest.workbookFiles)
+    ? manifest.workbookFiles
+    : [
+        ...(Array.isArray(manifest.workbook4a_codes)?manifest.workbook4a_codes:[]),
+        ...(Array.isArray(manifest.workbook4b_codes)?manifest.workbook4b_codes:[])
+      ].map(code=>String(code)+'.json');
+
+  const files=[...new Set(packageFiles.concat(workbookFiles))];
+  // HSK package files are required. Workbook files are optional at boot so
+  // missing workbook JSONs cannot prevent the HSK package list from loading.
+  const [packageData,workbookData,readingPassages]=await Promise.all([
+    Promise.all(packageFiles.map(getJSON)),
+    Promise.allSettled(workbookFiles.map(getJSON)),
     getJSON(manifest.readingPassages||'reading-passages.json')
   ]);
-  packageData.forEach(group=>{ if(group && group.code) DB[group.code]=group; else if(group && typeof group==='object') Object.assign(DB,group); });
+
+  packageData.concat(
+    workbookData.filter(r=>r.status==='fulfilled').map(r=>r.value)
+  ).forEach(group=>{
+    if(group && group.code) DB[group.code]=group;
+    else if(group && typeof group==='object') Object.assign(DB,group);
+  });
   Object.assign(READING_PASSAGES,readingPassages||{});
   PACKAGES=Object.keys(DB);
   return {manifest,packageCount:PACKAGES.length};
