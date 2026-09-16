@@ -3455,7 +3455,157 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 
   N.installed=true;
 })();
-</script></body>
+</script>
+<style id="navigationAndPackageListFinalV1">
+#packagesScreen .packagePager{display:none!important}
+</style>
+<script id="navigationAndPackageListFinalV1">
+(function(){
+  'use strict';
+  const N=window.__finalLayerBackV1=window.__finalLayerBackV1||{};
+  if(N.installed)return;
+
+  function routeHash(){
+    return '#'+String(window.route?.screen||'home');
+  }
+  function replaceGuard(){
+    try{
+      history.replaceState(
+        {...(history.state||{}),...(window.route||{}),__hskAppGuard:true},
+        '',
+        location.pathname+location.search+routeHash()
+      );
+    }catch(e){}
+  }
+
+  /* Prevent the old goHome() helper from stacking browser-history entries. */
+  window.armHome=function(){ replaceGuard(); };
+
+  /* Canceling the Exit dialog must not push another history entry. */
+  window.cancelExit=function(){
+    const modal=document.getElementById('exitModal');
+    if(modal)modal.classList.remove('show');
+    window.exitFromBack=false;
+    replaceGuard();
+  };
+
+  /* One physical-Back consumer for the whole SPA. */
+  if(!N.popInstalled){
+    window.addEventListener('popstate',function(){
+      replaceGuard();
+      try{
+        window.backRoute?.();
+      }finally{
+        setTimeout(replaceGuard,0);
+      }
+    },{passive:true});
+    N.popInstalled=true;
+  }
+
+  /* Establish one sentinel successor only once. */
+  if(!N.guardCreated){
+    try{
+      const st={...(history.state||{}),...(window.route||{screen:'home'}),__hskAppGuard:true};
+      history.replaceState(st,'',location.pathname+location.search+routeHash());
+      history.pushState(st,'',location.pathname+location.search+routeHash());
+      N.guardCreated=true;
+    }catch(e){}
+  }else{
+    replaceGuard();
+  }
+
+  /* Package list: continuous list, no pagination. */
+  function escText(v){
+    return String(v??'')
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function renderAllPackages(){
+    const grid=document.getElementById('packagesGrid');
+    if(!grid)return;
+
+    const g=(window.state&&window.state.selected) ||
+            (window.state&&window.state.groups&&window.state.groups[0]);
+    if(!g)return;
+
+    const head=document.getElementById('packageLevelKicker');
+    const title=document.getElementById('packagePageTitle');
+    const sub=document.getElementById('packagePageSub');
+
+    if(head)head.textContent=g.name||'';
+    if(title)title.textContent=g.kind==='workbook'?'Pilih lesson':'Pilih paket';
+
+    const q=String(document.getElementById('packageSearchInput')?.value||'').trim().toLowerCase();
+    const codes=(Array.isArray(g.codes)?g.codes:[])
+      .filter(c=>!q||String(c).toLowerCase().includes(q));
+
+    if(sub){
+      sub.textContent=(codes.length||0)+' '+(g.kind==='workbook'?'lesson':'paket')+' tersedia';
+    }
+
+    document.querySelectorAll('.packagePager').forEach(x=>x.remove());
+
+    if(!codes.length){
+      grid.innerHTML='<div class="emptySearch"><strong>Paket tidak ditemukan</strong><span>Coba kata kunci lain.</span></div>';
+      return;
+    }
+
+    grid.innerHTML=codes.map(c=>{
+      const st=typeof window.packageStats==='function'
+        ? window.packageStats(c)
+        : {pct:0,answered:0,total:0};
+
+      const progress=(st.total&&typeof window.progressHTML==='function')
+        ? window.progressHTML(st,'Progres paket')
+        : '';
+
+      const codeAttr=JSON.stringify(String(c))
+        .replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+
+      return '<article class="tile packageTile packageTileShell">'+
+        '<button class="packageTileMain" type="button" onclick="openPackage('+codeAttr+')">'+
+        '<div class="pkgTop">'+
+          '<div class="tileIcon packageHanziIcon" aria-hidden="true"><span>卷</span></div>'+
+          '<span class="statusPill"><span class="statusDot"></span>'+
+          (st.pct>=100?'Selesai':st.pct>0?'Sedang berjalan':'Belum dimulai')+
+          '</span>'+
+        '</div>'+
+        '<div class="pkgTitleRow"><div><b>Paket '+escText(c)+
+        '</b><small>'+escText(g.name)+
+        '</small></div></div>'+
+        progress+
+        '<div class="pkgFooter"><span>'+escText(g.name)+
+        '</span><span>'+(st.pct||0)+'%</span></div>'+
+        '</button></article>';
+    }).join('');
+  }
+
+  window.renderPackages=renderAllPackages;
+  window.renderPackagesScreen=renderAllPackages;
+
+  window.filterPackages=function(v){
+    const i=document.getElementById('packageSearchInput');
+    if(i)i.value=String(v??'');
+    renderAllPackages();
+  };
+
+  window.clearPackageSearch=function(){
+    const i=document.getElementById('packageSearchInput');
+    if(i)i.value='';
+    renderAllPackages();
+    i?.focus();
+  };
+
+  N.installed=true;
+  setTimeout(function(){
+    replaceGuard();
+    try{renderAllPackages();}catch(e){}
+  },0);
+})();
+</script>
+
+</body>
 <style id="packageTileCanonicalV46">
 /* V46 canonical package-card system. Legacy package-card rules were removed from
    appStylesConsolidated so this is the single source of truth for #packagesScreen. */
