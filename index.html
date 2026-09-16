@@ -3396,84 +3396,150 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 
 
 
-<script id="navigationControllerFinalV2">
+<script id="navigationControllerFinalV4">
 (function(){
   'use strict';
-  const C=window.__navigationControllerFinalV2=window.__navigationControllerFinalV2||{};
+  const C=window.__navigationControllerFinalV4=window.__navigationControllerFinalV4||{};
   if(C.installed)return;
 
-  function currentScreen(){return String(window.route?.screen||'home')}
-  function stateURL(){return location.pathname+location.search+'#'+currentScreen()}
-  function writeBase(){
-    try{history.replaceState({...route,__hskLayerGuard:true},'',stateURL())}catch(e){}
+  function screen(){
+    return String(window.route?.screen||'home');
   }
-  function armSentinel(){
+
+  function url(){
+    return location.pathname+location.search+'#'+screen();
+  }
+
+  function arm(){
     try{
-      const st={...(history.state||{}),...(window.route||{}),__hskLayerGuard:true};
-      history.replaceState(st,'',stateURL());
-      history.pushState({...st},'',stateURL());
+      const st={
+        ...(history.state||{}),
+        ...(window.route||{}),
+        __hskLayerGuard:true
+      };
+      history.replaceState(st,'',url());
+      history.pushState({...st},'',url());
     }catch(e){}
   }
 
-  const previousSetScreen=window.setScreen;
-  if(typeof previousSetScreen==='function'){
-    window.setScreen=function(name,push=true){
-      const result=previousSetScreen.call(this,name,false);
-      /* Internal app navigation has no browser-history stack. Keep exactly one
-         sentinel entry so Android/Chrome Back is always consumed by the SPA. */
-      armSentinel();
+  /*
+   * Internal app navigation must not create browser-history layers.
+   * Keep the existing app setScreen implementation, but always re-arm
+   * the single physical-back sentinel after navigation.
+   */
+  const originalSetScreen=window.setScreen;
+  if(typeof originalSetScreen==='function' && !C.wrapped){
+    C.wrapped=true;
+    window.setScreen=function(name,push){
+      const result=originalSetScreen.call(this,name,false);
+      setTimeout(arm,0);
       return result;
     };
   }
 
-  function parentRoute(){
-    if(!window.currentUsername && typeof window.showAuthScreen==='function'){
-      window.showAuthScreen(); return;
+  function goHome(){
+    if(typeof window.goHome==='function'){
+      return window.goHome(false);
     }
-    const screen=currentScreen();
-    switch(screen){
-      case 'exercise':
-      case 'result':
-        return window.openSections?.(route.packageCode,route.type,false);
-      case 'parts':
-        return window.openPackage?.(route.packageCode,false);
-      case 'package':
-        return window.openLevelPackages?.(selectedHSKLevel,false);
-      case 'packages':
-        /* Paket list is a direct child of Home for Back purposes. */
-        return window.goHome?.(false);
-      case 'levels':
-        /* Level selector is the root app layer: Back means Exit warning. */
-        return window.showExit?.(true);
-      case 'studyPlanDetail':
-        return window.openStudyPlans?.(false);
-      case 'studyPlans':
-        return window.goHome?.(false);
-      case 'home':
-      default:
-        return window.showExit?.(true);
+    if(typeof window.setScreen==='function'){
+      return window.setScreen('home',false);
     }
   }
 
-  window.backRoute=parentRoute;
-  window.__directLayerBack=parentRoute;
+  function openLevels(){
+    if(typeof window.openLevels==='function'){
+      return window.openLevels(false);
+    }
+    if(typeof window.setScreen==='function'){
+      return window.setScreen('levels',false);
+    }
+  }
 
-  /* Physical Android/Chrome Back: consume the sentinel, move one app layer,
-     then recreate one sentinel for the next physical Back. */
-  window.addEventListener('popstate',function(){
-    try{parentRoute();}
-    finally{setTimeout(armSentinel,0)}
-  },{passive:true});
+  function exitWarning(){
+    if(typeof window.showExit==='function'){
+      return window.showExit(true);
+    }
+    const modal=document.getElementById('exitModal');
+    if(modal)modal.classList.add('show');
+  }
 
-  /* The Exit cancel action must not create a second history entry. */
+  /*
+   * OFFICIAL APP HIERARCHY:
+   *
+   * Soal
+   *   -> Bagian
+   *   -> Detail Paket
+   *   -> Daftar Paket
+   *   -> Level HSK
+   *   -> Beranda
+   *   -> Exit / warning
+   */
+  function backRoute(){
+    const s=screen();
+
+    switch(s){
+      case 'exercise':
+        return window.openSections?.(route.packageCode,route.type,false);
+
+      case 'result':
+        if(typeof window.returnToQuestions==='function'){
+          return window.returnToQuestions();
+        }
+        return window.openSections?.(route.packageCode,route.type,false);
+
+      case 'parts':
+        return window.openPackage?.(route.packageCode,false);
+
+      case 'package':
+        return window.openLevelPackages?.(selectedHSKLevel,false);
+
+      case 'packages':
+        /*
+         * Package list -> HSK level selector.
+         */
+        return openLevels();
+
+      case 'levels':
+        /*
+         * HSK level selector -> Home.
+         * It is NOT the root.
+         */
+        return goHome();
+
+      case 'studyPlanDetail':
+        return window.openStudyPlans?.(false);
+
+      case 'studyPlans':
+        return goHome();
+
+      case 'home':
+      default:
+        return exitWarning();
+    }
+  }
+
+  window.backRoute=backRoute;
+  window.__directLayerBack=backRoute;
+
+  if(!C.popInstalled){
+    window.addEventListener('popstate',function(){
+      try{
+        backRoute();
+      }finally{
+        setTimeout(arm,0);
+      }
+    },{passive:true});
+    C.popInstalled=true;
+  }
+
   window.cancelExit=function(){
     const modal=document.getElementById('exitModal');
     if(modal)modal.classList.remove('show');
-    window.exitFromBack=false;
-    armSentinel();
+    if(typeof window.exitFromBack!=='undefined')window.exitFromBack=false;
+    setTimeout(arm,0);
   };
 
-  armSentinel();
+  arm();
   C.installed=true;
 })();
 </script>
