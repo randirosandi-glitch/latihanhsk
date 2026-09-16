@@ -1001,7 +1001,7 @@ function performLogout(){
   history.replaceState({screen:'home',authRequired:true},'',location.pathname+location.search+'#home');
 }
 function renderNavState(){document.querySelectorAll('.mainNav .navItem').forEach(b=>b.classList.toggle('active',b.dataset.nav===route.screen||((route.screen==='studyPlans'||route.screen==='studyPlanDetail')&&b.dataset.nav==='studyPlans')||((route.screen==='levels'||route.screen==='packages'||route.screen==='package'||route.screen==='parts'||route.screen==='exercise'||route.screen==='result')&&b.dataset.nav==='packages')))}
-function setScreen(name,push=true){if(!currentUsername){showAuthScreen();return}document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));const target=$(name);if(!target)return;target.classList.add('active');document.body.classList.toggle('exercise-focus',name==='exercise');document.body.classList.toggle('result-focus',name==='result');renderContext();renderNavState();if(push){history.pushState({...route},'',location.pathname+location.search+'#'+name)}}
+function setScreen(name,push=true){if(!currentUsername){showAuthScreen();return}document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));const target=$(name);if(!target)return;target.classList.add('active');document.body.classList.toggle('exercise-focus',name==='exercise');document.body.classList.toggle('result-focus',name==='result');renderContext();renderNavState();/* canonical navigation guard owns browser history */}
 function saveState(){history.replaceState({...route},'',location.pathname+location.search+'#'+route.screen)}
 const STORAGE_PREFIX='hsk4-kelas-e-progress-v4:';
 function storageKey(){return STORAGE_PREFIX+(currentUsername||'guest')}
@@ -1027,7 +1027,7 @@ function packageStats(code){let total=0,answered=0,score=0,gradedTotal=0;const r
 function progressHTML(st,label='Progres'){return `<div class="progressWrap"><div class="progressMeta"><span>${label}</span><span>${st.answered}/${st.total} · ${st.pct}%</span></div><div class="progressBar"><div class="fill" style="width:${st.pct}%"></div></div></div>`}
 function renderPackageProgress(code){const st=packageStats(code);return progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket')}
 function renderContext(){const c=$('context');const tb=$('topBack');const top=document.querySelector('.top');if(top){top.classList.toggle('homeTopHidden',route.screen==='home');top.classList.toggle('focusTopHidden',route.screen==='exercise'||route.screen==='result');const nav=document.querySelector('.mainNav');if(nav)nav.classList.toggle('focusNavHidden',route.screen==='exercise'||route.screen==='result');}if(tb){const hideBack=route.screen==='home'||route.screen==='levels'||route.screen==='studyPlans'||route.screen==='studyPlanDetail';tb.style.setProperty('display',hideBack?'none':'inline-flex','important');}c.classList.remove('show');c.innerHTML=''}
-function armHome(){if(!history.state||!history.state.homeGuard){history.replaceState({screen:'home',homeGuard:true},'',location.pathname+location.search+'#home');history.pushState({screen:'home',homeGuard:true},'',location.pathname+location.search+'#home')}}
+function armHome(){if(typeof window.__hskArmBackGuard==='function'){window.__hskArmBackGuard()} }
 function goHome(push=true){route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;setScreen('home',push);armHome()}
 function backRoute(){if(route.screen==='levels'){goHome()}else if(route.screen==='packages'){openPackages()}else if(route.screen==='package'){openLevelPackages(selectedHSKLevel)}else if(route.screen==='parts'){openPackage(route.packageCode)}else if(route.screen==='exercise'||route.screen==='result'){openSections(route.packageCode,route.type)}else goHome()}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushCloudSync()});
@@ -1081,7 +1081,7 @@ function showPackageScore(code){const st=packageStats(code);$('packageModalTitle
 function closePackageScore(){$('packageModal').classList.remove('show')}
 function toggleTheme(){applyTheme(document.body.classList.contains('dark')?'light':'dark')}
 function applyTheme(t){document.body.classList.toggle('dark',t==='dark');document.documentElement.classList.toggle('dark',t==='dark');const b=document.querySelector('.mainNav [data-nav="theme"]');if(b)b.innerHTML=(t==='dark'?svg('sun'):svg('moon'))+'<span class="navLabel">Tema</span>';document.querySelectorAll('.exerciseThemeToggle').forEach(b=>{b.innerHTML=svg(t==='dark'?'sun':'moon');b.setAttribute('aria-label',t==='dark'?'Beralih ke tema terang':'Beralih ke tema gelap');b.title=t==='dark'?'Tema terang':'Tema gelap'});document.querySelector('meta[name="theme-color"]').content=t==='dark'?'#0c1020':'#f4f5fb';localStorage.setItem('hsk-theme',t);if(typeof route!=='undefined'&&route)renderNavState()}
-function showExit(fromBack=false){if(!currentUsername)return;exitFromBack=fromBack;$('exitModal').classList.add('show')}function cancelExit(){$('exitModal').classList.remove('show');if(exitFromBack){exitFromBack=false;history.pushState({screen:'home',homeGuard:true},'',location.pathname+location.search+'#home')}}function confirmExit(){$('exitModal').classList.remove('show');exitFromBack=false;performLogout()}
+function showExit(fromBack=false){if(!currentUsername)return;exitFromBack=fromBack;$('exitModal').classList.add('show')}function cancelExit(){$('exitModal').classList.remove('show');if(exitFromBack){exitFromBack=false;if(typeof window.__hskArmBackGuard==='function')window.__hskArmBackGuard()}}function confirmExit(){$('exitModal').classList.remove('show');exitFromBack=false;performLogout()}
 let selectedHSKLevel=4;
 function openPackages(push=true){route={screen:'levels',packageCode:null,type:null,sectionIndex:null};selectedHSKLevel=4;renderLevelsScreen();setScreen('levelsScreen',push)}
 function renderLevelsScreen(){const el=document.querySelector('#levelsScreen .levelGrid');if(!el)return;el.innerHTML=`<button class="levelCard levelCard4" type="button" onclick="openLevelPackages(4)"><div class="levelCardIcon">4</div><div class="levelCardBody"><span class="levelEyebrow">HSK LEVEL</span><strong>HSK 4</strong><p>25 paket latihan tersedia</p></div><span class="levelCardArrow"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span></span></button><button class="levelCard levelCard5" type="button" onclick="openLevelPackages(5)"><div class="levelCardIcon">5</div><div class="levelCardBody"><span class="levelEyebrow">HSK LEVEL</span><strong>HSK 5</strong><p>Coming soon · sedang dipersiapkan</p></div><span class="levelCardArrow"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span></span></button>`;}
@@ -3178,103 +3178,8 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   }
 })();
 </script>
-<script id="finalNavigationAndSyncHardeningV3">
-(function(){
-  'use strict';
-  const M=window.__masterReliabilityFix=window.__masterReliabilityFix||{};
-  const safeJson=v=>{try{return JSON.stringify(v??null)}catch(e){return String(v)}};
-  const planSignature=v=>safeJson(Array.isArray(v)?v:[]);
-  const planStamp=s=>{const d=Number(s?._studyPlansUpdatedAt||0);if(d)return d;return (Array.isArray(s?._studyPlans)?s._studyPlans:[]).reduce((n,p)=>Math.max(n,Number(p?.updatedAt||0)),0)};
 
-  if(!M.planWriteWrappedV3&&typeof window.writeStore==='function'){
-    const originalWriteStore=window.writeStore; M.planWriteWrappedV3=true;
-    window.writeStore=function(store){
-      const next=(store&&typeof store==='object')?store:{};
-      if(!M.applyingCloudStore){
-        try{
-          const before=typeof window.readStore==='function'?window.readStore():{};
-          if(planSignature(before._studyPlans)!==planSignature(next._studyPlans)) next._studyPlansUpdatedAt=Date.now();
-          else if(next._studyPlansUpdatedAt==null&&before._studyPlansUpdatedAt!=null) next._studyPlansUpdatedAt=before._studyPlansUpdatedAt;
-        }catch(e){}
-      }
-      return originalWriteStore.call(this,next);
-    };
-  }
-  try{
-    const s=readStore(); const t=planStamp(s);
-    if(Array.isArray(s._studyPlans)&&t&&!s._studyPlansUpdatedAt){s._studyPlansUpdatedAt=t;M.applyingCloudStore=true;writeStore(s);M.applyingCloudStore=false;}
-  }catch(e){M.applyingCloudStore=false}
 
-  async function reliablePullCloudState(){
-    if(!currentUsername||typeof cloudEnabled!=='function'||!cloudEnabled()||navigator.onLine===false)return false;
-    try{
-      const row=await cloudFindUser(currentUsername);
-      if(!row){const local=readStore();await cloudCreateUser(currentUsername);await cloudUpdateUser(currentUsername,local);return true;}
-      const remote=row.data||{}; const local=readStore(); const merged={...remote}; let localNewer=false;
-      Object.entries(local).forEach(([k,v])=>{
-        if(k==='_studyPlans'||k==='_studyPlansUpdatedAt')return;
-        if(!merged[k]||Number(v?.updatedAt||0)>Number(merged[k]?.updatedAt||0)){merged[k]=v;localNewer=true;}
-      });
-      const lt=planStamp(local),rt=planStamp(remote);
-      if(lt>=rt){
-        if(Array.isArray(local._studyPlans))merged._studyPlans=local._studyPlans;
-        merged._studyPlansUpdatedAt=lt||rt||0;
-        if(lt>rt)localNewer=true;
-      }else{
-        if(Array.isArray(remote._studyPlans))merged._studyPlans=remote._studyPlans;
-        merged._studyPlansUpdatedAt=rt;
-      }
-      M.applyingCloudStore=true;writeStore(merged);M.applyingCloudStore=false;
-      if(localNewer)await cloudUpdateUser(currentUsername,merged);
-      try{renderHome();renderScores();if(route.screen==='levels')window.renderLevelsScreen?.();if(route.screen==='packages')window.renderPackagesScreen?.();if(route.screen==='studyPlans')window.renderStudyPlans?.();if(route.screen==='studyPlanDetail')window.renderStudyPlanDetail?.();refreshCurrentProgress?.();}catch(e){}
-      return true;
-    }catch(e){console.warn('Reliable cloud pull failed',e);return false}
-    finally{M.applyingCloudStore=false}
-  }
-  let pushBusy=false,pushQueued=false;
-  async function reliablePushCloudState(){
-    if(!currentUsername||typeof cloudEnabled!=='function'||!cloudEnabled()||navigator.onLine===false)return false;
-    if(pushBusy){pushQueued=true;return false} pushBusy=true;
-    try{await cloudUpdateUser(currentUsername,readStore());return true}
-    catch(e){console.warn('Reliable cloud push failed',e);return false}
-    finally{pushBusy=false;if(pushQueued){pushQueued=false;clearTimeout(M.syncTimer);M.syncTimer=setTimeout(()=>reliablePushCloudState(),250)}}
-  }
-  window.pullCloudState=reliablePullCloudState; window.pushCloudState=reliablePushCloudState;
-
-  const originalSetScreen=window.setScreen;
-  if(typeof originalSetScreen==='function'&&!M.setScreenWrappedV3){
-    M.setScreenWrappedV3=true;
-    window.setScreen=function(name,push=true){
-      if(push)route.materialKey=route.materialKey||String(window.__cleanMaterialKey||selectedHSKLevel||'hsk:4');
-      return originalSetScreen.call(this,name,push);
-    };
-  }
-  const originalOpenLevelPackages=window.openLevelPackages;
-  if(typeof originalOpenLevelPackages==='function'&&!M.levelOpenWrappedV3){
-    M.levelOpenWrappedV3=true;
-    window.openLevelPackages=function(level,push=true){
-      let k=String(level??'').trim();if(/^\d+$/.test(k))k='hsk:'+Number(k);if(/^wb4a$/i.test(k))k='wb:WB4A';if(/^wb4b$/i.test(k))k='wb:WB4B';
-      route.materialKey=k;return originalOpenLevelPackages.call(this,k,push);
-    };
-  }
-  window.restore=function(st){
-    const s=st||{};route={screen:s.screen||'home',packageCode:s.packageCode||null,type:s.type||null,sectionIndex:s.sectionIndex??null,studyPlanId:s.studyPlanId||null,materialKey:s.materialKey||null};
-    if(route.materialKey){window.__cleanMaterialKey=route.materialKey;selectedHSKLevel=route.materialKey;}
-    if(route.screen==='home'){renderHome();setScreen('home',false);return;}
-    if(route.screen==='levels'){window.__cleanMaterialKey='hsk:4';selectedHSKLevel='hsk:4';window.renderLevelsScreen?.();setScreen('levelsScreen',false);return;}
-    if(route.screen==='packages'){const k=route.materialKey||String(selectedHSKLevel||'hsk:4');window.__cleanMaterialKey=k;selectedHSKLevel=k;window.renderPackagesScreen?.();setScreen('packagesScreen',false);return;}
-    if(route.screen==='package'){renderPackage();setScreen('package',false);return;}
-    if(route.screen==='parts'){renderSections();setScreen('partsScreen',false);return;}
-    if(route.screen==='exercise'){loadCurrentSectionState();renderExercise();setScreen('exercise',false);return;}
-    if(route.screen==='result'){renderResult();setScreen('result',false);return;}
-    if(route.screen==='studyPlans'){window.renderStudyPlans?.();setScreen('studyPlans',false);return;}
-    if(route.screen==='studyPlanDetail'){window.renderStudyPlanDetail?.();setScreen('studyPlanDetail',false);return;}
-    window.goHome?.(false);
-  };
-  M.navigationSyncHardeningV3=true;
-})();
-</script>
-<script id="navigationBackCleanV1">/* Legacy history back policy removed. Final direct-layer navigation controller handles all Back actions. */</script>
 <script id="progressCloudRecoveryPatchV122">
 (function(){
   'use strict';
@@ -3396,227 +3301,15 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 
 
 
-<script id="navigationControllerFinalV5">
-(function(){
-  'use strict';
-  const C=window.__navigationControllerFinalV5=window.__navigationControllerFinalV5||{};
-  if(C.installed)return;
 
-  /*
-   * CRITICAL:
-   * `route` and `currentUsername` are global lexical variables declared
-   * with `let`, so they are NOT reliably available as window.route /
-   * window.currentUsername. Reading window.route was the reason every
-   * Back action was being interpreted as Home/Exit.
-   */
-  function screen(){
-    return String(route?.screen||'home');
-  }
 
-  function stateURL(){
-    return location.pathname+location.search+'#'+screen();
-  }
 
-  function arm(){
-    try{
-      const st={
-        ...(history.state||{}),
-        ...(route||{}),
-        __hskLayerGuard:true
-      };
-      history.replaceState(st,'',stateURL());
-      history.pushState({...st},'',stateURL());
-    }catch(e){}
-  }
 
-  function goHome(){
-    return goHomeCore(false);
-  }
 
-  function goHomeCore(push){
-    route={screen:'home',packageCode:null,type:null,sectionIndex:null};
-    answers={}; checked={}; resultState=null;
-    setScreen('home',push);
-  }
 
-  function openLevels(){
-    return openPackages(false);
-  }
 
-  function exitWarning(){
-    return showExit(true);
-  }
 
-  /*
-   * OFFICIAL APP HIERARCHY:
-   * Soal -> Bagian -> Detail Paket -> Daftar Paket
-   * -> Level HSK -> Beranda -> Exit
-   */
-  function backRoute(){
-    switch(screen()){
-      case 'exercise':
-        return openSections(route.packageCode,route.type,false);
 
-      case 'result':
-        if(typeof returnToQuestions==='function') return returnToQuestions();
-        return openSections(route.packageCode,route.type,false);
-
-      case 'parts':
-        return openPackage(route.packageCode,false);
-
-      case 'package':
-        return openLevelPackages(selectedHSKLevel,false);
-
-      case 'packages':
-        return openLevels();
-
-      case 'levels':
-        return goHome();
-
-      case 'studyPlanDetail':
-        return openStudyPlans(false);
-
-      case 'studyPlans':
-        return goHome();
-
-      case 'home':
-      default:
-        return exitWarning();
-    }
-  }
-
-  window.backRoute=backRoute;
-  window.__directLayerBack=backRoute;
-
-  /*
-   * One physical Back listener. The browser has already consumed the
-   * sentinel entry when popstate fires; do not call history.back() here.
-   */
-
-  window.cancelExit=function(){
-    const modal=$('exitModal');
-    if(modal)modal.classList.remove('show');
-    if(typeof exitFromBack!=='undefined')exitFromBack=false;
-    setTimeout(arm,0);
-  };
-
-  /*
-   * Do not wrap setScreen or create another history layer.
-   * Existing app navigation functions already know whether they should
-   * push. Back navigation above explicitly uses push=false.
-   */
-  arm();
-  C.installed=true;
-})();
-</script>
-
-<script id="navigationControllerCLEAN">
-(function(){
-  'use strict';
-  const C=window.__navigationControllerCLEAN=window.__navigationControllerCLEAN||{};
-  if(C.installed)return;
-
-  function screen(){ return String(route?.screen||'home'); }
-
-  function arm(){
-    try{
-      const hash='#'+screen(), h=history.state||{};
-      if(h.__hskBackSentinel && location.hash===hash)return;
-      const st={...(h||{}),...(route||{}),__hskBackSentinel:true};
-      history.replaceState(st,'',location.pathname+location.search+hash);
-      history.pushState({...st},'',location.pathname+location.search+hash);
-    }catch(e){}
-  }
-
-  function home(){
-    if(typeof window.goHome==='function') return window.goHome(false);
-    route={screen:'home',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
-    if(typeof setScreen==='function') return setScreen('home',false);
-  }
-
-  function levels(){
-    if(typeof window.openPackages==='function') return window.openPackages(false);
-  }
-
-  function exit(){
-    if(typeof showExit==='function') return showExit(true);
-  }
-
-  /*
-   * Final hierarchy:
-   * Soal -> Bagian -> Detail Paket -> Daftar Paket
-   * -> Level HSK -> Beranda -> Exit
-   *
-   * Study Plan:
-   * Rencana -> Paket -> Back -> Rencana yang sama
-   */
-  function back(){
-    switch(screen()){
-      case 'exercise':
-        return openSections(route.packageCode,route.type,false);
-
-      case 'result':
-        if(typeof returnToQuestions==='function') return returnToQuestions();
-        return openSections(route.packageCode,route.type,false);
-
-      case 'parts':
-        return openPackage(route.packageCode,false);
-
-      case 'package':
-        if(route.studyPlanId && typeof openStudyPlan==='function'){
-          return openStudyPlan(route.studyPlanId,false);
-        }
-        return openLevelPackages(selectedHSKLevel,false);
-
-      case 'packages':
-        return levels();
-
-      case 'levels':
-        return home();
-
-      case 'studyPlanDetail':
-        return openStudyPlans(false);
-
-      case 'studyPlans':
-        return home();
-
-      case 'home':
-      default:
-        return exit();
-    }
-  }
-
-  window.backRoute=back;
-  window.__directLayerBack=back;
-
-  /*
-   * Hardware Android Back: exactly one listener.
-   * Never call history.back() from here.
-   */
-  window.addEventListener('popstate',function(){
-    try{
-      back();
-    }catch(e){
-      console.error('HSK Back:',e);
-      home();
-    }finally{
-      setTimeout(arm,0);
-    }
-  },{passive:true});
-
-  window.cancelExit=function(){
-    const modal=document.getElementById('exitModal');
-    if(modal)modal.classList.remove('show');
-    if(typeof exitFromBack!=='undefined')exitFromBack=false;
-    setTimeout(arm,0);
-  };
-
-  arm();
-  C.installed=true;
-})();
-</script>
-
-</body>
 <style id="packageTileCanonicalV46">
 /* V46 canonical package-card system. Legacy package-card rules were removed from
    appStylesConsolidated so this is the single source of truth for #packagesScreen. */
@@ -4048,7 +3741,7 @@ body.dark #packagesScreen .packageTile-green{--accent:#58c79d;--accentSoft:#2138
 }
 
 </style>
-</html>
+
 
 <style id="packageHanziIconFixedV1">
 #packagesGrid .packageTileMain{
@@ -4523,145 +4216,29 @@ body.dark #packagesGrid .packageHanziIcon{
 })();
 </script>
 <!-- HSK FINAL NAV + ACCURACY REPAIR V10 -->
-<script id="hskFinalNavigationAccuracyV11">
+
+<script id="hskAccuracyRepairCLEAN">
 (function(){
   'use strict';
-  if(window.__HSK_FINAL_V11__) return;
-  window.__HSK_FINAL_V11__=true;
-
-  const $=id=>document.getElementById(id);
-
-  /* IMPORTANT: route/currentUsername/selectedHSKLevel are top-level `let`
-     bindings in this document. They are NOT reliably exposed as window.*.
-     Earlier V10 used window.route and therefore always saw "home", which
-     made every hardware Back look like an Exit action. */
-  const getRoute=()=>route||{};
-  const screen=()=>String(getRoute().screen||'home');
-  const stateUrl=()=>location.pathname+location.search+'#'+screen();
-
-  /* Keep exactly one sentinel entry at the current app layer. Hardware Back
-     consumes the sentinel; the popstate handler then performs app-layer
-     navigation and immediately arms the sentinel for the new layer. */
-  function armGuard(){
-    try{
-      const r=getRoute();
-      const st={...(history.state||{}),...r,__hskFinalGuard:true};
-      history.replaceState(st,'',stateUrl());
-      history.pushState({...st},'',stateUrl());
-    }catch(e){ console.warn('HSK guard:',e); }
-  }
-
-  function goHome(){
-    route={screen:'home',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
-    answers={}; checked={}; resultState=null;
-    if(typeof setScreen==='function') setScreen('home',false);
-    else if(typeof renderHome==='function') renderHome();
-  }
-
-  function backLayer(){
-    const r=getRoute();
-    switch(screen()){
-      case 'exercise':
-        if(typeof openSections==='function') return openSections(r.packageCode,r.type,false);
-        break;
-      case 'result':
-        if(typeof returnToQuestions==='function') return returnToQuestions();
-        if(typeof openSections==='function') return openSections(r.packageCode,r.type,false);
-        break;
-      case 'parts':
-        if(typeof openPackage==='function') return openPackage(r.packageCode,false);
-        break;
-      case 'package':
-        /* A package opened from Rencana must return to that exact plan. */
-        if(r.studyPlanId && typeof openStudyPlan==='function')
-          return openStudyPlan(r.studyPlanId,false);
-        if(typeof openLevelPackages==='function')
-          return openLevelPackages(selectedHSKLevel,false);
-        break;
-      case 'packages':
-        if(typeof openPackages==='function') return openPackages(false);
-        break;
-      case 'levels':
-        return goHome();
-      case 'studyPlanDetail':
-        if(typeof openStudyPlans==='function') return openStudyPlans(false);
-        break;
-      case 'studyPlans':
-        return goHome();
-      case 'home':
-      default:
-        if(typeof showExit==='function') return showExit(true);
-        break;
-    }
-  }
-
-  window.__HSK_APP_BACK_V11__=backLayer;
-  window.backRoute=backLayer;
-  window.__directLayerBack=backLayer;
-
-  /* Final hardware Back interceptor. Capture phase runs before the older
-     bubble-phase listeners in this file. stopImmediatePropagation prevents
-     those legacy listeners from issuing a second navigation/exit. */
-  window.addEventListener('popstate',function(e){
-    try{ e.preventDefault(); e.stopImmediatePropagation(); }catch(_){ }
-    try{ backLayer(); }
-    catch(err){
-      console.error('HSK hardware Back:',err);
-      goHome();
-    }
-    setTimeout(armGuard,0);
-  },true);
-
-  /* UI Back buttons and Android hardware Back share the exact same function. */
-  window.handleAppBackV11=function(){
-    try{ backLayer(); }
-    catch(err){ console.error('HSK UI Back:',err); goHome(); }
-    finally{ setTimeout(armGuard,0); }
-  };
-
-  /* Preserve the app's existing forward-navigation behavior. */
-  if(typeof setScreen==='function' && !setScreen.__hskV11Wrapped){
-    const originalSetScreen=setScreen;
-    function wrappedSetScreen(name,push=true){
-      const result=originalSetScreen(name,push);
-      if(push!==false) setTimeout(armGuard,0);
-      return result;
-    }
-    wrappedSetScreen.__hskV11Wrapped=true;
-    wrappedSetScreen.__hskV11Original=originalSetScreen;
-    setScreen=wrappedSetScreen;
-    window.setScreen=wrappedSetScreen;
-  }
-
-  window.cancelExit=function(){
-    const modal=$('exitModal');
-    if(modal) modal.classList.remove('show');
-    exitFromBack=false;
-    setTimeout(armGuard,0);
-  };
-
-  /* ---------------- Lazy-package accuracy repair ---------------- */
-  let accuracyWarmStarted=false;
+  if(window.__hskAccuracyCleanInstalled)return;
+  window.__hskAccuracyCleanInstalled=true;
+  let warmStarted=false;
   async function warmLazyStats(){
-    if(accuracyWarmStarted) return;
-    accuracyWarmStarted=true;
+    if(warmStarted)return;
+    warmStarted=true;
     try{
       const codes=Object.keys(DB||{}).filter(c=>DB[c]?.__lazy);
-      if(!codes.length || typeof window.__hskLoadPackages!=='function') return;
+      if(!codes.length||typeof window.__hskLoadPackages!=='function')return;
       await window.__hskLoadPackages(codes);
-      try{ renderHome(); }catch(_){ }
-      try{ renderPackagesScreen(); }catch(_){ }
-      try{ if(typeof renderCleanPackages==='function') renderCleanPackages(); }catch(_){ }
-      try{ if(typeof renderStudyPlans==='function') renderStudyPlans(); }catch(_){ }
-      try{ if(typeof renderStudyPlanDetail==='function' && route?.screen==='studyPlanDetail') renderStudyPlanDetail(); }catch(_){ }
-      try{ if(typeof refreshHomeStatsWithoutWorkbooks==='function') refreshHomeStatsWithoutWorkbooks(); }catch(_){ }
-    }catch(e){ console.warn('HSK lazy accuracy warmup:',e); }
+      try{renderHome()}catch(_){ }
+      try{renderPackagesScreen()}catch(_){ }
+      try{if(typeof renderCleanPackages==='function')renderCleanPackages()}catch(_){ }
+      try{if(typeof renderStudyPlans==='function')renderStudyPlans()}catch(_){ }
+      try{if(typeof renderStudyPlanDetail==='function'&&route?.screen==='studyPlanDetail')renderStudyPlanDetail()}catch(_){ }
+      try{if(typeof refreshHomeStatsWithoutWorkbooks==='function')refreshHomeStatsWithoutWorkbooks()}catch(_){ }
+    }catch(e){console.warn('HSK lazy accuracy warmup:',e)}
   }
-
-  /* Before loading: show progress only. After the external JSON is loaded,
-     DB[code].__lazy becomes false and the original packageStats() computes
-     real correct answers from the package answer keys. */
-  if(typeof packageStats==='function' && !packageStats.__hskV11Wrapped){
+  if(typeof packageStats==='function'&&!packageStats.__hskAccuracyCleanWrapped){
     const originalStats=packageStats;
     function fixedPackageStats(code){
       const pkg=DB?.[code];
@@ -4671,21 +4248,135 @@ body.dark #packagesGrid .packageHanziIcon{
         const expected=Number(meta?.total)||0;
         const answeredRaw=typeof lazyStoredProgress==='function'?Number(lazyStoredProgress(code))||0:0;
         const answered=Math.min(answeredRaw,expected||answeredRaw);
-        return {total:expected,answered,score:0,gradedTotal:0,
-          pct:expected?Math.round(answered/expected*100):0,scorePct:0,rows:[]};
+        return {total:expected,answered,score:0,gradedTotal:0,pct:expected?Math.round(answered/expected*100):0,scorePct:0,rows:[]};
       }
       return originalStats(code);
     }
-    fixedPackageStats.__hskV11Wrapped=true;
-    fixedPackageStats.__hskV11Original=originalStats;
+    fixedPackageStats.__hskAccuracyCleanWrapped=true;
+    fixedPackageStats.__hskAccuracyCleanOriginal=originalStats;
     packageStats=fixedPackageStats;
     window.packageStats=fixedPackageStats;
   }
-
   setTimeout(warmLazyStats,800);
   window.__hskWarmLazyStats=warmLazyStats;
-  setTimeout(armGuard,0);
 })();
 </script>
+
+<script id="hskCanonicalNavigationV12">
+(function(){
+  'use strict';
+  if(window.__hskCanonicalNavigationV12)return;
+  window.__hskCanonicalNavigationV12=true;
+
+  const getRoute=()=>route||{};
+  const screen=()=>String(getRoute().screen||'home');
+  let handlingPop=false;
+  let armTimer=0;
+
+  function stateUrl(){return location.pathname+location.search+'#'+screen()}
+
+  function armGuard(){
+    clearTimeout(armTimer);
+    try{
+      const r=getRoute();
+      const u=stateUrl();
+      const h=history.state||{};
+      // If the current entry is already our sentinel for this exact layer,
+      // do nothing. This is what prevents focus/visibility events from
+      // creating an ever-growing browser history stack.
+      if(h.__hskCanonicalGuard && String(h.screen||'')===screen() && location.hash==='#'+screen())return;
+      const state={...h,...r,__hskCanonicalGuard:true};
+      history.replaceState(state,'',u);
+      history.pushState({...state},'',u);
+    }catch(e){console.warn('HSK history guard:',e)}
+  }
+  window.__hskArmBackGuard=armGuard;
+
+  function goHome(){
+    route={screen:'home',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
+    answers={};checked={};resultState=null;
+    if(typeof setScreen==='function')setScreen('home',false);
+    else if(typeof renderHome==='function')renderHome();
+  }
+
+  function back(){
+    const r=getRoute();
+    switch(screen()){
+      case 'exercise':
+        return typeof openSections==='function'?openSections(r.packageCode,r.type,false):goHome();
+      case 'result':
+        if(typeof returnToQuestions==='function')return returnToQuestions();
+        return typeof openSections==='function'?openSections(r.packageCode,r.type,false):goHome();
+      case 'parts':
+        return typeof openPackage==='function'?openPackage(r.packageCode,false):goHome();
+      case 'package':
+        if(r.studyPlanId&&typeof openStudyPlan==='function')return openStudyPlan(r.studyPlanId,false);
+        return typeof openLevelPackages==='function'?openLevelPackages(selectedHSKLevel,false):goHome();
+      case 'packages':
+        return typeof openPackages==='function'?openPackages(false):goHome();
+      case 'levels':
+        return goHome();
+      case 'studyPlanDetail':
+        return typeof openStudyPlans==='function'?openStudyPlans(false):goHome();
+      case 'studyPlans':
+        return goHome();
+      case 'home':
+      default:
+        return typeof showExit==='function'?showExit(true):null;
+    }
+  }
+
+  window.backRoute=back;
+  window.__directLayerBack=back;
+  window.handleAppBack=back;
+
+  // The only popstate listener in the application. It consumes the sentinel
+  // entry and performs app-layer navigation; it never calls history.back().
+  window.addEventListener('popstate',function(e){
+    if(handlingPop)return;
+    handlingPop=true;
+    try{e.stopImmediatePropagation()}catch(_){ }
+    let result;
+    try{result=back()}catch(err){console.error('HSK Back:',err);result=goHome()}
+    Promise.resolve(result).finally(function(){
+      handlingPop=false;
+      armGuard();
+    });
+  },true);
+
+  // Forward navigation must not create a history entry for every app layer.
+  // The one sentinel is maintained by this controller only.
+  if(typeof setScreen==='function'&&!setScreen.__hskCanonicalWrapped){
+    const original=setScreen;
+    function wrapped(name,push=true){
+      const out=original.call(this,name,false);
+      if(!handlingPop)armGuard();
+      return out;
+    }
+    wrapped.__hskCanonicalWrapped=true;
+    wrapped.__hskCanonicalOriginal=original;
+    setScreen=wrapped;
+    window.setScreen=wrapped;
+  }
+
+  window.cancelExit=function(){
+    const modal=document.getElementById('exitModal');
+    if(modal)modal.classList.remove('show');
+    if(typeof exitFromBack!=='undefined')exitFromBack=false;
+    armGuard();
+  };
+
+  armGuard();
+  // initApp()/submitAuth() in the legacy core also use replaceState. Re-arm
+  // after those asynchronous startup/auth transitions so Android Back always
+  // has exactly one guard entry.
+  window.addEventListener('load',()=>setTimeout(armGuard,0),{once:true});
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(armGuard,0)});
+  window.addEventListener('focus',()=>setTimeout(armGuard,0));
+  setTimeout(armGuard,1200);
+  setTimeout(armGuard,3500);
+})();
+</script>
+
 </body>
 </html>
