@@ -935,50 +935,76 @@ let route={screen:'home',packageCode:null,type:null,sectionIndex:null};let allow
 const $=id=>document.getElementById(id);const esc=s=>String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const READING_PASSAGES={};
 
-/* External question database loader — only database separation. */
+/* External question database loader — split DB with lazy package loading. */
 window.__hskDbReady=(async function(){
   const base='./data/';
+  const packagePromises=new Map();
+  const passagePromises=new Map();
   async function getJSON(file){
     const r=await fetch(base+file,{cache:'no-store'});
     if(!r.ok) throw new Error('Gagal memuat database: '+file+' ('+r.status+')');
     return r.json();
   }
   const manifest=await getJSON('manifest.json');
+  const hsk4Codes=Array.isArray(manifest.hsk4_codes)?manifest.hsk4_codes.map(String):[];
+  const hsk5Codes=Array.isArray(manifest.hsk5_codes)?manifest.hsk5_codes.map(String):[];
+  const wb4aCodes=Array.isArray(manifest.workbook4a_codes)?manifest.workbook4a_codes.map(String):[];
+  const wb4bCodes=Array.isArray(manifest.workbook4b_codes)?manifest.workbook4b_codes.map(String):[];
+  const packageCodes=[...new Set([...hsk4Codes,...hsk5Codes,...wb4aCodes,...wb4bCodes])];
 
-  // Resolve the external database files from the repository manifest.
-  // This is database-loading logic only; UI and app behavior are untouched.
-  const packageFiles=Array.isArray(manifest.packages)
-    ? manifest.packages
-    : [
-        ...(Array.isArray(manifest.hsk4_codes)?manifest.hsk4_codes:[]),
-        ...(Array.isArray(manifest.hsk5_codes)?manifest.hsk5_codes:[])
-      ].map(code=>String(code)+'.json');
+  /* Register lightweight entries so the package list can render without
+     downloading the question bodies. */
+  packageCodes.forEach(code=>{if(!DB[code])DB[code]={code,__lazy:true}});
+  PACKAGES=packageCodes.slice();
 
-  const workbookFiles=Array.isArray(manifest.workbookFiles)
-    ? manifest.workbookFiles
-    : [
-        ...(Array.isArray(manifest.workbook4a_codes)?manifest.workbook4a_codes:[]),
-        ...(Array.isArray(manifest.workbook4b_codes)?manifest.workbook4b_codes:[])
-      ].map(code=>String(code)+'.json');
+  async function loadFile(file,code){
+    const key=String(code||file);
+    if(packagePromises.has(key))return packagePromises.get(key);
+    const promise=getJSON(file).then(group=>{
+      if(group && group.code) DB[group.code]=group;
+      else if(group && typeof group==='object' && code){
+        DB[code]=Object.assign({code},group);
+      }
+      return DB[code];
+    }).catch(err=>{
+      packagePromises.delete(key);
+      throw err;
+    });
+    packagePromises.set(key,promise);
+    return promise;
+  }
 
-  const files=[...new Set(packageFiles.concat(workbookFiles))];
-  // HSK package files are required. Workbook files are optional at boot so
-  // missing workbook JSONs cannot prevent the HSK package list from loading.
-  const [packageData,workbookData,readingPassages]=await Promise.all([
-    Promise.all(packageFiles.map(getJSON)),
-    Promise.allSettled(workbookFiles.map(getJSON)),
-    getJSON(manifest.readingPassages||'reading-passages.json')
-  ]);
+  window.__hskLoadPackage=async function(code){
+    code=String(code||'');
+    if(!code)return null;
+    if(DB[code] && !DB[code].__lazy)return DB[code];
+    return loadFile(code+'.json',code);
+  };
 
-  packageData.concat(
-    workbookData.filter(r=>r.status==='fulfilled').map(r=>r.value)
-  ).forEach(group=>{
-    if(group && group.code) DB[group.code]=group;
-    else if(group && typeof group==='object') Object.assign(DB,group);
-  });
-  Object.assign(READING_PASSAGES,readingPassages||{});
-  PACKAGES=Object.keys(DB);
-  return {manifest,packageCount:PACKAGES.length};
+  window.__hskLoadPackages=async function(codes){
+    const list=[...new Set((codes||[]).map(String).filter(Boolean))];
+    return Promise.all(list.map(window.__hskLoadPackage));
+  };
+
+  window.__hskLoadReadingPassages=async function(){
+    if(Object.keys(READING_PASSAGES).length)return READING_PASSAGES;
+    const key='reading-passages.json';
+    if(passagePromises.has(key))return passagePromises.get(key);
+    const promise=getJSON(key).then(data=>{
+      Object.assign(READING_PASSAGES,data||{});
+      return READING_PASSAGES;
+    }).catch(err=>{passagePromises.delete(key);throw err});
+    passagePromises.set(key,promise);
+    return promise;
+  };
+
+  window.__hskLoadAllPackages=async function(){
+    return window.__hskLoadPackages(packageCodes);
+  };
+
+  window.__hskManifest=manifest;
+  window.__hskPackageCodes=packageCodes;
+  return {manifest,packageCount:packageCodes.length,lazy:true};
 })();
 
 function norm(s){return String(s??'').replace(/[\s。！？!?，,]/g,'').toLowerCase()}
@@ -3247,8 +3273,8 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     DB[SPECIAL_SENT]={meta:{title:'HSK4 Susun Kalimat',desc:'Kumpulan semua soal susun kalimat HSK 4'},writing:[],listening:[],reading:[{title:'阅读 · HSK4 · Susun Kalimat',range:`1–${sentQs.length}`,questions:sentQs}]};
     window.__cleanSpecialCounts={susunKata:wordQs.length,susunKalimat:sentQs.length};
   }
+  window.__ensureSpecialDB=ensureSpecialDB;
   window.__hskDbReady.then(()=>{
-    ensureSpecialDB();
     window.__cleanPackageAudit={
     regularHsk4:0,regularHsk4SusunKata:0,regularHsk4SusunKalimat:0,
     workbook4a:0,workbook4b:0,errors:[]
@@ -4664,6 +4690,103 @@ body.dark #packagesScreen .packageTile-green{--accent:#58c79d;--accentSoft:#2138
   }else{
     if(route?.screen==='package')appendPackageReset();
     if(route?.screen==='parts')appendSectionReset();
+  }
+})();
+</script>
+
+<script id="SPLIT_DB_LAZY_LOADING_FINAL">
+(function(){
+  'use strict';
+  const waitReady=()=>window.__hskDbReady||Promise.resolve();
+  const loadPackage=code=>window.__hskLoadPackage?window.__hskLoadPackage(code):Promise.resolve(DB?.[code]);
+  const loadPassages=()=>window.__hskLoadReadingPassages?window.__hskLoadReadingPassages():Promise.resolve(READING_PASSAGES);
+
+  /* Only the selected package is fetched when the user opens it. */
+  const originalOpenPackage=window.openPackage;
+  window.openPackage=async function(code,push=true){
+    code=String(code||'');
+    if(!code)return;
+    try{
+      await waitReady();
+      await loadPackage(code);
+      if(typeof originalOpenPackage==='function')return originalOpenPackage.call(this,code,push);
+    }catch(err){
+      console.error(err);
+      if(typeof appNotice==='function')appNotice('Gagal memuat paket','Database '+code+' tidak dapat dimuat. Periksa koneksi internet lalu coba lagi.');
+    }
+  };
+
+  /* Package cards in the current UI have their own entry function. */
+  const originalOpenPackageFromTile=window.openPackageFromTile;
+  window.openPackageFromTile=async function(code){
+    code=String(code||'');
+    if(!code)return;
+    try{
+      await waitReady();
+      await loadPackage(code);
+      if(typeof originalOpenPackageFromTile==='function')return originalOpenPackageFromTile.call(this,code);
+      return window.openPackage(code,true);
+    }catch(err){
+      console.error(err);
+      if(typeof appNotice==='function')appNotice('Gagal memuat paket','Database '+code+' tidak dapat dimuat. Periksa koneksi internet lalu coba lagi.');
+    }
+  };
+
+  /* Opening a section must have the package body available first. */
+  const originalOpenSections=window.openSections;
+  window.openSections=async function(code,type,push=true){
+    code=String(code||'');
+    try{
+      await waitReady();
+      await loadPackage(code);
+      if(String(type)==='reading')await loadPassages();
+      if(typeof originalOpenSections==='function')return originalOpenSections.call(this,code,type,push);
+    }catch(err){
+      console.error(err);
+      if(typeof appNotice==='function')appNotice('Gagal memuat bagian','Database '+code+' tidak dapat dimuat.');
+    }
+  };
+
+  /* The exercise itself is the final safety net: lazy-load the selected
+     package (and reading passages) immediately before rendering questions. */
+  const originalStartSection=window.startSection;
+  window.startSection=async function(i,push=true){
+    const code=String(route?.packageCode||'');
+    const type=String(route?.type||'');
+    try{
+      await waitReady();
+      await loadPackage(code);
+      if(type==='reading')await loadPassages();
+      if(typeof originalStartSection==='function')return originalStartSection.call(this,i,push);
+    }catch(err){
+      console.error(err);
+      if(typeof appNotice==='function')appNotice('Gagal memuat soal','Database '+code+' tidak dapat dimuat.');
+    }
+  };
+
+  /* Special packages are generated from all HSK4 data only when opened. */
+  const originalOpenSpecial=window.openSpecialPackage;
+  window.openSpecialPackage=async function(code,push=true){
+    try{
+      await waitReady();
+      if(typeof window.__hskLoadPackages==='function' && Array.isArray(window.__hskManifest?.hsk4_codes))
+        await window.__hskLoadPackages(window.__hskManifest.hsk4_codes);
+      if(typeof window.__ensureSpecialDB==='function')window.__ensureSpecialDB();
+      if(typeof originalOpenSpecial==='function')return originalOpenSpecial.call(this,code,push);
+    }catch(err){
+      console.error(err);
+      if(typeof appNotice==='function')appNotice('Gagal memuat paket spesial','Database HSK 4 tidak dapat dimuat.');
+    }
+  };
+
+  /* A study-plan entry can bypass the normal tile, so protect it too. */
+  const originalOpenFromStudyPlan=window.openPackageFromStudyPlan;
+  if(typeof originalOpenFromStudyPlan==='function'){
+    window.openPackageFromStudyPlan=async function(planId,code){
+      await waitReady();
+      await loadPackage(code);
+      return originalOpenFromStudyPlan.call(this,planId,code);
+    };
   }
 })();
 </script>
