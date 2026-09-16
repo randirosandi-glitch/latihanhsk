@@ -1286,10 +1286,13 @@ async function initApp(){
     document.querySelector('.mainNav')?.classList.remove('authLocked');
     $('home')?.classList.add('active');
     renderUserPill();renderContext();renderNavState();
+    // Render the home screen immediately. Cloud sync is background-only and must
+    // never block the application boot or leave the user on the boot loader.
     renderHome();renderPackagesScreen();renderScores();
     history.replaceState({screen:'home',homeGuard:true},'',location.pathname+location.search+'#home');
-    await pullCloudState(true);
-    renderHome();renderPackagesScreen();renderScores();
+    Promise.resolve(pullCloudState(true)).then(()=>{
+      try{renderHome();renderPackagesScreen();renderScores()}catch(e){console.warn('[HSK] post-sync render failed',e)}
+    }).catch(e=>console.warn('[HSK] background cloud sync failed',e));
   }else{
     const a=$('authScreen');if(a)a.style.display='flex';
     document.documentElement.classList.add('auth-page');
