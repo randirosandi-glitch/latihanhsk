@@ -4145,6 +4145,189 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   document.addEventListener('hsk:data-ready',()=>{try{renderHome();renderScores();renderPackagesScreen()}catch(e){}});
 })();
 </script>
+
+<style id="dynamicFolderCatalogStyles">
+#levelsScreen .levelGroupDivider{grid-column:1/-1;margin:10px 2px 0;padding:8px 2px 0;font-size:10px;font-weight:800;letter-spacing:2px;color:var(--muted);text-transform:uppercase;border-top:1px solid color-mix(in srgb,var(--line) 70%,transparent);}
+#levelsScreen .levelGroupDivider:first-child{border-top:0;margin-top:0;}
+#packagesScreen #packagesGrid{grid-template-columns:1fr!important;}
+</style>
+<script id="dynamicFolderCatalogMainReady">
+(function(){
+  'use strict';
+  /* Dynamic folder catalog — main-ready.
+     The data/ folder is the source of truth.
+     Folder name = category/material shown in the app.
+     JSON filename = package code.
+     Nothing is hard-coded for HSK levels or workbook names.
+     Optional preview override: ?branch=refactor/dynamic-folder-catalog
+  */
+  const REPO='randirosandi-glitch/latihanhsk';
+  const params=new URLSearchParams(location.search);
+  const BRANCH=params.get('branch')||'main';
+  const API='https://api.github.com/repos/'+REPO+'/contents/';
+  const RAW='https://raw.githubusercontent.com/'+REPO+'/'+encodeURIComponent(BRANCH).replace(/%2F/g,'/')+'/';
+  const state=window.__hskDynamicFolderCatalog={loaded:false,branch:BRANCH,groups:[],byCode:new Map(),error:null,selected:null};
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const natural=(a,b)=>String(a).localeCompare(String(b),undefined,{numeric:true,sensitivity:'base'});
+  const kind=name=>/^HSK\s*\d+/i.test(name)?'hsk':/^Workbook\b/i.test(name)?'workbook':'custom';
+  const level=name=>{const m=String(name).match(/^HSK\s*(\d+)/i);return m?Number(m[1]):null};
+  async function api(path){
+    const r=await fetch(API+path.replace(/^\/+/, '')+'?ref='+encodeURIComponent(BRANCH),{cache:'no-store',headers:{Accept:'application/vnd.github+json'}});
+    if(!r.ok)throw new Error('GitHub catalog HTTP '+r.status+' for '+path);
+    return r.json();
+  }
+  async function discover(){
+    const root=await api('data');
+    const dirs=(root||[]).filter(x=>x.type==='dir');
+    const groups=[];
+    for(const dir of dirs){
+      const items=await api(dir.path);
+      const files=(items||[]).filter(x=>x.type==='file'&&/\.json$/i.test(x.name)&&x.name.toLowerCase()!=='manifest.json'&&x.name.toLowerCase()!=='reading-passages.json').sort((a,b)=>natural(a.name,b.name));
+      if(!files.length)continue;
+      const g={name:dir.name,path:dir.path,kind:kind(dir.name),level:level(dir.name),files:[],codes:[]};
+      files.forEach(f=>{const code=f.name.replace(/\.json$/i,'');const item={name:f.name,code,path:f.path,raw:RAW+f.path};g.files.push(item);g.codes.push(code);state.byCode.set(code,item)});
+      groups.push(g);
+    }
+    groups.sort((a,b)=>{
+      const ak=a.kind==='hsk'?0:a.kind==='workbook'?1:2,bk=b.kind==='hsk'?0:b.kind==='workbook'?1:2;
+      if(ak!==bk)return ak-bk;
+      if(a.level!=null&&b.level!=null&&a.level!==b.level)return a.level-b.level;
+      if(a.level!=null&&b.level==null)return -1;
+      if(a.level==null&&b.level!=null)return 1;
+      return natural(a.name,b.name);
+    });
+    return groups;
+  }
+  function groupByKey(key){
+    const k=String(key||'');
+    if(k.startsWith('folder:'))return state.groups.find(g=>g.name===k.slice(7))||null;
+    if(/^hsk:\d+$/i.test(k))return state.groups.find(g=>g.kind==='hsk'&&g.level===Number(k.split(':')[1]))||null;
+    return state.groups.find(g=>g.name===k)||null;
+  }
+  function selectedGroup(){return state.selected||groupByKey(window.__hskDynamicMaterial)||state.groups[0]||null}
+  function ensureStub(code,g){
+    if(!window.DB[code])window.DB[code]={code,__lazy:true,__folder:g.name};
+    else window.DB[code].__folder=g.name;
+  }
+  function packageCount(){return state.groups.reduce((n,g)=>n+g.codes.length,0)}
+  function updateHomeMetrics(){
+    const n=$('homeMetricPackages'),note=document.querySelector('#homeMetricPackages')?.parentElement?.querySelector('.homeMetricNote');
+    if(n)n.textContent=String(packageCount());
+    if(note)note.textContent='paket dari data/';
+  }
+  function $(id){return document.getElementById(id)}
+  function renderLevels(){
+    const grid=document.querySelector('#levelsScreen .levelGrid');if(!grid)return;
+    const h=state.groups.filter(g=>g.kind==='hsk'),w=state.groups.filter(g=>g.kind==='workbook'),c=state.groups.filter(g=>g.kind==='custom');
+    let html='';
+    const section=(label,arr)=>arr.length?'<div class="levelGroupDivider">'+esc(label)+'</div>'+arr.map((g)=>{
+      const idx=state.groups.indexOf(g);
+      const accent=g.kind==='hsk'?(g.level===4?'levelCard4':'levelCard5'):'levelCardWorkbook';
+      const icon=g.level!=null?String(g.level):g.kind==='workbook'?'W':'•';
+      const noun=g.kind==='workbook'?'lesson':'paket';
+      return `<button class="levelCard ${accent}" type="button" data-material-key="folder:${esc(g.name)}" onclick="openDynamicFolder(${idx})"><div class="levelCardIcon">${esc(icon)}</div><div class="levelCardBody"><span class="levelEyebrow">${esc(g.kind==='hsk'?'HSK LEVEL':g.kind==='workbook'?'WORKBOOK':'MATERI')}</span><strong>${esc(g.name)}</strong><p>${g.codes.length} ${noun} tersedia</p></div><span class="levelCardArrow"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span></span></button>`;
+    }).join(''):'';
+    html+=section('HSK',h)+section('Workbook',w)+section('Paket',c);
+    grid.innerHTML=html||'<div class="notice"><strong>Belum ada paket.</strong><br>Tambahkan folder berisi file JSON ke data/.</div>';
+  }
+  function packageDesc(code){
+    const d=window.DB[code]||{};let total=0,parts=[];
+    Object.entries(window.META||{}).forEach(([t,m])=>{const n=(d[t]||[]).reduce((x,s)=>x+(Array.isArray(s.questions)?s.questions.length:0),0);if(n){total+=n;parts.push(m.label)}});
+    return total?`${total} soal · ${parts.join(' · ')}`:'Paket tersedia';
+  }
+  function progressFor(code){try{return typeof window.packageStats==='function'?window.packageStats(code):{pct:0,total:0,answered:0}}catch(e){return{pct:0,total:0,answered:0}}}
+  function renderPackages(){
+    const g=selectedGroup(),grid=$('packagesGrid');if(!g||!grid)return;
+    const head=$('packageLevelKicker'),title=$('packagePageTitle'),sub=$('packagePageSub'),panel=$('hsk5Panel');
+    if(panel)panel.hidden=true;
+    if(head)head.textContent=g.name;
+    if(title)title.textContent=g.kind==='workbook'?'Pilih lesson':'Pilih paket';
+    const input=$('packageSearchInput');const q=String(input?.value||'').trim().toLowerCase();
+    const codes=g.codes.filter(code=>{const d=window.DB[code]||{};return !q||code.toLowerCase().includes(q)||String(d.title||'').toLowerCase().includes(q)});
+    document.querySelectorAll('.packagePager').forEach(x=>x.remove());
+    const size=10,totalPages=Math.max(1,Math.ceil(codes.length/size));
+    const page=Math.max(0,Math.min(Number(window.__hskDynamicPackagePage||0),totalPages-1));window.__hskDynamicPackagePage=page;
+    if(!codes.length){grid.innerHTML='<div class="emptySearch"><strong>Paket tidak ditemukan</strong><span>Coba kata kunci lain.</span></div>';return}
+    grid.innerHTML=codes.slice(page*size,(page+1)*size).map(code=>{
+      const d=window.DB[code]||{},st=progressFor(code),status=st.pct>=100?'Selesai':st.pct>0?'Sedang berjalan':'Belum dimulai';
+      const chips=Object.entries(window.META||{}).filter(([t])=>(d[t]||[]).length>0).map(([t,m])=>`<span class="pkgMetaChip">${esc(m.label)}</span>`).join('');
+      return `<article class="tile packageTile packageTileShell" data-package-code="${esc(code)}"><button class="packageTileMain" type="button" onclick="openDynamicPackage('${esc(code)}')"><div class="pkgTop"><div class="tileIcon" aria-hidden="true">${typeof window.svg==='function'?window.svg('box'):''}</div><span class="statusPill"><span class="statusDot"></span>${status}</span></div><div class="pkgTitleRow"><div><b>${esc(d.title||('Paket '+code))}</b><small>${esc(packageDesc(code))}</small>${chips?`<div class="pkgMetaChips">${chips}</div>`:''}</div></div>${st.total?window.progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket'):''}<div class="pkgFooter"><span>${esc(g.name)}</span><span>${st.pct||0}%</span></div></button></article>`;
+    }).join('');
+    if(totalPages>1){
+      const pager=document.createElement('div');pager.className='packagePager';
+      pager.innerHTML=(page>0?'<button class="btn" type="button" data-d="-1">‹ Sebelumnya</button>':'')+`<span class="packagePageIndicator">Halaman ${page+1} / ${totalPages}</span>`+(page<totalPages-1?'<button class="btn" type="button" data-d="1">Berikutnya ›</button>':'');
+      pager.querySelectorAll('button').forEach(b=>b.onclick=()=>{window.__hskDynamicPackagePage=page+Number(b.dataset.d);renderPackages()});grid.after(pager);
+    }
+  }
+  async function loadPackage(code){
+    const item=state.byCode.get(String(code));
+    if(!item)throw new Error('Paket tidak ditemukan di data/.');
+    const cached=window.DB[code];if(cached&&!cached.__lazy)return cached;
+    const r=await fetch(item.raw,{cache:'no-cache'});if(!r.ok)throw new Error('Database paket HTTP '+r.status);
+    const d=await r.json();if(!d||typeof d!=='object')throw new Error('Database paket tidak valid: '+code);
+    d.code=d.code||code;d.__folder=(state.groups.find(g=>g.codes.includes(code))||{}).name||'';window.DB[code]=d;return d;
+  }
+  window.__hskLoadPackage=loadPackage;
+  window.__hskLoadPackages=async codes=>Promise.all([...new Set((codes||[]).map(String).filter(Boolean))].map(loadPackage));
+  window.openDynamicFolder=function(index,push=true){
+    const g=state.groups[Number(index)];if(!g)return;state.selected=g;window.__hskDynamicMaterial='folder:'+g.name;window.__hskDynamicPackagePage=0;
+    window.selectedHSKLevel=g.level||0;window.route={screen:'packages',packageCode:null,type:null,sectionIndex:null,studyPlanId:null,materialKey:'folder:'+g.name};
+    renderPackages();window.setScreen('packagesScreen',push);window.scrollTo({top:0,left:0,behavior:'auto'});
+  };
+  window.openPackages=function(push=true){
+    window.route={screen:'levels',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};renderLevels();window.setScreen('levelsScreen',push);window.scrollTo({top:0,left:0,behavior:'auto'});
+  };
+  window.openLevelPackages=function(key,push=true){
+    let g=null;const s=String(key??'');
+    if(/^\d+$/.test(s))g=state.groups.find(x=>x.kind==='hsk'&&x.level===Number(s));
+    else g=groupByKey(s);
+    if(!g)return window.openPackages(push);
+    const i=state.groups.indexOf(g);window.openDynamicFolder(i,push);
+  };
+  window.renderLevelsScreen=renderLevels;
+  window.renderPackagesScreen=renderPackages;
+  window.filterPackages=function(value){const i=$('packageSearchInput');if(i)i.value=String(value??'');window.__hskDynamicPackagePage=0;renderPackages()};
+  window.clearPackageSearch=function(){const i=$('packageSearchInput');if(i)i.value='';window.__hskDynamicPackagePage=0;renderPackages();i?.focus()};
+  window.openDynamicPackage=async function(code,push=true){
+    try{
+      await loadPackage(code);
+      const keep=window.route?.studyPlanId||window.__cleanReturnPlanId||null;window.__cleanReturnPlanId=null;
+      window.route={screen:'package',packageCode:String(code),type:null,sectionIndex:null,studyPlanId:keep,materialKey:window.DB[code]?.__folder||null};
+      if(typeof window.renderPackage==='function')window.renderPackage();
+      window.setScreen('package',push);window.scrollTo({top:0,left:0,behavior:'auto'});
+    }catch(e){console.error(e);if(typeof window.appNotice==='function')window.appNotice('Paket gagal dimuat',e.message||'Silakan coba lagi.',{icon:'!'});else alert('Paket gagal dimuat. Silakan coba lagi.');}
+  };
+  window.openPackageFromTile=window.openDynamicPackage;
+  window.openPackage=window.openDynamicPackage;
+  const oldBackRoute=window.backRoute;
+  window.backRoute=function(){
+    const r=window.route||{};
+    if(r.screen==='package'&&state.selected){window.openDynamicFolder(state.groups.indexOf(state.selected),true);return}
+    if(r.screen==='packages'){window.openPackages(true);return}
+    if(typeof oldBackRoute==='function')return oldBackRoute.apply(this,arguments);
+  };
+  async function boot(){
+    try{
+      state.groups=await discover();
+      state.groups.forEach(g=>g.codes.forEach(c=>ensureStub(c,g)));
+      state.loaded=true;
+      state.selected=state.groups[0]||null;
+      window.__hskCatalog={groups:state.groups};
+      window.__hskDynamicGroups=state.groups;
+      renderLevels();
+      if(state.selected)renderPackages();
+      updateHomeMetrics();
+      document.dispatchEvent(new Event('hsk:dynamic-catalog-ready'));
+    }catch(e){
+      state.error=e;console.error('Dynamic folder catalog:',e);
+      const grid=document.querySelector('#levelsScreen .levelGrid');
+      if(grid)grid.innerHTML='<div class="notice"><strong>Katalog paket belum dapat dimuat.</strong><br>Periksa koneksi internet lalu coba lagi.</div>';
+    }
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+})();
+
+</script>
 </body>
 
 
