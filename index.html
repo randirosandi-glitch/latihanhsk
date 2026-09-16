@@ -3396,17 +3396,24 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 
 
 
-<script id="navigationControllerFinalV4">
+<script id="navigationControllerFinalV5">
 (function(){
   'use strict';
-  const C=window.__navigationControllerFinalV4=window.__navigationControllerFinalV4||{};
+  const C=window.__navigationControllerFinalV5=window.__navigationControllerFinalV5||{};
   if(C.installed)return;
 
+  /*
+   * CRITICAL:
+   * `route` and `currentUsername` are global lexical variables declared
+   * with `let`, so they are NOT reliably available as window.route /
+   * window.currentUsername. Reading window.route was the reason every
+   * Back action was being interpreted as Home/Exit.
+   */
   function screen(){
-    return String(window.route?.screen||'home');
+    return String(route?.screen||'home');
   }
 
-  function url(){
+  function stateURL(){
     return location.pathname+location.search+'#'+screen();
   }
 
@@ -3414,100 +3421,60 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     try{
       const st={
         ...(history.state||{}),
-        ...(window.route||{}),
+        ...(route||{}),
         __hskLayerGuard:true
       };
-      history.replaceState(st,'',url());
-      history.pushState({...st},'',url());
+      history.replaceState(st,'',stateURL());
+      history.pushState({...st},'',stateURL());
     }catch(e){}
   }
 
-  /*
-   * Internal app navigation must not create browser-history layers.
-   * Keep the existing app setScreen implementation, but always re-arm
-   * the single physical-back sentinel after navigation.
-   */
-  const originalSetScreen=window.setScreen;
-  if(typeof originalSetScreen==='function' && !C.wrapped){
-    C.wrapped=true;
-    window.setScreen=function(name,push){
-      const result=originalSetScreen.call(this,name,false);
-      setTimeout(arm,0);
-      return result;
-    };
+  function goHome(){
+    return goHomeCore(false);
   }
 
-  function goHome(){
-    if(typeof window.goHome==='function'){
-      return window.goHome(false);
-    }
-    if(typeof window.setScreen==='function'){
-      return window.setScreen('home',false);
-    }
+  function goHomeCore(push){
+    route={screen:'home',packageCode:null,type:null,sectionIndex:null};
+    answers={}; checked={}; resultState=null;
+    setScreen('home',push);
   }
 
   function openLevels(){
-    if(typeof window.openLevels==='function'){
-      return window.openLevels(false);
-    }
-    if(typeof window.setScreen==='function'){
-      return window.setScreen('levels',false);
-    }
+    return openPackages(false);
   }
 
   function exitWarning(){
-    if(typeof window.showExit==='function'){
-      return window.showExit(true);
-    }
-    const modal=document.getElementById('exitModal');
-    if(modal)modal.classList.add('show');
+    return showExit(true);
   }
 
   /*
    * OFFICIAL APP HIERARCHY:
-   *
-   * Soal
-   *   -> Bagian
-   *   -> Detail Paket
-   *   -> Daftar Paket
-   *   -> Level HSK
-   *   -> Beranda
-   *   -> Exit / warning
+   * Soal -> Bagian -> Detail Paket -> Daftar Paket
+   * -> Level HSK -> Beranda -> Exit
    */
   function backRoute(){
-    const s=screen();
-
-    switch(s){
+    switch(screen()){
       case 'exercise':
-        return window.openSections?.(route.packageCode,route.type,false);
+        return openSections(route.packageCode,route.type,false);
 
       case 'result':
-        if(typeof window.returnToQuestions==='function'){
-          return window.returnToQuestions();
-        }
-        return window.openSections?.(route.packageCode,route.type,false);
+        if(typeof returnToQuestions==='function') return returnToQuestions();
+        return openSections(route.packageCode,route.type,false);
 
       case 'parts':
-        return window.openPackage?.(route.packageCode,false);
+        return openPackage(route.packageCode,false);
 
       case 'package':
-        return window.openLevelPackages?.(selectedHSKLevel,false);
+        return openLevelPackages(selectedHSKLevel,false);
 
       case 'packages':
-        /*
-         * Package list -> HSK level selector.
-         */
         return openLevels();
 
       case 'levels':
-        /*
-         * HSK level selector -> Home.
-         * It is NOT the root.
-         */
         return goHome();
 
       case 'studyPlanDetail':
-        return window.openStudyPlans?.(false);
+        return openStudyPlans(false);
 
       case 'studyPlans':
         return goHome();
@@ -3521,6 +3488,10 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   window.backRoute=backRoute;
   window.__directLayerBack=backRoute;
 
+  /*
+   * One physical Back listener. The browser has already consumed the
+   * sentinel entry when popstate fires; do not call history.back() here.
+   */
   if(!C.popInstalled){
     window.addEventListener('popstate',function(){
       try{
@@ -3533,12 +3504,17 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   }
 
   window.cancelExit=function(){
-    const modal=document.getElementById('exitModal');
+    const modal=$('exitModal');
     if(modal)modal.classList.remove('show');
-    if(typeof window.exitFromBack!=='undefined')window.exitFromBack=false;
+    if(typeof exitFromBack!=='undefined')exitFromBack=false;
     setTimeout(arm,0);
   };
 
+  /*
+   * Do not wrap setScreen or create another history layer.
+   * Existing app navigation functions already know whether they should
+   * push. Back navigation above explicitly uses push=false.
+   */
   arm();
   C.installed=true;
 })();
