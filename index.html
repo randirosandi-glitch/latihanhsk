@@ -1222,49 +1222,110 @@ async function loadQuestionData(){
 (function(){
 "use strict";
 const REPO="randirosandi-glitch/latihanhsk", REF="main";
-const API="https://api.github.com/repos/"+REPO+"/contents/";
-const RAW="https://raw.githubusercontent.com/"+REPO+"/"+REF+"/";
+const TREE_API="https://api.github.com/repos/"+REPO+"/git/trees/"+REF+"?recursive=1";
+const RAW_BASE="https://raw.githubusercontent.com/"+REPO+"/"+REF+"/";
 const catalog=Object.create(null), cache=Object.create(null);
 
-function apiURL(path){return API+path.split("/").map(encodeURIComponent).join("/")+"?ref="+encodeURIComponent(REF)}
-function rawURL(path){return RAW+path.split("/").map(encodeURIComponent).join("/")}
-async function getJSON(url){
-  const r=await fetch(url,{cache:"no-store",headers:{Accept:"application/vnd.github+json"}});
-  if(!r.ok) throw new Error("HTTP "+r.status);
-  return r.json();
+function pageURL(path){return new URL(String(path).replace(/^\//,''),document.baseURI).href}
+function rawURL(path){return RAW_BASE+String(path).split("/").map(encodeURIComponent).join("/")}
+function addCatalogItem(category,path){
+  const m=String(path).match(/^data\/([^/]+)\/([^/]+\.json)$/i);
+  if(!m)return;
+  const name=m[2], code=name.replace(/\.json$/i,"");
+  if(name==='manifest.json'||name==='reading-passages.json')return;
+  const meta={code,category:m[1],path,url:pageURL(path),rawUrl:rawURL(path)};
+  catalog[code]=meta;
+  (window.__HSK_DYNAMIC_GROUPS[m[1]]||(window.__HSK_DYNAMIC_GROUPS[m[1]]=[])).push(meta);
+}
+function sortCatalogGroups(groups){
+  Object.keys(groups).forEach(k=>groups[k].sort((a,b)=>String(a.code).localeCompare(String(b.code),undefined,{numeric:true,sensitivity:'base'})));
+  return groups;
+}
+function clearCatalog(){
+  Object.keys(catalog).forEach(k=>delete catalog[k]);
+  window.__HSK_DYNAMIC_GROUPS=Object.create(null);
+}
+function seedKnownCatalog(){
+  const fallback={
+    "HSK 4":["H41001","H41002","H41003","H41004","H41005","H41006","H41007","H41008","H41009","H41110","H41111","H41218","H41219","H41220","H41221","H41327","H41328","H41329","H41330","H41331","H41332","H41333","H41553B","H41553C","H41553D"],
+    "Workbook HSK4a":["WB4A02","WB4A03","WB4A04","WB4A05","WB4A06","WB4A07","WB4A08","WB4A09","WB4A10"],
+    "Workbook HSK4b":["WB4B01","WB4B02","WB4B03","WB4B04","WB4B05","WB4B06","WB4B07","WB4B08","WB4B09","WB4B10"],
+    "hsk7":["TEST-HSK7"]
+  };
+  clearCatalog();
+  for(const [category,codes] of Object.entries(fallback)){
+    for(const code of codes)addCatalogItem(category,`data/${category}/${code}.json`);
+  }
+  sortCatalogGroups(window.__HSK_DYNAMIC_GROUPS);
 }
 window.__HSK_DYNAMIC_CATALOG=catalog;
 window.__HSK_DYNAMIC_GROUPS=Object.create(null);
 
+async function loadTree(){
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),5000);
+  try{
+    const r=await fetch(TREE_API,{cache:"no-store",headers:{Accept:"application/vnd.github+json"},signal:controller.signal});
+    if(!r.ok)throw new Error("GitHub tree HTTP "+r.status);
+    return r.json();
+  }finally{clearTimeout(timer)}
+}
 window.loadDynamicFolderCatalog=async function(){
-  const root=await getJSON(apiURL("data"));
-  const dirs=(Array.isArray(root)?root:[]).filter(x=>x.type==="dir");
-  for(const dir of dirs){
-    const entries=await getJSON(apiURL("data/"+dir.name));
-    const files=(Array.isArray(entries)?entries:[]).filter(x=>
-      x.type==="file" && /\.json$/i.test(x.name) &&
-      x.name!=="manifest.json" && x.name!=="reading-passages.json"
-    );
-    if(!files.length) continue;
-    window.__HSK_DYNAMIC_GROUPS[dir.name]=[];
-    for(const file of files){
-      const code=file.name.replace(/\.json$/i,"");
-      const meta={code,category:dir.name,path:file.path,url:rawURL(file.path)};
-      catalog[code]=meta;
-      window.__HSK_DYNAMIC_GROUPS[dir.name].push(meta);
+  // A local/static fallback guarantees the current database remains usable even
+  // when GitHub's API is unavailable or rate-limited. The API is only used to
+  // discover newly added folders/packages.
+  if(!window.__HSK_DYNAMIC_READY)seedKnownCatalog();
+  try{
+    const tree=await loadTree();
+    const items=Array.isArray(tree?.tree)?tree.tree:[];
+    const discovered=Object.create(null);
+    for(const item of items){
+      if(item?.type!=="blob" || !/^data\/[^/]+\/[^/]+\.json$/i.test(item.path||''))continue;
+      const m=item.path.match(/^data\/([^/]+)\/([^/]+\.json)$/i);
+      if(!m||m[2]==='manifest.json'||m[2]==='reading-passages.json')continue;
+      (discovered[m[1]]||(discovered[m[1]]=[])).push(item.path);
     }
+    // Only replace the fallback when the tree is complete. A truncated tree
+    // would otherwise silently hide valid packages.
+    if(Object.keys(discovered).length && tree?.truncated!==true){
+      clearCatalog();
+      for(const [category,paths] of Object.entries(discovered))for(const path of paths)addCatalogItem(category,path);
+      sortCatalogGroups(window.__HSK_DYNAMIC_GROUPS);
+      window.__HSK_DYNAMIC_SOURCE='github-tree';
+    }else{
+      window.__HSK_DYNAMIC_SOURCE='fallback';
+    }
+    window.__HSK_DYNAMIC_READY=true;
+  }catch(e){
+    console.warn('[HSK] GitHub catalog discovery unavailable; using local fallback catalog.',e);
+    window.__HSK_DYNAMIC_READY=true;
+    window.__HSK_DYNAMIC_SOURCE='fallback';
   }
-  window.__HSK_DYNAMIC_READY=true;
   document.dispatchEvent(new CustomEvent("hsk:dynamic-catalog-ready"));
   return window.__HSK_DYNAMIC_GROUPS;
 };
 
 window.loadPackageLazy=async function(code){
-  code=String(code);
+  code=String(code||'');
   if(cache[code]){DB[code]=cache[code];return cache[code]}
   const meta=catalog[code];
-  if(!meta) throw new Error("Paket tidak ditemukan: "+code);
-  const data=await getJSON(meta.url);
+  if(!meta)throw new Error("Paket tidak ditemukan: "+code);
+  let data;
+  try{
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),15000);
+    try{
+      const r=await fetch(meta.url,{cache:"no-store",signal:controller.signal});
+      if(!r.ok)throw new Error("HTTP "+r.status);
+      data=await r.json();
+    }finally{clearTimeout(timer)}
+  }catch(primaryError){
+    // Secondary path for environments where the GitHub Pages relative path is
+    // not yet available while raw GitHub is already updated.
+    const r=await fetch(meta.rawUrl,{cache:"no-store"});
+    if(!r.ok)throw primaryError;
+    data=await r.json();
+  }
   cache[code]=data;
   DB[code]=data;
   return data;
