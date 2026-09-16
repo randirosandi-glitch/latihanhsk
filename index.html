@@ -1024,11 +1024,10 @@ function performLogout(){
   document.querySelector('.mainNav')?.classList.add('authLocked');
   renderUserPill();
   resetAuthChoices();
-  history.replaceState({screen:'home',authRequired:true},'',location.pathname+location.search+'#home');
 }
 function renderNavState(){document.querySelectorAll('.mainNav .navItem').forEach(b=>b.classList.toggle('active',b.dataset.nav===route.screen||((route.screen==='studyPlans'||route.screen==='studyPlanDetail')&&b.dataset.nav==='studyPlans')||((route.screen==='levels'||route.screen==='packages'||route.screen==='package'||route.screen==='parts'||route.screen==='exercise'||route.screen==='result')&&b.dataset.nav==='packages')))}
 function setScreen(name,push=true){if(!currentUsername){showAuthScreen();return}document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));const target=$(name);if(!target)return;target.classList.add('active');document.body.classList.toggle('exercise-focus',name==='exercise');document.body.classList.toggle('result-focus',name==='result');renderContext();renderNavState();/* canonical navigation guard owns browser history */}
-function saveState(){history.replaceState({...route},'',location.pathname+location.search+'#'+route.screen)}
+function saveState(){return route}
 const STORAGE_PREFIX='hsk4-kelas-e-progress-v4:';
 function storageKey(){return STORAGE_PREFIX+(currentUsername||'guest')}
 function readStore(){try{return JSON.parse(localStorage.getItem(storageKey())||'{}')||{}}catch(e){return {}}}
@@ -1055,7 +1054,6 @@ function renderPackageProgress(code){const st=packageStats(code);return progress
 function renderContext(){const c=$('context');const tb=$('topBack');const top=document.querySelector('.top');if(top){top.classList.toggle('homeTopHidden',route.screen==='home');top.classList.toggle('focusTopHidden',route.screen==='exercise'||route.screen==='result');const nav=document.querySelector('.mainNav');if(nav)nav.classList.toggle('focusNavHidden',route.screen==='exercise'||route.screen==='result');}if(tb){const hideBack=route.screen==='home'||route.screen==='levels'||route.screen==='studyPlans'||route.screen==='studyPlanDetail';tb.style.setProperty('display',hideBack?'none':'inline-flex','important');}c.classList.remove('show');c.innerHTML=''}
 function armHome(){if(typeof window.__hskArmBackGuard==='function'){window.__hskArmBackGuard()} }
 function goHome(push=true){route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;setScreen('home',push);armHome()}
-function backRoute(){if(route.screen==='levels'){goHome()}else if(route.screen==='packages'){openPackages()}else if(route.screen==='package'){openLevelPackages(selectedHSKLevel)}else if(route.screen==='parts'){openPackage(route.packageCode)}else if(route.screen==='exercise'||route.screen==='result'){openSections(route.packageCode,route.type)}else goHome()}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushCloudSync()});
 window.addEventListener('pagehide',()=>flushCloudSync());
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&currentUsername){pullCloudState(true)}});
@@ -1216,7 +1214,7 @@ function continueLastPackage(code){
 let authMode='';
 function showAuthForm(mode){authMode=mode;$('authChoices').hidden=true;$('authForm').hidden=false;$('authFormTitle').textContent=mode==='register'?'Buat akun baru':'Login';$('authSubmit').textContent=mode==='register'?'Buat akun & mulai':'Login & lanjut belajar';$('authUsername').value='';$('authError').textContent='';setTimeout(()=>$('authUsername')?.focus(),60)}
 function resetAuthChoices(){authMode='';$('authChoices').hidden=false;$('authForm').hidden=true;$('authError').textContent=''}
-async function submitAuth(){const input=$('authUsername');const v=normalizeUsername(input?.value);const err=$('authError');if(!validUsername(v)){err.textContent='Username harus 3–24 karakter dan hanya boleh memakai huruf, angka, titik, garis bawah, atau tanda hubung.';return}err.textContent='';const btn=$('authSubmit');if(btn)btn.disabled=true;try{if(cloudEnabled()){const existing=await cloudFindUser(v);if(authMode==='register'){if(existing){err.textContent='Username tersebut sudah terdaftar. Silakan pilih username lain atau gunakan Login.';return}await cloudCreateUser(v)}else{if(!existing){err.textContent='Username tidak ditemukan. Silakan pilih Buat akun baru terlebih dahulu.';return}}}currentUsername=v;setUsernameLocal(v);route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;$('authScreen').style.display='none';document.querySelector('.mainNav')?.classList.remove('authLocked');const authTop=document.querySelector('.top');if(authTop){authTop.classList.remove('homeTopHidden');authTop.style.removeProperty('display')}document.body.classList.remove('auth-active','auth-page');document.documentElement.classList.remove('auth-page');document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$('home')?.classList.add('active');history.replaceState({screen:'home',homeGuard:true},'',location.pathname+location.search+'#home');renderUserPill();renderContext();renderNavState();renderHome();renderPackagesScreen();renderScores();await pullCloudState(true);renderHome();renderPackagesScreen();renderScores()}catch(e){err.textContent=e?.message||'Terjadi kesalahan saat menghubungkan ke server.'}finally{if(btn)btn.disabled=false}}
+async function submitAuth(){const input=$('authUsername');const v=normalizeUsername(input?.value);const err=$('authError');if(!validUsername(v)){err.textContent='Username harus 3–24 karakter dan hanya boleh memakai huruf, angka, titik, garis bawah, atau tanda hubung.';return}err.textContent='';const btn=$('authSubmit');if(btn)btn.disabled=true;try{if(cloudEnabled()){const existing=await cloudFindUser(v);if(authMode==='register'){if(existing){err.textContent='Username tersebut sudah terdaftar. Silakan pilih username lain atau gunakan Login.';return}await cloudCreateUser(v)}else{if(!existing){err.textContent='Username tidak ditemukan. Silakan pilih Buat akun baru terlebih dahulu.';return}}}currentUsername=v;setUsernameLocal(v);route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;$('authScreen').style.display='none';document.querySelector('.mainNav')?.classList.remove('authLocked');const authTop=document.querySelector('.top');if(authTop){authTop.classList.remove('homeTopHidden');authTop.style.removeProperty('display')}document.body.classList.remove('auth-active','auth-page');document.documentElement.classList.remove('auth-page');document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$('home')?.classList.add('active');renderUserPill();renderContext();renderNavState();renderHome();renderPackagesScreen();renderScores();await pullCloudState(true);renderHome();renderPackagesScreen();renderScores()}catch(e){err.textContent=e?.message||'Terjadi kesalahan saat menghubungkan ke server.'}finally{if(btn)btn.disabled=false}}
 function showAuthScreen(){const a=$('authScreen');if(a){a.style.display='flex';document.documentElement.classList.add('auth-page');document.body.classList.add('auth-page','auth-active');const top=document.querySelector('.top');if(top){top.classList.add('homeTopHidden');top.style.setProperty('display','none','important')}document.querySelector('.mainNav')?.classList.add('authLocked');resetAuthChoices();window.scrollTo({top:0,left:0,behavior:'auto'});requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));}}
 async function loadQuestionData(){
   if(HSK_DATA_STATE.loaded)return;
@@ -1241,7 +1239,6 @@ async function initApp(){
     $('home')?.classList.add('active');
     renderUserPill();renderContext();renderNavState();
     renderHome();renderPackagesScreen();renderScores();
-    history.replaceState({screen:'home',homeGuard:true},'',location.pathname+location.search+'#home');
     await pullCloudState(true);
     renderHome();renderPackagesScreen();renderScores();
   }else{
@@ -1253,8 +1250,7 @@ async function initApp(){
     document.body.classList.add('auth-active');
     document.querySelector('.mainNav')?.classList.add('authLocked');
     renderUserPill();resetAuthChoices();
-    history.replaceState({screen:'home',authRequired:true},'',location.pathname+location.search+'#home');
-  }
+    }
 }
 function removeStrayEscapedNewlines(){const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);const a=[];while(w.nextNode()){const n=w.currentNode;if(!n.parentElement?.closest('script,style,textarea')&&/^\s*\\n(?:\s*\\n)*\s*$/.test(n.nodeValue||''))a.push(n)}a.forEach(n=>n.remove())}
 removeStrayEscapedNewlines();
@@ -1302,7 +1298,6 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   const PAGE_SIZE=10;
   let page=0;
   const originalCards=renderQuestionCards;
-  const originalBack=backRoute;
   function pageCount(){return Math.max(1,Math.ceil(currentQuestions.length/PAGE_SIZE));}
   function visible(){return currentQuestions.slice(page*PAGE_SIZE,Math.min(currentQuestions.length,(page+1)*PAGE_SIZE));}
   function cardsForVisible(){const all=currentQuestions;currentQuestions=visible();const h=originalCards();currentQuestions=all;return h;}
@@ -1334,7 +1329,6 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   window.renderResult=function(){const rp=$('resultPkg'),rt=$('resultType'),rpart=$('resultPart');if(rp)rp.textContent=route.packageCode;if(rt)rt.textContent=META[route.type]?.label||route.type;const _resTitle=DB[route.packageCode]?.[route.type]?.[route.sectionIndex]?.title||'';if(rpart)rpart.textContent='Hasil · '+_resTitle.replace(/^.*?·\s*/, '');const r=resultState||{score:0,total:currentQuestions.length,answered:0},seq=isSequenceWriting(route.type,route.sectionIndex),pct=r.total?Math.round(r.score/r.total*100):0;const list=currentQuestions.map((q,i)=>{const id=String(q[0]),u=answers[id],has=u!==undefined&&String(u).trim()!=='';if(route.type==='writing'&&!seq)return '<article class="resultQuestion"><div class="resultQuestionHead"><span>Soal '+(i+1)+' · 第 '+esc(id)+' 题</span><span class="resultStatus empty">Tidak dinilai</span></div><div class="resultQuestionText">'+esc(q[1]||'')+'</div><div class="resultAnswer"><b>Jawabanmu:</b> '+esc(userText(q))+'<br><b>Contoh jawaban:</b> '+esc(correctText(q))+'</div></article>';const ok=has&&isCorrect(q,u,route.type,route.sectionIndex);return '<article class="resultQuestion"><div class="resultQuestionHead"><span>Soal '+(i+1)+' · 第 '+esc(id)+' 题</span><span class="resultStatus '+(ok?'good':has?'bad':'empty')+'">'+(ok?'✓ Benar':has?'✗ Salah':'Belum dijawab')+'</span></div><div class="resultQuestionText">'+esc(q[1]||'')+'</div><div class="resultAnswer"><b>Jawabanmu:</b> '+esc(userText(q))+(has&&!ok?'<br><b>Jawaban benar:</b> '+esc(correctText(q)):'')+'</div></article>';}).join('');const title=DB[route.packageCode][route.type][route.sectionIndex]?.title||'Hasil';const summary=(route.type==='writing'&&!seq)?'<p><b>'+r.answered+'/'+r.total+'</b> jawaban tersimpan.</p>':'<div class="score">'+pct+'%</div><div class="bar"><div class="fill" style="width:'+pct+'%"></div></div><p><b>'+r.score+'/'+r.total+'</b> benar · '+r.answered+' dijawab · '+(r.total-r.answered)+' belum dijawab</p>';$('resultBody').innerHTML='<div class="result"><div class="sub">'+esc(title)+'</div>'+summary+'<div class="resultList">'+list+'</div><div class="resultActions"><button class="btn soft" onclick="returnToQuestions()">← Kembali ke Soal</button><button class="btn" onclick="returnToParts()">← Kembali ke List Bagian</button><button class="btn" onclick="repeat()">↻ Ulangi</button></div></div>';};
   window.returnToQuestions=function(){page=0;route={...route,screen:'exercise'};loadCurrentSectionState();renderExercise();setScreen('exercise');};
   window.returnToParts=function(){openSections(route.packageCode,route.type);};
-  window.backRoute=function(){if(route.screen==='result')return returnToQuestions();if(route.screen==='exercise')return openSections(route.packageCode,route.type);return originalBack();};
 })();
 </script>
 <script id="workbookHSK4aIntegration">
@@ -1694,13 +1688,11 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   document.addEventListener('pointermove',function(ev){if(longPressTimer)movePackageLongPress(ev)}, {passive:true});
   document.addEventListener('pointerup',function(){if(longPressTimer)cancelPackageLongPress()}, {passive:true});
   document.addEventListener('pointercancel',function(){if(longPressTimer)cancelPackageLongPress()}, {passive:true});
-  function backRoutePlans(){if(route.screen==='studyPlans'){goHome()}else if(route.screen==='studyPlanDetail'){openStudyPlans()}else if(route.screen==='levels'){goHome()}else if(route.screen==='packages'){openPackages()}else if(route.screen==='package'){openLevelPackages(selectedHSKLevel)}else if(route.screen==='parts'){openPackage(route.packageCode)}else if(route.screen==='exercise'||route.screen==='result'){openSections(route.packageCode,route.type)}else goHome()}
   const oldRenderPackageTile=window.renderPackageTile;
   window.renderPackageTile=function(code,idx){const st=packageStats(code),total=st.total||0,metaParts=Object.entries(META).filter(([t])=>(DB[code]?.[t]||[]).length>0).map(([t,m])=>m.label),desc=metaParts.length?`${total} soal · ${metaParts.join(' · ')}`:'Belum ada soal interaktif',palette=['blue','purple','orange','pink','green'][idx%5],pct=st.pct||0,status=pct>=100?'Selesai':pct>0?'Sedang berjalan':'Belum dimulai';return `<button class="tile packageTile packageTile-${palette}" type="button" data-package-code="${escPlan(code)}" onclick="openPackageFromTile('${escPlan(code)}')"><div class="pkgTop"><div class="tileIcon" aria-hidden="true">${svg('box')}</div><span class="statusPill">${status}</span></div><div class="pkgTitleRow"><div><b>Paket ${escPlan(code)}</b><small>${escPlan(desc)}</small></div></div>${total?progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket'):''}<div class="pkgFooter"><span>Listening · Reading · Writing</span><span>${pct}%</span></div></button>`}
 
   const oldRenderNavState=window.renderNavState;
   window.renderNavState=function(){document.querySelectorAll('.mainNav .navItem').forEach(b=>b.classList.toggle('active',b.dataset.nav===route.screen||((route.screen==='levels'||route.screen==='packages'||route.screen==='package'||route.screen==='parts'||route.screen==='exercise'||route.screen==='result')&&b.dataset.nav==='packages')))}
-  const oldBackRoute=window.backRoute;window.backRoute=backRoutePlans;
   const oldRestore=window.restore;window.restore=function(s){route={screen:s.screen||'home',packageCode:s.packageCode||null,type:s.type||null,sectionIndex:s.sectionIndex??null,studyPlanId:s.studyPlanId||null};if(route.screen==='studyPlans'){renderStudyPlans();setScreen('studyPlans',false)}else if(route.screen==='studyPlanDetail'){studyPlanDetailId=s.studyPlanId||null;renderStudyPlanDetail();setScreen('studyPlanDetail',false)}else oldRestore(s)};
   const oldSetScreen=window.setScreen; // keep existing behavior; route state is enough for navigation
   document.addEventListener('click',function(e){
@@ -2060,24 +2052,6 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
         nav==='studyPlans' && planScreens.has(route.screen)
       );
     });
-  };
-
-  window.backRoute=function(){
-    switch(route.screen){
-      case 'studyPlanDetail': return window.openStudyPlans(true);
-      case 'studyPlans': return window.goHome();
-      case 'levels': return window.goHome();
-      case 'packages': return window.openPackages(true);
-      case 'package': return window.openLevelPackages(selectedHSKLevel,true);
-      case 'parts': return window.openPackage(route.packageCode,true);
-      case 'result':
-        if(typeof window.returnToQuestions==='function') return window.returnToQuestions();
-        return window.openSections(route.packageCode,route.type,true);
-      case 'exercise':
-        return window.openSections(route.packageCode,route.type,true);
-      default:
-        return window.goHome();
-    }
   };
 
   /* ---------- Study plans ---------- */
@@ -2933,29 +2907,6 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   };
 
   window.returnToParts=function(){window.openSections(route.packageCode,route.type,true)};
-
-  /* ------------------------------------------------------------
-     BACK / HISTORY — plan-aware
-     ------------------------------------------------------------ */
-  window.backRoute=function(){
-    switch(route.screen){
-      case 'studyPlanDetail': return window.openStudyPlans(true);
-      case 'studyPlans': return window.goHome();
-      case 'levels': return window.goHome();
-      case 'packages': return window.openPackages(true);
-      case 'package':
-        if(route.studyPlanId && plan(route.studyPlanId)) return window.openStudyPlan(route.studyPlanId,true);
-        return window.openLevelPackages(selectedHSKLevel,true);
-      case 'parts':
-        return window.openPackage(route.packageCode,true);
-      case 'exercise':
-        return window.openSections(route.packageCode,route.type,true);
-      case 'result':
-        if(typeof window.returnToQuestions==='function')return window.returnToQuestions();
-        return window.openSections(route.packageCode,route.type,true);
-      default:return window.goHome();
-    }
-  };
 
   window.restore=function(s){
     const st=s||{};
@@ -4288,119 +4239,264 @@ body.dark #packagesGrid .packageHanziIcon{
 })();
 </script>
 
-<script id="hskCanonicalNavigationV12">
+<script id="hskNavigationController">
 (function(){
   'use strict';
-  if(window.__hskCanonicalNavigationV12)return;
-  window.__hskCanonicalNavigationV12=true;
+  /*
+    CLEAN HSK HISTORY MODEL
+    -----------------------
+    Browser history represents the app's real screen stack.
+    - Every normal in-app navigation (setScreen(..., true)) creates ONE
+      history entry containing the current route.
+    - Hardware/browser Back consumes that entry with one popstate and renders
+      the route that was actually below it.
+    - Home owns a second, protected entry. Back on Home therefore produces the
+      Exit dialog instead of allowing Chrome to leave the document.
+    - No sentinel + history.go(1), no synthetic popstate, and no second Back
+      controller are used.
+  */
+  if(window.__hskNavigationController)return;
+  window.__hskNavigationController=true;
 
-  const getRoute=()=>route||{};
-  const screen=()=>String(getRoute().screen||'home');
   let handlingPop=false;
-  let armTimer=0;
+  const HOME_GUARD='__hskHomeGuardV3';
 
-  function stateUrl(){return location.pathname+location.search+'#'+screen()}
+  function routeSnapshot(){
+    const r=window.route||{};
+    return {
+      screen:String(r.screen||'home'),
+      packageCode:r.packageCode??null,
+      type:r.type??null,
+      sectionIndex:r.sectionIndex??null,
+      studyPlanId:r.studyPlanId??null
+    };
+  }
 
-  function armGuard(){
-    clearTimeout(armTimer);
+  function urlFor(r){
+    return location.pathname+location.search+'#'+String(r.screen||'home');
+  }
+
+  function stateFor(r,extra){
+    return {...(extra||{}),...r};
+  }
+
+  function writeCurrentState(push){
+    const r=routeSnapshot();
+    const st=stateFor(r);
     try{
-      const r=getRoute();
-      const u=stateUrl();
-      const h=history.state||{};
-      // If the current entry is already our sentinel for this exact layer,
-      // do nothing. This is what prevents focus/visibility events from
-      // creating an ever-growing browser history stack.
-      if(h.__hskCanonicalGuard && String(h.screen||'')===screen() && location.hash==='#'+screen())return;
-      const state={...h,...r,__hskCanonicalGuard:true};
-      history.replaceState(state,'',u);
-      history.pushState({...state},'',u);
-    }catch(e){console.warn('HSK history guard:',e)}
-  }
-  window.__hskArmBackGuard=armGuard;
-
-  function goHome(){
-    route={screen:'home',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
-    answers={};checked={};resultState=null;
-    if(typeof setScreen==='function')setScreen('home',false);
-    else if(typeof renderHome==='function')renderHome();
+      if(push) history.pushState(st,'',urlFor(r));
+      else history.replaceState(st,'',urlFor(r));
+    }catch(e){console.warn('HSK history write failed:',e)}
   }
 
-  function back(){
-    const r=getRoute();
-    switch(screen()){
-      case 'exercise':
-        return typeof openSections==='function'?openSections(r.packageCode,r.type,false):goHome();
-      case 'result':
-        if(typeof returnToQuestions==='function')return returnToQuestions();
-        return typeof openSections==='function'?openSections(r.packageCode,r.type,false):goHome();
-      case 'parts':
-        return typeof openPackage==='function'?openPackage(r.packageCode,false):goHome();
-      case 'package':
-        if(r.studyPlanId&&typeof openStudyPlan==='function')return openStudyPlan(r.studyPlanId,false);
-        return typeof openLevelPackages==='function'?openLevelPackages(selectedHSKLevel,false):goHome();
-      case 'packages':
-        return typeof openPackages==='function'?openPackages(false):goHome();
-      case 'levels':
-        return goHome();
-      case 'studyPlanDetail':
-        return typeof openStudyPlans==='function'?openStudyPlans(false):goHome();
-      case 'studyPlans':
-        return goHome();
-      case 'home':
-      default:
-        return typeof showExit==='function'?showExit(true):null;
+  function renderRoute(st){
+    const s=String(st?.screen||'home');
+    const packageCode=st?.packageCode??null;
+    const type=st?.type??null;
+    const sectionIndex=st?.sectionIndex??null;
+    const studyPlanId=st?.studyPlanId??null;
+
+    route={
+      screen:s,
+      packageCode:packageCode,
+      type:type,
+      sectionIndex:sectionIndex,
+      studyPlanId:studyPlanId
+    };
+
+    try{
+      if(s==='home'){
+        answers={};checked={};resultState=null;
+        if(typeof renderHome==='function')renderHome();
+        if(typeof window.setScreen==='function')window.setScreen('home',false);
+        return;
+      }
+      if(s==='levels'){
+        if(typeof renderLevelsScreen==='function')renderLevelsScreen();
+        if(typeof window.setScreen==='function')window.setScreen('levelsScreen',false);
+        return;
+      }
+      if(s==='packages'){
+        if(typeof renderPackagesScreen==='function')renderPackagesScreen();
+        if(typeof window.setScreen==='function')window.setScreen('packagesScreen',false);
+        return;
+      }
+      if(s==='studyPlans'){
+        if(typeof renderStudyPlans==='function')renderStudyPlans();
+        if(typeof window.setScreen==='function')window.setScreen('studyPlans',false);
+        return;
+      }
+      if(s==='studyPlanDetail'){
+        if(typeof renderStudyPlanDetail==='function')renderStudyPlanDetail();
+        else if(typeof window.renderPlanDetailV4==='function')window.renderPlanDetailV4();
+        if(typeof window.setScreen==='function')window.setScreen('studyPlanDetail',false);
+        return;
+      }
+      if(s==='package'){
+        if(typeof renderPackage==='function')renderPackage();
+        if(typeof window.setScreen==='function')window.setScreen('package',false);
+        return;
+      }
+      if(s==='parts'){
+        if(typeof renderSections==='function')renderSections();
+        if(typeof window.setScreen==='function')window.setScreen('partsScreen',false);
+        return;
+      }
+      if(s==='exercise'){
+        if(typeof loadCurrentSectionState==='function')loadCurrentSectionState();
+        if(typeof renderExercise==='function')renderExercise();
+        if(typeof window.setScreen==='function')window.setScreen('exercise',false);
+        return;
+      }
+      if(s==='result'){
+        if(typeof renderResult==='function')renderResult();
+        if(typeof window.setScreen==='function')window.setScreen('result',false);
+        return;
+      }
+      /* Unknown/legacy state: fail safely to Home, never to browser history. */
+      const home={screen:'home',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
+      route=home;
+      if(typeof renderHome==='function')renderHome();
+      if(typeof window.setScreen==='function')window.setScreen('home',false);
+    }catch(e){
+      console.error('HSK route render failed:',e);
+      try{
+        route={screen:'home',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
+        if(typeof renderHome==='function')renderHome();
+        if(typeof window.setScreen==='function')window.setScreen('home',false);
+      }catch(_){ }
     }
   }
 
-  window.backRoute=back;
-  window.__directLayerBack=back;
-  window.handleAppBack=back;
+  function armHomeGuard(){
+    const r=routeSnapshot();
+    if(r.screen!=='home')return;
+    const current=history.state||{};
+    const base=stateFor(r);
+    try{
+      /* Keep the current Home entry as the normal app state, then add exactly
+         one protected Home entry above it. */
+      history.replaceState({...base,[HOME_GUARD]:false},'',urlFor(r));
+      history.pushState({...base,[HOME_GUARD]:true},'',urlFor(r));
+    }catch(e){console.warn('HSK Home guard failed:',e)}
+  }
 
-  // The only popstate listener in the application. It consumes the sentinel
-  // entry and performs app-layer navigation; it never calls history.back().
+  function goHomeFromCurrent(){
+    const home={screen:'home',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
+    renderRoute(home);
+    /* Replace the popped entry with normal Home and put one protected Home
+       entry above it. This prevents Chrome from seeing an app-empty stack. */
+    try{
+      history.replaceState({...home,[HOME_GUARD]:false},'',urlFor(home));
+      history.pushState({...home,[HOME_GUARD]:true},'',urlFor(home));
+    }catch(e){console.warn('HSK Home restore failed:',e)}
+  }
+
+  /*
+    setScreen is the single point where normal app navigation becomes browser
+    history. Existing callers already pass true/false as their second argument.
+    We preserve that API and ignore legacy push implementations inside the
+    original function.
+  */
+  const originalSetScreen=window.setScreen;
+  if(typeof originalSetScreen==='function'&&!originalSetScreen.__hskNavigationClean){
+    function cleanSetScreen(name,push){
+      const out=originalSetScreen.call(this,name,false);
+      if(push!==false&&!handlingPop){
+        writeCurrentState(true);
+      }
+      return out;
+    }
+    cleanSetScreen.__hskNavigationClean=true;
+    cleanSetScreen.__hskNavigationOriginal=originalSetScreen;
+    window.setScreen=cleanSetScreen;
+    try{setScreen=cleanSetScreen}catch(_){ }
+  }
+
+  /* One and only one application Back entry point. */
+  function appBack(){
+    if(handlingPop)return;
+    const r=routeSnapshot();
+    if(r.screen==='home'){
+      if(typeof window.showExit==='function')window.showExit(true);
+      return;
+    }
+    /* Normal app layers are represented in browser history. */
+    try{history.back()}catch(e){console.warn('HSK app back failed:',e);goHomeFromCurrent()}
+  }
+  window.backRoute=appBack;
+  window.handleAppBack=appBack;
+  window.__directLayerBack=appBack;
+
+  /* The ONLY hardware/browser Back listener. */
   window.addEventListener('popstate',function(e){
     if(handlingPop)return;
     handlingPop=true;
     try{e.stopImmediatePropagation()}catch(_){ }
-    let result;
-    try{result=back()}catch(err){console.error('HSK Back:',err);result=goHome()}
-    Promise.resolve(result).finally(function(){
-      handlingPop=false;
-      armGuard();
-    });
-  },true);
+    try{
+      const st=e.state||{};
+      if(String(st.screen||'')==='home'){
+        const home={screen:'home',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
+        route=home;
+        if(typeof renderHome==='function')renderHome();
+        if(typeof window.setScreen==='function')window.setScreen('home',false);
 
-  // Forward navigation must not create a history entry for every app layer.
-  // The one sentinel is maintained by this controller only.
-  if(typeof setScreen==='function'&&!setScreen.__hskCanonicalWrapped){
-    const original=setScreen;
-    function wrapped(name,push=true){
-      const out=original.call(this,name,false);
-      if(!handlingPop)armGuard();
-      return out;
+        if(st[HOME_GUARD]===true){
+          /* We arrived at Home from an inner app layer. Do NOT show Exit.
+             The popped entry itself is the protected Home entry; normalize it
+             into a normal Home entry and put one fresh protected entry above it. */
+          try{
+            history.replaceState({...home,[HOME_GUARD]:false},'',urlFor(home));
+            history.pushState({...home,[HOME_GUARD]:true},'',urlFor(home));
+          }catch(err){console.warn('HSK Home guard rebuild failed:',err)}
+        }else{
+          /* We are already on Home and the user pressed hardware Back again.
+             This is the ONLY situation where Back means Exit. Push the guard
+             back immediately so Chrome never receives this Back as navigation. */
+          try{
+            history.pushState({...home,[HOME_GUARD]:true},'',urlFor(home));
+          }catch(err){console.warn('HSK Home trap failed:',err)}
+          if(typeof window.showExit==='function')window.showExit(true);
+        }
+        return;
+      }
+      if(st.screen){
+        renderRoute(st);
+        return;
+      }
+      /* No HSK state means we have reached the browser's real entry. Never
+         let the app intentionally fall through to Chrome. */
+      goHomeFromCurrent();
+    }catch(err){
+      console.error('HSK hardware Back:',err);
+      goHomeFromCurrent();
+    }finally{
+      handlingPop=false;
     }
-    wrapped.__hskCanonicalWrapped=true;
-    wrapped.__hskCanonicalOriginal=original;
-    setScreen=wrapped;
-    window.setScreen=wrapped;
-  }
+  },true);
 
   window.cancelExit=function(){
     const modal=document.getElementById('exitModal');
     if(modal)modal.classList.remove('show');
     if(typeof exitFromBack!=='undefined')exitFromBack=false;
-    armGuard();
+    /* Recreate the protected Home entry only when the app is actually on Home. */
+    if(String(route?.screen||'')==='home')armHomeGuard();
   };
 
-  armGuard();
-  // initApp()/submitAuth() in the legacy core also use replaceState. Re-arm
-  // after those asynchronous startup/auth transitions so Android Back always
-  // has exactly one guard entry.
-  window.addEventListener('load',()=>setTimeout(armGuard,0),{once:true});
-  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(armGuard,0)});
-  window.addEventListener('focus',()=>setTimeout(armGuard,0));
-  setTimeout(armGuard,1200);
-  setTimeout(armGuard,3500);
+  function initialize(){
+    if(!window.currentUsername && typeof currentUsername!=='undefined'&&!currentUsername)return;
+    const r=routeSnapshot();
+    if(r.screen==='home'){
+      /* Startup/auth code may already have replaced the URL. Normalize it once
+         and create exactly one protected Home entry. */
+      armHomeGuard();
+    }else{
+      writeCurrentState(false);
+    }
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initialize,{once:true});
+  else initialize();
 })();
 </script>
 
