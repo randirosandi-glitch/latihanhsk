@@ -911,10 +911,7 @@ body.dark .bootMark,body.dark .authMark,body.dark .topBrandMark{background:trans
 </section>
 <section id="levelsScreen" class="screen">
   <div class="section levelLandingHead"><div class="sectionKicker">PAKET SOAL</div><h2>Pilih level HSK</h2><div class="sub">Mulai dari level yang ingin kamu latih.</div></div>
-  <div class="levelGrid">
-    <button class="levelCard levelCard4" type="button" onclick="openLevelPackages(4)"><div class="levelCardIcon">4</div><div class="levelCardBody"><span class="levelEyebrow">HSK LEVEL</span><strong>HSK 4</strong><p>25 paket latihan tersedia</p></div><span class="levelCardArrow"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span></span></button>
-    <button class="levelCard levelCard5" type="button" onclick="openLevelPackages(5)"><div class="levelCardIcon">5</div><div class="levelCardBody"><span class="levelEyebrow">HSK LEVEL</span><strong>HSK 5</strong><p>Coming soon · sedang dipersiapkan</p></div><span class="levelCardArrow"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span></span></button>
-  </div>
+  <div class="levelGrid" id="dynamicLevelGrid"></div>
 </section>
 <section id="packagesScreen" class="screen">
   <div class="section packagePageHead"><div class="sectionKicker" id="packageLevelKicker">HSK 4</div><h2 id="packagePageTitle">Pilih paket</h2><div class="sub" id="packagePageSub">25 paket latihan tersedia.</div></div>
@@ -1310,7 +1307,143 @@ removeStrayEscapedNewlines();
 function finishAppBoot(){const loader=document.getElementById('appBootLoader');document.documentElement.classList.remove('app-booting');if(loader){loader.classList.add('hide');setTimeout(()=>loader.remove(),240)}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>Promise.resolve(initApp()).finally(finishAppBoot),{once:true});else Promise.resolve(initApp()).finally(finishAppBoot);
 </script>
-<footer class="appFooter" aria-label="Versi aplikasi"><span>HSK Try Out by E班</span><span>v 1.22</span></footer>
+\n<script id="dynamicFolderCatalogFinal2026">
+(function(){
+  'use strict';
+  /* Dynamic folder catalog — data structure is the source of truth.
+     Folder name = material/category name. JSON filename = package code.
+     No package is shown unless a real JSON file exists in its folder. */
+  const REPO='randirosandi-glitch/latihanhsk';
+  const BRANCH='refactor/dynamic-folder-catalog';
+  const API='https://api.github.com/repos/'+REPO+'/contents/';
+  const catalog={loaded:false,groups:[],byCode:new Map(),byPath:new Map()};
+  window.__hskDynamicCatalog=catalog;
+  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const sortNatural=(a,b)=>String(a).localeCompare(String(b),undefined,{numeric:true,sensitivity:'base'});
+  async function api(path){
+    const r=await fetch(API+path+'?ref='+encodeURIComponent(BRANCH),{cache:'no-store',headers:{Accept:'application/vnd.github+json'}});
+    if(!r.ok)throw new Error('GitHub catalog HTTP '+r.status);
+    return r.json();
+  }
+  function kind(name){
+    if(/^HSK\s*\d+/i.test(name))return 'hsk';
+    if(/^Workbook\b/i.test(name))return 'workbook';
+    return 'custom';
+  }
+  function level(name){const m=String(name).match(/^HSK\s*(\d+)/i);return m?Number(m[1]):null}
+  async function discover(){
+    const root=await api('data');
+    const dirs=(root||[]).filter(x=>x.type==='dir');
+    const groups=[];
+    for(const d of dirs){
+      const items=await api('data/'+encodeURIComponent(d.name));
+      const files=(items||[]).filter(x=>x.type==='file' && /\\.json$/i.test(x.name) && x.name.toLowerCase()!=='manifest.json' && x.name.toLowerCase()!=='reading-passages.json');
+      if(!files.length)continue;
+      files.sort((a,b)=>sortNatural(a.name,b.name));
+      const g={name:d.name,path:d.path,kind:kind(d.name),level:level(d.name),files:[],codes:[]};
+      files.forEach(f=>{const code=f.name.replace(/\\.json$/i,'');const item={name:f.name,code,path:f.path,download_url:f.download_url};g.files.push(item);g.codes.push(code);catalog.byCode.set(code,item);catalog.byPath.set(f.path,item)});
+      groups.push(g);
+    }
+    groups.sort((a,b)=>{
+      const ak=a.kind==='hsk'?0:a.kind==='workbook'?1:2,bk=b.kind==='hsk'?0:b.kind==='workbook'?1:2;
+      if(ak!==bk)return ak-bk;
+      if(a.level!=null&&b.level!=null&&a.level!==b.level)return a.level-b.level;
+      return sortNatural(a.name,b.name);
+    });
+    if(!groups.length)throw new Error('Belum ada folder paket berisi JSON di data/.');
+    catalog.groups=groups;catalog.loaded=true;
+    window.__hskDynamicGroups=groups;
+    return groups;
+  }
+  function groupBySelected(){return catalog.groups.find(g=>g.name===window.__hskSelectedFolder)||catalog.groups[0]||null}
+  function renderLevels(){
+    const el=document.getElementById('dynamicLevelGrid');if(!el)return;
+    el.innerHTML=catalog.groups.map((g,i)=>{
+      const accent=g.kind==='hsk'?(g.level===4?'levelCard4':'levelCard5'):'levelCardWorkbook';
+      const icon=g.level!=null?String(g.level):(g.kind==='workbook'?'W':'•');
+      return `<button class="levelCard ${accent}" type="button" onclick="openDynamicFolder(${i})"><div class="levelCardIcon">${esc(icon)}</div><div class="levelCardBody"><span class="levelEyebrow">${esc(g.kind==='hsk'?'HSK LEVEL':g.kind==='workbook'?'WORKBOOK':'MATERI')}</span><strong>${esc(g.name)}</strong><p>${g.files.length} paket tersedia</p></div><span class="levelCardArrow"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span></span></button>`;
+    }).join('');
+  }
+  window.openDynamicFolder=function(index,push=true){
+    const g=catalog.groups[Number(index)];if(!g)return;
+    window.__hskSelectedFolder=g.name;
+    window.__hskSelectedGroup=g;
+    window.__hskDynamicCodes=g.codes.slice();
+    selectedHSKLevel=g.level||0;
+    route={screen:'packages',packageCode:null,type:null,sectionIndex:null};
+    renderDynamicPackages(g);
+    setScreen('packagesScreen',push);
+    window.scrollTo({top:0,left:0,behavior:'auto'});
+  };
+  function renderDynamicPackages(g){
+    const el=document.getElementById('packagesGrid');if(!el)return;
+    const head=document.getElementById('packageLevelKicker'),title=document.getElementById('packagePageTitle'),sub=document.getElementById('packagePageSub'),panel=document.getElementById('hsk5Panel');
+    if(panel)panel.hidden=true; if(head)head.textContent=g.name; if(title)title.textContent='Pilih paket'; if(sub)sub.textContent=g.files.length+' paket tersedia.'; el.hidden=false;
+    const input=document.getElementById('packageSearchInput');const q=String(input?.value||'').trim().toLowerCase();
+    const files=g.files.filter(f=>{const code=f.code.toLowerCase(),name=f.name.replace(/\\.json$/i,'').toLowerCase();return !q||code.includes(q)||name.includes(q)});
+    el.innerHTML=files.map((f,i)=>renderPackageTile(f.code,i)).join('');
+    if(!files.length)el.innerHTML='<div class="emptySearch"><strong>Paket tidak ditemukan</strong><span>Coba nama atau kode paket lain.</span></div>';
+  }
+  window.renderLevelsScreen=function(){renderLevels()};
+  window.openLevelPackages=function(level,push=true){
+    const g=catalog.groups.find(x=>x.level===Number(level));
+    if(g){window.__hskSelectedFolder=g.name;window.__hskSelectedGroup=g;renderDynamicPackages(g);route={screen:'packages',packageCode:null,type:null,sectionIndex:null};setScreen('packagesScreen',push);return;}
+    const old=window.__hskOriginalOpenLevelPackages;if(old)old(level,push);
+  };
+  window.renderPackagesScreen=function(){
+    const g=groupBySelected(); if(g){renderDynamicPackages(g);return;}
+  };
+  window.filterPackages=function(value){const g=groupBySelected();if(g){const input=document.getElementById('packageSearchInput');if(input)input.value=String(value??'');renderDynamicPackages(g);}};
+  window.clearPackageSearch=function(){const input=document.getElementById('packageSearchInput');if(input)input.value='';const g=groupBySelected();if(g)renderDynamicPackages(g);};
+
+  // Replace the lazy loader so JSON is fetched from its actual folder.
+  const packageCache=new Map();
+  async function loadDynamicPackage(code){
+    code=String(code||'');
+    const meta=catalog.byCode.get(code);
+    if(!meta)throw new Error('Paket '+code+' tidak ditemukan di katalog folder.');
+    if(DB[code]&&!DB[code].__lazy)return DB[code];
+    if(packageCache.has(code))return packageCache.get(code);
+    const p=fetch(meta.download_url,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('Database paket '+code+' HTTP '+r.status);return r.json()}).then(d=>{if(!d||typeof d!=='object')throw new Error('Database paket tidak valid: '+code);d.code=d.code||code;DB[code]=d;return d}).catch(e=>{packageCache.delete(code);throw e});
+    packageCache.set(code,p);return p;
+  }
+  window.__hskLoadPackage=loadDynamicPackage;
+  window.__hskLoadPackages=async codes=>Promise.all([...new Set((codes||[]).map(String))].map(loadDynamicPackage));
+
+  // Existing navigation calls this function; wrap it without changing exercise UI.
+  window.openPackage=async function(code,push=true){
+    code=String(code||'');
+    if(!catalog.byCode.has(code)){alert('Paket tidak ditemukan di folder data.');return;}
+    try{
+      await loadDynamicPackage(code);
+      const ret=window.__cleanReturnPlanId||route.studyPlanId||null;window.__cleanReturnPlanId=null;
+      route={screen:'package',packageCode:code,type:null,sectionIndex:null,studyPlanId:ret,materialKey:window.__hskSelectedFolder||null};
+      renderPackage();setScreen('package',push);window.scrollTo({top:0,left:0,behavior:'auto'});
+    }catch(e){console.error(e);alert('Paket gagal dimuat. Silakan coba lagi.');}
+  };
+
+  async function bootDynamic(){
+    try{
+      const groups=await discover();
+      // Remove every legacy/stub package from the visible catalog.
+      const allowed=new Set(groups.flatMap(g=>g.codes));
+      Object.keys(DB).forEach(c=>{if(!allowed.has(c)&&!/^HSK4-SUSUN-/.test(c))delete DB[c]});
+      // Create lightweight stubs only for real files. This keeps existing progress cards fast.
+      groups.forEach(g=>g.codes.forEach(code=>{if(!DB[code])DB[code]={code,__lazy:true}}));
+      renderLevels();
+      if(window.__hskSelectedFolder){const g=groupBySelected();if(g)renderDynamicPackages(g)}
+      else{window.__hskSelectedFolder=groups[0].name;window.__hskSelectedGroup=groups[0];renderDynamicPackages(groups[0]);}
+      try{renderHome();renderScores()}catch(e){}
+      document.dispatchEvent(new Event('hsk:dynamic-catalog-ready'));
+    }catch(e){
+      console.error('Dynamic folder catalog:',e);
+      catalog.error=e;
+      const el=document.getElementById('dynamicLevelGrid');if(el)el.innerHTML='<div class="notice"><strong>Katalog paket belum dapat dimuat.</strong><br>Periksa koneksi internet lalu coba lagi.</div>';
+    }
+  }
+  bootDynamic();
+})();
+</script>\n<footer class="appFooter" aria-label="Versi aplikasi"><span>HSK Try Out by E班</span><span>v 1.22</span></footer>
 <script>
 (function(){
   const originalApplyTheme=window.applyTheme;
@@ -4143,168 +4276,6 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 
   // Re-render progress after a package finishes lazy loading.
   document.addEventListener('hsk:data-ready',()=>{try{renderHome();renderScores();renderPackagesScreen()}catch(e){}});
-})();
-</script>
-<script id="dynamicFolderCatalogV1">
-(function(){
-  'use strict';
-  const REPO='randirosandi-glitch/latihanhsk';
-  const BRANCH='main';
-  const API='https://api.github.com/repos/'+REPO+'/contents/data';
-  const $=id=>document.getElementById(id);
-  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const SPECIAL_WORD='HSK4-SUSUN-KATA', SPECIAL_SENT='HSK4-SUSUN-KALIMAT';
-  const state=window.__dynamicFolderCatalog={loaded:false,groups:[],byCode:new Map(),error:null};
-
-  function groupKind(name){
-    if(/^HSK\s*\d+/i.test(name))return 'hsk';
-    if(/^Workbook\b/i.test(name))return 'workbook';
-    return 'custom';
-  }
-  function groupLevel(name){const m=String(name).match(/^HSK\s*(\d+)/i);return m?Number(m[1]):null}
-  function sortCodes(a,b){return String(a).localeCompare(String(b),undefined,{numeric:true,sensitivity:'base'})}
-
-  async function api(path){
-    const r=await fetch(path,{cache:'no-store',headers:{Accept:'application/vnd.github+json'}});
-    if(!r.ok)throw new Error('GitHub catalog '+r.status);
-    return r.json();
-  }
-
-  async function discover(){
-    const root=await api(API+'?ref='+encodeURIComponent(BRANCH));
-    const dirs=root.filter(x=>x.type==='dir');
-    const groups=[];
-    for(const dir of dirs){
-      const items=await api(dir.url+'?ref='+encodeURIComponent(BRANCH));
-      const files=items.filter(x=>x.type==='file'&&/\.json$/i.test(x.name)&&x.name!=='manifest.json'&&x.name!=='reading-passages.json');
-      if(!files.length)continue;
-      const g={name:dir.name,path:dir.path,kind:groupKind(dir.name),level:groupLevel(dir.name),files:files.map(f=>({name:f.name,path:f.path,url:f.download_url})),codes:files.map(f=>f.name.replace(/\.json$/i,'')).sort(sortCodes)};
-      groups.push(g);
-      g.files.forEach(f=>state.byCode.set(f.name.replace(/\.json$/i,''),f.path));
-    }
-    groups.sort((a,b)=>{
-      const ak=a.kind==='hsk'?0:a.kind==='workbook'?1:2,bk=b.kind==='hsk'?0:b.kind==='workbook'?1:2;
-      if(ak!==bk)return ak-bk;
-      if(a.level!=null&&b.level!=null)return a.level-b.level;
-      return a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:'base'});
-    });
-    if(!groups.length)throw new Error('Belum ada folder paket di data/.');
-    return groups;
-  }
-
-  function fallbackFromManifest(){
-    const m=window.__hskManifest||{};
-    const defs=[['HSK 4',m.hsk4_codes||[],'hsk',4],['HSK 5',m.hsk5_codes||[],'hsk',5],['Workbook HSK4a',m.workbook4a_codes||[],'workbook',null],['Workbook HSK4b',m.workbook4b_codes||[],'workbook',null]];
-    const groups=[];
-    defs.forEach(([name,codes,kind,level])=>{const list=[...new Set(codes.map(String).filter(Boolean))];if(list.length)groups.push({name,path:'',kind,level,legacy:true,codes:list,files:list.map(code=>({name:code+'.json',path:code+'.json'}))})});
-    return groups;
-  }
-
-  function installCatalog(groups){
-    state.groups=groups;state.loaded=true;
-    const h4=groups.find(g=>g.kind==='hsk'&&g.level===4)?.codes||[];
-    const h5=groups.find(g=>g.kind==='hsk'&&g.level===5)?.codes||[];
-    const wb4a=groups.find(g=>g.name.toLowerCase()==='workbook hsk4a')?.codes||[];
-    const wb4b=groups.find(g=>g.name.toLowerCase()==='workbook hsk4b')?.codes||[];
-    window.__hskCatalog={hsk4:h4,hsk5:h5,wb4a,wb4b,groups};
-    window.__hskDynamicGroups=groups;
-    groups.forEach(g=>g.codes.forEach(code=>{if(!DB[code])DB[code]={code,__lazy:true,__folder:g.name};else DB[code].__folder=g.name}));
-  }
-
-  function groupForKey(key){
-    const k=String(key||'');
-    if(k.startsWith('folder:'))return state.groups.find(g=>g.name===k.slice(7))||null;
-    if(/^hsk:\d+$/i.test(k))return state.groups.find(g=>g.kind==='hsk'&&g.level===Number(k.split(':')[1]))||null;
-    if(/^wb:/i.test(k))return state.groups.find(g=>g.name.toLowerCase()===k.slice(3).toLowerCase())||null;
-    return state.groups.find(g=>g.name===k)||null;
-  }
-  function materialKey(g){return 'folder:'+g.name}
-  function materialLabel(g){return g.name}
-  function isHsk(g){return g.kind==='hsk'}
-
-  function packageDesc(code){
-    const d=DB[code]||{};let total=0,parts=[];
-    Object.entries(window.META||{}).forEach(([t,m])=>{const n=(d[t]||[]).reduce((x,s)=>x+(s.questions?.length||0),0);if(n){total+=n;parts.push(m.label)}});
-    return total?`${total} soal · ${parts.join(' · ')}`:'Belum ada soal interaktif';
-  }
-  function progressFor(code){try{return typeof packageStats==='function'?packageStats(code):{pct:0,total:0,answered:0}}catch(e){return{pct:0,total:0,answered:0}}}
-
-  function renderLevelCard(g){
-    const count=g.codes.length, key=materialKey(g), icon=isHsk(g)?String(g.level||'HSK'):'WB';
-    const label=g.name;
-    const cls=isHsk(g)?('levelCard '+(g.level===4?'levelCard4':'levelCard5')):'levelCard levelCardWorkbook';
-    return `<button class="${cls}" type="button" data-material-key="${esc(key)}" onclick="openLevelPackages('${esc(key)}')"><div class="levelCardIcon">${esc(icon)}</div><div class="levelCardBody"><span class="levelEyebrow">${isHsk(g)?'HSK LEVEL':g.kind==='workbook'?'WORKBOOK':'PAKET'}</span><strong>${esc(label)}</strong><p>${count} ${isHsk(g)?'paket latihan':'lesson'} tersedia</p></div><span class="levelCardArrow"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span></span></button>`;
-  }
-  function renderSpecialCards(){
-    const h4=state.groups.find(g=>g.kind==='hsk'&&g.level===4);
-    if(!h4)return '';
-    const wc=window.__cleanSpecialCounts?.susunKata||0,sc=window.__cleanSpecialCounts?.susunKalimat||0;
-    if(!wc&&!sc)return '';
-    return '<div class="levelGroupDivider">Spesial</div>'+
-      (wc?`<button class="levelCard specialLevelCard levelCard4" type="button" data-special-code="${SPECIAL_WORD}" onclick="openSpecialPackage('${SPECIAL_WORD}')"><div class="levelCardIcon">↔</div><div class="levelCardBody"><span class="levelEyebrow">SPESIAL</span><strong>HSK4 Susun Kata</strong><p>${wc} soal · kata → kalimat</p></div><span class="levelCardArrow"><span class="material-symbols-rounded ico">arrow_forward</span></span></button>`:'')+
-      (sc?`<button class="levelCard specialLevelCard levelCard4" type="button" data-special-code="${SPECIAL_SENT}" onclick="openSpecialPackage('${SPECIAL_SENT}')"><div class="levelCardIcon">≡</div><div class="levelCardBody"><span class="levelEyebrow">SPESIAL</span><strong>HSK4 Susun Kalimat</strong><p>${sc} soal · kalimat → paragraf</p></div><span class="levelCardArrow"><span class="material-symbols-rounded ico">arrow_forward</span></span></button>`:'');
-  }
-  function renderDynamicLevels(){
-    const grid=document.querySelector('#levelsScreen .levelGrid');if(!grid||!state.groups.length)return;
-    const h=state.groups.filter(g=>g.kind==='hsk'),w=state.groups.filter(g=>g.kind==='workbook'),c=state.groups.filter(g=>g.kind==='custom');
-    let html='';
-    if(h.length)html+='<div class="levelGroupDivider">HSK</div>'+h.map(renderLevelCard).join('');
-    if(w.length)html+='<div class="levelGroupDivider">Workbook</div>'+w.map(renderLevelCard).join('');
-    if(c.length)html+='<div class="levelGroupDivider">Paket</div>'+c.map(renderLevelCard).join('');
-    html+=renderSpecialCards();
-    grid.innerHTML=html;
-  }
-
-  function renderDynamicPackages(){
-    const grid=$('packagesGrid');if(!grid)return;
-    const key=String(window.__dynamicSelectedMaterial||window.__cleanMaterialKey||selectedHSKLevel||'');
-    const g=groupForKey(key);if(!g)return;
-    const head=$('packageLevelKicker'),title=$('packagePageTitle'),sub=$('packagePageSub'),panel=$('hsk5Panel');
-    if(panel)panel.hidden=true;grid.hidden=false;
-    if(head)head.textContent=materialLabel(g);if(title)title.textContent=g.kind==='workbook'?'Pilih lesson':'Pilih paket';if(sub)sub.textContent=`${g.codes.length} ${g.kind==='workbook'?'lesson':'paket latihan'} tersedia.`;
-    document.querySelector('.packagePager')?.remove();
-    const q=String($('packageSearchInput')?.value||'').trim().toUpperCase();
-    const codes=g.codes.filter(c=>!q||c.toUpperCase().includes(q));
-    if(!codes.length){grid.innerHTML='<div class="emptySearch"><strong>Paket tidak ditemukan</strong><span>Coba cari nama atau kode lesson.</span></div>';return;}
-    const size=10,page=Math.max(0,Math.min(Number(window.__dynamicPackagePage||0),Math.ceil(codes.length/size)-1));window.__dynamicPackagePage=page;
-    grid.innerHTML=codes.slice(page*size,(page+1)*size).map((code,i)=>{
-      const d=DB[code]||{},st=progressFor(code),isH=isHsk(g),status=st.pct>=100?'Selesai':st.pct>0?'Sedang berjalan':'Belum dimulai';
-      const chips=Object.entries(window.META||{}).filter(([t])=>(d[t]||[]).length>0).map(([t,m])=>`<span class="pkgMetaChip">${esc(m.label)}</span>`).join('');
-      return `<article class="tile packageTile packageTileShell" data-package-code="${esc(code)}"><button class="packageTileMain" type="button" onclick="openPackageFromTile('${esc(code)}')"><div class="pkgTop"><div class="tileIcon" aria-hidden="true">${typeof svg==='function'?svg('box'):''}</div>${isH?`<span class="statusPill"><span class="statusDot"></span>${status}</span>`:''}</div><div class="pkgTitleRow"><div><b>${esc(d.title||('Paket '+code))}</b><small>${esc(packageDesc(code))}</small>${chips?`<div class="pkgMetaChips">${chips}</div>`:''}</div></div>${isH&&st.total?progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket'):''}<div class="pkgFooter"><span>${esc(g.name)}</span>${isH?`<span>${st.pct||0}%</span>`:''}</div></button></article>`;
-    }).join('');
-    if(codes.length>size){const pager=document.createElement('div');pager.className='packagePager';pager.innerHTML=(page>0?'<button class="btn" type="button" data-d="-1">‹ Sebelumnya</button>':'')+`<span class="packagePageIndicator">Halaman ${page+1} / ${Math.ceil(codes.length/size)}</span>`+(page<Math.ceil(codes.length/size)-1?'<button class="btn" type="button" data-d="1">Berikutnya ›</button>':'');pager.querySelectorAll('button').forEach(b=>b.onclick=()=>{window.__dynamicPackagePage=page+Number(b.dataset.d);renderDynamicPackages()});grid.after(pager)}
-  }
-
-  async function loadDynamicPackage(code){
-    code=String(code||'');const path=state.byCode.get(code);
-    if(!path)return null;
-    const cached=DB[code];if(cached&&!cached.__lazy)return cached;
-    const r=await fetch('./'+path,{cache:'no-cache'});if(!r.ok)throw new Error('Database: '+path+' '+r.status);
-    const d=await r.json();if(!d||typeof d!=='object')throw new Error('Database paket tidak valid: '+code);
-    d.code=d.code||code;d.__folder=(state.groups.find(g=>g.codes.includes(code))||{}).name||'';DB[code]=d;return d;
-  }
-
-  async function boot(){
-    try{
-      let groups;
-      try{groups=await discover()}catch(e){groups=fallbackFromManifest();state.error=e}
-      if(!groups.length)return;
-      installCatalog(groups);
-      window.__hskLoadPackage=loadDynamicPackage;
-      window.__hskLoadPackages=async codes=>Promise.all([...new Set((codes||[]).map(String).filter(Boolean))].map(loadDynamicPackage));
-      window.__dynamicSelectedMaterial=window.__dynamicSelectedMaterial||('folder:'+groups[0].name);
-      window.openPackages=function(push=true){route={screen:'levels',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};renderDynamicLevels();setScreen('levelsScreen',push);window.scrollTo({top:0,left:0,behavior:'auto'});};
-      window.openLevelPackages=function(key,push=true){const g=groupForKey(key);if(!g)return;window.__dynamicSelectedMaterial=materialKey(g);window.__cleanMaterialKey=materialKey(g);selectedHSKLevel=materialKey(g);window.__dynamicPackagePage=0;route={screen:'packages',packageCode:null,type:null,sectionIndex:null,studyPlanId:null,materialKey:materialKey(g)};renderDynamicPackages();setScreen('packagesScreen',push);window.scrollTo({top:0,left:0,behavior:'auto'});};
-      window.renderLevelsScreen=renderDynamicLevels;
-      window.renderPackagesScreen=renderDynamicPackages;
-      window.__dynamicFolderCatalogReady=true;
-      if(route?.screen==='levels')renderDynamicLevels();
-      if(route?.screen==='packages')renderDynamicPackages();
-      document.dispatchEvent(new Event('hsk:dynamic-catalog-ready'));
-    }catch(e){state.error=e;console.warn('Dynamic folder catalog',e)}
-  }
-
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
 </script>
 </body>
