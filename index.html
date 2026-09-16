@@ -3392,219 +3392,91 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 #levelsScreen .levelGroupDivider:first-child{border-top:0;margin-top:0;}
 #packagesScreen #packagesGrid{grid-template-columns:1fr!important;}
 </style>
-<script>(function(){
-  'use strict';
-  /* DIRECT LAYER NAVIGATION
-     App Back and Android/Chrome Back follow the visible hierarchy.
-     They never use history.back() and never restore an older route.
-  */
-  const N=window.__directLayerNavigation=window.__directLayerNavigation||{};
-  if(N.installed)return;
 
-  const originalSetScreen=window.setScreen;
-  function cleanState(){
+
+
+
+<script id="navigationControllerFinalV2">
+(function(){
+  'use strict';
+  const C=window.__navigationControllerFinalV2=window.__navigationControllerFinalV2||{};
+  if(C.installed)return;
+
+  function currentScreen(){return String(window.route?.screen||'home')}
+  function stateURL(){return location.pathname+location.search+'#'+currentScreen()}
+  function writeBase(){
+    try{history.replaceState({...route,__hskLayerGuard:true},'',stateURL())}catch(e){}
+  }
+  function armSentinel(){
     try{
-      history.replaceState({...route,__hskLayerGuard:true},'',location.pathname+location.search+'#'+(route?.screen||'home'));
+      const st={...(history.state||{}),...(window.route||{}),__hskLayerGuard:true};
+      history.replaceState(st,'',stateURL());
+      history.pushState({...st},'',stateURL());
     }catch(e){}
   }
 
-  /* Forward navigation changes the visible layer but does not build a browser-history stack. */
-  if(typeof originalSetScreen==='function'){
-    window.setScreen=function(name){
-      const r=originalSetScreen.call(this,name,false);
-      cleanState();
-      return r;
+  const previousSetScreen=window.setScreen;
+  if(typeof previousSetScreen==='function'){
+    window.setScreen=function(name,push=true){
+      const result=previousSetScreen.call(this,name,false);
+      /* Internal app navigation has no browser-history stack. Keep exactly one
+         sentinel entry so Android/Chrome Back is always consumed by the SPA. */
+      armSentinel();
+      return result;
     };
   }
 
-  function goParent(){
-    if(!currentUsername){showAuthScreen();return;}
-    const screen=String(route?.screen||'home');
-    try{
-      if(screen==='studyPlanDetail') return window.openStudyPlans?.(false);
-      if(screen==='studyPlans') return window.goHome?.(false);
-      if(screen==='exercise'||screen==='result') return window.openSections?.(route.packageCode,route.type,false);
-      if(screen==='parts') return window.openPackage?.(route.packageCode,false);
-      if(screen==='package') return window.openLevelPackages?.(selectedHSKLevel,false);
-      if(screen==='packages') return window.openPackages?.(false);
-      if(screen==='levels') return window.goHome?.(false);
-      if(screen==='home') return window.showExit?.(true);
-      return window.goHome?.(false);
-    }finally{
-      setTimeout(cleanState,0);
+  function parentRoute(){
+    if(!window.currentUsername && typeof window.showAuthScreen==='function'){
+      window.showAuthScreen(); return;
+    }
+    const screen=currentScreen();
+    switch(screen){
+      case 'exercise':
+      case 'result':
+        return window.openSections?.(route.packageCode,route.type,false);
+      case 'parts':
+        return window.openPackage?.(route.packageCode,false);
+      case 'package':
+        return window.openLevelPackages?.(selectedHSKLevel,false);
+      case 'packages':
+        /* Paket list is a direct child of Home for Back purposes. */
+        return window.goHome?.(false);
+      case 'levels':
+        /* Level selector is the root app layer: Back means Exit warning. */
+        return window.showExit?.(true);
+      case 'studyPlanDetail':
+        return window.openStudyPlans?.(false);
+      case 'studyPlans':
+        return window.goHome?.(false);
+      case 'home':
+      default:
+        return window.showExit?.(true);
     }
   }
 
-  window.backRoute=goParent;
-  window.__directLayerBack=goParent;
+  window.backRoute=parentRoute;
+  window.__directLayerBack=parentRoute;
 
-  /* Establish exactly one browser guard. A physical Back gesture is consumed by the app. */
-  try{
-    const current={...(history.state||{}),...route,__hskLayerGuard:true};
-    history.replaceState(current,'',location.pathname+location.search+'#'+(route?.screen||'home'));
-    history.pushState({...current},'',location.pathname+location.search+'#'+(route?.screen||'home'));
-  }catch(e){}
-
+  /* Physical Android/Chrome Back: consume the sentinel, move one app layer,
+     then recreate one sentinel for the next physical Back. */
   window.addEventListener('popstate',function(){
-    try{
-      const current={...(history.state||{}),...route,__hskLayerGuard:true};
-      history.pushState(current,'',location.pathname+location.search+'#'+(route?.screen||'home'));
-    }catch(e){}
-    goParent();
+    try{parentRoute();}
+    finally{setTimeout(armSentinel,0)}
   },{passive:true});
 
-  N.installed=true;
-})();
-</script>
-<style id="navigationAndPackageListFinalV1">
-#packagesScreen .packagePager{display:none!important}
-</style>
-<script id="navigationAndPackageListFinalV1">
-(function(){
-  'use strict';
-  const N=window.__finalLayerBackV1=window.__finalLayerBackV1||{};
-  if(N.installed)return;
-
-  function routeHash(){
-    return '#'+String(window.route?.screen||'home');
-  }
-  function replaceGuard(){
-    try{
-      history.replaceState(
-        {...(history.state||{}),...(window.route||{}),__hskAppGuard:true},
-        '',
-        location.pathname+location.search+routeHash()
-      );
-    }catch(e){}
-  }
-
-  /* Prevent the old goHome() helper from stacking browser-history entries. */
-  window.armHome=function(){ replaceGuard(); };
-
-  /* Canceling the Exit dialog must not push another history entry. */
+  /* The Exit cancel action must not create a second history entry. */
   window.cancelExit=function(){
     const modal=document.getElementById('exitModal');
     if(modal)modal.classList.remove('show');
     window.exitFromBack=false;
-    replaceGuard();
+    armSentinel();
   };
 
-  /* One physical-Back consumer for the whole SPA. */
-  if(!N.popInstalled){
-    window.addEventListener('popstate',function(){
-      replaceGuard();
-      try{
-        window.backRoute?.();
-      }finally{
-        setTimeout(replaceGuard,0);
-      }
-    },{passive:true});
-    N.popInstalled=true;
-  }
-
-  /* Establish one sentinel successor only once. */
-  if(!N.guardCreated){
-    try{
-      const st={...(history.state||{}),...(window.route||{screen:'home'}),__hskAppGuard:true};
-      history.replaceState(st,'',location.pathname+location.search+routeHash());
-      history.pushState(st,'',location.pathname+location.search+routeHash());
-      N.guardCreated=true;
-    }catch(e){}
-  }else{
-    replaceGuard();
-  }
-
-  /* Package list: continuous list, no pagination. */
-  function escText(v){
-    return String(v??'')
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  function renderAllPackages(){
-    const grid=document.getElementById('packagesGrid');
-    if(!grid)return;
-
-    const g=(window.state&&window.state.selected) ||
-            (window.state&&window.state.groups&&window.state.groups[0]);
-    if(!g)return;
-
-    const head=document.getElementById('packageLevelKicker');
-    const title=document.getElementById('packagePageTitle');
-    const sub=document.getElementById('packagePageSub');
-
-    if(head)head.textContent=g.name||'';
-    if(title)title.textContent=g.kind==='workbook'?'Pilih lesson':'Pilih paket';
-
-    const q=String(document.getElementById('packageSearchInput')?.value||'').trim().toLowerCase();
-    const codes=(Array.isArray(g.codes)?g.codes:[])
-      .filter(c=>!q||String(c).toLowerCase().includes(q));
-
-    if(sub){
-      sub.textContent=(codes.length||0)+' '+(g.kind==='workbook'?'lesson':'paket')+' tersedia';
-    }
-
-    document.querySelectorAll('.packagePager').forEach(x=>x.remove());
-
-    if(!codes.length){
-      grid.innerHTML='<div class="emptySearch"><strong>Paket tidak ditemukan</strong><span>Coba kata kunci lain.</span></div>';
-      return;
-    }
-
-    grid.innerHTML=codes.map(c=>{
-      const st=typeof window.packageStats==='function'
-        ? window.packageStats(c)
-        : {pct:0,answered:0,total:0};
-
-      const progress=(st.total&&typeof window.progressHTML==='function')
-        ? window.progressHTML(st,'Progres paket')
-        : '';
-
-      const codeAttr=JSON.stringify(String(c))
-        .replace(/&/g,'&amp;').replace(/"/g,'&quot;');
-
-      return '<article class="tile packageTile packageTileShell">'+
-        '<button class="packageTileMain" type="button" onclick="openPackage('+codeAttr+')">'+
-        '<div class="pkgTop">'+
-          '<div class="tileIcon packageHanziIcon" aria-hidden="true"><span>卷</span></div>'+
-          '<span class="statusPill"><span class="statusDot"></span>'+
-          (st.pct>=100?'Selesai':st.pct>0?'Sedang berjalan':'Belum dimulai')+
-          '</span>'+
-        '</div>'+
-        '<div class="pkgTitleRow"><div><b>Paket '+escText(c)+
-        '</b><small>'+escText(g.name)+
-        '</small></div></div>'+
-        progress+
-        '<div class="pkgFooter"><span>'+escText(g.name)+
-        '</span><span>'+(st.pct||0)+'%</span></div>'+
-        '</button></article>';
-    }).join('');
-  }
-
-  window.renderPackages=renderAllPackages;
-  window.renderPackagesScreen=renderAllPackages;
-
-  window.filterPackages=function(v){
-    const i=document.getElementById('packageSearchInput');
-    if(i)i.value=String(v??'');
-    renderAllPackages();
-  };
-
-  window.clearPackageSearch=function(){
-    const i=document.getElementById('packageSearchInput');
-    if(i)i.value='';
-    renderAllPackages();
-    i?.focus();
-  };
-
-  N.installed=true;
-  setTimeout(function(){
-    replaceGuard();
-    try{renderAllPackages();}catch(e){}
-  },0);
+  armSentinel();
+  C.installed=true;
 })();
 </script>
-
 </body>
 <style id="packageTileCanonicalV46">
 /* V46 canonical package-card system. Legacy package-card rules were removed from
