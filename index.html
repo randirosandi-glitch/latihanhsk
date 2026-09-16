@@ -1258,8 +1258,14 @@ window.loadDynamicFolderCatalog=async function(){
 window.loadPackageLazy=async function(code){
   code=String(code);
   if(cache[code]){DB[code]=cache[code];return cache[code]}
-  const meta=catalog[code];
-  if(!meta) throw new Error("Paket tidak ditemukan: "+code);
+  let meta=catalog[code];
+  if(!meta){
+    if(!window.__HSK_DYNAMIC_READY){
+      await window.loadDynamicFolderCatalog();
+      meta=catalog[code];
+    }
+  }
+  if(!meta) throw new Error("Paket tidak ditemukan di data/: "+code);
   const data=await getJSON(meta.url);
   cache[code]=data;
   DB[code]=data;
@@ -1268,7 +1274,8 @@ window.loadPackageLazy=async function(code){
 })();
 
 async function initApp(){
-  try{await window.loadDynamicFolderCatalog()}catch(e){console.error("[HSK] Dynamic catalog:",e)}
+  // Catalog discovery runs in the background so the stable UI/auth screen never hangs on GitHub API latency.
+  window.loadDynamicFolderCatalog().catch(e=>console.warn("[HSK] Dynamic catalog unavailable:",e));
   await loadQuestionData();
   try{const savedTheme=localStorage.getItem('hsk-theme');applyTheme(savedTheme==='dark'?'dark':'light')}catch(e){applyTheme('light')}
   route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;
