@@ -1092,7 +1092,7 @@ function clearPackageSearch(){const i=$('packageSearchInput');if(i)i.value='';fi
 function filterPackages(value){if(selectedHSKLevel!==4)return;const el=$('packageSearchInput');if(el&&String(el.value)!==String(value??''))el.value=String(value??'');renderCleanPackages()}
 function openScores(push=true){route={screen:'scores',packageCode:null,type:null,sectionIndex:null};renderScores();setScreen('scores',push);window.scrollTo({top:0,left:0,behavior:'auto'})}
 function renderPackagesScreen(){const el=$('packagesGrid');if(!el)return;const panel=$('hsk5Panel'),head=$('packageLevelKicker'),title=$('packagePageTitle'),sub=$('packagePageSub');const is5=selectedHSKLevel===5;el.hidden=is5;if(panel)panel.hidden=!is5;if(head)head.textContent=is5?'HSK 5':'HSK 4';if(title)title.textContent=is5?'HSK 5':'Pilih paket';if(sub)sub.textContent=is5?'Paket HSK 5 sedang dipersiapkan.':'25 paket latihan tersedia.';if(is5){el.innerHTML='';return}const input=$('packageSearchInput');const q=input?input.value:'';const codes=Object.keys(DB).filter(code=>!q||code.includes(String(q).trim().toUpperCase()));el.innerHTML=codes.map((code)=>renderPackageTile(code,Object.keys(DB).indexOf(code))).join('');if(!codes.length)el.innerHTML='<div class="emptySearch"><strong>Paket tidak ditemukan</strong><span>Coba cari dengan kode seperti H41001.</span></div>'}
-function renderPackageTile(code,idx){const st=packageStats(code),total=st.total||0,metaParts=Object.entries(META).filter(([t])=>(DB[code]?.[t]||[]).length>0).map(([t,m])=>m.label),desc=metaParts.length?`${total} soal · ${metaParts.join(' · ')}`:'Belum ada soal interaktif',palette=['blue','purple','orange','pink','green'][idx%5],pct=st.pct||0,status=pct>=100?'Selesai':pct>0?'Sedang berjalan':'Belum dimulai';return `<button class="tile packageTile packageTile-${palette}" type="button" onclick="openPackage('${esc(code)}')"><div class="pkgTop"><div class="pkgHanziIcon" data-hanzi="卷" aria-hidden="true"></div><span class="statusPill">${status}</span></div><div class="pkgTitleRow"><div><b>Paket ${esc(code)}</b><small>${esc(desc)}</small></div></div>${total?progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket'):''}<div class="pkgFooter"><span>Listening · Reading · Writing</span><span>${pct}%</span></div></button>`}
+function renderPackageTile(code,idx){const st=packageStats(code),total=st.total||0,metaParts=Object.entries(META).filter(([t])=>(DB[code]?.[t]||[]).length>0).map(([t,m])=>m.label),desc=metaParts.length?`${total} soal · ${metaParts.join(' · ')}`:'Belum ada soal interaktif',palette=['blue','purple','orange','pink','green'][idx%5],pct=st.pct||0,status=pct>=100?'Selesai':pct>0?'Sedang berjalan':'Belum dimulai';return `<button class="tile packageTile packageTile-${palette}" type="button" onclick="openPackage('${esc(code)}')"><div class="pkgTop"><div class="tileIcon" aria-hidden="true">${svg('box')}</div><span class="statusPill">${status}</span></div><div class="pkgTitleRow"><div><b>Paket ${esc(code)}</b><small>${esc(desc)}</small></div></div>${total?progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket'):''}<div class="pkgFooter"><span>Listening · Reading · Writing</span><span>${pct}%</span></div></button>`}
 let selectedScoreLevel=4;
 function renderScores(){
   const el=$('scoresGrid');if(!el)return;
@@ -1323,7 +1323,7 @@ window.openLevelPackages=function(level,push=true){const v=String(level).toLower
 window.filterPackages=function(value){const i=$('packageSearchInput');if(i)i.value=String(value??'');window.__wbPackagePage=0;renderPackagesScreen()};
 window.clearPackageSearch=function(){const i=$('packageSearchInput');if(i)i.value='';window.__wbPackagePage=0;renderPackagesScreen();i?.focus()};
 window.renderPackagesScreen=function(){const el=$('packagesGrid');if(!el)return;const panel=$('hsk5Panel'),head=$('packageLevelKicker'),title=$('packagePageTitle'),sub=$('packagePageSub'),is5=selectedHSKLevel===5,isWB=selectedHSKLevel==='wb4a';el.hidden=is5;if(panel)panel.hidden=!is5;if(head)head.textContent=is5?'HSK 5':isWB?'Workbook HSK4a':'HSK 4';if(title)title.textContent=is5?'HSK 5':isWB?'Pilih lesson Workbook':'Pilih paket';if(sub)sub.textContent=is5?'Paket HSK 5 sedang dipersiapkan.':isWB?'9 lesson · 450 soal tersedia.':'25 paket latihan tersedia.';document.querySelector('.packagePager')?.remove();if(is5){el.innerHTML='';return}const q=String($('packageSearchInput')?.value||'').trim().toUpperCase(),codes=levelCodes().filter(c=>!q||c.includes(q));if(!codes.length){el.innerHTML='<div class="emptySearch"><strong>Paket tidak ditemukan</strong><span>Coba cari nama atau kode lesson.</span></div>';return}const size=10,page=Math.max(0,Math.min(Number(window.__wbPackagePage||0),Math.ceil(codes.length/size)-1));window.__wbPackagePage=page;el.innerHTML=codes.slice(page*size,(page+1)*size).map(c=>renderPackageTile(c,Object.keys(DB).indexOf(c))).join('');if(codes.length>size){const pager=document.createElement('div');pager.className='packagePager';pager.innerHTML=(page>0?'<button class="btn" type="button" data-d="-1">‹ Sebelumnya</button>':'')+'<span class="packagePageIndicator">Halaman '+(page+1)+' / '+Math.ceil(codes.length/size)+'</span>'+(page<Math.ceil(codes.length/size)-1?'<button class="btn" type="button" data-d="1">Berikutnya ›</button>':'');pager.querySelectorAll('button').forEach(x=>x.onclick=()=>{window.__wbPackagePage=page+Number(x.dataset.d);renderPackagesScreen()});el.after(pager)}};
-window.renderPackageTile=function(code,idx){const st=packageStats(code),total=st.total||0,parts=Object.entries(META).filter(([t])=>(DB[code]?.[t]||[]).length>0).map(([t,m])=>m.label),desc=parts.length?`${total} soal · ${parts.join(' · ')}`:'Belum ada soal interaktif',palette=['blue','purple','orange','pink','green'][idx%5],pct=st.pct||0,status=pct>=100?'Selesai':pct>0?'Sedang berjalan':'Belum dimulai',title=DB[code]?.title||('Paket '+code);return `<button class="tile packageTile packageTile-${palette}" type="button" onclick="openPackage('${esc(code)}')"><div class="pkgTop"><div class="pkgHanziIcon" data-hanzi="卷" aria-hidden="true"></div><span class="statusPill">${status}</span></div><div class="pkgTitleRow"><div><b>${esc(title)}</b><small>${esc(desc)}</small></div></div>${total?progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket'):''}<div class="pkgFooter"><span>Listening · Reading · Writing</span><span>${pct}%</span></div></button>`};
+window.renderPackageTile=function(code,idx){const st=packageStats(code),total=st.total||0,parts=Object.entries(META).filter(([t])=>(DB[code]?.[t]||[]).length>0).map(([t,m])=>m.label),desc=parts.length?`${total} soal · ${parts.join(' · ')}`:'Belum ada soal interaktif',palette=['blue','purple','orange','pink','green'][idx%5],pct=st.pct||0,status=pct>=100?'Selesai':pct>0?'Sedang berjalan':'Belum dimulai',title=DB[code]?.title||('Paket '+code);return `<button class="tile packageTile packageTile-${palette}" type="button" onclick="openPackage('${esc(code)}')"><div class="pkgTop"><div class="tileIcon" aria-hidden="true">${svg('box')}</div><span class="statusPill">${status}</span></div><div class="pkgTitleRow"><div><b>${esc(title)}</b><small>${esc(desc)}</small></div></div>${total?progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket'):''}<div class="pkgFooter"><span>Listening · Reading · Writing</span><span>${pct}%</span></div></button>`};
 window.renderPackage=function(){const code=route.packageCode,d=DB[code]||{};$('pkgCrumb').textContent=code;$('pkgTitle').textContent=d.title||('Paket '+code);const palettes={listening:{accent:'#1769e8',soft:'#edf4ff',hanzi:'听'},reading:{accent:'#7654e8',soft:'#f1edff',hanzi:'读'},writing:{accent:'#ef8b25',soft:'#fff1df',hanzi:'写'}};$('parts').innerHTML=Object.entries(META).map(([t,m])=>{const arr=d[t]||[],total=arr.reduce((a,x)=>a+x.questions.length,0),ps=arr.reduce((a,x,i)=>{const st=sectionStats(code,t,i);return {answered:a.answered+st.answered,total:a.total+st.total}},{answered:0,total:0});ps.pct=ps.total?Math.round(ps.answered/ps.total*100):0;const pal=palettes[t]||palettes.listening;return total?`<button class=\"partCard flatPartCard\" style=\"--part-accent:${pal.accent};--part-soft:${pal.soft}\" type=\"button\" onclick=\"openSections('${esc(code)}','${t}')\"><span class=\"partHanzi\" aria-hidden=\"true\">${pal.hanzi}</span><span class=\"partMain\"><span class=\"partEyebrow\">${esc(m.zh)}</span><strong>${esc(m.label)}</strong><span class=\"partMeta\">${total} soal tersedia</span><span class=\"partTags\"><i>${esc(m.zh)}</i><i>${esc(m.label)}</i></span>${progressHTML(ps,'Progres bagian')}</span></button>`:`<div class=\"partCard flatPartCard partDisabled\" style=\"--part-accent:${pal.accent};--part-soft:${pal.soft}\"><span class=\"partHanzi\" aria-hidden=\"true\">${pal.hanzi}</span><span class=\"partMain\"><span class=\"partEyebrow\">${esc(m.zh)}</span><strong>${esc(m.label)}</strong><span class=\"partMeta\">Belum tersedia dari sumber paket</span></span></div>`}).join('')+`<div style=\"grid-column:1/-1\">${renderPackageProgress(code)}</div>`};
 const oldCI=window.correctIndex;window.correctIndex=function(q,type){const id=Number(q[0]),key=String(q[3]??'').trim();if(type==='listening'&&String(route?.packageCode||'').startsWith('WB4A'))return id<=5?(key==='√'?0:1):(/^[A-F]$/.test(key)?key.charCodeAt(0)-65:(q[2]||[]).findIndex(o=>norm(o)===norm(key)));if(type==='reading'&&String(route?.packageCode||'').startsWith('WB4A')&&Number(route?.sectionIndex)===2)return permutations().indexOf(key);return oldCI(q,type)};
 document.addEventListener('hsk:data-ready',ensureWorkbookLevelCard,{once:true});
@@ -1670,7 +1670,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   document.addEventListener('pointercancel',function(){if(longPressTimer)cancelPackageLongPress()}, {passive:true});
   function backRoutePlans(){if(route.screen==='studyPlans'){goHome()}else if(route.screen==='studyPlanDetail'){openStudyPlans()}else if(route.screen==='levels'){goHome()}else if(route.screen==='packages'){openPackages()}else if(route.screen==='package'){openLevelPackages(selectedHSKLevel)}else if(route.screen==='parts'){openPackage(route.packageCode)}else if(route.screen==='exercise'||route.screen==='result'){openSections(route.packageCode,route.type)}else goHome()}
   const oldRenderPackageTile=window.renderPackageTile;
-  window.renderPackageTile=function(code,idx){const st=packageStats(code),total=st.total||0,metaParts=Object.entries(META).filter(([t])=>(DB[code]?.[t]||[]).length>0).map(([t,m])=>m.label),desc=metaParts.length?`${total} soal · ${metaParts.join(' · ')}`:'Belum ada soal interaktif',palette=['blue','purple','orange','pink','green'][idx%5],pct=st.pct||0,status=pct>=100?'Selesai':pct>0?'Sedang berjalan':'Belum dimulai';return `<button class="tile packageTile packageTile-${palette}" type="button" data-package-code="${escPlan(code)}" onclick="openPackageFromTile('${escPlan(code)}')"><div class="pkgTop"><div class="pkgHanziIcon" data-hanzi="卷" aria-hidden="true"></div><span class="statusPill">${status}</span></div><div class="pkgTitleRow"><div><b>Paket ${escPlan(code)}</b><small>${escPlan(desc)}</small></div></div>${total?progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket'):''}<div class="pkgFooter"><span>Listening · Reading · Writing</span><span>${pct}%</span></div></button>`}
+  window.renderPackageTile=function(code,idx){const st=packageStats(code),total=st.total||0,metaParts=Object.entries(META).filter(([t])=>(DB[code]?.[t]||[]).length>0).map(([t,m])=>m.label),desc=metaParts.length?`${total} soal · ${metaParts.join(' · ')}`:'Belum ada soal interaktif',palette=['blue','purple','orange','pink','green'][idx%5],pct=st.pct||0,status=pct>=100?'Selesai':pct>0?'Sedang berjalan':'Belum dimulai';return `<button class="tile packageTile packageTile-${palette}" type="button" data-package-code="${escPlan(code)}" onclick="openPackageFromTile('${escPlan(code)}')"><div class="pkgTop"><div class="tileIcon" aria-hidden="true">${svg('box')}</div><span class="statusPill">${status}</span></div><div class="pkgTitleRow"><div><b>Paket ${escPlan(code)}</b><small>${escPlan(desc)}</small></div></div>${total?progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket'):''}<div class="pkgFooter"><span>Listening · Reading · Writing</span><span>${pct}%</span></div></button>`}
 
   const oldRenderNavState=window.renderNavState;
   window.renderNavState=function(){document.querySelectorAll('.mainNav .navItem').forEach(b=>b.classList.toggle('active',b.dataset.nav===route.screen||((route.screen==='levels'||route.screen==='packages'||route.screen==='package'||route.screen==='parts'||route.screen==='exercise'||route.screen==='result')&&b.dataset.nav==='packages')))}
@@ -1874,7 +1874,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       onclick="openPackageFromTile('${escHtml(code)}')"
       aria-label="Buka ${escHtml(title)}">
       <div class="pkgTop">
-        <div class="pkgHanziIcon" data-hanzi="卷" aria-hidden="true"></div>
+        <div class="tileIcon" aria-hidden="true">${typeof svg==='function'?svg('box'):''}</div>
         <span class="statusPill">${escHtml(status)}</span>
       </div>
       <div class="pkgTitleRow">
@@ -2690,7 +2690,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       const pct=st.pct||0,status=pct>=100?'Selesai':pct>0?'Sedang berjalan':'Belum dimulai';
       return `<button class="tile packageTile packageTile-${['blue','purple','orange','pink','green'][i%5]}"
         type="button" data-package-code="${escV4(c)}" aria-label="Buka ${escV4(titleText)}">
-        <div class="pkgTop"><div class="pkgHanziIcon" data-hanzi="卷" aria-hidden="true"></div><span class="statusPill">${status}</span></div>
+        <div class="pkgTop"><div class="tileIcon" aria-hidden="true">${typeof svg==='function'?svg('box'):''}</div><span class="statusPill">${status}</span></div>
         <div class="pkgTitleRow"><div><b>${escV4(titleText)}</b><small>${escV4((typeof packageDescription==='function'?packageDescription(c):''))}</small></div>
         </div>
         ${st.total?progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket'):''}
@@ -3065,7 +3065,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     const added=hasPlan(code);
     return `<article class="tile packageTile packageTile-${palette} packageTileShell" data-package-code="${esc(code)}">
       <button class="packageTileMain" type="button" onclick="openPackageFromTile('${esc(code)}')" aria-label="Buka ${esc(title)}">
-        <div class="pkgTop"><div class="pkgHanziIcon" data-hanzi="卷" aria-hidden="true"></div>${isHsk?`<span class="statusPill">${esc(status)}</span>`:''}</div>
+        <div class="pkgTop"><div class="tileIcon" aria-hidden="true">${typeof svg==='function'?svg('box'):''}</div>${isHsk?`<span class="statusPill">${esc(status)}</span>`:''}</div>
         <div class="pkgTitleRow"><div><b>${esc(title)}</b><small>${esc(packageDesc(code))}</small></div></div>
         ${isHsk&&st.total?progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket'):''}
         <div class="pkgFooter"><span>${esc(material?.label||'Materi')}</span>${isHsk?`<span>${pct}%</span>`:''}</div>
@@ -3888,6 +3888,62 @@ body.dark #packagesScreen .packageTile-green{--accent:#58c79d;--accentSoft:#2138
 
 </style>
 </html>
+
+<style id="packageHanziIconFixedV1">
+#packagesGrid .packageTileMain{
+  width:100%!important;
+  display:block!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  color:inherit!important;
+  font:inherit!important;
+  text-align:left!important;
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  box-shadow:none!important;
+}
+#packagesGrid .packageHanziIcon{
+  display:grid!important;
+  place-items:center!important;
+  width:48px!important;
+  height:48px!important;
+  min-width:48px!important;
+  margin:0!important;
+  padding:0!important;
+  border-radius:14px!important;
+  background:var(--accentSoft)!important;
+  color:var(--accent)!important;
+  overflow:hidden!important;
+}
+#packagesGrid .packageHanziIcon span{
+  display:block!important;
+  font-family:"Ma Shan Zheng","Noto Serif SC",serif!important;
+  font-size:37px!important;
+  font-weight:400!important;
+  font-style:normal!important;
+  line-height:1!important;
+  letter-spacing:0!important;
+  transform:translateY(-1px);
+}
+body.dark #packagesGrid .packageHanziIcon{
+  background:var(--accentSoft)!important;
+  color:var(--accent)!important;
+}
+@media(max-width:760px){
+  #packagesGrid .packageHanziIcon{
+    width:48px!important;
+    height:48px!important;
+    min-width:48px!important;
+    border-radius:14px!important;
+  }
+  #packagesGrid .packageHanziIcon span{
+    font-size:37px!important;
+  }
+}
+</style>
+
 <script id="databaseAndPackageRuntimeV1">
 (function(){
   'use strict';
@@ -3990,7 +4046,7 @@ body.dark #packagesScreen .packageTile-green{--accent:#58c79d;--accentSoft:#2138
     document.querySelectorAll('.packagePager').forEach(x=>x.remove());
     const size=10,page=Math.max(0,Math.min(Number(window.__dbPackagePage||0),Math.max(0,Math.ceil(codes.length/size)-1)));window.__dbPackagePage=page;
     if(!codes.length){grid.innerHTML='<div class="emptySearch"><strong>Paket tidak ditemukan</strong><span>Coba kata kunci lain.</span></div>';return}
-    grid.innerHTML=codes.slice(page*size,(page+1)*size).map(c=>{const st=typeof packageStats==='function'?packageStats(c):{pct:0,answered:0,total:0};return '<article class="tile packageTile packageTileShell"><button class="packageTileMain" type="button" onclick="openPackage(\''+esc(c)+'\')"><div class="pkgTop"><div class="pkgHanziIcon" data-hanzi="卷" aria-hidden="true"></div><span class="statusPill"><span class="statusDot"></span>'+(st.pct>=100?'Selesai':st.pct>0?'Sedang berjalan':'Belum dimulai')+'</span></div><div class="pkgTitleRow"><div><b>Paket '+esc(c)+'</b><small>'+esc(g.name)+'</small></div></div>'+(st.total&&typeof progressHTML==='function'?progressHTML(st,'Progres paket'):'')+'<div class="pkgFooter"><span>'+esc(g.name)+'</span><span>'+(st.pct||0)+'%</span></div></button></article>'}).join('');
+    grid.innerHTML=codes.slice(page*size,(page+1)*size).map(c=>{const st=typeof packageStats==='function'?packageStats(c):{pct:0,answered:0,total:0};return '<article class="tile packageTile packageTileShell"><button class="packageTileMain" type="button" onclick="openPackage(\''+esc(c)+'\')"><div class="pkgTop"><div class="tileIcon packageHanziIcon" aria-hidden="true"><span>卷</span></div><span class="statusPill"><span class="statusDot"></span>'+(st.pct>=100?'Selesai':st.pct>0?'Sedang berjalan':'Belum dimulai')+'</span></div><div class="pkgTitleRow"><div><b>Paket '+esc(c)+'</b><small>'+esc(g.name)+'</small></div></div>'+(st.total&&typeof progressHTML==='function'?progressHTML(st,'Progres paket'):'')+'<div class="pkgFooter"><span>'+esc(g.name)+'</span><span>'+(st.pct||0)+'%</span></div></button></article>'}).join('');
     const pages=Math.ceil(codes.length/size);if(pages>1){const pager=document.createElement('div');pager.className='packagePager';pager.innerHTML=(page?'<button class="btn" data-d="-1">‹ Sebelumnya</button>':'')+'<span class="packagePageIndicator">Halaman '+(page+1)+' / '+pages+'</span>'+((page<pages-1)?'<button class="btn" data-d="1">Berikutnya ›</button>':'');pager.querySelectorAll('button').forEach(b=>b.onclick=()=>{window.__dbPackagePage=page+Number(b.dataset.d);renderPackages()});grid.after(pager)}
   }
 
