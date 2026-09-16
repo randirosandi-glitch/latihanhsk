@@ -4523,161 +4523,167 @@ body.dark #packagesGrid .packageHanziIcon{
 })();
 </script>
 <!-- HSK FINAL NAV + ACCURACY REPAIR V10 -->
-<script id="hskFinalNavigationAccuracyV10">
+<script id="hskFinalNavigationAccuracyV11">
 (function(){
   'use strict';
-  if(window.__HSK_FINAL_V10__) return;
-  window.__HSK_FINAL_V10__=true;
+  if(window.__HSK_FINAL_V11__) return;
+  window.__HSK_FINAL_V11__=true;
 
   const $=id=>document.getElementById(id);
-  const screen=()=>String(window.route?.screen||'home');
+
+  /* IMPORTANT: route/currentUsername/selectedHSKLevel are top-level `let`
+     bindings in this document. They are NOT reliably exposed as window.*.
+     Earlier V10 used window.route and therefore always saw "home", which
+     made every hardware Back look like an Exit action. */
+  const getRoute=()=>route||{};
+  const screen=()=>String(getRoute().screen||'home');
   const stateUrl=()=>location.pathname+location.search+'#'+screen();
 
-  /* One browser guard for the whole app. The app owns the layer stack;
-     browser history is only the hardware-back interception mechanism. */
+  /* Keep exactly one sentinel entry at the current app layer. Hardware Back
+     consumes the sentinel; the popstate handler then performs app-layer
+     navigation and immediately arms the sentinel for the new layer. */
   function armGuard(){
     try{
-      const st={...(history.state||{}),...(window.route||{}),__hskFinalGuard:true};
+      const r=getRoute();
+      const st={...(history.state||{}),...r,__hskFinalGuard:true};
       history.replaceState(st,'',stateUrl());
       history.pushState({...st},'',stateUrl());
     }catch(e){ console.warn('HSK guard:',e); }
   }
 
   function goHome(){
-    if(typeof window.goHome==='function') return window.goHome(false);
-    window.route={screen:'home',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
-    if(typeof window.setScreen==='function') return window.setScreen('home',false);
+    route={screen:'home',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
+    answers={}; checked={}; resultState=null;
+    if(typeof setScreen==='function') setScreen('home',false);
+    else if(typeof renderHome==='function') renderHome();
   }
+
   function backLayer(){
+    const r=getRoute();
     switch(screen()){
       case 'exercise':
-        if(typeof window.openSections==='function') return window.openSections(route.packageCode,route.type,false);
+        if(typeof openSections==='function') return openSections(r.packageCode,r.type,false);
         break;
       case 'result':
-        if(typeof window.returnToQuestions==='function') return window.returnToQuestions();
-        if(typeof window.openSections==='function') return window.openSections(route.packageCode,route.type,false);
+        if(typeof returnToQuestions==='function') return returnToQuestions();
+        if(typeof openSections==='function') return openSections(r.packageCode,r.type,false);
         break;
       case 'parts':
-        if(typeof window.openPackage==='function') return window.openPackage(route.packageCode,false);
+        if(typeof openPackage==='function') return openPackage(r.packageCode,false);
         break;
       case 'package':
-        if(route.studyPlanId && typeof window.openStudyPlan==='function')
-          return window.openStudyPlan(route.studyPlanId,false);
-        if(typeof window.openLevelPackages==='function') return window.openLevelPackages(window.selectedHSKLevel||4,false);
+        /* A package opened from Rencana must return to that exact plan. */
+        if(r.studyPlanId && typeof openStudyPlan==='function')
+          return openStudyPlan(r.studyPlanId,false);
+        if(typeof openLevelPackages==='function')
+          return openLevelPackages(selectedHSKLevel,false);
         break;
       case 'packages':
-        if(typeof window.openPackages==='function') return window.openPackages(false);
+        if(typeof openPackages==='function') return openPackages(false);
         break;
       case 'levels':
         return goHome();
       case 'studyPlanDetail':
-        if(typeof window.openStudyPlans==='function') return window.openStudyPlans(false);
+        if(typeof openStudyPlans==='function') return openStudyPlans(false);
         break;
       case 'studyPlans':
         return goHome();
       case 'home':
       default:
-        if(typeof window.showExit==='function') return window.showExit(true);
+        if(typeof showExit==='function') return showExit(true);
         break;
     }
   }
 
-  window.__HSK_APP_BACK_V10__=backLayer;
+  window.__HSK_APP_BACK_V11__=backLayer;
   window.backRoute=backLayer;
   window.__directLayerBack=backLayer;
 
-  /* Capture phase runs before every old popstate patch still present in the
-     file. stopImmediatePropagation prevents those legacy listeners from
-     executing and prevents the stacked-patch problem. */
+  /* Final hardware Back interceptor. Capture phase runs before the older
+     bubble-phase listeners in this file. stopImmediatePropagation prevents
+     those legacy listeners from issuing a second navigation/exit. */
   window.addEventListener('popstate',function(e){
     try{ e.preventDefault(); e.stopImmediatePropagation(); }catch(_){ }
-    try{
-      backLayer();
-    }catch(err){
-      console.error('HSK final hardware Back:',err);
+    try{ backLayer(); }
+    catch(err){
+      console.error('HSK hardware Back:',err);
       goHome();
     }
     setTimeout(armGuard,0);
   },true);
 
-  /* Keep UI Back and hardware Back on exactly the same route function. */
-  window.handleAppBackV10=function(){
+  /* UI Back buttons and Android hardware Back share the exact same function. */
+  window.handleAppBackV11=function(){
     try{ backLayer(); }
+    catch(err){ console.error('HSK UI Back:',err); goHome(); }
     finally{ setTimeout(armGuard,0); }
   };
 
-  /* Patch setScreen once so every normal forward navigation ends with a
-     guard entry. This does not create a second navigation controller. */
-  if(typeof window.setScreen==='function' && !window.setScreen.__hskV10Wrapped){
-    const originalSetScreen=window.setScreen;
+  /* Preserve the app's existing forward-navigation behavior. */
+  if(typeof setScreen==='function' && !setScreen.__hskV11Wrapped){
+    const originalSetScreen=setScreen;
     function wrappedSetScreen(name,push=true){
-      const r=originalSetScreen.call(this,name,push);
+      const result=originalSetScreen(name,push);
       if(push!==false) setTimeout(armGuard,0);
-      return r;
+      return result;
     }
-    wrappedSetScreen.__hskV10Wrapped=true;
-    wrappedSetScreen.__hskOriginal=originalSetScreen;
+    wrappedSetScreen.__hskV11Wrapped=true;
+    wrappedSetScreen.__hskV11Original=originalSetScreen;
+    setScreen=wrappedSetScreen;
     window.setScreen=wrappedSetScreen;
   }
 
-  /* Exit cancellation must restore the guard, not browser history. */
   window.cancelExit=function(){
     const modal=$('exitModal');
     if(modal) modal.classList.remove('show');
-    if(typeof window.exitFromBack!=='undefined') window.exitFromBack=false;
+    exitFromBack=false;
     setTimeout(armGuard,0);
   };
 
-  /* ---------------- Lazy-package accuracy repair ----------------
-     Lazy package stubs contain metadata only. Answers are stored locally,
-     but the old packageStats() deliberately returned score:0 until the
-     JSON was loaded. Warm all manifest packages once, then refresh the
-     existing dashboard/package/plan renderers. The package data remains
-     external; nothing is embedded into index.html. */
+  /* ---------------- Lazy-package accuracy repair ---------------- */
   let accuracyWarmStarted=false;
   async function warmLazyStats(){
     if(accuracyWarmStarted) return;
     accuracyWarmStarted=true;
     try{
-      const dbObj=(typeof DB!=='undefined')?DB:{};
-      const codes=Object.keys(dbObj).filter(c=>dbObj[c]?.__lazy);
+      const codes=Object.keys(DB||{}).filter(c=>DB[c]?.__lazy);
       if(!codes.length || typeof window.__hskLoadPackages!=='function') return;
       await window.__hskLoadPackages(codes);
-      try{ if(typeof window.renderHome==='function') window.renderHome(); }catch(_){ }
-      try{ if(typeof window.renderPackagesScreen==='function') window.renderPackagesScreen(); }catch(_){ }
-      try{ if(typeof window.renderCleanPackages==='function') window.renderCleanPackages(); }catch(_){ }
-      try{ if(typeof window.renderStudyPlans==='function') window.renderStudyPlans(); }catch(_){ }
-      try{ if(typeof window.renderStudyPlanDetail==='function' && route?.screen==='studyPlanDetail') window.renderStudyPlanDetail(); }catch(_){ }
-      try{ if(typeof window.refreshHomeStatsWithoutWorkbooks==='function') window.refreshHomeStatsWithoutWorkbooks(); }catch(_){ }
+      try{ renderHome(); }catch(_){ }
+      try{ renderPackagesScreen(); }catch(_){ }
+      try{ if(typeof renderCleanPackages==='function') renderCleanPackages(); }catch(_){ }
+      try{ if(typeof renderStudyPlans==='function') renderStudyPlans(); }catch(_){ }
+      try{ if(typeof renderStudyPlanDetail==='function' && route?.screen==='studyPlanDetail') renderStudyPlanDetail(); }catch(_){ }
+      try{ if(typeof refreshHomeStatsWithoutWorkbooks==='function') refreshHomeStatsWithoutWorkbooks(); }catch(_){ }
     }catch(e){ console.warn('HSK lazy accuracy warmup:',e); }
   }
 
-  /* Start after the database runtime has installed its manifest/loader. */
-  setTimeout(warmLazyStats,800);
-  window.__hskWarmLazyStats=warmLazyStats;
-
-  /* Fix the synchronous lazy branch too: once a package is loaded, the
-     normal sectionStats path is used and therefore score is calculated from
-     the real answer key. Before loading, progress remains available. */
-  if(typeof window.packageStats==='function' && !window.packageStats.__hskV10Wrapped){
-    const originalStats=window.packageStats;
+  /* Before loading: show progress only. After the external JSON is loaded,
+     DB[code].__lazy becomes false and the original packageStats() computes
+     real correct answers from the package answer keys. */
+  if(typeof packageStats==='function' && !packageStats.__hskV11Wrapped){
+    const originalStats=packageStats;
     function fixedPackageStats(code){
-      const pkg=(typeof DB!=='undefined')?DB[code]:null;
+      const pkg=DB?.[code];
       if(pkg?.__lazy){
-        /* Trigger loading; dashboard is refreshed when it completes. */
         warmLazyStats();
-        const expected=(typeof lazyPackageMeta==='function' ? Number(lazyPackageMeta(code)?.total)||0 : 0);
-        const answered=(typeof lazyStoredProgress==='function' ? Number(lazyStoredProgress(code))||0 : 0);
-        return {total:expected,answered:Math.min(answered,expected||answered),score:0,gradedTotal:0,
-          pct:expected?Math.round(Math.min(answered,expected)/expected*100):0,scorePct:0,rows:[]};
+        const meta=typeof lazyPackageMeta==='function'?lazyPackageMeta(code):null;
+        const expected=Number(meta?.total)||0;
+        const answeredRaw=typeof lazyStoredProgress==='function'?Number(lazyStoredProgress(code))||0:0;
+        const answered=Math.min(answeredRaw,expected||answeredRaw);
+        return {total:expected,answered,score:0,gradedTotal:0,
+          pct:expected?Math.round(answered/expected*100):0,scorePct:0,rows:[]};
       }
       return originalStats(code);
     }
-    fixedPackageStats.__hskV10Wrapped=true;
-    fixedPackageStats.__hskV10Original=originalStats;
+    fixedPackageStats.__hskV11Wrapped=true;
+    fixedPackageStats.__hskV11Original=originalStats;
+    packageStats=fixedPackageStats;
     window.packageStats=fixedPackageStats;
   }
 
+  setTimeout(warmLazyStats,800);
+  window.__hskWarmLazyStats=warmLazyStats;
   setTimeout(armGuard,0);
 })();
 </script>
