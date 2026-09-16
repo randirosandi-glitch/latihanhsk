@@ -3896,299 +3896,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   };
 })();
 </script>
-<script id="v122LazyDatabasePatch">
-(function(){
-'use strict';
 
-/*
-  CLEAN DATA MODEL
-  ----------------
-  data/<folder>/ = one selectable package category
-  data/<folder>/*.json = packages inside that category
-  No package question body is downloaded during boot.
-  The existing stable renderer still consumes DB[code].
-*/
-
-const API_ROOT='https://api.github.com/repos/randirosandi-glitch/latihanhsk/contents/data';
-const RAW_ROOT='https://raw.githubusercontent.com/randirosandi-glitch/latihanhsk/main/data/';
-const dynamicFolders=Object.create(null);
-const dynamicPackages=Object.create(null);
-const dynamicCache=new Map();
-let dynamicCatalogPromise=null;
-
-function dynKey(v){return String(v||'').trim().toLowerCase();}
-function dynEncodePath(p){return String(p).split('/').map(encodeURIComponent).join('/');}
-async function dynFetchJSON(url){
-  const r=await fetch(url,{cache:'no-store',headers:{Accept:'application/vnd.github+json'}});
-  if(!r.ok)throw new Error('GitHub API '+r.status);
-  return r.json();
-}
-function dynRaw(path){return RAW_ROOT+dynEncodePath(path);}
-function dynFolderKind(name){
-  const n=dynKey(name);
-  if(n==='hsk 4'||n==='hsk4')return 'hsk4';
-  if(n==='hsk 5'||n==='hsk5')return 'hsk5';
-  if(n==='workbook hsk4a'||n==='workbook hsk 4a'||n==='workbook4a')return 'wb4a';
-  if(n==='workbook hsk4b'||n==='workbook hsk 4b'||n==='workbook4b')return 'wb4b';
-  return 'dynamic';
-}
-function dynLabel(name){
-  const kind=dynFolderKind(name);
-  if(kind==='hsk4')return 'HSK 4';
-  if(kind==='hsk5')return 'HSK 5';
-  if(kind==='wb4a')return 'Workbook HSK4a';
-  if(kind==='wb4b')return 'Workbook HSK4b';
-  return String(name).replace(/[-_]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
-}
-function dynCode(file){return String(file||'').replace(/\.json$/i,'');}
-
-async function loadDynamicCatalog(){
-  if(dynamicCatalogPromise)return dynamicCatalogPromise;
-  dynamicCatalogPromise=(async()=>{
-    const root=await dynFetchJSON(API_ROOT);
-    const dirs=(Array.isArray(root)?root:[]).filter(x=>x.type==='dir');
-    for(const dir of dirs){
-      const entries=await dynFetchJSON(API_ROOT+'/'+dynEncodePath(dir.name));
-      const files=(Array.isArray(entries)?entries:[]).filter(x=>
-        x.type==='file' && /\.json$/i.test(x.name) &&
-        !/^(manifest|reading-passages)\.json$/i.test(x.name)
-      );
-      const key=dir.name;
-      const kind=dynFolderKind(key);
-      const list=files.map(f=>({
-        code:dynCode(f.name),
-        name:f.name,
-        folder:key,
-        kind,
-        label:dynLabel(key),
-        path:f.path,
-        url:dynRaw(f.path)
-      }));
-      dynamicFolders[key]={name:key,label:dynLabel(key),kind,codes:list.map(x=>x.code),packages:list};
-      list.forEach(x=>dynamicPackages[x.code]=x);
-    }
-    window.__hskDynamicFolders=dynamicFolders;
-    window.__hskDynamicPackages=dynamicPackages;
-    window.__hskDynamicReady=true;
-    document.dispatchEvent(new CustomEvent('hsk:dynamic-catalog-ready'));
-    return dynamicFolders;
-  })().catch(e=>{
-    dynamicCatalogPromise=null;
-    console.warn('[HSK] dynamic catalog unavailable',e);
-    throw e;
-  });
-  return dynamicCatalogPromise;
-}
-
-async function loadDynamicPackage(code){
-  code=String(code||'');
-  if(dynamicCache.has(code))return dynamicCache.get(code);
-  if(!window.__hskDynamicReady)await loadDynamicCatalog();
-  const meta=dynamicPackages[code];
-  if(!meta)throw new Error('Paket tidak ditemukan: '+code);
-  const promise=dynFetchJSON(meta.url).then(data=>{
-    if(!data||typeof data!=='object')throw new Error('JSON paket tidak valid: '+code);
-    data.code=data.code||code;
-    DB[code]=data;
-    return data;
-  }).catch(e=>{dynamicCache.delete(code);throw e});
-  dynamicCache.set(code,promise);
-  return promise;
-}
-
-window.__hskLoadPackage=loadDynamicPackage;
-window.__hskLoadPackages=async codes=>
-  Promise.all([...new Set((codes||[]).map(String).filter(Boolean))].map(loadDynamicPackage));
-
-/* Keep the stable app boot independent of GitHub API. */
-async function loadQuestionData(){
-  if(HSK_DATA_STATE.loaded)return;
-  HSK_DATA_STATE.loaded=true;
-  window.__hskManifest={};
-  /* Old embedded DB is intentionally not recreated here. */
-  document.dispatchEvent(new Event('hsk:data-ready'));
-}
-
-/* Read the catalog only when the user opens Paket Soal. */
-function allDynamicCategories(){
-  return Object.values(dynamicFolders).filter(f=>f.packages.length);
-}
-function categoryForKey(key){
-  const k=String(key||'');
-  if(k==='hsk:4')return Object.values(dynamicFolders).find(f=>f.kind==='hsk4');
-  if(k==='hsk:5')return Object.values(dynamicFolders).find(f=>f.kind==='hsk5');
-  if(k==='wb:WB4A')return Object.values(dynamicFolders).find(f=>f.kind==='wb4a');
-  if(k==='wb:WB4B')return Object.values(dynamicFolders).find(f=>f.kind==='wb4b');
-  return dynamicFolders[k]||null;
-}
-function categoryKey(f){return f.kind==='dynamic'?f.name:(
-  f.kind==='hsk4'?'hsk:4':f.kind==='hsk5'?'hsk:5':f.kind==='wb4a'?'wb:WB4A':'wb:WB4B'
-);}
-function dynamicLevelCard(f,index){
-  const key=categoryKey(f), isH=/^hsk[45]$/.test(f.kind), coming=f.kind==='hsk5';
-  const icon=isH?(f.kind==='hsk4'?'4':'5'):'WB';
-  const cls=isH?(f.kind==='hsk4'?'levelCard4':'levelCard5 levelCardComingSoon'):'levelCardWorkbook';
-  const onclick=coming?'':`onclick="openLevelPackages(${JSON.stringify(key)})"`;
-  return `<button class="levelCard ${cls}" type="button" ${onclick} ${coming?'disabled':''} data-material-key="${escV(key)}">
-    <div class="levelCardIcon">${escV(icon)}</div>
-    <div class="levelCardBody"><span class="levelEyebrow">${isH?'HSK LEVEL':'PAKET'}</span>
-      <strong>${escV(f.label)}</strong><p>${coming?'Coming Soon · sedang dipersiapkan':`${f.packages.length} paket tersedia`}</p>
-    </div>
-    <span class="levelCardArrow"><span class="material-symbols-rounded ico" aria-hidden="true">${coming?'lock':'arrow_forward'}</span></span>
-  </button>`;
-}
-function dynamicPackageTile(meta,idx,f){
-  const code=meta.code, d=DB[code]||{}, title=d.title||meta.name.replace(/\.json$/i,'');
-  const kind=f.kind, isHsk=kind==='hsk4'||kind==='hsk5';
-  return `<button class="tile packageTile packageTile-${['blue','purple','orange','pink','green'][idx%5]}" type="button"
-    data-package-code="${escV(code)}" onclick="openPackageFromTile('${escV(code)}')">
-    <div class="pkgTop"><div class="tileIcon pkgHanziIcon" data-hanzi="练" aria-hidden="true"></div>
-      ${isHsk?`<span class="statusPill"><span class="statusDot"></span>${escV(statusFor(code))}</span>`:''}
-    </div>
-    <div class="pkgTitleRow"><div class="pkgIdentity">
-      <span class="pkgLevelLabel">${escV(f.label)}</span><b>${escV(title)}</b>
-      <small>${escV(code)}</small>
-    </div></div>
-    <span class="pkgChartDecor" aria-hidden="true"><span class="material-symbols-rounded">show_chart</span></span>
-    <div class="pkgFooter"><span>${isHsk?'Progres paket':'Paket'}</span>${isHsk?`<span>${pctFor(code)}%</span>`:''}</div>
-  </button>`;
-}
-
-/* Dynamic category screen: folder names are the categories. */
-window.openPackages=async function(push=true){
-  setMaterialKey('hsk:4');
-  route={screen:'levels',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
-  renderCleanLevels();
-  setScreen('levelsScreen',push);
-  window.scrollTo({top:0,left:0,behavior:'auto'});
-  try{await loadDynamicCatalog();renderCleanLevels();}
-  catch(e){console.warn('[HSK] catalog load failed',e);}
-};
-
-window.renderCleanLevels=async function(){
-  const grid=document.querySelector('#levelsScreen .levelGrid');if(!grid)return;
-  if(!window.__hskDynamicReady){
-    grid.innerHTML='<div class="emptySearch"><strong>Memuat daftar paket…</strong><span>Sebentar, membaca folder data.</span></div>';
-    try{await loadDynamicCatalog();}catch(e){
-      grid.innerHTML='<div class="emptySearch"><strong>Daftar paket belum dapat dimuat.</strong><span>Periksa koneksi lalu coba lagi.</span></div>';return;
-    }
-  }
-  const fs=allDynamicCategories();
-  const standard=fs.filter(f=>f.kind!=='dynamic');
-  const extra=fs.filter(f=>f.kind==='dynamic');
-  let html='';
-  const hsk=standard.filter(f=>f.kind==='hsk4'||f.kind==='hsk5');
-  const wb=standard.filter(f=>f.kind==='wb4a'||f.kind==='wb4b');
-  if(hsk.length)html+=divider('HSK')+hsk.map(dynamicLevelCard).join('');
-  if(wb.length)html+=divider('Workbook')+wb.map(dynamicLevelCard).join('');
-  if(extra.length)html+=divider('Paket lainnya')+extra.map(dynamicLevelCard).join('');
-  if(!html)html='<div class="emptySearch"><strong>Belum ada paket.</strong><span>Tambahkan folder berisi file JSON ke data/.</span></div>';
-  grid.innerHTML=html;
-};
-
-window.openLevelPackages=async function(key,push=true){
-  setMaterialKey(String(key));
-  route={screen:'packages',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
-  if($('packageSearchInput'))$('packageSearchInput').value='';
-  const grid=$('packagesGrid');
-  if(grid)grid.innerHTML='<div class="emptySearch"><strong>Memuat paket…</strong><span>Membaca isi folder.</span></div>';
-  setScreen('packagesScreen',push);
-  window.scrollTo({top:0,left:0,behavior:'auto'});
-  try{await loadDynamicCatalog();renderCleanPackages();}
-  catch(e){if(grid)grid.innerHTML='<div class="emptySearch"><strong>Gagal memuat paket.</strong><span>Periksa koneksi lalu coba lagi.</span></div>';}
-};
-
-window.renderCleanPackages=function(){
-  const grid=$('packagesGrid');if(!grid)return;
-  const f=categoryForKey(currentMaterialKey());
-  const head=$('packageLevelKicker'),title=$('packagePageTitle'),sub=$('packagePageSub'),panel=$('hsk5Panel');
-  if(panel)panel.hidden=true;
-  if(!f){grid.innerHTML='<div class="emptySearch"><strong>Kategori tidak ditemukan.</strong><span>Folder mungkin belum berisi JSON.</span></div>';return;}
-  if(head)head.textContent=f.label;
-  if(title)title.textContent=f.kind==='dynamic'?'Pilih paket':(f.kind==='wb4a'||f.kind==='wb4b'?'Pilih lesson':'Pilih paket');
-  const q=String($('packageSearchInput')?.value||'').trim().toLowerCase();
-  const list=f.packages.filter(x=>!q||x.code.toLowerCase().includes(q)||x.name.toLowerCase().includes(q));
-  if(sub)sub.textContent=`${f.packages.length} ${f.kind==='wb4a'||f.kind==='wb4b'?'lesson':'paket'} tersedia.`;
-  document.querySelectorAll('.packagePager').forEach(x=>x.remove());
-  grid.innerHTML=list.length?list.map((x,i)=>dynamicPackageTile(x,i,f)).join(''):
-    '<div class="emptySearch"><strong>Paket tidak ditemukan</strong><span>Coba kata kunci lain.</span></div>';
-};
-
-window.filterPackages=function(value){
-  const i=$('packageSearchInput');if(i)i.value=String(value??'');renderCleanPackages();
-};
-window.clearPackageSearch=function(){
-  const i=$('packageSearchInput');if(i)i.value='';renderCleanPackages();i?.focus();
-};
-
-window.openPackageFromTile=async function(code){
-  code=String(code||'');
-  try{
-    await loadDynamicPackage(code);
-    const ret=window.__cleanReturnPlanId||route.studyPlanId||null;window.__cleanReturnPlanId=null;
-    route={screen:'package',packageCode:code,type:null,sectionIndex:null,studyPlanId:ret};
-    renderPackage();setScreen('package',true);window.scrollTo({top:0,left:0,behavior:'auto'});
-  }catch(e){console.error('[HSK] package load failed',code,e);alert('Paket gagal dimuat. Silakan coba lagi.');}
-};
-
-/* Existing section/exercise engine stays intact; only ensure data exists before use. */
-window.openSections=async function(code,type,push=true){
-  code=String(code||'');
-  try{
-    if(!DB[code])await loadDynamicPackage(code);
-    if(type==='reading'&&window.__hskLoadPassages)await window.__hskLoadPassages();
-    if(!META[type])return;
-    route={screen:'parts',packageCode:code,type,sectionIndex:null,studyPlanId:route.studyPlanId||null};
-    renderSections();setScreen('partsScreen',push);
-  }catch(e){console.error('[HSK] sections load failed',code,type,e);alert('Bagian soal gagal dimuat.');}
-};
-
-window.startSection=async function(i,push=true){
-  const code=String(route.packageCode||''),type=route.type;
-  try{
-    if(!DB[code])await loadDynamicPackage(code);
-    if(type==='reading'&&window.__hskLoadPassages)await window.__hskLoadPassages();
-    const arr=DB[code]?.[type]||[];if(!arr[i])return;
-    route={screen:'exercise',packageCode:code,type,sectionIndex:Number(i),studyPlanId:route.studyPlanId||null};
-    resumeQuestionId=null;window.__hskResumePage=0;loadCurrentSectionState();renderExercise();setScreen('exercise',push);
-  }catch(e){console.error('[HSK] exercise load failed',code,type,i,e);alert('Soal gagal dimuat.');}
-};
-
-/* Reading passages are separate data, also lazy. */
-window.__hskLoadPassages=async function(){
-  if(window.__hskPassagePromise)return window.__hskPassagePromise;
-  window.__hskPassagePromise=dynFetchJSON(dynRaw('reading-passages.json')).then(d=>{
-    Object.assign(READING_PASSAGES,d||{});return d;
-  });
-  return window.__hskPassagePromise;
-};
-
-/* Special packages remain generated from HSK4 data, but their source packages
-   are loaded only when the special package is opened. */
-window.openSpecialPackage=async function(code,push=true){
-  try{
-    await loadDynamicCatalog();
-    const h4=Object.values(dynamicFolders).find(f=>f.kind==='hsk4');
-    if(!h4)throw new Error('Folder HSK 4 tidak ditemukan');
-    await window.__hskLoadPackages(h4.codes);
-    await window.__hskLoadPassages();
-    const wordQs=[],sentQs=[];let wi=1,si=1;
-    h4.packages.forEach(meta=>{
-      const pkg=DB[meta.code]||{};
-      (pkg.writing?.[0]?.questions||[]).forEach(q=>wordQs.push([`SK-${String(wi++).padStart(3,'0')}`,String(q[1]||''),String(q[2]||''),'']));
-      (pkg.reading?.[2]?.questions||[]).forEach(q=>sentQs.push([`SP-${String(si++).padStart(3,'0')}`,'Susun kalimat berikut menjadi paragraf yang benar.',Array.isArray(q[2])?q[2].slice():[],String(q[3]||'')]));
-    });
-    DB[SPECIAL_WORD]={code:SPECIAL_WORD,title:'HSK4 Susun Kata',meta:{title:'HSK4 Susun Kata'},writing:[{title:'书写 · HSK4 · Susun Kata',range:`1–${wordQs.length}`,questions:wordQs}],reading:[],listening:[]};
-    DB[SPECIAL_SENT]={code:SPECIAL_SENT,title:'HSK4 Susun Kalimat',meta:{title:'HSK4 Susun Kalimat'},writing:[],reading:[{title:'阅读 · HSK4 · Susun Kalimat',range:`1–${sentQs.length}`,questions:sentQs}],listening:[]};
-    const type=code===SPECIAL_WORD?'writing':'reading';
-    route={screen:'exercise',packageCode:code,type,sectionIndex:0,studyPlanId:null};
-    resumeQuestionId=null;window.__hskResumePage=0;loadCurrentSectionState();renderExercise();setScreen('exercise',push);
-  }catch(e){console.error('[HSK] special package failed',e);alert('Paket spesial gagal dimuat.');}
-};
-
-/* Do not touch boot flow. The stable app starts immediately. */
-})();
-</script>
 
 <script id="progressCloudRecoveryPatchV122">
 (function(){
@@ -4300,6 +4008,75 @@ window.openSpecialPackage=async function(code,push=true){
 
   // Re-render progress after a package finishes lazy loading.
   document.addEventListener('hsk:data-ready',()=>{try{renderHome();renderScores();renderPackagesScreen()}catch(e){}});
+})();
+</script>
+<script id="dynamicFolderResolver">
+(function(){
+"use strict";
+const ROOT="https://api.github.com/repos/randirosandi-glitch/latihanhsk/contents/data";
+const RAW="https://raw.githubusercontent.com/randirosandi-glitch/latihanhsk/main/data/";
+const folders=Object.create(null), packages=Object.create(null), cache=new Map();
+let catalogPromise=null;
+
+function enc(p){return String(p).split("/").map(encodeURIComponent).join("/")}
+async function get(url){
+  const r=await fetch(url,{cache:"no-store",headers:{Accept:"application/vnd.github+json"}});
+  if(!r.ok)throw new Error("HTTP "+r.status);
+  return r.json();
+}
+async function catalog(){
+  if(catalogPromise)return catalogPromise;
+  catalogPromise=(async()=>{
+    const root=await get(ROOT);
+    for(const d of (Array.isArray(root)?root:[]).filter(x=>x.type==="dir")){
+      const list=await get(ROOT+"/"+enc(d.name));
+      const ps=(Array.isArray(list)?list:[]).filter(x=>
+        x.type==="file" && /\.json$/i.test(x.name) &&
+        !/^(manifest|reading-passages)\.json$/i.test(x.name)
+      ).map(x=>({
+        code:x.name.replace(/\.json$/i,""),
+        name:x.name.replace(/\.json$/i,""),
+        folder:d.name,
+        path:x.path,
+        url:RAW+enc(x.path)
+      }));
+      if(ps.length){
+        folders[d.name]={name:d.name,packages:ps};
+        ps.forEach(p=>packages[p.code]=p);
+      }
+    }
+    window.__HSK_DYNAMIC_FOLDERS=folders;
+    window.__HSK_DYNAMIC_PACKAGES=packages;
+    window.__HSK_DYNAMIC_READY=true;
+    document.dispatchEvent(new CustomEvent("hsk:dynamic-catalog-ready"));
+    return folders;
+  })().catch(e=>{catalogPromise=null;throw e});
+  return catalogPromise;
+}
+async function load(code){
+  code=String(code||"");
+  if(DB[code] && !DB[code].__lazy)return DB[code];
+  if(cache.has(code))return cache.get(code);
+  if(!window.__HSK_DYNAMIC_READY)await catalog();
+  const p=packages[code];
+  if(!p)throw new Error("Paket tidak ditemukan: "+code);
+  const job=get(p.url).then(d=>{
+    if(!d||typeof d!=="object")throw new Error("JSON tidak valid: "+code);
+    d.code=d.code||code; DB[code]=d; return d;
+  }).catch(e=>{cache.delete(code);throw e});
+  cache.set(code,job); return job;
+}
+window.__hskDynamicCatalog=catalog;
+window.__hskDynamicLoad=load;
+window.__hskDynamicLoadMany=async codes=>
+  Promise.all([...new Set((codes||[]).map(String))].map(load));
+
+/* Non-invasive bridge: if stable code asks for a package that is not
+   embedded, expose the loader without replacing stable navigation. */
+window.__hskDynamicGet=async function(code){
+  if(DB[String(code)])return DB[String(code)];
+  return load(code);
+};
 })();
 </script>
 </body>
