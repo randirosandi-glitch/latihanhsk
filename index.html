@@ -4032,6 +4032,119 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 
 })();
 </script>
+
+<script id="progressCloudRecoveryPatchV122">
+(function(){
+  'use strict';
+
+  // Recovery-safe cloud merge:
+  // Never let a shorter/newer section snapshot erase answers that already exist
+  // locally or in the cloud. Section answer maps are merged question-by-question.
+  function mergeSectionStateSafe(a,b){
+    const A=(a&&typeof a==='object')?a:{};
+    const B=(b&&typeof b==='object')?b:{};
+    const answers={...(A.answers||{}),...(B.answers||{})};
+    const checked={...(A.checked||{}),...(B.checked||{})};
+    // Prefer a non-empty answer over an empty/undefined value.
+    for(const k of new Set([...Object.keys(A.answers||{}),...Object.keys(B.answers||{})])){
+      const av=A.answers?.[k], bv=B.answers?.[k];
+      if((bv===undefined||String(bv).trim()==='') && av!==undefined && String(av).trim()!=='') answers[k]=av;
+      else if(bv!==undefined) answers[k]=bv;
+    }
+    return {answers,checked,updatedAt:Math.max(Number(A.updatedAt)||0,Number(B.updatedAt)||0)};
+  }
+
+  function mergeStoresSafe(local,remote){
+    const L=local&&typeof local==='object'?local:{};
+    const R=remote&&typeof remote==='object'?remote:{};
+    const out={...R};
+    const keys=new Set([...Object.keys(R),...Object.keys(L)]);
+    for(const k of keys){
+      if(k==='_resume')continue;
+      const lv=L[k],rv=R[k];
+      if(k.includes('|') && (k.split('|').length===3) &&
+         ((lv&&typeof lv==='object')||(rv&&typeof rv==='object'))){
+        out[k]=mergeSectionStateSafe(rv,lv);
+      }else if(lv!==undefined){
+        if(rv===undefined) out[k]=lv;
+        else if(lv&&rv&&typeof lv==='object'&&typeof rv==='object'&&
+                (Number(lv.updatedAt)||Number(rv.updatedAt))){
+          out[k]=Number(lv.updatedAt||0)>=Number(rv.updatedAt||0)?lv:rv;
+        }else{
+          out[k]=lv;
+        }
+      }
+    }
+    const lr=L._resume, rr=R._resume;
+    if(lr&&rr) out._resume=Number(lr.updatedAt||0)>=Number(rr.updatedAt||0)?lr:rr;
+    else if(lr||rr) out._resume=lr||rr;
+    return out;
+  }
+
+  // Replace the public pull with a recovery-safe version while retaining the
+  // existing cloud configuration and UI.
+  if(typeof window.cloudFindUser==='function'){
+    window.pullCloudState=async function(){
+      if(!window.currentUsername || typeof cloudEnabled!=='function' || !cloudEnabled())return false;
+      if(navigator.onLine===false){try{window.__cloudSyncState='offline';renderHome()}catch(e){};return false}
+      try{
+        const local=readStore();
+        const row=await cloudFindUser(currentUsername);
+        if(!row){
+          await cloudCreateUser(currentUsername,local);
+          window.__cloudSyncState='synced';
+          try{renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress()}catch(e){}
+          return true;
+        }
+        const merged=mergeStoresSafe(local,row.data||{});
+        writeStore(merged);
+        // Push the union back so the cloud becomes the complete source of truth.
+        await cloudUpdateUser(currentUsername,merged);
+        window.__cloudSyncState='synced';
+        try{renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress()}catch(e){}
+        return true;
+      }catch(e){
+        console.warn('Recovery-safe cloud sync failed',e);
+        window.__cloudSyncState=navigator.onLine===false?'offline':'warning';
+        try{renderHome()}catch(x){}
+        return false;
+      }
+    };
+  }
+
+  // Progress on catalog screens can be calculated from saved answer maps even
+  // while the package body is still lazy/unloaded. This prevents visible
+  // progress from looking lost merely because a package JSON has not loaded.
+  const originalPackageStats=window.packageStats;
+  if(typeof originalPackageStats==='function'){
+    window.packageStats=function(code){
+      const base=originalPackageStats(code);
+      try{
+        const store=readStore();
+        const prefix=String(code)+'|';
+        let answered=0;
+        Object.keys(store).forEach(k=>{
+          if(!k.startsWith(prefix)||k==='_resume')return;
+          const st=store[k];
+          if(!st||typeof st!=='object')return;
+          answered+=Object.keys(st.answers||{}).filter(q=>st.answers[q]!==undefined&&String(st.answers[q]).trim()!=='').length;
+        });
+        // Once the real package is loaded, the original calculation is more
+        // authoritative for total/score; use the saved-answer count only to
+        // prevent a lazy stub from hiding already-saved progress.
+        if(answered>base.answered){
+          const total=base.total||100;
+          return {...base,answered,pct:total?Math.round(answered/total*100):0};
+        }
+      }catch(e){}
+      return base;
+    };
+  }
+
+  // Re-render progress after a package finishes lazy loading.
+  document.addEventListener('hsk:data-ready',()=>{try{renderHome();renderScores();renderPackagesScreen()}catch(e){}});
+})();
+</script>
 </body>
 
 
