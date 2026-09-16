@@ -3877,7 +3877,7 @@ body.dark #packagesGrid .packageHanziIcon{
     document.querySelectorAll('.packagePager').forEach(x=>x.remove());
     
     if(!codes.length){grid.innerHTML='<div class="emptySearch"><strong>Paket tidak ditemukan</strong><span>Coba kata kunci lain.</span></div>';return}
-    grid.innerHTML=codes.map(c=>{const st=typeof packageStats==='function'?packageStats(c):{pct:0,answered:0,total:0};return '<article class="tile packageTile packageTileShell" data-package-code="'+esc(c)+'"><button class="packageTileMain" type="button" onclick="openPackage(\''+esc(c)+'\')"><div class="pkgTop"><div class="tileIcon packageHanziIcon" aria-hidden="true"><span>卷</span></div><span class="statusPill"><span class="statusDot"></span>'+(st.pct>=100?'Selesai':st.pct>0?'Sedang berjalan':'Belum dimulai')+'</span></div><div class="pkgTitleRow"><div><b>Paket '+esc(c)+'</b><small>'+esc(g.name)+'</small></div></div>'+(st.total&&typeof progressHTML==='function'?progressHTML(st,'Progres paket'):'')+'<div class="pkgFooter"><span>'+esc(g.name)+'</span><span>'+(st.pct||0)+'%</span></div></button></article>'}).join('');
+    grid.innerHTML=codes.map(c=>{const st=typeof packageStats==='function'?packageStats(c):{pct:0,answered:0,total:0};return '<article class="tile packageTile packageTileShell"><button class="packageTileMain" type="button" onclick="openPackage(\''+esc(c)+'\')"><div class="pkgTop"><div class="tileIcon packageHanziIcon" aria-hidden="true"><span>卷</span></div><span class="statusPill"><span class="statusDot"></span>'+(st.pct>=100?'Selesai':st.pct>0?'Sedang berjalan':'Belum dimulai')+'</span></div><div class="pkgTitleRow"><div><b>Paket '+esc(c)+'</b><small>'+esc(g.name)+'</small></div></div>'+(st.total&&typeof progressHTML==='function'?progressHTML(st,'Progres paket'):'')+'<div class="pkgFooter"><span>'+esc(g.name)+'</span><span>'+(st.pct||0)+'%</span></div></button></article>'}).join('');
     
   }
 
@@ -4360,6 +4360,37 @@ body.dark #packagesGrid .packageHanziIcon{
     if(map[id])out.screen=map[id];
     return out;
   }
+
+  /* Keep the navigation chrome tied to the screen that is actually visible.
+     Some legacy renderers can update DOM before/without leaving route in the
+     exact shape expected by older chrome code. Back must never expose a stale
+     Back button or highlight the wrong navbar tab. */
+  function syncChrome(){
+    const active=document.querySelector('.screen.active');
+    const id=active?.id||'';
+    const map={
+      home:'home',
+      levelsScreen:'levels',
+      packagesScreen:'packages',
+      scores:'scores',
+      studyPlans:'studyPlans',
+      studyPlanDetail:'studyPlanDetail',
+      package:'package',
+      partsScreen:'parts',
+      exercise:'exercise',
+      result:'result'
+    };
+    const screen=map[id]||norm(window.route||{}).screen;
+    const backHidden=screen==='home'||screen==='levels'||screen==='studyPlans';
+    const tb=document.getElementById('topBack');
+    if(tb)tb.style.setProperty('display',backHidden?'none':'inline-flex','important');
+    document.querySelectorAll('.mainNav .navItem').forEach(b=>{
+      const activeNav=(screen===b.dataset.nav)||
+        ((screen==='studyPlans'||screen==='studyPlanDetail')&&b.dataset.nav==='studyPlans')||
+        ((screen==='levels'||screen==='packages'||screen==='package'||screen==='parts'||screen==='exercise'||screen==='result')&&b.dataset.nav==='packages');
+      b.classList.toggle('active',activeNav);
+    });
+  }
   function back(){
     const r=visibleRoute();
     /* Only the real Home screen may open the Exit confirmation. */
@@ -4377,8 +4408,10 @@ body.dark #packagesGrid .packageHanziIcon{
         if(candidate!=null)studyPlanDetailId=candidate;
       }
       render(p);
+      syncChrome();
     }catch(e){
       console.error('HSK app Back error',e);
+      syncChrome();
     }finally{internalChange=false;}
   }
   window.backRoute=back;window.handleAppBack=back;window.__directLayerBack=back;
@@ -4413,6 +4446,7 @@ body.dark #packagesGrid .packageHanziIcon{
       history.replaceState(stateFor(r),'',location.href.split('#')[0]+'#'+encodeURIComponent(r.screen));
       history.pushState(stateFor(r),'',location.href.split('#')[0]+'#'+encodeURIComponent(r.screen));
       render(r);
+      syncChrome();
     }finally{internalChange=false;}
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initialize,{once:true});else initialize();
