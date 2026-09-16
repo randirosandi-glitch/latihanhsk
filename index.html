@@ -1266,6 +1266,34 @@ async function loadQuestionData(){
   const wb4b=(manifest.workbook4b_codes||[]).map(String);
   window.__hskCatalog={hsk4,hsk5,wb4a,wb4b};
 
+  // V1.25 dynamic folder discovery. The data directory itself is the catalog:
+  // adding data/hsk7/*.json automatically creates HSK 7 in the app.
+  const folderCatalog={};
+  try{
+    const api='https://api.github.com/repos/randirosandi-glitch/latihanhsk/contents/data';
+    const rootRes=await fetch(api,{cache:'no-cache',headers:{Accept:'application/vnd.github+json'}});
+    if(rootRes.ok){
+      const entries=await rootRes.json();
+      for(const entry of (Array.isArray(entries)?entries:[])){
+        if(entry.type!=='dir')continue;
+        const folderName=String(entry.name||'');
+        const dirRes=await fetch(api+'/'+encodeURIComponent(folderName),{cache:'no-cache',headers:{Accept:'application/vnd.github+json'}});
+        if(!dirRes.ok)continue;
+        const files=await dirRes.json();
+        const jsonFiles=(Array.isArray(files)?files:[]).filter(x=>x.type==='file'&&/\.json$/i.test(x.name||''));
+        if(!jsonFiles.length)continue;
+        folderCatalog[folderName]={name:folderName,codes:jsonFiles.map(x=>String(x.name).replace(/\.json$/i,'')),paths:Object.fromEntries(jsonFiles.map(x=>[String(x.name).replace(/\.json$/i,''),folderName+'/'+x.name]))};
+        jsonFiles.forEach(x=>{
+          const code=String(x.name).replace(/\.json$/i,'');
+          if(!DB[code])DB[code]={code,__lazy:true};
+        });
+      }
+    }
+  }catch(e){
+    console.warn('Dynamic folder catalog unavailable; using manifest catalog.',e);
+  }
+  window.__hskFolderCatalog=folderCatalog;
+
   // V1.24: catalog only. Never fabricate question sections.
   // The complete JSON is loaded when a package is opened.
   [...hsk4,...hsk5,...wb4a,...wb4b].forEach(c=>{
@@ -1866,23 +1894,51 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     const dbCodes=(typeof DB!=='undefined' && DB) ? Object.keys(DB) : [];
     const hsk=new Map();
     const wb=new Map();
+    const folders=window.__hskFolderCatalog||{};
 
+    // Folder catalog is the source of truth for newly added data folders.
+    // This means a folder such as data/hsk7/ becomes HSK 7 automatically,
+    // even when its package filename does not follow the old Hxxxx pattern.
+    Object.values(folders).forEach(folder=>{
+      const name=String(folder.name||folder.folder||'').trim();
+      const hm=name.match(/^hsk\s*(\d+)$/i);
+      if(hm){
+        const level=Number(hm[1]);
+        const codes=[...(folder.codes||[])].map(String).sort();
+        if(codes.length){
+          if(!hsk.has(level))hsk.set(level,[]);
+          hsk.get(level).push(...codes);
+        }
+        return;
+      }
+      const wm=name.match(/^workbook\s*hsk\s*(\d+)\s*([a-z])$/i);
+      if(wm){
+        const key='WB'+wm[1]+wm[2].toUpperCase();
+        if(!wb.has(key))wb.set(key,{key,level:Number(wm[1]),suffix:wm[2].toLowerCase(),label:'Workbook HSK'+wm[1]+wm[2].toLowerCase(),codes:[]});
+        wb.get(key).codes.push(...(folder.codes||[]).map(String));
+      }
+    });
+
+    // Backward compatibility for manifest/flat files that are not inside a
+    // recognized folder. Do not duplicate codes already discovered above.
     dbCodes.forEach(code=>{
+      const already=Object.values(folders).some(f=>(f.codes||[]).includes(code));
+      if(already)return;
       const level=regularLevel(code);
       if(level!==null){
-        if(!hsk.has(level)) hsk.set(level,[]);
+        if(!hsk.has(level))hsk.set(level,[]);
         hsk.get(level).push(code);
         return;
       }
       const family=workbookFamily(code);
       if(family){
-        if(!wb.has(family.key)) wb.set(family.key,{...family,codes:[]});
+        if(!wb.has(family.key))wb.set(family.key,{...family,codes:[]});
         wb.get(family.key).codes.push(code);
       }
     });
 
-    hsk.forEach(v=>v.sort());
-    wb.forEach(v=>v.codes.sort((a,b)=>{
+    hsk.forEach((v,k)=>hsk.set(k,[...new Set(v)].sort()));
+    wb.forEach(v=>v.codes=[...new Set(v.codes)].sort((a,b)=>{
       const na=Number((a.match(/\d+$/)||['0'])[0]);
       const nb=Number((b.match(/\d+$/)||['0'])[0]);
       return na-nb || a.localeCompare(b);
@@ -3921,6 +3977,11 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       pathCache.set(code,explicit);
       return explicit;
     }
+    const folders=window.__hskFolderCatalog||{};
+    for(const folder of Object.values(folders)){
+      const p=folder?.paths?.[code];
+      if(p){pathCache.set(code,p);return p;}
+    }
 
     // Current flat-data compatibility.
     const flat=code+'.json';
@@ -4010,7 +4071,8 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       workbook4a:c.wb4a?.length||0,
       workbook4b:c.wb4b?.length||0,
       loadedPackages:[...cache.keys()].filter(k=>DB[k]&&!DB[k].__lazy),
-      loadedPassages:passageCache.has('all')
+      loadedPassages:passageCache.has('all'),
+      folders:Object.values(window.__hskFolderCatalog||{}).map(f=>({name:f.name,count:(f.codes||[]).length}))
     };
   };
 
