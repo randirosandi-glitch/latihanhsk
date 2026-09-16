@@ -1051,7 +1051,7 @@ function lazyStoredProgress(code){const prefix=String(code)+'|',store=readStore(
 function packageStats(code){let total=0,answered=0,score=0,gradedTotal=0;const rows=[];const pkg=DB[code];if(pkg?.__lazy){const meta=lazyPackageMeta(code);const expected=Number(meta?.total)||0;const savedAnswered=lazyStoredProgress(code);return {total:expected,answered:Math.min(savedAnswered,expected||savedAnswered),score:0,gradedTotal:0,pct:expected?Math.round(Math.min(savedAnswered,expected)/expected*100):0,scorePct:0,rows:[]}}for(const [type,m] of Object.entries(META)){const arr=pkg?.[type]||[];for(let i=0;i<arr.length;i++){const st=sectionStats(code,type,i);total+=st.total;answered+=st.answered;if(type!=='writing'||isSequenceWriting(type,i)){score+=st.score;gradedTotal+=st.total}rows.push({type,label:m.label,zh:m.zh,section:arr[i].title.replace(/^.*?·\s*/,''),range:arr[i].range,...st,graded:type!=='writing'||isSequenceWriting(type,i)})}}return {total,answered,score,gradedTotal,pct:total?Math.round(answered/total*100):0,scorePct:gradedTotal?Math.round(score/gradedTotal*100):0,rows}}
 function progressHTML(st,label='Progres'){return `<div class="progressWrap"><div class="progressMeta"><span>${label}</span><span>${st.answered}/${st.total} · ${st.pct}%</span></div><div class="progressBar"><div class="fill" style="width:${st.pct}%"></div></div></div>`}
 function renderPackageProgress(code){const st=packageStats(code);return progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket')}
-function renderContext(){const c=$('context');const tb=$('topBack');const top=document.querySelector('.top');if(top){top.classList.toggle('homeTopHidden',route.screen==='home');top.classList.toggle('focusTopHidden',route.screen==='exercise'||route.screen==='result');const nav=document.querySelector('.mainNav');if(nav)nav.classList.toggle('focusNavHidden',route.screen==='exercise'||route.screen==='result');}if(tb){const hideBack=route.screen==='home'||route.screen==='levels'||route.screen==='studyPlans'||route.screen==='studyPlanDetail';tb.style.setProperty('display',hideBack?'none':'inline-flex','important');}c.classList.remove('show');c.innerHTML=''}
+function renderContext(){const c=$('context');const tb=$('topBack');const top=document.querySelector('.top');if(top){top.classList.toggle('homeTopHidden',route.screen==='home');top.classList.toggle('focusTopHidden',route.screen==='exercise'||route.screen==='result');const nav=document.querySelector('.mainNav');if(nav)nav.classList.toggle('focusNavHidden',route.screen==='exercise'||route.screen==='result');}if(tb){const hideBack=route.screen==='home';tb.style.setProperty('display',hideBack?'none':'inline-flex','important');}c.classList.remove('show');c.innerHTML=''}
 function armHome(){if(typeof window.__hskArmBackGuard==='function'){window.__hskArmBackGuard()} }
 function goHome(push=true){route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;setScreen('home',push);armHome()}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushCloudSync()});
@@ -4312,11 +4312,11 @@ body.dark #packagesGrid .packageHanziIcon{
     if(!el){
       el=document.createElement('div');el.id='hskHardwareBackToast';el.textContent='Gunakan tombol kembali di app';
       el.setAttribute('role','status');el.setAttribute('aria-live','polite');
-      el.style.cssText='position:fixed;left:50%;bottom:104px;transform:translateX(-50%) translateY(8px);z-index:2147483647;padding:10px 16px;border:1px solid rgba(255,255,255,.14);border-radius:12px;background:rgba(24,28,40,.96);color:#f5f7fb;font:600 14px/1.25 Roboto,system-ui,sans-serif;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .14s ease,transform .14s ease;';
+      el.style.cssText='position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) translateY(8px);z-index:2147483647;padding:10px 16px;border:1px solid rgba(255,255,255,.14);border-radius:12px;background:rgba(24,28,40,.96);color:#f5f7fb;font:600 14px/1.25 Roboto,system-ui,sans-serif;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .14s ease,transform .14s ease;';
       document.body.appendChild(el);
     }
-    el.style.opacity='1';el.style.transform='translateX(-50%) translateY(0)';
-    clearTimeout(el.__hideTimer);el.__hideTimer=setTimeout(()=>{el.style.opacity='0';el.style.transform='translateX(-50%) translateY(8px)';},1000);
+    el.style.opacity='1';el.style.transform='translate(-50%,-50%) translateY(0)';
+    clearTimeout(el.__hideTimer);el.__hideTimer=setTimeout(()=>{el.style.opacity='0';el.style.transform='translate(-50%,-50%) translateY(8px)';},1000);
   }
 
   /* Every forward navigation gets a fresh browser entry. */
@@ -4447,6 +4447,68 @@ body.dark #packagesGrid .packageHanziIcon{
       window.__suppressPackageClickUntil=0;
     }
   },true);
+})();
+</script>
+
+
+<!-- V12 FINAL NAV/UI: fixed app top bar + persistent app Back -->
+<style id="hskFixedTopBarV12">
+  .top{
+    position:fixed!important;
+    top:0!important;
+    left:0!important;
+    right:0!important;
+    width:100%!important;
+    z-index:2000!important;
+    box-shadow:none!important;
+  }
+  /* Never hide the persistent header merely because the current layer is a focus screen. */
+  .top.focusTopHidden{display:block!important;visibility:visible!important;}
+  .mainNav.focusNavHidden{display:flex!important;visibility:visible!important;}
+  #topBack,#topBack.backTextOnly{
+    display:inline-flex!important;
+    visibility:visible!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+  }
+  .top.homeTopHidden #topBack{display:none!important;}
+  main{padding-top:102px!important;}
+  @media(max-width:760px){main{padding-top:92px!important;}}
+  @media (min-width:761px) and (orientation:landscape){
+    .topin{margin-left:84px!important;margin-right:0!important;width:calc(100% - 84px)!important;}
+    main{padding-top:102px!important;}
+  }
+</style>
+<script id="hskFixedTopBarControllerV12">
+(function(){
+  'use strict';
+  /* UI-only layer: preserve the existing context renderer, then force the
+     persistent header/nav visibility rules needed by the final navigation UX. */
+  const originalRenderContext = window.renderContext || (typeof renderContext==='function'?renderContext:null);
+  function syncFixedTopBar(){
+    const top=document.querySelector('.top');
+    const tb=document.getElementById('topBack');
+    const nav=document.querySelector('.mainNav');
+    const active=document.querySelector('.screen.active');
+    const id=active?.id||'';
+    const r=window.route||{};
+    const map={home:'home',levelsScreen:'levels',packagesScreen:'packages',scores:'scores',studyPlans:'studyPlans',studyPlanDetail:'studyPlanDetail',package:'package',partsScreen:'parts',exercise:'exercise',result:'result'};
+    const screen=map[id]||String(r.screen||'home');
+    if(top){
+      top.classList.remove('focusTopHidden');
+      top.classList.toggle('homeTopHidden',screen==='home');
+    }
+    if(tb)tb.style.setProperty('display',screen==='home'?'none':'inline-flex','important');
+    if(nav)nav.classList.remove('focusNavHidden');
+  }
+  function finalRenderContext(){
+    try{if(originalRenderContext)originalRenderContext.apply(this,arguments);}catch(e){console.warn('HSK context render:',e)}
+    syncFixedTopBar();
+  }
+  try{window.renderContext=finalRenderContext;renderContext=finalRenderContext;}catch(_){ }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',syncFixedTopBar,{once:true});
+  else syncFixedTopBar();
+  window.addEventListener('load',syncFixedTopBar,{once:true});
 })();
 </script>
 </body>
