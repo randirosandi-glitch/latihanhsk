@@ -940,7 +940,33 @@ async function pullCloudState(force=false){
     const remote=row.data||{};
     const merged={...remote};
     let localNewer=false;
+
+    /*
+       Study plans are stored as an ARRAY, so the generic updatedAt merge above
+       cannot detect an edit to one plan (the array itself has no updatedAt).
+       That caused a freshly saved description to be replaced by an older cloud
+       copy on the next pull. Merge individual plans by their own updatedAt.
+    */
+    const localPlans=Array.isArray(local._studyPlans)?local._studyPlans:null;
+    const remotePlans=Array.isArray(remote._studyPlans)?remote._studyPlans:null;
+    if(localPlans||remotePlans){
+      const lp=new Map((localPlans||[]).map(x=>[String(x.id),x]));
+      const rp=new Map((remotePlans||[]).map(x=>[String(x.id),x]));
+      const ids=new Set([...lp.keys(),...rp.keys()]);
+      const mergedPlans=[];
+      ids.forEach(id=>{
+        const l=lp.get(id),r=rp.get(id);
+        if(!r){ mergedPlans.push(l); localNewer=true; return; }
+        if(!l){ mergedPlans.push(r); return; }
+        const lt=Number(l.updatedAt||0),rt=Number(r.updatedAt||0);
+        if(lt>=rt){ mergedPlans.push(l); if(lt>rt) localNewer=true; }
+        else mergedPlans.push(r);
+      });
+      merged._studyPlans=mergedPlans;
+    }
+
     Object.entries(local).forEach(([k,v])=>{
+      if(k==='_studyPlans')return;
       if(!merged[k]||Number(v.updatedAt||0)>Number(merged[k].updatedAt||0)){merged[k]=v;localNewer=true}
     });
     writeStore(merged);
@@ -1308,6 +1334,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   window.renderResult=function(){const rp=$('resultPkg'),rt=$('resultType'),rpart=$('resultPart');if(rp)rp.textContent=route.packageCode;if(rt)rt.textContent=META[route.type]?.label||route.type;const _resTitle=DB[route.packageCode]?.[route.type]?.[route.sectionIndex]?.title||'';if(rpart)rpart.textContent='Hasil · '+_resTitle.replace(/^.*?·\s*/, '');const r=resultState||{score:0,total:currentQuestions.length,answered:0},seq=isSequenceWriting(route.type,route.sectionIndex),pct=r.total?Math.round(r.score/r.total*100):0;const list=currentQuestions.map((q,i)=>{const id=String(q[0]),u=answers[id],has=u!==undefined&&String(u).trim()!=='';if(route.type==='writing'&&!seq)return '<article class="resultQuestion"><div class="resultQuestionHead"><span>Soal '+(i+1)+' · 第 '+esc(id)+' 题</span><span class="resultStatus empty">Tidak dinilai</span></div><div class="resultQuestionText">'+esc(q[1]||'')+'</div><div class="resultAnswer"><b>Jawabanmu:</b> '+esc(userText(q))+'<br><b>Contoh jawaban:</b> '+esc(correctText(q))+'</div></article>';const ok=has&&isCorrect(q,u,route.type,route.sectionIndex);return '<article class="resultQuestion"><div class="resultQuestionHead"><span>Soal '+(i+1)+' · 第 '+esc(id)+' 题</span><span class="resultStatus '+(ok?'good':has?'bad':'empty')+'">'+(ok?'✓ Benar':has?'✗ Salah':'Belum dijawab')+'</span></div><div class="resultQuestionText">'+esc(q[1]||'')+'</div><div class="resultAnswer"><b>Jawabanmu:</b> '+esc(userText(q))+(has&&!ok?'<br><b>Jawaban benar:</b> '+esc(correctText(q)):'')+'</div></article>';}).join('');const title=DB[route.packageCode][route.type][route.sectionIndex]?.title||'Hasil';const summary=(route.type==='writing'&&!seq)?'<p><b>'+r.answered+'/'+r.total+'</b> jawaban tersimpan.</p>':'<div class="score">'+pct+'%</div><div class="bar"><div class="fill" style="width:'+pct+'%"></div></div><p><b>'+r.score+'/'+r.total+'</b> benar · '+r.answered+' dijawab · '+(r.total-r.answered)+' belum dijawab</p>';$('resultBody').innerHTML='<div class="result"><div class="sub">'+esc(title)+'</div>'+summary+'<div class="resultList">'+list+'</div><div class="resultActions"><button class="btn soft" onclick="returnToQuestions()">← Kembali ke Soal</button><button class="btn" onclick="returnToParts()">← Kembali ke List Bagian</button><button class="btn" onclick="repeat()">↻ Ulangi</button></div></div>';};
   window.returnToQuestions=function(){page=0;route={...route,screen:'exercise'};loadCurrentSectionState();renderExercise();setScreen('exercise');};
   window.returnToParts=function(){openSections(route.packageCode,route.type);};
+  window.backRoute=function(){if(route.screen==='result')return returnToQuestions();if(route.screen==='exercise')return openSections(route.packageCode,route.type);return originalBack();};
 })();
 </script>
 <script id="workbookHSK4aIntegration">
@@ -1667,11 +1694,13 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   document.addEventListener('pointermove',function(ev){if(longPressTimer)movePackageLongPress(ev)}, {passive:true});
   document.addEventListener('pointerup',function(){if(longPressTimer)cancelPackageLongPress()}, {passive:true});
   document.addEventListener('pointercancel',function(){if(longPressTimer)cancelPackageLongPress()}, {passive:true});
+  function backRoutePlans(){if(route.screen==='studyPlans'){goHome()}else if(route.screen==='studyPlanDetail'){openStudyPlans()}else if(route.screen==='levels'){goHome()}else if(route.screen==='packages'){openPackages()}else if(route.screen==='package'){openLevelPackages(selectedHSKLevel)}else if(route.screen==='parts'){openPackage(route.packageCode)}else if(route.screen==='exercise'||route.screen==='result'){openSections(route.packageCode,route.type)}else goHome()}
   const oldRenderPackageTile=window.renderPackageTile;
   window.renderPackageTile=function(code,idx){const st=packageStats(code),total=st.total||0,metaParts=Object.entries(META).filter(([t])=>(DB[code]?.[t]||[]).length>0).map(([t,m])=>m.label),desc=metaParts.length?`${total} soal · ${metaParts.join(' · ')}`:'Belum ada soal interaktif',palette=['blue','purple','orange','pink','green'][idx%5],pct=st.pct||0,status=pct>=100?'Selesai':pct>0?'Sedang berjalan':'Belum dimulai';return `<button class="tile packageTile packageTile-${palette}" type="button" data-package-code="${escPlan(code)}" onclick="openPackageFromTile('${escPlan(code)}')"><div class="pkgTop"><div class="tileIcon" aria-hidden="true">${svg('box')}</div><span class="statusPill">${status}</span></div><div class="pkgTitleRow"><div><b>Paket ${escPlan(code)}</b><small>${escPlan(desc)}</small></div></div>${total?progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket'):''}<div class="pkgFooter"><span>Listening · Reading · Writing</span><span>${pct}%</span></div></button>`}
 
   const oldRenderNavState=window.renderNavState;
   window.renderNavState=function(){document.querySelectorAll('.mainNav .navItem').forEach(b=>b.classList.toggle('active',b.dataset.nav===route.screen||((route.screen==='levels'||route.screen==='packages'||route.screen==='package'||route.screen==='parts'||route.screen==='exercise'||route.screen==='result')&&b.dataset.nav==='packages')))}
+  const oldBackRoute=window.backRoute;window.backRoute=backRoutePlans;
   const oldRestore=window.restore;window.restore=function(s){route={screen:s.screen||'home',packageCode:s.packageCode||null,type:s.type||null,sectionIndex:s.sectionIndex??null,studyPlanId:s.studyPlanId||null};if(route.screen==='studyPlans'){renderStudyPlans();setScreen('studyPlans',false)}else if(route.screen==='studyPlanDetail'){studyPlanDetailId=s.studyPlanId||null;renderStudyPlanDetail();setScreen('studyPlanDetail',false)}else oldRestore(s)};
   const oldSetScreen=window.setScreen; // keep existing behavior; route state is enough for navigation
   document.addEventListener('click',function(e){
@@ -2033,6 +2062,23 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     });
   };
 
+  window.backRoute=function(){
+    switch(route.screen){
+      case 'studyPlanDetail': return window.openStudyPlans(true);
+      case 'studyPlans': return window.goHome();
+      case 'levels': return window.goHome();
+      case 'packages': return window.openPackages(true);
+      case 'package': return window.openLevelPackages(selectedHSKLevel,true);
+      case 'parts': return window.openPackage(route.packageCode,true);
+      case 'result':
+        if(typeof window.returnToQuestions==='function') return window.returnToQuestions();
+        return window.openSections(route.packageCode,route.type,true);
+      case 'exercise':
+        return window.openSections(route.packageCode,route.type,true);
+      default:
+        return window.goHome();
+    }
+  };
 
   /* ---------- Study plans ---------- */
 
@@ -2891,6 +2937,25 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   /* ------------------------------------------------------------
      BACK / HISTORY — plan-aware
      ------------------------------------------------------------ */
+  window.backRoute=function(){
+    switch(route.screen){
+      case 'studyPlanDetail': return window.openStudyPlans(true);
+      case 'studyPlans': return window.goHome();
+      case 'levels': return window.goHome();
+      case 'packages': return window.openPackages(true);
+      case 'package':
+        if(route.studyPlanId && plan(route.studyPlanId)) return window.openStudyPlan(route.studyPlanId,true);
+        return window.openLevelPackages(selectedHSKLevel,true);
+      case 'parts':
+        return window.openPackage(route.packageCode,true);
+      case 'exercise':
+        return window.openSections(route.packageCode,route.type,true);
+      case 'result':
+        if(typeof window.returnToQuestions==='function')return window.returnToQuestions();
+        return window.openSections(route.packageCode,route.type,true);
+      default:return window.goHome();
+    }
+  };
 
   window.restore=function(s){
     const st=s||{};
@@ -4223,64 +4288,35 @@ body.dark #packagesGrid .packageHanziIcon{
 })();
 </script>
 
-<script id="hskCanonicalNavigationV14_SINGLE_GUARD">
+<script id="hskCanonicalNavigationV12">
 (function(){
   'use strict';
-  if(window.__hskCanonicalNavigationV14)return;
-  window.__hskCanonicalNavigationV14=true;
-
-  /*
-   * CLEAN APP NAVIGATION / HARDWARE BACK
-   * ------------------------------------
-   * The app has its own layer hierarchy. Browser history is used only as a
-   * two-entry trap so Android/Chrome Back cannot leave the document.
-   *
-   *   [base app entry] <-> [current app guard]
-   *
-   * We NEVER push a new history entry while handling Back. Instead, when the
-   * guard is consumed by the browser, we immediately restore it with
-   * history.forward(). This avoids the old pushState/popstate race and avoids
-   * accumulating history entries.
-   */
-  let restoringGuard=false;
-  let guardReady=false;
-  let guardGeneration=0;
+  if(window.__hskCanonicalNavigationV12)return;
+  window.__hskCanonicalNavigationV12=true;
 
   const getRoute=()=>route||{};
   const screen=()=>String(getRoute().screen||'home');
-  const urlFor=()=>location.pathname+location.search+'#'+screen();
+  let handlingPop=false;
+  let armTimer=0;
 
-  function guardState(){
-    return {...(history.state||{}),...getRoute(),__hskSingleGuard:true,__hskGuardGeneration:guardGeneration};
-  }
+  function stateUrl(){return location.pathname+location.search+'#'+screen()}
 
-  function armGuard(force=false){
+  function armGuard(){
+    clearTimeout(armTimer);
     try{
-      const current=history.state||{};
-      const valid=!!current.__hskSingleGuard &&
-        String(current.screen||'')===screen() &&
-        location.hash==='#'+screen();
-      if(valid&&!force){guardReady=true;return true;}
-
-      /* Initialisation creates exactly one guard entry. */
-      if(!guardReady){
-        guardGeneration++;
-        history.replaceState(guardState(),'',urlFor());
-        history.pushState(guardState(),'',urlFor());
-        guardReady=true;
-        return true;
-      }
-
-      /* Existing guard: rewrite it, never add another entry. */
-      history.replaceState(guardState(),'',urlFor());
-      return true;
-    }catch(e){
-      console.warn('HSK navigation guard:',e);
-      return false;
-    }
+      const r=getRoute();
+      const u=stateUrl();
+      const h=history.state||{};
+      // If the current entry is already our sentinel for this exact layer,
+      // do nothing. This is what prevents focus/visibility events from
+      // creating an ever-growing browser history stack.
+      if(h.__hskCanonicalGuard && String(h.screen||'')===screen() && location.hash==='#'+screen())return;
+      const state={...h,...r,__hskCanonicalGuard:true};
+      history.replaceState(state,'',u);
+      history.pushState({...state},'',u);
+    }catch(e){console.warn('HSK history guard:',e)}
   }
-
-  window.__hskArmBackGuard=()=>armGuard(false);
+  window.__hskArmBackGuard=armGuard;
 
   function goHome(){
     route={screen:'home',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
@@ -4293,29 +4329,21 @@ body.dark #packagesGrid .packageHanziIcon{
     const r=getRoute();
     switch(screen()){
       case 'exercise':
-        return typeof openSections==='function'
-          ?openSections(r.packageCode,r.type,false):goHome();
+        return typeof openSections==='function'?openSections(r.packageCode,r.type,false):goHome();
       case 'result':
         if(typeof returnToQuestions==='function')return returnToQuestions();
-        return typeof openSections==='function'
-          ?openSections(r.packageCode,r.type,false):goHome();
+        return typeof openSections==='function'?openSections(r.packageCode,r.type,false):goHome();
       case 'parts':
-        return typeof openPackage==='function'
-          ?openPackage(r.packageCode,false):goHome();
+        return typeof openPackage==='function'?openPackage(r.packageCode,false):goHome();
       case 'package':
-        /* A package opened from Rencana must return to that exact Rencana. */
-        if(r.studyPlanId&&typeof openStudyPlan==='function')
-          return openStudyPlan(r.studyPlanId,false);
-        return typeof openLevelPackages==='function'
-          ?openLevelPackages(selectedHSKLevel,false):goHome();
+        if(r.studyPlanId&&typeof openStudyPlan==='function')return openStudyPlan(r.studyPlanId,false);
+        return typeof openLevelPackages==='function'?openLevelPackages(selectedHSKLevel,false):goHome();
       case 'packages':
-        return typeof openPackages==='function'
-          ?openPackages(false):goHome();
+        return typeof openPackages==='function'?openPackages(false):goHome();
       case 'levels':
         return goHome();
       case 'studyPlanDetail':
-        return typeof openStudyPlans==='function'
-          ?openStudyPlans(false):goHome();
+        return typeof openStudyPlans==='function'?openStudyPlans(false):goHome();
       case 'studyPlans':
         return goHome();
       case 'home':
@@ -4328,60 +4356,31 @@ body.dark #packagesGrid .packageHanziIcon{
   window.__directLayerBack=back;
   window.handleAppBack=back;
 
-  /*
-   * Hardware Android Back.
-   *
-   * First popstate = browser consumed our guard.
-   * We restore the exact guard with history.forward().
-   * Second popstate = restoration completed; only then do the app-layer Back.
-   * No pushState is performed during Back, so the browser stack cannot grow.
-   */
+  // The only popstate listener in the application. It consumes the sentinel
+  // entry and performs app-layer navigation; it never calls history.back().
   window.addEventListener('popstate',function(e){
-    try{e.stopImmediatePropagation();}catch(_){ }
-
-    if(restoringGuard){
-      restoringGuard=false;
-      try{
-        back();
-      }catch(err){
-        console.error('HSK hardware Back:',err);
-        goHome();
-      }
-      /* Navigation functions update route synchronously. Keep the single
-         guard at the new layer without adding another history entry. */
-      setTimeout(()=>armGuard(false),0);
-      return;
-    }
-
-    restoringGuard=true;
-    try{
-      /* The browser moved from guard -> base. Move back to the guard without
-         creating another entry. */
-      history.forward();
-    }catch(err){
-      restoringGuard=false;
-      console.error('HSK guard restore:',err);
-      try{armGuard(false);}catch(_){ }
-    }
+    if(handlingPop)return;
+    handlingPop=true;
+    try{e.stopImmediatePropagation()}catch(_){ }
+    let result;
+    try{result=back()}catch(err){console.error('HSK Back:',err);result=goHome()}
+    Promise.resolve(result).finally(function(){
+      handlingPop=false;
+      armGuard();
+    });
   },true);
 
-  /* Visible Back buttons call exactly the same layer function. */
-  window.handleAppBackV14=function(){
-    try{back();}
-    catch(err){console.error('HSK UI Back:',err);goHome();}
-    finally{setTimeout(()=>armGuard(false),0);}
-  };
-
-  /* Forward app navigation never creates browser-history entries. */
-  if(typeof setScreen==='function'&&!setScreen.__hskSingleGuardWrappedV14){
+  // Forward navigation must not create a history entry for every app layer.
+  // The one sentinel is maintained by this controller only.
+  if(typeof setScreen==='function'&&!setScreen.__hskCanonicalWrapped){
     const original=setScreen;
     function wrapped(name,push=true){
       const out=original.call(this,name,false);
-      if(!restoringGuard)armGuard(false);
+      if(!handlingPop)armGuard();
       return out;
     }
-    wrapped.__hskSingleGuardWrappedV14=true;
-    wrapped.__hskSingleGuardOriginal=original;
+    wrapped.__hskCanonicalWrapped=true;
+    wrapped.__hskCanonicalOriginal=original;
     setScreen=wrapped;
     window.setScreen=wrapped;
   }
@@ -4390,23 +4389,50 @@ body.dark #packagesGrid .packageHanziIcon{
     const modal=document.getElementById('exitModal');
     if(modal)modal.classList.remove('show');
     if(typeof exitFromBack!=='undefined')exitFromBack=false;
-    armGuard(false);
+    armGuard();
   };
 
-  /* Legacy startup/auth code may rewrite the current state before this
-     controller starts. Normalize it once after the document is ready. */
-  function normalizeGuard(){
-    if(!guardReady)armGuard(true);
-    else armGuard(false);
-  }
-
-  normalizeGuard();
-  window.addEventListener('load',()=>setTimeout(normalizeGuard,0),{once:true});
-  document.addEventListener('visibilitychange',()=>{
-    if(document.visibilityState==='visible')setTimeout(normalizeGuard,0);
-  });
+  armGuard();
+  // initApp()/submitAuth() in the legacy core also use replaceState. Re-arm
+  // after those asynchronous startup/auth transitions so Android Back always
+  // has exactly one guard entry.
+  window.addEventListener('load',()=>setTimeout(armGuard,0),{once:true});
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(armGuard,0)});
+  window.addEventListener('focus',()=>setTimeout(armGuard,0));
+  setTimeout(armGuard,1200);
+  setTimeout(armGuard,3500);
 })();
 </script>
 
+
+<script id="finalLongPressClickGuardV1">
+(function(){
+  'use strict';
+  /* Final guard: after a package long-press opens the Rencana picker,
+     stop the button's inline onclick from immediately opening the package.
+     This must run in capture phase because inline onclick fires before
+     document bubble listeners. */
+  document.addEventListener('click',function(e){
+    const tile=e.target.closest?.('#packagesScreen .packageTile[data-package-code]');
+    if(!tile)return;
+    const r=window.__functionalRepairV4;
+    const master=window.__packageLongPressMaster;
+    const until=Math.max(
+      Number(r?.suppressUntil||0),
+      Number(master?.suppressPackageClickUntil||0),
+      Number(window.suppressPackageClickUntil||0),
+      Number(window.__suppressPackageClickUntil||0)
+    );
+    if(until>Date.now()){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      if(r)r.suppressUntil=0;
+      if(master)master.suppressPackageClickUntil=0;
+      window.suppressPackageClickUntil=0;
+      window.__suppressPackageClickUntil=0;
+    }
+  },true);
+})();
+</script>
 </body>
 </html>
