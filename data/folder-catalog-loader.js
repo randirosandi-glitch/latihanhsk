@@ -1,8 +1,7 @@
-/* Dynamic data-folder catalog bootstrap.
+/* Dynamic HSK data-folder catalog bootstrap.
  *
- * The app's index.html remains the UI/logic engine. This helper exposes one
- * deterministic folder-aware loader contract without changing the UI.
- * It expects folders under /data and JSON package files inside them.
+ * Package categories come directly from folders under /data.
+ * JSON filenames become package codes. Empty folders are ignored.
  */
 (function(){
   'use strict';
@@ -23,18 +22,20 @@
     return {kind:'custom',level:null};
   }
   function codeOf(name){return String(name).replace(/\.json$/i,'')}
-  function sort(a,b){return String(a).localeCompare(String(b),undefined,{numeric:true,sensitivity:'base'})}
+  function sortCodes(a,b){return String(a).localeCompare(String(b),undefined,{numeric:true,sensitivity:'base'})}
 
   async function discover(){
     const root=await api(ROOT+'?ref='+encodeURIComponent(BRANCH));
     const dirs=(root||[]).filter(x=>x.type==='dir');
     const groups=[];
+    state.byCode.clear();
     for(const dir of dirs){
       const items=await api(dir.url+'?ref='+encodeURIComponent(BRANCH));
-      const files=(items||[]).filter(x=>x.type==='file'&&/\.json$/i.test(x.name));
+      const files=(items||[]).filter(x=>x.type==='file'&&/\.json$/i.test(x.name)&&x.name!=='manifest.json'&&x.name!=='reading-passages.json');
       if(!files.length)continue;
       const meta=classify(dir.name);
-      const group={name:dir.name,path:dir.path,kind:meta.kind,level:meta.level,codes:files.map(f=>codeOf(f.name)).sort(sort),files:{}};
+      const codes=files.map(f=>codeOf(f.name)).sort(sortCodes);
+      const group={name:dir.name,path:dir.path,kind:meta.kind,level:meta.level,codes,files:{}};
       files.forEach(f=>{group.files[codeOf(f.name)]=f.path;state.byCode.set(codeOf(f.name),f.path)});
       groups.push(group);
     }
@@ -43,15 +44,17 @@
       const bk=b.kind==='hsk'?0:b.kind==='workbook'?1:2;
       if(ak!==bk)return ak-bk;
       if(a.level!=null&&b.level!=null)return a.level-b.level;
-      return sort(a.name,b.name);
+      return sortCodes(a.name,b.name);
     });
     return groups;
   }
 
-  async function load(){
+  window.__loadFolderCatalog=async function(){
     try{
       const groups=await discover();
-      state.groups=groups;state.ready=true;
+      state.groups=groups;
+      state.ready=true;
+      state.error=null;
       window.__hskDynamicGroups=groups;
       window.__hskDynamicPathForCode=code=>state.byCode.get(String(code||''))||null;
       window.__hskDynamicGroupsForUI=()=>state.groups.slice();
@@ -59,9 +62,9 @@
       return groups;
     }catch(e){
       state.error=e;
+      state.ready=false;
       console.warn('Dynamic folder catalog failed',e);
       return [];
     }
-  }
-  window.__loadFolderCatalog=load;
+  };
 })();
