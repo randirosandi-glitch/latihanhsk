@@ -2,7 +2,7 @@
 (function(){
   'use strict';
   const REPO='randirosandi-glitch/latihanhsk';
-  const BRANCH='main';
+  const BRANCH='refactor/dynamic-folder-catalog';
   const ROOT='https://api.github.com/repos/'+REPO+'/contents/data';
   const state=window.__folderCatalogV2={groups:[],byCode:new Map(),ready:false,error:null};
   async function api(url){const r=await fetch(url,{cache:'no-store',headers:{Accept:'application/vnd.github+json'}});if(!r.ok)throw new Error('Catalog '+r.status);return r.json()}
@@ -17,7 +17,7 @@
       const files=(items||[]).filter(x=>x.type==='file'&&/\.json$/i.test(x.name)&&x.name!=='manifest.json'&&x.name!=='reading-passages.json');
       if(!files.length)continue;
       const meta=classify(dir.name);const g={name:dir.name,path:dir.path,kind:meta.kind,level:meta.level,codes:files.map(f=>codeOf(f.name)).sort(sort),files:{}};
-      files.forEach(f=>{const c=codeOf(f.name);g.files[c]=f.path;state.byCode.set(c,f.path)});groups.push(g);
+      files.forEach(f=>{const c=codeOf(f.name);g.files[c]=f.path;state.byCode.set(c,g.files[c])});groups.push(g);
     }
     groups.sort((a,b)=>{const ak=a.kind==='hsk'?0:a.kind==='workbook'?1:2,bk=b.kind==='hsk'?0:b.kind==='workbook'?1:2;if(ak!==bk)return ak-bk;if(a.level!=null&&b.level!=null)return a.level-b.level;return sort(a.name,b.name)});return groups;
   }
