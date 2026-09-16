@@ -1266,13 +1266,11 @@ async function loadQuestionData(){
   const wb4b=(manifest.workbook4b_codes||[]).map(String);
   window.__hskCatalog={hsk4,hsk5,wb4a,wb4b};
 
-  // Keep package cards/progress renderable without downloading question bodies.
-  // HSK4 package structure is fixed at 45/40/15 questions.
-  const makeStub=(code,type,count)=>({title:type,range:'',questions:Array.from({length:count},(_,i)=>[String(i+1),'','',''])});
-  hsk4.forEach(c=>{
-    if(!DB[c])DB[c]={code:c,__lazy:true,listening:[makeStub(c,'听力 · 第一部分',45)],reading:[makeStub(c,'阅读 · 第一部分',40)],writing:[makeStub(c,'书写 · 第一部分',15)]};
+  // V1.24: catalog only. Never fabricate question sections.
+  // The complete JSON is loaded when a package is opened.
+  [...hsk4,...hsk5,...wb4a,...wb4b].forEach(c=>{
+    if(!DB[c])DB[c]={code:c,__lazy:true};
   });
-  [...hsk5,...wb4a,...wb4b].forEach(c=>{if(!DB[c])DB[c]={code:c,__lazy:true};});
 
   HSK_DATA_STATE.loaded=true;
   document.dispatchEvent(new Event('hsk:data-ready'));
@@ -3896,7 +3894,247 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   };
 })();
 </script>
+<script id="v124LazyDatabasePatch">
+(function(){
+  'use strict';
 
+  const manifest=()=>window.__hskManifest||{};
+  const catalog=()=>window.__hskCatalog||{};
+  const cache=new Map();
+  const passageCache=new Map();
+  const pathCache=new Map();
+
+  async function getJSON(file){
+    const r=await fetch('./data/'+file,{cache:'no-cache'});
+    if(!r.ok)throw new Error('Database: '+file+' '+r.status);
+    return r.json();
+  }
+
+  async function getPackagePath(code){
+    code=String(code||'');
+    if(pathCache.has(code))return pathCache.get(code);
+
+    // Prefer an explicit path map if a future manifest provides one.
+    const m=manifest();
+    const explicit=m.package_paths?.[code] || m.paths?.[code];
+    if(explicit){
+      pathCache.set(code,explicit);
+      return explicit;
+    }
+
+    // Current flat-data compatibility.
+    const flat=code+'.json';
+    try{
+      const r=await fetch('./data/'+flat,{method:'HEAD',cache:'no-cache'});
+      if(r.ok){
+        pathCache.set(code,flat);
+        return flat;
+      }
+    }catch(e){}
+
+    // New folder-data compatibility: discover data/<folder>/<code>.json
+    // through GitHub's public contents API. This is only used when the
+    // flat path does not exist, so normal startup remains lightweight.
+    try{
+      const api='https://api.github.com/repos/randirosandi-glitch/latihanhsk/contents/data';
+      const r=await fetch(api,{cache:'no-cache',headers:{Accept:'application/vnd.github+json'}});
+      if(r.ok){
+        const entries=await r.json();
+        for(const e of (Array.isArray(entries)?entries:[])){
+          if(e.type!=='dir')continue;
+          const rr=await fetch(api+'/'+encodeURIComponent(e.name),{
+            cache:'no-cache',headers:{Accept:'application/vnd.github+json'}
+          });
+          if(!rr.ok)continue;
+          const files=await rr.json();
+          const hit=(Array.isArray(files)?files:[]).find(x=>
+            x.type==='file' && x.name===code+'.json'
+          );
+          if(hit){
+            const rel=e.name+'/'+hit.name;
+            pathCache.set(code,rel);
+            return rel;
+          }
+        }
+      }
+    }catch(e){}
+
+    return flat;
+  }
+
+  async function loadPackage(code){
+    code=String(code||'');
+    if(!code)return null;
+
+    const current=DB[code];
+    if(current && !current.__lazy)return current;
+    if(cache.has(code))return cache.get(code);
+
+    const promise=(async()=>{
+      const path=await getPackagePath(code);
+      const d=await getJSON(path);
+      if(!d||typeof d!=='object')
+        throw new Error('Database paket tidak valid: '+code);
+      d.code=d.code||code;
+      DB[code]=d;
+      return d;
+    })().catch(e=>{cache.delete(code);throw e});
+
+    cache.set(code,promise);
+    return promise;
+  }
+
+  async function loadPassages(){
+    if(passageCache.has('all'))return passageCache.get('all');
+    const promise=getJSON('reading-passages.json').then(d=>{
+      Object.assign(READING_PASSAGES,d||{});
+      return d;
+    }).catch(e=>{passageCache.delete('all');throw e});
+    passageCache.set('all',promise);
+    return promise;
+  }
+
+  async function loadWorkbook(code){return loadPackage(code)}
+
+  window.__hskLoadPackage=loadPackage;
+  window.__hskLoadPackages=async codes=>
+    Promise.all([...new Set((codes||[]).map(String).filter(Boolean))].map(loadPackage));
+  window.__hskLoadPassages=loadPassages;
+
+  window.__hskLazyAudit=function(){
+    const c=catalog();
+    return {
+      manifestLoaded:Boolean(window.__hskManifest),
+      hsk4:c.hsk4?.length||0,
+      hsk5:c.hsk5?.length||0,
+      workbook4a:c.wb4a?.length||0,
+      workbook4b:c.wb4b?.length||0,
+      loadedPackages:[...cache.keys()].filter(k=>DB[k]&&!DB[k].__lazy),
+      loadedPassages:passageCache.has('all')
+    };
+  };
+
+  // Keep stable navigation intact. Only the data boundary is lazy.
+  const oldOpenPackage=window.openPackage;
+  window.openPackage=async function(code,push=true){
+    code=String(code||'');
+    if(!DB[code]){
+      if(typeof window.goHome==='function')window.goHome(false);
+      return;
+    }
+    try{
+      await loadPackage(code);
+      if(/^H/i.test(code) && DB[code]?.reading)await loadPassages();
+      const ret=window.__cleanReturnPlanId||route.studyPlanId||null;
+      window.__cleanReturnPlanId=null;
+      route={screen:'package',packageCode:code,type:null,sectionIndex:null,
+             studyPlanId:ret,materialKey:window.__cleanMaterialKey||selectedHSKLevel};
+      if(typeof renderPackage==='function')renderPackage();
+      setScreen('package',push);
+      window.scrollTo({top:0,left:0,behavior:'auto'});
+    }catch(e){
+      console.error(e);
+      appNotice?.('Paket gagal dimuat','Data paket tidak dapat dimuat. Silakan coba lagi.');
+    }
+  };
+
+  window.openPackageFromTile=window.openPackage;
+
+  window.openSections=async function(code,type,push=true){
+    code=String(code||'');
+    if(!DB[code]||!META[type])return;
+    try{
+      await loadPackage(code);
+      if(type==='reading')await loadPassages();
+      const ret=route.studyPlanId||null;
+      route={screen:'parts',packageCode:code,type,sectionIndex:null,
+             studyPlanId:ret,materialKey:window.__cleanMaterialKey||selectedHSKLevel};
+      renderSections();
+      setScreen('partsScreen',push);
+    }catch(e){
+      console.error(e);
+      appNotice?.('Bagian soal gagal dimuat','Data bagian soal tidak dapat dimuat. Silakan coba lagi.');
+    }
+  };
+
+  window.startSection=async function(i,push=true){
+    const code=String(route.packageCode||''),type=route.type;
+    if(!code||!META[type])return;
+    try{
+      await loadPackage(code);
+      if(type==='reading')await loadPassages();
+      const arr=DB[code]?.[type]||[];
+      if(!arr[i])return;
+      const ret=route.studyPlanId||null;
+      route={screen:'exercise',packageCode:code,type,sectionIndex:Number(i),
+             studyPlanId:ret,materialKey:window.__cleanMaterialKey||selectedHSKLevel};
+      resumeQuestionId=null;
+      window.__hskResumePage=0;
+      loadCurrentSectionState();
+      renderExercise();
+      setScreen('exercise',push);
+    }catch(e){
+      console.error(e);
+      appNotice?.('Soal gagal dimuat','Data soal tidak dapat dimuat. Silakan coba lagi.');
+    }
+  };
+
+  window.openSpecialPackage=async function(code,push=true){
+    code=String(code||'');
+    const isWord=code===SPECIAL_WORD,isSent=code===SPECIAL_SENT;
+    if(!isWord&&!isSent)return;
+    try{
+      const hsk4=(catalog().hsk4||[]).map(String);
+      await window.__hskLoadPackages(hsk4);
+      await loadPassages();
+      const wordQs=[],sentQs=[];let wi=1,si=1;
+      hsk4.forEach(c=>{
+        const pkg=DB[c]||{};
+        (pkg.writing?.[0]?.questions||[]).forEach(q=>
+          wordQs.push([`SK-${String(wi++).padStart(3,'0')}`,
+            String(q[1]||''),String(q[2]||''),'']));
+        (pkg.reading?.[2]?.questions||[]).forEach(q=>
+          sentQs.push([`SP-${String(si++).padStart(3,'0')}`,
+            'Susun kalimat berikut menjadi paragraf yang benar.',
+            Array.isArray(q[2])?q[2].slice():[],String(q[3]||'')]));
+      });
+      DB[SPECIAL_WORD]={code:SPECIAL_WORD,
+        meta:{title:'HSK4 Susun Kata',desc:'Kumpulan semua soal susun kata HSK 4'},
+        writing:[{title:'书写 · HSK4 · Susun Kata',range:`1–${wordQs.length}`,questions:wordQs}],
+        reading:[],listening:[]};
+      DB[SPECIAL_SENT]={code:SPECIAL_SENT,
+        meta:{title:'HSK4 Susun Kalimat',desc:'Kumpulan semua soal susun kalimat HSK 4'},
+        writing:[],listening:[],
+        reading:[{title:'阅读 · HSK4 · Susun Kalimat',range:`1–${sentQs.length}`,questions:sentQs}]};
+      const type=isWord?'writing':'reading';
+      route={screen:'exercise',packageCode:code,type,sectionIndex:0,
+             studyPlanId:null,materialKey:'special'};
+      resumeQuestionId=null;
+      window.__hskResumePage=0;
+      loadCurrentSectionState();
+      renderExercise();
+      setScreen('exercise',push);
+      window.scrollTo({top:0,left:0,behavior:'auto'});
+    }catch(e){
+      console.error(e);
+      appNotice?.('Materi spesial gagal dimuat','Data materi spesial tidak dapat dimuat. Silakan coba lagi.');
+    }
+  };
+
+  const oldRestore=window.restore;
+  window.restore=async function(st){
+    st=st||{};
+    if(st.packageCode && DB[st.packageCode] && DB[st.packageCode].__lazy){
+      try{
+        await loadPackage(st.packageCode);
+        if(st.type==='reading')await loadPassages();
+      }catch(e){console.error(e);return;}
+    }
+    if(typeof oldRestore==='function')return oldRestore(st);
+  };
+
+})();
+</script>
 
 <script id="progressCloudRecoveryPatchV122">
 (function(){
@@ -4008,75 +4246,6 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 
   // Re-render progress after a package finishes lazy loading.
   document.addEventListener('hsk:data-ready',()=>{try{renderHome();renderScores();renderPackagesScreen()}catch(e){}});
-})();
-</script>
-<script id="dynamicFolderResolver">
-(function(){
-"use strict";
-const ROOT="https://api.github.com/repos/randirosandi-glitch/latihanhsk/contents/data";
-const RAW="https://raw.githubusercontent.com/randirosandi-glitch/latihanhsk/main/data/";
-const folders=Object.create(null), packages=Object.create(null), cache=new Map();
-let catalogPromise=null;
-
-function enc(p){return String(p).split("/").map(encodeURIComponent).join("/")}
-async function get(url){
-  const r=await fetch(url,{cache:"no-store",headers:{Accept:"application/vnd.github+json"}});
-  if(!r.ok)throw new Error("HTTP "+r.status);
-  return r.json();
-}
-async function catalog(){
-  if(catalogPromise)return catalogPromise;
-  catalogPromise=(async()=>{
-    const root=await get(ROOT);
-    for(const d of (Array.isArray(root)?root:[]).filter(x=>x.type==="dir")){
-      const list=await get(ROOT+"/"+enc(d.name));
-      const ps=(Array.isArray(list)?list:[]).filter(x=>
-        x.type==="file" && /\.json$/i.test(x.name) &&
-        !/^(manifest|reading-passages)\.json$/i.test(x.name)
-      ).map(x=>({
-        code:x.name.replace(/\.json$/i,""),
-        name:x.name.replace(/\.json$/i,""),
-        folder:d.name,
-        path:x.path,
-        url:RAW+enc(x.path)
-      }));
-      if(ps.length){
-        folders[d.name]={name:d.name,packages:ps};
-        ps.forEach(p=>packages[p.code]=p);
-      }
-    }
-    window.__HSK_DYNAMIC_FOLDERS=folders;
-    window.__HSK_DYNAMIC_PACKAGES=packages;
-    window.__HSK_DYNAMIC_READY=true;
-    document.dispatchEvent(new CustomEvent("hsk:dynamic-catalog-ready"));
-    return folders;
-  })().catch(e=>{catalogPromise=null;throw e});
-  return catalogPromise;
-}
-async function load(code){
-  code=String(code||"");
-  if(DB[code] && !DB[code].__lazy)return DB[code];
-  if(cache.has(code))return cache.get(code);
-  if(!window.__HSK_DYNAMIC_READY)await catalog();
-  const p=packages[code];
-  if(!p)throw new Error("Paket tidak ditemukan: "+code);
-  const job=get(p.url).then(d=>{
-    if(!d||typeof d!=="object")throw new Error("JSON tidak valid: "+code);
-    d.code=d.code||code; DB[code]=d; return d;
-  }).catch(e=>{cache.delete(code);throw e});
-  cache.set(code,job); return job;
-}
-window.__hskDynamicCatalog=catalog;
-window.__hskDynamicLoad=load;
-window.__hskDynamicLoadMany=async codes=>
-  Promise.all([...new Set((codes||[]).map(String))].map(load));
-
-/* Non-invasive bridge: if stable code asks for a package that is not
-   embedded, expose the loader without replacing stable navigation. */
-window.__hskDynamicGet=async function(code){
-  if(DB[String(code)])return DB[String(code)];
-  return load(code);
-};
 })();
 </script>
 </body>
