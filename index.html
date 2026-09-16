@@ -3396,126 +3396,117 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 
 
 
-<script id="navigationControllerFinalV5">
+
+
+<style id="finalPackageListNoPagination">
+  #packagesScreen .packagePager,
+  #packagesScreen .packagePageIndicator { display:none!important; }
+</style>
+
+<script id="navigationControllerFinalV6">
 (function(){
   'use strict';
-  const C=window.__navigationControllerFinalV5=window.__navigationControllerFinalV5||{};
+  const C=window.__navigationControllerFinalV6=window.__navigationControllerFinalV6||{};
   if(C.installed)return;
 
-  /*
-   * CRITICAL:
-   * `route` and `currentUsername` are global lexical variables declared
-   * with `let`, so they are NOT reliably available as window.route /
-   * window.currentUsername. Reading window.route was the reason every
-   * Back action was being interpreted as Home/Exit.
-   */
   function screen(){
     return String(route?.screen||'home');
   }
 
-  function stateURL(){
+  function href(){
     return location.pathname+location.search+'#'+screen();
   }
 
-  function arm(){
+  function guard(){
     try{
-      const st={
-        ...(history.state||{}),
-        ...(route||{}),
-        __hskLayerGuard:true
-      };
-      history.replaceState(st,'',stateURL());
-      history.pushState({...st},'',stateURL());
+      const state={...(history.state||{}),...(route||{}),__hskBackGuard:true};
+      history.replaceState(state,'',href());
+      history.pushState({...state},'',href());
     }catch(e){}
   }
 
-  function goHome(){
-    return goHomeCore(false);
-  }
-
-  function goHomeCore(push){
+  function home(){
+    if(typeof window.goHome==='function') return window.goHome(false);
     route={screen:'home',packageCode:null,type:null,sectionIndex:null};
-    answers={}; checked={}; resultState=null;
-    setScreen('home',push);
+    return setScreen('home',false);
   }
 
-  function openLevels(){
-    return openPackages(false);
+  function levels(){
+    if(typeof window.openPackages==='function') return window.openPackages(false);
   }
 
-  function exitWarning(){
-    return showExit(true);
-  }
-
-  /*
-   * OFFICIAL APP HIERARCHY:
-   * Soal -> Bagian -> Detail Paket -> Daftar Paket
-   * -> Level HSK -> Beranda -> Exit
-   */
-  function backRoute(){
+  function back(){
     switch(screen()){
       case 'exercise':
-        return openSections(route.packageCode,route.type,false);
+        return window.openSections(route.packageCode,route.type,false);
 
       case 'result':
-        if(typeof returnToQuestions==='function') return returnToQuestions();
-        return openSections(route.packageCode,route.type,false);
+        if(typeof window.returnToQuestions==='function') return window.returnToQuestions();
+        return window.openSections(route.packageCode,route.type,false);
 
       case 'parts':
-        return openPackage(route.packageCode,false);
+        return window.openPackage(route.packageCode,false);
 
       case 'package':
-        return openLevelPackages(selectedHSKLevel,false);
+        return window.openLevelPackages(selectedHSKLevel,false);
 
       case 'packages':
-        return openLevels();
+        return levels();
 
       case 'levels':
-        return goHome();
+        return home();
 
       case 'studyPlanDetail':
-        return openStudyPlans(false);
+        return window.openStudyPlans(false);
 
       case 'studyPlans':
-        return goHome();
+        return home();
 
       case 'home':
       default:
-        return exitWarning();
+        return window.showExit(true);
     }
   }
 
-  window.backRoute=backRoute;
-  window.__directLayerBack=backRoute;
+  window.backRoute=back;
+  window.__directLayerBack=back;
 
   /*
-   * One physical Back listener. The browser has already consumed the
-   * sentinel entry when popstate fires; do not call history.back() here.
+   * IMPORTANT:
+   * Use capture=true and stopImmediatePropagation().
+   * Older patches in this file registered additional popstate handlers.
+   * Those handlers are not removable because they used anonymous callbacks.
+   * Capturing here prevents them from firing after this final controller.
    */
-  if(!C.popInstalled){
-    window.addEventListener('popstate',function(){
-      try{
-        backRoute();
-      }finally{
-        setTimeout(arm,0);
-      }
-    },{passive:true});
-    C.popInstalled=true;
-  }
+  window.addEventListener('popstate',function(ev){
+    ev.stopImmediatePropagation();
+    try{
+      back();
+    }catch(e){
+      console.error('HSK Back navigation failed:',e);
+      home();
+    }finally{
+      setTimeout(guard,0);
+    }
+  },true);
 
+  /*
+   * Keep a guard entry available even on the first page. This prevents
+   * Android Chrome from treating the hardware Back as "leave the site".
+   */
+  guard();
+
+  /*
+   * Canceling Exit must restore the guard without adding a normal
+   * application-history layer.
+   */
   window.cancelExit=function(){
-    const modal=$('exitModal');
+    const modal=document.getElementById('exitModal');
     if(modal)modal.classList.remove('show');
     if(typeof exitFromBack!=='undefined')exitFromBack=false;
-    setTimeout(arm,0);
+    setTimeout(guard,0);
   };
 
-  /*
-   * Do not wrap setScreen or create another history layer.
-   * Existing app navigation functions already know whether they should
-   * push. Back navigation above explicitly uses push=false.
-   */
-  arm();
   C.installed=true;
 })();
 </script>
@@ -4108,10 +4099,9 @@ body.dark #packagesGrid .packageHanziIcon{
     if(head)head.textContent=g.name;if(title)title.textContent=g.kind==='workbook'?'Pilih lesson':'Pilih paket';if(sub)sub.textContent=g.codes.length+' '+(g.kind==='workbook'?'lesson':'paket')+' tersedia';
     const q=String($('packageSearchInput')?.value||'').trim().toLowerCase();const codes=g.codes.filter(c=>!q||c.toLowerCase().includes(q));
     document.querySelectorAll('.packagePager').forEach(x=>x.remove());
-    const size=10,page=Math.max(0,Math.min(Number(window.__dbPackagePage||0),Math.max(0,Math.ceil(codes.length/size)-1)));window.__dbPackagePage=page;
+    window.__dbPackagePage=0;
     if(!codes.length){grid.innerHTML='<div class="emptySearch"><strong>Paket tidak ditemukan</strong><span>Coba kata kunci lain.</span></div>';return}
-    grid.innerHTML=codes.slice(page*size,(page+1)*size).map(c=>{const st=typeof packageStats==='function'?packageStats(c):{pct:0,answered:0,total:0};return '<article class="tile packageTile packageTileShell"><button class="packageTileMain" type="button" onclick="openPackage(\''+esc(c)+'\')"><div class="pkgTop"><div class="tileIcon packageHanziIcon" aria-hidden="true"><span>卷</span></div><span class="statusPill"><span class="statusDot"></span>'+(st.pct>=100?'Selesai':st.pct>0?'Sedang berjalan':'Belum dimulai')+'</span></div><div class="pkgTitleRow"><div><b>Paket '+esc(c)+'</b><small>'+esc(g.name)+'</small></div></div>'+(st.total&&typeof progressHTML==='function'?progressHTML(st,'Progres paket'):'')+'<div class="pkgFooter"><span>'+esc(g.name)+'</span><span>'+(st.pct||0)+'%</span></div></button></article>'}).join('');
-    const pages=Math.ceil(codes.length/size);if(pages>1){const pager=document.createElement('div');pager.className='packagePager';pager.innerHTML=(page?'<button class="btn" data-d="-1">‹ Sebelumnya</button>':'')+'<span class="packagePageIndicator">Halaman '+(page+1)+' / '+pages+'</span>'+((page<pages-1)?'<button class="btn" data-d="1">Berikutnya ›</button>':'');pager.querySelectorAll('button').forEach(b=>b.onclick=()=>{window.__dbPackagePage=page+Number(b.dataset.d);renderPackages()});grid.after(pager)}
+    grid.innerHTML=codes.map(c=>{const st=typeof packageStats==='function'?packageStats(c):{pct:0,answered:0,total:0};return '<article class="tile packageTile packageTileShell"><button class="packageTileMain" type="button" onclick="openPackage(\''+esc(c)+'\')"><div class="pkgTop"><div class="tileIcon packageHanziIcon" aria-hidden="true"><span>卷</span></div><span class="statusPill"><span class="statusDot"></span>'+(st.pct>=100?'Selesai':st.pct>0?'Sedang berjalan':'Belum dimulai')+'</span></div><div class="pkgTitleRow"><div><b>Paket '+esc(c)+'</b><small>'+esc(g.name)+'</small></div></div>'+(st.total&&typeof progressHTML==='function'?progressHTML(st,'Progres paket'):'')+'<div class="pkgFooter"><span>'+esc(g.name)+'</span><span>'+(st.pct||0)+'%</span></div></button></article>'}).join('');
   }
 
   async function loadPackage(code){
