@@ -4239,241 +4239,158 @@ body.dark #packagesGrid .packageHanziIcon{
 })();
 </script>
 
-<script id="hskNavigationController">
+<script id="hskNavigationControllerV9">
 (function(){
   'use strict';
-
   /*
-   * HSK NAVIGATION — CLEAN REBUILD V8
+   * HARDWARE BACK IS INTENTIONALLY BLOCKED.
    *
-   * Browser History API (pushState/popstate) is intentionally NOT used here.
-   * The app uses hash entries as its browser-history layer. This is deliberate:
-   * Android/Chrome hardware Back then moves between concrete app route hashes,
-   * while hashchange only renders the route that the browser selected.
+   * Product rule:
+   *   - Hardware/browser Back NEVER changes the app screen.
+   *   - The user must use the app's visible Back button.
+   *   - Hardware Back only shows a 1-second toast.
+   *   - App Back changes the app route without asking Chrome to navigate.
    *
-   * Rules:
-   * 1. Forward navigation = one new hash entry.
-   * 2. App Back = exactly one history.back().
-   * 3. Hardware Back = hashchange; NEVER call history.back() from hashchange.
-   * 4. Home has two distinct entries: #hsk-home and #hsk-home-guard.
-   * 5. Rendering never creates history.
-   * 6. No route-specific Back handlers.
+   * This controller deliberately does NOT use popstate to navigate the app.
+   * The browser history is only used as a sacrificial guard entry so that
+   * Android/Chrome cannot escape the app when hardware Back is pressed.
    */
-  if(window.__hskCleanNavigationV8)return;
-  window.__hskCleanNavigationV8=true;
+  if(window.__hskNavigationControllerV9)return;
+  window.__hskNavigationControllerV9=true;
   window.__hskNavigationController=true;
 
-  const HOME_HASH='#hsk-home';
-  const GUARD_HASH='#hsk-home-guard';
-  const PREFIX='#hsk-route=';
-  let handlingHash=false;
+  const APP='__hskAppV9';
+  let internalChange=false;
   let initialized=false;
 
-  function norm(s){
-    return {
-      screen:String(s?.screen||'home'),
-      packageCode:s?.packageCode??null,
-      type:s?.type??null,
-      sectionIndex:s?.sectionIndex??null,
-      studyPlanId:s?.studyPlanId??null
-    };
-  }
+  function norm(s){return {
+    screen:String(s?.screen||'home'),
+    packageCode:s?.packageCode??null,
+    type:s?.type??null,
+    sectionIndex:s?.sectionIndex??null,
+    studyPlanId:s?.studyPlanId??null
+  };}
   function snap(){return norm(window.route||{});}
-  function same(a,b){
-    a=norm(a); b=norm(b);
-    return a.screen===b.screen &&
-      String(a.packageCode??'')===String(b.packageCode??'') &&
-      String(a.type??'')===String(b.type??'') &&
-      String(a.sectionIndex??'')===String(b.sectionIndex??'') &&
-      String(a.studyPlanId??'')===String(b.studyPlanId??'');
-  }
+  function same(a,b){a=norm(a);b=norm(b);return a.screen===b.screen &&
+    String(a.packageCode??'')===String(b.packageCode??'') &&
+    String(a.type??'')===String(b.type??'') &&
+    String(a.sectionIndex??'')===String(b.sectionIndex??'') &&
+    String(a.studyPlanId??'')===String(b.studyPlanId??'');}
   function home(){return {screen:'home',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};}
-
-  function encodeRoute(r){
-    return PREFIX+encodeURIComponent(JSON.stringify(norm(r)));
+  function stateFor(r){return {...norm(r),[APP]:true};}
+  function render(r){
+    r=norm(r); window.route=r;
+    try{
+      if(r.screen==='home'){if(typeof renderHome==='function')renderHome();setScreen('home',false);return true;}
+      if(r.screen==='levels'){if(typeof renderLevelsScreen==='function')renderLevelsScreen();setScreen('levelsScreen',false);return true;}
+      if(r.screen==='packages'){if(typeof renderPackagesScreen==='function')renderPackagesScreen();setScreen('packagesScreen',false);return true;}
+      if(r.screen==='scores'){if(typeof renderScoresMaster==='function')renderScoresMaster();setScreen('scores',false);return true;}
+      if(r.screen==='studyPlans'){if(typeof renderStudyPlans==='function')renderStudyPlans();setScreen('studyPlans',false);return true;}
+      if(r.screen==='studyPlanDetail'){if(typeof renderStudyPlanDetail==='function')renderStudyPlanDetail();else if(typeof renderPlanDetailV4==='function')renderPlanDetailV4();setScreen('studyPlanDetail',false);return true;}
+      if(r.screen==='package'){if(typeof renderPackage==='function')renderPackage();setScreen('package',false);return true;}
+      if(r.screen==='parts'){if(typeof renderSections==='function')renderSections();setScreen('partsScreen',false);return true;}
+      if(r.screen==='exercise'){if(typeof loadCurrentSectionState==='function')loadCurrentSectionState();if(typeof renderExercise==='function')renderExercise();setScreen('exercise',false);return true;}
+      if(r.screen==='result'){if(typeof renderResult==='function')renderResult();setScreen('result',false);return true;}
+    }catch(e){console.error('HSK router render error',e);}
+    return false;
   }
-  function decodeHash(){
-    const h=location.hash||'';
-    if(h===HOME_HASH)return home();
-    if(h===GUARD_HASH)return home();
-    if(!h.startsWith(PREFIX))return null;
-    try{return norm(JSON.parse(decodeURIComponent(h.slice(PREFIX.length))))}catch(_){return null}
-  }
-  function setHash(r,replace){
-    const h=encodeRoute(r);
-    if(replace){
-      const base=location.href.split('#')[0];
-      location.replace(base+h);
-    }else{
-      location.hash=h.slice(1);
-    }
-  }
-  function pushRawHash(h){ location.hash=h.replace(/^#/,''); }
   function parentOf(r){
     r=norm(r);
     switch(r.screen){
-      case 'studyPlanDetail': return {screen:'studyPlans'};
-      case 'package': return r.studyPlanId ? {screen:'studyPlanDetail',studyPlanId:r.studyPlanId} : {screen:'packages'};
-      case 'parts': return {screen:'package',packageCode:r.packageCode};
-      case 'exercise': return {screen:'parts',packageCode:r.packageCode,type:r.type};
-      case 'result': return {screen:'exercise',packageCode:r.packageCode,type:r.type,sectionIndex:r.sectionIndex};
-      case 'packages': return {screen:'levels'};
-      case 'levels':
-      case 'scores':
-      case 'studyPlans': return home();
-      default: return home();
+      case 'studyPlanDetail': return {screen:'studyPlans',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
+      case 'package': return r.studyPlanId?{screen:'studyPlanDetail',packageCode:null,type:null,sectionIndex:null,studyPlanId:r.studyPlanId}:{screen:'packages',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
+      case 'parts': return {screen:'package',packageCode:r.packageCode,type:null,sectionIndex:null,studyPlanId:r.studyPlanId};
+      case 'exercise': return {screen:'parts',packageCode:r.packageCode,type:r.type,sectionIndex:null,studyPlanId:r.studyPlanId};
+      case 'result': return {screen:'exercise',packageCode:r.packageCode,type:r.type,sectionIndex:r.sectionIndex,studyPlanId:r.studyPlanId};
+      case 'packages': return {screen:'levels',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
+      case 'levels': case 'scores': case 'studyPlans': return home();
+      default:return home();
     }
   }
-
-  function render(r){
-    r=norm(r);
-    window.route=r;
-    try{
-      if(r.screen==='home'){
-        if(typeof renderHome==='function')renderHome();
-        setScreen('home',false); return true;
-      }
-      if(r.screen==='levels'){
-        if(typeof renderLevelsScreen==='function')renderLevelsScreen();
-        setScreen('levelsScreen',false); return true;
-      }
-      if(r.screen==='packages'){
-        if(typeof renderPackagesScreen==='function')renderPackagesScreen();
-        setScreen('packagesScreen',false); return true;
-      }
-      if(r.screen==='scores'){
-        if(typeof renderScoresMaster==='function')renderScoresMaster();
-        else if(typeof renderScores==='function')renderScores();
-        setScreen('scores',false); return true;
-      }
-      if(r.screen==='studyPlans'){
-        if(typeof renderStudyPlans==='function')renderStudyPlans();
-        setScreen('studyPlans',false); return true;
-      }
-      if(r.screen==='studyPlanDetail'){
-        if(typeof renderStudyPlanDetail==='function')renderStudyPlanDetail();
-        else if(typeof renderPlanDetailV4==='function')renderPlanDetailV4();
-        setScreen('studyPlanDetail',false); return true;
-      }
-      if(r.screen==='package'){
-        if(typeof renderPackage==='function')renderPackage();
-        setScreen('package',false); return true;
-      }
-      if(r.screen==='parts'){
-        if(typeof renderSections==='function')renderSections();
-        setScreen('partsScreen',false); return true;
-      }
-      if(r.screen==='exercise'){
-        if(typeof loadCurrentSectionState==='function')loadCurrentSectionState();
-        if(typeof renderExercise==='function')renderExercise();
-        setScreen('exercise',false); return true;
-      }
-      if(r.screen==='result'){
-        if(typeof renderResult==='function')renderResult();
-        setScreen('result',false); return true;
-      }
-    }catch(e){console.error('HSK navigation render error',e);}
-    return false;
+  function toast(){
+    let el=document.getElementById('hskHardwareBackToast');
+    if(!el){
+      el=document.createElement('div');el.id='hskHardwareBackToast';el.textContent='Gunakan tombol kembali di app';
+      el.setAttribute('role','status');el.setAttribute('aria-live','polite');
+      el.style.cssText='position:fixed;left:50%;bottom:104px;transform:translateX(-50%) translateY(8px);z-index:2147483647;padding:10px 16px;border:1px solid rgba(255,255,255,.14);border-radius:12px;background:rgba(24,28,40,.96);color:#f5f7fb;font:600 14px/1.25 Roboto,system-ui,sans-serif;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .14s ease,transform .14s ease;';
+      document.body.appendChild(el);
+    }
+    el.style.opacity='1';el.style.transform='translateX(-50%) translateY(0)';
+    clearTimeout(el.__hideTimer);el.__hideTimer=setTimeout(()=>{el.style.opacity='0';el.style.transform='translateX(-50%) translateY(8px)';},1000);
   }
 
-  function pushForward(target){
-    const t=norm(target);
-    const current=decodeHash();
-    if(current && same(current,t)){
-      render(t); return;
-    }
-    const parent=parentOf(t);
-    if(current && !same(current,parent) && !same(current,home())){
-      /* Direct/deep opening: build only the missing parent, then target. */
-      setHash(parent,false);
-      setHash(t,false);
-      return;
-    }
-    if(!current && !same(parent,home()))setHash(parent,false);
-    setHash(t,false);
-  }
-
-  /* Replace legacy setScreen so existing feature functions remain intact.
-     Their existing push=false calls are render-only calls. */
+  /* Every forward navigation gets a fresh browser entry. */
   const originalSetScreen=window.setScreen;
-  if(typeof originalSetScreen==='function' && !originalSetScreen.__hskCleanV8){
+  if(typeof originalSetScreen==='function'&&!originalSetScreen.__hskSingleRouterV9){
     function routerSetScreen(name,push=true){
       const out=originalSetScreen.call(this,name,false);
-      if(push!==false && !handlingHash){
-        const target=snap();
-        pushForward(target);
+      if(push!==false && !internalChange){
+        const r=snap();
+        history.pushState(stateFor(r),'',location.href.split('#')[0]+'#'+encodeURIComponent(r.screen));
       }
       return out;
     }
-    routerSetScreen.__hskCleanV8=true;
+    routerSetScreen.__hskSingleRouterV9=true;
     routerSetScreen.__hskOriginal=originalSetScreen;
     window.setScreen=routerSetScreen;
     try{setScreen=routerSetScreen}catch(_){ }
   }
 
-  function showExitFromHome(){
-    try{
-      if(typeof window.showExit==='function')return window.showExit(true);
-      if(typeof showExit==='function')return showExit(true);
-    }catch(e){console.error('HSK exit dialog',e)}
-  }
-
-  function appBack(){
+  /* Visible app Back: render the logical parent and replace the current
+     browser entry. Chrome is never asked to go backward. */
+  function back(){
     const r=snap();
-    if(r.screen==='home')return showExitFromHome();
-    /* Never call a route-specific openX() from Back. */
-    history.back();
-  }
-  window.backRoute=appBack;
-  window.handleAppBack=appBack;
-  window.__directLayerBack=appBack;
-
-  /* Hardware/browser Back lands here. It has already moved the browser one
-     history entry. We ONLY render the selected hash; we never call back(). */
-  window.addEventListener('hashchange',function(){
-    if(handlingHash)return;
-    handlingHash=true;
+    if(r.screen==='home'){
+      try{if(typeof window.showExit==='function')window.showExit(true);else if(typeof showExit==='function')showExit(true);}catch(e){}
+      return;
+    }
+    const p=parentOf(r);
+    internalChange=true;
     try{
-      const h=location.hash||'';
-      if(h===HOME_HASH){
-        render(home());
-        showExitFromHome();
-        /* Re-arm the distinct guard entry. */
-        pushRawHash(GUARD_HASH);
-        return;
-      }
-      if(h===GUARD_HASH){
-        render(home());
-        return;
-      }
-      const r=decodeHash();
-      if(r && render(r))return;
+      window.route=norm(p);
+      render(p);
+      history.replaceState(stateFor(p),'',location.href.split('#')[0]+'#'+encodeURIComponent(p.screen));
+      /* Keep one guard entry immediately after the current app state. */
+      history.pushState(stateFor(p),'',location.href.split('#')[0]+'#'+encodeURIComponent(p.screen));
+    }finally{internalChange=false;}
+  }
+  window.backRoute=back;window.handleAppBack=back;window.__directLayerBack=back;
 
-      /* Unknown hash: normalize to protected Home without exposing Chrome. */
-      setHash(home(),false);
-    }finally{handlingHash=false;}
-  },false);
+  /* Hardware/browser Back: always cancel the browser move and stay exactly
+     where the user is. No route is rendered here. */
+  window.addEventListener('popstate',function(e){
+    if(internalChange)return;
+    toast();
+    setTimeout(function(){
+      try{history.forward();}catch(_){
+        try{history.pushState(stateFor(snap()),'',location.href);}catch(__){}
+      }
+    },0);
+  },true);
 
+  /* Close/Cancel of the exit dialog never invokes browser Back. */
   window.cancelExit=function(){
-    const m=document.getElementById('exitModal');
-    if(m)m.classList.remove('show');
+    const m=document.getElementById('exitModal');if(m)m.classList.remove('show');
     if(typeof exitFromBack!=='undefined')exitFromBack=false;
+    try{history.replaceState(stateFor(snap()),'',location.href);}catch(_){ }
+    try{history.pushState(stateFor(snap()),'',location.href);}catch(_){ }
   };
 
   function initialize(){
     if(initialized)return;
-    if(!window.currentUsername && typeof currentUsername!=='undefined' && !currentUsername)return;
+    if(!window.currentUsername&&typeof currentUsername!=='undefined'&&!currentUsername)return;
     initialized=true;
-
-    /* Start every document with a deterministic protected Home pair. */
-    const base=location.href.split('#')[0];
-    history.replaceState(null,'',base+HOME_HASH);
-    location.hash=GUARD_HASH.slice(1);
-    render(home());
+    const r=snap();
+    internalChange=true;
+    try{
+      /* Collapse whatever old router left behind. The current visible route
+         becomes the sole logical app state, followed by one guard entry. */
+      history.replaceState(stateFor(r),'',location.href.split('#')[0]+'#'+encodeURIComponent(r.screen));
+      history.pushState(stateFor(r),'',location.href.split('#')[0]+'#'+encodeURIComponent(r.screen));
+      render(r);
+    }finally{internalChange=false;}
   }
-
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initialize,{once:true});
-  else initialize();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initialize,{once:true});else initialize();
 })();
 </script>
 
