@@ -4541,5 +4541,105 @@ body:has(#home.active) #topBack{display:none!important;}
 }
 </style>
 
+
+<!-- FINAL TARGETED REPAIR: restore package long-press only. -->
+<script id="finalPackageLongPressRestoreOnly">
+(function(){
+  'use strict';
+
+  /*
+   * The current package renderer uses nested buttons and several existing
+   * navigation guards. Keep those intact. This is only a touch fallback for
+   * the package-card long press, plus a short duplicate-open guard because the
+   * existing pointer handler may also receive the same Android touch.
+   */
+  const state = window.__finalPackageLongPressRestore =
+    window.__finalPackageLongPressRestore || {
+      timer:null, x:0, y:0, code:null, lastOpen:0, lastCode:null
+    };
+
+  const isPackageTile = el =>
+    el && el.closest && el.closest(
+      '#packagesScreen .packageTile[data-package-code]'
+    );
+
+  const isPickerOpen = () => {
+    const m = document.getElementById('studyPlanPickerModal');
+    return !!(m && m.classList.contains('show'));
+  };
+
+  /* Deduplicate the two possible touch/pointer long-press paths. */
+  const originalPicker = window.openStudyPlanPicker;
+  if (typeof originalPicker === 'function' && !originalPicker.__longPressDedup) {
+    const wrappedPicker = function(code){
+      const now = Date.now();
+      if (
+        state.lastCode === String(code) &&
+        now - state.lastOpen < 900 &&
+        isPickerOpen()
+      ) return;
+      state.lastCode = String(code);
+      state.lastOpen = now;
+      return originalPicker.apply(this, arguments);
+    };
+    wrappedPicker.__longPressDedup = true;
+    window.openStudyPlanPicker = wrappedPicker;
+  }
+
+  function clear(){
+    if(state.timer){
+      clearTimeout(state.timer);
+      state.timer = null;
+    }
+    state.code = null;
+  }
+
+  document.addEventListener('touchstart', function(e){
+    const tile = isPackageTile(e.target);
+    if(!tile) return;
+
+    const touch = e.touches && e.touches[0];
+    if(!touch) return;
+
+    clear();
+    state.x = touch.clientX;
+    state.y = touch.clientY;
+    state.code = tile.dataset.packageCode;
+
+    state.timer = setTimeout(function(){
+      state.timer = null;
+      const code = state.code;
+      if(!code) return;
+
+      /* Suppress the synthetic click generated after the long press. */
+      const r = window.__functionalRepairV4;
+      const master = window.__packageLongPressMaster;
+      const until = Date.now() + 900;
+
+      if(r) r.suppressUntil = until;
+      if(master) master.suppressPackageClickUntil = until;
+      window.suppressPackageClickUntil = until;
+      window.__suppressPackageClickUntil = until;
+
+      if(typeof window.openStudyPlanPicker === 'function'){
+        window.openStudyPlanPicker(code);
+      }
+    }, 650);
+  }, {passive:true});
+
+  document.addEventListener('touchmove', function(e){
+    if(!state.timer) return;
+    const touch = e.touches && e.touches[0];
+    if(!touch) return;
+    if(Math.hypot(touch.clientX-state.x, touch.clientY-state.y) > 14){
+      clear();
+    }
+  }, {passive:true});
+
+  document.addEventListener('touchend', clear, {passive:true});
+  document.addEventListener('touchcancel', clear, {passive:true});
+})();
+</script>
+
 </body>
 </html>
