@@ -1268,8 +1268,10 @@ window.loadPackageLazy=async function(code){
 })();
 
 async function initApp(){
-  try{await window.loadDynamicFolderCatalog()}catch(e){console.error("[HSK] Dynamic catalog:",e)}
+  // Boot from the local manifest first so the UI never depends on a remote
+  // GitHub API request completing. Folder discovery continues in the background.
   await loadQuestionData();
+  window.loadDynamicFolderCatalog?.().catch(e=>console.warn('[HSK] Dynamic catalog:',e));
   try{const savedTheme=localStorage.getItem('hsk-theme');applyTheme(savedTheme==='dark'?'dark':'light')}catch(e){applyTheme('light')}
   route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;
   currentUsername=getUsername();
@@ -4917,11 +4919,20 @@ body.dark #packagesScreen .packageTile-green{--accent:#58c79d;--accentSoft:#2138
   function currentKeyFinal(){return String(window.__finalFolderKey||route?.materialKey||selectedHSKLevel||'');}
   function setKeyFinal(k){window.__finalFolderKey=String(k);selectedHSKLevel=String(k);window.__cleanMaterialKey=String(k)}
   function ensureStubsFinal(){
-    const g=groups();
-    for(const f of g.flatMap(x=>x.codes)){
-      if(DB[f])continue;
-      // Lightweight placeholder only. The real JSON is fetched on package open.
-      DB[f]=/^HSK\s*4$/i.test(x.name)?{code:f,__lazy:true,listening:[{title:'听力 · 第一部分',range:'',questions:Array.from({length:45},(_,i)=>[String(i+1),'','',''])}],reading:[{title:'阅读 · 第一部分',range:'',questions:Array.from({length:40},(_,i)=>[String(i+1),'','',''])}],writing:[{title:'书写 · 第一部分',range:'',questions:Array.from({length:15},(_,i)=>[String(i+1),'','',''])}]}:{code:f,__lazy:true};
+    const gs=groups();
+    for(const g of gs){
+      const isHsk4=/^HSK\s*4$/i.test(g.name);
+      for(const f of g.codes){
+        if(DB[f])continue;
+        // Lightweight placeholder only. The real JSON is fetched on package open.
+        // HSK 4 keeps its known 45/40/15 catalog counts so progress can render
+        // before the question body is lazy-loaded.
+        DB[f]=isHsk4?{code:f,__lazy:true,
+          listening:[{title:'听力 · 第一部分',range:'',questions:Array.from({length:45},(_,i)=>[String(i+1),'','',''])}],
+          reading:[{title:'阅读 · 第一部分',range:'',questions:Array.from({length:40},(_,i)=>[String(i+1),'','',''])}],
+          writing:[{title:'书写 · 第一部分',range:'',questions:Array.from({length:15},(_,i)=>[String(i+1),'','',''])}]
+        }:{code:f,__lazy:true};
+      }
     }
   }
   function titleForFinal(code){
