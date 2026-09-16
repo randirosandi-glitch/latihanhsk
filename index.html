@@ -4243,255 +4243,275 @@ body.dark #packagesGrid .packageHanziIcon{
 (function(){
   'use strict';
   /*
-    CLEAN HSK HISTORY MODEL
-    -----------------------
-    Browser history represents the app's real screen stack.
-    - Every normal in-app navigation (setScreen(..., true)) creates ONE
-      history entry containing the current route.
-    - Hardware/browser Back consumes that entry with one popstate and renders
-      the route that was actually below it.
-    - Home owns a second, protected entry. Back on Home therefore produces the
-      Exit dialog instead of allowing Chrome to leave the document.
-    - No sentinel + history.go(1), no synthetic popstate, and no second Back
-      controller are used.
-  */
-  if(window.__hskNavigationController)return;
+   * SINGLE APP NAVIGATION CONTROLLER
+   *
+   * Important rule:
+   * - Forward navigation creates history entries.
+   * - App Back only calls history.back().
+   * - popstate NEVER calls history.back() again; it renders e.state.
+   * - Home is protected by a two-entry boundary so Chrome never receives
+   *   an empty history from an in-app Back operation.
+   */
+  if(window.__hskNavigationControllerV7)return;
+  window.__hskNavigationControllerV7=true;
   window.__hskNavigationController=true;
 
+  const APP='__hskAppV7', IDX='__hskIndexV7', GUARD='__hskHomeGuardV7';
   let handlingPop=false;
-  const HOME_GUARD='__hskHomeGuardV3';
+  let initialized=false;
 
-  function routeSnapshot(){
-    const r=window.route||{};
+  function norm(s){
     return {
-      screen:String(r.screen||'home'),
-      packageCode:r.packageCode??null,
-      type:r.type??null,
-      sectionIndex:r.sectionIndex??null,
-      studyPlanId:r.studyPlanId??null
+      screen:String(s?.screen||'home'),
+      packageCode:s?.packageCode??null,
+      type:s?.type??null,
+      sectionIndex:s?.sectionIndex??null,
+      studyPlanId:s?.studyPlanId??null
     };
   }
-
-  function urlFor(r){
-    return location.pathname+location.search+'#'+String(r.screen||'home');
+  function snap(){return norm(window.route||{});}
+  function same(a,b){
+    a=norm(a); b=norm(b);
+    return a.screen===b.screen &&
+      String(a.packageCode??'')===String(b.packageCode??'') &&
+      String(a.type??'')===String(b.type??'') &&
+      String(a.sectionIndex??'')===String(b.sectionIndex??'') &&
+      String(a.studyPlanId??'')===String(b.studyPlanId??'');
   }
+  function home(){return {screen:'home',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};}
+  function stateFor(r,index,guard){return {...norm(r),[APP]:true,[IDX]:index,[GUARD]:!!guard};}
+  function appIndex(){return Number(history.state?.[IDX]);}
+  function appState(){return history.state?.[APP]===true;}
+  function appUrl(r){return location.pathname+location.search+'#'+encodeURIComponent(String(r?.screen||'home'));}
 
-  function stateFor(r,extra){
-    return {...(extra||{}),...r};
-  }
-
-  function writeCurrentState(push){
-    const r=routeSnapshot();
-    const st=stateFor(r);
+  function render(r){
+    r=norm(r);
+    window.route=r;
     try{
-      if(push) history.pushState(st,'',urlFor(r));
-      else history.replaceState(st,'',urlFor(r));
-    }catch(e){console.warn('HSK history write failed:',e)}
-  }
-
-  function renderRoute(st){
-    const s=String(st?.screen||'home');
-    const packageCode=st?.packageCode??null;
-    const type=st?.type??null;
-    const sectionIndex=st?.sectionIndex??null;
-    const studyPlanId=st?.studyPlanId??null;
-
-    route={
-      screen:s,
-      packageCode:packageCode,
-      type:type,
-      sectionIndex:sectionIndex,
-      studyPlanId:studyPlanId
-    };
-
-    try{
-      if(s==='home'){
-        answers={};checked={};resultState=null;
+      if(r.screen==='home'){
         if(typeof renderHome==='function')renderHome();
-        if(typeof window.setScreen==='function')window.setScreen('home',false);
-        return;
+        setScreen('home',false);
+        return true;
       }
-      if(s==='levels'){
+      if(r.screen==='levels'){
         if(typeof renderLevelsScreen==='function')renderLevelsScreen();
-        if(typeof window.setScreen==='function')window.setScreen('levelsScreen',false);
-        return;
+        setScreen('levelsScreen',false);
+        return true;
       }
-      if(s==='packages'){
+      if(r.screen==='packages'){
         if(typeof renderPackagesScreen==='function')renderPackagesScreen();
-        if(typeof window.setScreen==='function')window.setScreen('packagesScreen',false);
-        return;
+        setScreen('packagesScreen',false);
+        return true;
       }
-      if(s==='studyPlans'){
+      if(r.screen==='scores'){
+        if(typeof renderScoresMaster==='function')renderScoresMaster();
+        setScreen('scores',false);
+        return true;
+      }
+      if(r.screen==='studyPlans'){
         if(typeof renderStudyPlans==='function')renderStudyPlans();
-        if(typeof window.setScreen==='function')window.setScreen('studyPlans',false);
-        return;
+        setScreen('studyPlans',false);
+        return true;
       }
-      if(s==='studyPlanDetail'){
+      if(r.screen==='studyPlanDetail'){
         if(typeof renderStudyPlanDetail==='function')renderStudyPlanDetail();
-        else if(typeof window.renderPlanDetailV4==='function')window.renderPlanDetailV4();
-        if(typeof window.setScreen==='function')window.setScreen('studyPlanDetail',false);
-        return;
+        else if(typeof renderPlanDetailV4==='function')renderPlanDetailV4();
+        setScreen('studyPlanDetail',false);
+        return true;
       }
-      if(s==='package'){
+      if(r.screen==='package'){
         if(typeof renderPackage==='function')renderPackage();
-        if(typeof window.setScreen==='function')window.setScreen('package',false);
-        return;
+        setScreen('package',false);
+        return true;
       }
-      if(s==='parts'){
+      if(r.screen==='parts'){
         if(typeof renderSections==='function')renderSections();
-        if(typeof window.setScreen==='function')window.setScreen('partsScreen',false);
-        return;
+        setScreen('partsScreen',false);
+        return true;
       }
-      if(s==='exercise'){
+      if(r.screen==='exercise'){
         if(typeof loadCurrentSectionState==='function')loadCurrentSectionState();
         if(typeof renderExercise==='function')renderExercise();
-        if(typeof window.setScreen==='function')window.setScreen('exercise',false);
-        return;
+        setScreen('exercise',false);
+        return true;
       }
-      if(s==='result'){
+      if(r.screen==='result'){
         if(typeof renderResult==='function')renderResult();
-        if(typeof window.setScreen==='function')window.setScreen('result',false);
-        return;
+        setScreen('result',false);
+        return true;
       }
-      /* Unknown/legacy state: fail safely to Home, never to browser history. */
-      const home={screen:'home',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
-      route=home;
-      if(typeof renderHome==='function')renderHome();
-      if(typeof window.setScreen==='function')window.setScreen('home',false);
+      console.warn('HSK router: unknown screen',r.screen);
+      return false;
     }catch(e){
-      console.error('HSK route render failed:',e);
-      try{
-        route={screen:'home',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
-        if(typeof renderHome==='function')renderHome();
-        if(typeof window.setScreen==='function')window.setScreen('home',false);
-      }catch(_){ }
+      console.error('HSK router render error',e);
+      return false;
     }
   }
 
-  function armHomeGuard(){
-    const r=routeSnapshot();
-    if(r.screen!=='home')return;
-    const current=history.state||{};
-    const base=stateFor(r);
-    try{
-      /* Keep the current Home entry as the normal app state, then add exactly
-         one protected Home entry above it. */
-      history.replaceState({...base,[HOME_GUARD]:false},'',urlFor(r));
-      history.pushState({...base,[HOME_GUARD]:true},'',urlFor(r));
-    }catch(e){console.warn('HSK Home guard failed:',e)}
+  function parentOf(r){
+    r=norm(r);
+    switch(r.screen){
+      case 'studyPlanDetail':
+        return home().screen==='home' ? {screen:'studyPlans',packageCode:null,type:null,sectionIndex:null,studyPlanId:null} : home();
+      case 'package':
+        return r.studyPlanId
+          ? {screen:'studyPlanDetail',packageCode:null,type:null,sectionIndex:null,studyPlanId:r.studyPlanId}
+          : {screen:'packages',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
+      case 'parts':
+        return {screen:'package',packageCode:r.packageCode,type:null,sectionIndex:null,studyPlanId:r.studyPlanId};
+      case 'exercise':
+        return {screen:'parts',packageCode:r.packageCode,type:r.type,sectionIndex:null,studyPlanId:r.studyPlanId};
+      case 'result':
+        return {screen:'exercise',packageCode:r.packageCode,type:r.type,sectionIndex:r.sectionIndex,studyPlanId:r.studyPlanId};
+      case 'packages': return {screen:'levels',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
+      case 'levels':
+      case 'scores':
+      case 'studyPlans': return home();
+      default: return home();
+    }
   }
 
-  function goHomeFromCurrent(){
-    const home={screen:'home',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
-    renderRoute(home);
-    /* Replace the popped entry with normal Home and put one protected Home
-       entry above it. This prevents Chrome from seeing an app-empty stack. */
-    try{
-      history.replaceState({...home,[HOME_GUARD]:false},'',urlFor(home));
-      history.pushState({...home,[HOME_GUARD]:true},'',urlFor(home));
-    }catch(e){console.warn('HSK Home restore failed:',e)}
+  function resetHomeBoundary(){
+    const h=home();
+    history.replaceState(stateFor(h,0,false),'',appUrl(h));
+    history.pushState(stateFor(h,1,true),'',appUrl(h));
   }
 
-  /*
-    setScreen is the single point where normal app navigation becomes browser
-    history. Existing callers already pass true/false as their second argument.
-    We preserve that API and ignore legacy push implementations inside the
-    original function.
-  */
+  function ensureForwardEntry(target){
+    const t=norm(target);
+    const cur=history.state;
+    const ci=appIndex();
+    const parent=parentOf(t);
+
+    /* The normal path: current entry is the logical parent. */
+    if(appState() && Number.isFinite(ci) && same(cur,parent)){
+      history.pushState(stateFor(t,ci+1,false),'',appUrl(t));
+      return;
+    }
+
+    /* If a feature opened a nested screen directly, create the missing
+       logical parent(s) without destroying the current app page. */
+    if(appState() && Number.isFinite(ci) && ci>=1){
+      const nextIndex=ci+1;
+      if(!same(cur,parent)){
+        history.pushState(stateFor(parent,nextIndex,false),'',appUrl(parent));
+        history.pushState(stateFor(t,nextIndex+1,false),'',appUrl(t));
+      }else{
+        history.pushState(stateFor(t,nextIndex,false),'',appUrl(t));
+      }
+      return;
+    }
+
+    /* Startup/external history: establish our protected Home boundary first. */
+    resetHomeBoundary();
+    if(!same(parent,home()))history.pushState(stateFor(parent,2,false),'',appUrl(parent));
+    history.pushState(stateFor(t,same(parent,home())?2:3,false),'',appUrl(t));
+  }
+
+  /* Intercept the legacy setScreen only for forward history bookkeeping.
+     Rendering remains owned by the existing application functions. */
   const originalSetScreen=window.setScreen;
-  if(typeof originalSetScreen==='function'&&!originalSetScreen.__hskNavigationClean){
-    function cleanSetScreen(name,push){
+  if(typeof originalSetScreen==='function'&&!originalSetScreen.__hskSingleRouterV7){
+    function routerSetScreen(name,push=true){
       const out=originalSetScreen.call(this,name,false);
-      if(push!==false&&!handlingPop){
-        writeCurrentState(true);
+      if(push!==false && !handlingPop){
+        ensureForwardEntry(snap());
       }
       return out;
     }
-    cleanSetScreen.__hskNavigationClean=true;
-    cleanSetScreen.__hskNavigationOriginal=originalSetScreen;
-    window.setScreen=cleanSetScreen;
-    try{setScreen=cleanSetScreen}catch(_){ }
+    routerSetScreen.__hskSingleRouterV7=true;
+    routerSetScreen.__hskOriginal=originalSetScreen;
+    window.setScreen=routerSetScreen;
+    try{setScreen=routerSetScreen}catch(_){ }
   }
 
-  /* One and only one application Back entry point. */
-  function appBack(){
-    if(handlingPop)return;
-    const r=routeSnapshot();
-    if(r.screen==='home'){
-      if(typeof window.showExit==='function')window.showExit(true);
+  function showExit(){
+    try{
+      if(typeof window.showExit==='function')return window.showExit(true);
+      if(typeof showExit==='function')return showExit(true);
+    }catch(e){console.error('HSK exit dialog',e)}
+  }
+
+  /* UI Back: Home shows Exit; every internal page asks the browser to move
+     exactly one entry backward. No route-specific openX() calls here. */
+  function back(){
+    const r=snap();
+    if(r.screen==='home')return showExit();
+    if(appState() && Number.isFinite(appIndex()) && appIndex()>1){
+      history.back();
       return;
     }
-    /* Normal app layers are represented in browser history. */
-    try{history.back()}catch(e){console.warn('HSK app back failed:',e);goHomeFromCurrent()}
+    /* Broken/missing app state: repair in place, never delegate to Chrome. */
+    resetHomeBoundary();
+    render(home());
   }
-  window.backRoute=appBack;
-  window.handleAppBack=appBack;
-  window.__directLayerBack=appBack;
+  window.backRoute=back;
+  window.handleAppBack=back;
+  window.__directLayerBack=back;
 
-  /* The ONLY hardware/browser Back listener. */
+  /* HARDWARE / BROWSER BACK:
+     The browser has ALREADY moved to e.state. We only render that state.
+     Calling back() here was the old bug that caused one Back to skip a level
+     and eventually show Exit. */
   window.addEventListener('popstate',function(e){
     if(handlingPop)return;
     handlingPop=true;
-    try{e.stopImmediatePropagation()}catch(_){ }
     try{
-      const st=e.state||{};
-      if(String(st.screen||'')==='home'){
-        const home={screen:'home',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
-        route=home;
-        if(typeof renderHome==='function')renderHome();
-        if(typeof window.setScreen==='function')window.setScreen('home',false);
-
-        if(st[HOME_GUARD]===true){
-          /* We arrived at Home from an inner app layer. Do NOT show Exit.
-             The popped entry itself is the protected Home entry; normalize it
-             into a normal Home entry and put one fresh protected entry above it. */
-          try{
-            history.replaceState({...home,[HOME_GUARD]:false},'',urlFor(home));
-            history.pushState({...home,[HOME_GUARD]:true},'',urlFor(home));
-          }catch(err){console.warn('HSK Home guard rebuild failed:',err)}
-        }else{
-          /* We are already on Home and the user pressed hardware Back again.
-             This is the ONLY situation where Back means Exit. Push the guard
-             back immediately so Chrome never receives this Back as navigation. */
-          try{
-            history.pushState({...home,[HOME_GUARD]:true},'',urlFor(home));
-          }catch(err){console.warn('HSK Home trap failed:',err)}
-          if(typeof window.showExit==='function')window.showExit(true);
+      const s=e.state;
+      if(s?.[APP]===true){
+        const r=norm(s);
+        const ci=Number(s[IDX]);
+        if(r.screen==='home'){
+          render(r);
+          /* If this was the unguarded Home boundary (index 0), immediately
+             restore the protected Home entry after showing Exit. */
+          if(s[GUARD]!==true){
+            showExit();
+            history.replaceState(stateFor(home(),0,false),'',appUrl(home()));
+            history.pushState(stateFor(home(),1,true),'',appUrl(home()));
+          }
+          return;
         }
-        return;
+        if(Number.isFinite(ci) && ci>=2){
+          render(r);
+          return;
+        }
       }
-      if(st.screen){
-        renderRoute(st);
-        return;
-      }
-      /* No HSK state means we have reached the browser's real entry. Never
-         let the app intentionally fall through to Chrome. */
-      goHomeFromCurrent();
+
+      /* A foreign/unexpected history entry must never be allowed to close the
+         document. Replace it with our protected Home boundary. */
+      resetHomeBoundary();
+      render(home());
     }catch(err){
-      console.error('HSK hardware Back:',err);
-      goHomeFromCurrent();
+      console.error('HSK popstate',err);
+      try{resetHomeBoundary();render(home())}catch(_){ }
     }finally{
       handlingPop=false;
     }
   },true);
 
   window.cancelExit=function(){
-    const modal=document.getElementById('exitModal');
-    if(modal)modal.classList.remove('show');
+    const m=document.getElementById('exitModal');
+    if(m)m.classList.remove('show');
     if(typeof exitFromBack!=='undefined')exitFromBack=false;
-    /* Recreate the protected Home entry only when the app is actually on Home. */
-    if(String(route?.screen||'')==='home')armHomeGuard();
+    if(!appState() || !Number.isFinite(appIndex())){
+      try{resetHomeBoundary()}catch(_){ }
+    }
   };
 
   function initialize(){
-    if(!window.currentUsername && typeof currentUsername!=='undefined'&&!currentUsername)return;
-    const r=routeSnapshot();
-    if(r.screen==='home'){
-      /* Startup/auth code may already have replaced the URL. Normalize it once
-         and create exactly one protected Home entry. */
-      armHomeGuard();
+    if(initialized)return;
+    if(!window.currentUsername&&typeof currentUsername!=='undefined'&&!currentUsername)return;
+    initialized=true;
+    const r=snap();
+    resetHomeBoundary();
+    if(!same(r,home())){
+      const p=parentOf(r);
+      if(!same(p,home()))history.pushState(stateFor(p,2,false),'',appUrl(p));
+      history.pushState(stateFor(r,same(p,home())?2:3,false),'',appUrl(r));
+      render(r);
     }else{
-      writeCurrentState(false);
+      render(home());
     }
   }
 
