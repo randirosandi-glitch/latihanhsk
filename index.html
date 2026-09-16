@@ -4255,11 +4255,11 @@ body.dark #packagesGrid .packageHanziIcon{
    * The browser history is only used as a sacrificial guard entry so that
    * Android/Chrome cannot escape the app when hardware Back is pressed.
    */
-  if(window.__hskNavigationControllerV9)return;
-  window.__hskNavigationControllerV9=true;
+  if(window.__hskNavigationControllerV10)return;
+  window.__hskNavigationControllerV10=true;
   window.__hskNavigationController=true;
 
-  const APP='__hskAppV9';
+  const APP='__hskAppV10';
   let internalChange=false;
   let initialized=false;
 
@@ -4321,7 +4321,7 @@ body.dark #packagesGrid .packageHanziIcon{
 
   /* Every forward navigation gets a fresh browser entry. */
   const originalSetScreen=window.setScreen;
-  if(typeof originalSetScreen==='function'&&!originalSetScreen.__hskSingleRouterV9){
+  if(typeof originalSetScreen==='function'&&!originalSetScreen.__hskSingleRouterV10){
     function routerSetScreen(name,push=true){
       const out=originalSetScreen.call(this,name,false);
       if(push!==false && !internalChange){
@@ -4330,16 +4330,39 @@ body.dark #packagesGrid .packageHanziIcon{
       }
       return out;
     }
-    routerSetScreen.__hskSingleRouterV9=true;
+    routerSetScreen.__hskSingleRouterV10=true;
     routerSetScreen.__hskOriginal=originalSetScreen;
     window.setScreen=routerSetScreen;
     try{setScreen=routerSetScreen}catch(_){ }
   }
 
-  /* Visible app Back: render the logical parent and replace the current
-     browser entry. Chrome is never asked to go backward. */
-  function back(){
+  /* Visible app Back: use the ACTUAL visible app layer, not browser history.
+     Some legacy feature functions can leave window.route stale while the
+     correct .screen is visibly active. Reading the active screen first keeps
+     the app Back button deterministic and prevents false Exit dialogs. */
+  function visibleRoute(){
+    const active=document.querySelector('.screen.active');
+    const id=active?.id||'';
     const r=snap();
+    const out=norm(r);
+    const map={
+      home:'home',
+      levelsScreen:'levels',
+      packagesScreen:'packages',
+      scores:'scores',
+      studyPlans:'studyPlans',
+      studyPlanDetail:'studyPlanDetail',
+      package:'package',
+      partsScreen:'parts',
+      exercise:'exercise',
+      result:'result'
+    };
+    if(map[id])out.screen=map[id];
+    return out;
+  }
+  function back(){
+    const r=visibleRoute();
+    /* Only the real Home screen may open the Exit confirmation. */
     if(r.screen==='home'){
       try{if(typeof window.showExit==='function')window.showExit(true);else if(typeof showExit==='function')showExit(true);}catch(e){}
       return;
@@ -4348,10 +4371,14 @@ body.dark #packagesGrid .packageHanziIcon{
     internalChange=true;
     try{
       window.route=norm(p);
+      /* Keep the Study Plan detail identifier used by the legacy renderer. */
+      if(p.screen==='studyPlanDetail' && typeof studyPlanDetailId!=='undefined' && studyPlanDetailId==null){
+        const candidate=r.studyPlanId;
+        if(candidate!=null)studyPlanDetailId=candidate;
+      }
       render(p);
-      history.replaceState(stateFor(p),'',location.href.split('#')[0]+'#'+encodeURIComponent(p.screen));
-      /* Keep one guard entry immediately after the current app state. */
-      history.pushState(stateFor(p),'',location.href.split('#')[0]+'#'+encodeURIComponent(p.screen));
+    }catch(e){
+      console.error('HSK app Back error',e);
     }finally{internalChange=false;}
   }
   window.backRoute=back;window.handleAppBack=back;window.__directLayerBack=back;
@@ -4372,8 +4399,6 @@ body.dark #packagesGrid .packageHanziIcon{
   window.cancelExit=function(){
     const m=document.getElementById('exitModal');if(m)m.classList.remove('show');
     if(typeof exitFromBack!=='undefined')exitFromBack=false;
-    try{history.replaceState(stateFor(snap()),'',location.href);}catch(_){ }
-    try{history.pushState(stateFor(snap()),'',location.href);}catch(_){ }
   };
 
   function initialize(){
