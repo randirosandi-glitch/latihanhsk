@@ -2280,13 +2280,13 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       const x=packageStats(code);
       const status=x.total&&x.answered>=x.total?'Selesai':x.answered?'Sedang berjalan':'Belum dimulai';
       return `<div class="studyPlanPackage" role="button" tabindex="0"
-        onclick="openPackage('${escHtml(code)}')"
-        onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openPackage('${escHtml(code)}')}">
+        onclick="openPackageFromStudyPlan('${escHtml(p.id)}','${escHtml(code)}')"
+        onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openPackageFromStudyPlan('${escHtml(p.id)}','${escHtml(code)}')}">
         <div class="studyPlanPackageNum">${String(i+1).padStart(2,'0')}</div>
         <div class="studyPlanPackageMain"><strong>${escHtml(DB[code]?.title||('Paket '+code))}</strong><span>${x.answered}/${x.total} soal terjawab · ${status}</span></div>
         <span class="studyPlanPackagePct">${x.pct||0}%</span>
         <div class="studyPlanPackageActions">
-          <button type="button" onclick="event.stopPropagation();openPackage('${escHtml(code)}')" title="Buka paket">→</button>
+          <button type="button" onclick="event.stopPropagation();openPackageFromStudyPlan('${escHtml(p.id)}','${escHtml(code)}')" title="Buka paket">→</button>
           <button type="button" onclick="event.stopPropagation();removePackageFromStudyPlan('${escHtml(p.id)}','${escHtml(code)}')" title="Hapus dari rencana">×</button>
         </div>
       </div>`;
@@ -2403,6 +2403,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       const st=packageStats(code);
       return !st.total || st.answered<st.total;
     })||p.packageCodes[0];
+    route.studyPlanId=String(p.id);
     window.openPackage(target);
   };
 
@@ -3510,52 +3511,21 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 })();
 </script>
 
-<script id="navigationControllerFINALV6">
+<script id="navigationControllerFINALV7_PLAN_AWARE">
 (function(){
   'use strict';
-
-  /*
-   * SINGLE SOURCE OF TRUTH FOR BACK.
-   *
-   * The file contains older feature patches which previously overwrote
-   * window.backRoute. This controller is intentionally placed LAST so
-   * the final global button handler and the physical Android Back handler
-   * use the exact same hierarchy.
-   */
-
-  const C=window.__navigationControllerFINALV6=window.__navigationControllerFINALV6||{};
+  const C=window.__navigationControllerFINALV7_PLAN_AWARE=window.__navigationControllerFINALV7_PLAN_AWARE||{};
   if(C.installed)return;
 
-  function screen(){
-    return String(route?.screen||'home');
-  }
-
-  function makeState(){
-    return {
-      ...(history.state||{}),
-      ...(route||{}),
-      __hskBackSentinel:true,
-      homeGuard:screen()==='home'
-    };
-  }
+  function screen(){ return String(route?.screen||'home'); }
 
   function arm(){
-    const s=screen();
-    const h=history.state||{};
-    const hash='#'+s;
-
-    /*
-     * If the current entry is already our sentinel for this exact screen,
-     * do nothing. This prevents duplicate sentinels when goHome() calls
-     * armHome() internally.
-     */
-    if(h.__hskBackSentinel && location.hash===hash)return;
-
     try{
-      history.replaceState(makeState(),'',
-        location.pathname+location.search+hash);
-      history.pushState(makeState(),'',
-        location.pathname+location.search+hash);
+      const hash='#'+screen(), h=history.state||{};
+      if(h.__hskBackSentinel && location.hash===hash)return;
+      const st={...(h||{}),...(route||{}),__hskBackSentinel:true,homeGuard:screen()==='home'};
+      history.replaceState(st,'',location.pathname+location.search+hash);
+      history.pushState({...st},'',location.pathname+location.search+hash);
     }catch(e){}
   }
 
@@ -3564,41 +3534,77 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   }
 
   function goHomeLayer(){
-    if(typeof goHome==='function')return goHome(false);
-    route={screen:'home',packageCode:null,type:null,sectionIndex:null};
+    if(typeof window.goHome==='function')return window.goHome(false);
+    route={screen:'home',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
     if(typeof setScreen==='function')setScreen('home',false);
   }
 
-  function goLevels(){
-    if(typeof openPackages==='function')return openPackages(false);
+  function goLevels(){ return window.openPackages(false); }
+
+  /*
+   * Explicit Study Plan entry point.
+   * Set the return context BEFORE calling the active database-backed
+   * openPackage() function.
+   */
+  window.openPackageFromStudyPlan=function(planId,code){
+    if(!code)return;
+    route.studyPlanId=String(planId||'');
+    return window.openPackage(code,true);
+  };
+
+  /*
+   * Preserve plan context for the "Lanjutkan" button even if an older
+   * implementation is the one that receives the call.
+   */
+  const oldContinue=window.continueStudyPlan;
+  if(typeof oldContinue==='function' && !C.continueWrapped){
+    C.continueWrapped=true;
+    window.continueStudyPlan=function(id){
+      const p=(typeof getPlanMaster==='function'?getPlanMaster(id):
+               typeof getPlan==='function'?getPlan(id):null);
+      if(p)route.studyPlanId=String(p.id);
+      return oldContinue(id);
+    };
   }
 
   function back(){
     switch(screen()){
       case 'exercise':
-        return openSections(route.packageCode,route.type,false);
+        return window.openSections(route.packageCode,route.type,false);
 
       case 'result':
-        if(typeof returnToQuestions==='function')return returnToQuestions();
-        return openSections(route.packageCode,route.type,false);
+        if(typeof window.returnToQuestions==='function')return window.returnToQuestions();
+        return window.openSections(route.packageCode,route.type,false);
 
       case 'parts':
-        return openPackage(route.packageCode,false);
+        return window.openPackage(route.packageCode,false);
 
       case 'package':
-        return openLevelPackages(selectedHSKLevel,false);
+        /*
+         * Package opened from Rencana -> SAME Rencana detail.
+         * Generic package navigation still returns to the package list.
+         */
+        if(route.studyPlanId){
+          const id=String(route.studyPlanId);
+          const exists=(typeof getPlanMaster==='function' && getPlanMaster(id)) ||
+                       (typeof getPlan==='function' && getPlan(id));
+          if(exists && typeof window.openStudyPlan==='function'){
+            return window.openStudyPlan(id,false);
+          }
+        }
+        return window.openLevelPackages(selectedHSKLevel,false);
 
-      case 'packages':
-        return goLevels();
+      case 'studyPlanDetail':
+        return window.openStudyPlans(false);
+
+      case 'studyPlans':
+        return goHomeLayer();
 
       case 'levels':
         return goHomeLayer();
 
-      case 'studyPlanDetail':
-        return openStudyPlans(false);
-
-      case 'studyPlans':
-        return goHomeLayer();
+      case 'packages':
+        return goLevels();
 
       case 'home':
       default:
@@ -3606,47 +3612,22 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     }
   }
 
-  /*
-   * Force internal app navigation to stay inside the SPA.
-   * We preserve the existing setScreen behavior but suppress browser
-   * history entries; the sentinel is restored after every navigation.
-   */
-  const originalSetScreen=window.setScreen;
-  if(typeof originalSetScreen==='function' && !C.setScreenWrapped){
-    C.setScreenWrapped=true;
-    window.setScreen=function(name,push){
-      const result=originalSetScreen.call(this,name,false);
-      setTimeout(arm,0);
-      return result;
-    };
-  }
-
   window.backRoute=back;
   window.__directLayerBack=back;
 
-  /*
-   * Hardware/Chrome Back: exactly one listener.
-   * The sentinel is consumed by the browser, then we move one app layer.
-   * At Home we show the exit warning and immediately re-arm the sentinel,
-   * so the browser itself is never allowed to close the tab.
-   */
   window.addEventListener('popstate',function(){
-    try{
-      back();
-    }catch(e){
+    try{ back(); }
+    catch(e){
       console.error('HSK Back navigation:',e);
       goHomeLayer();
-    }finally{
-      setTimeout(arm,0);
     }
+    finally{ setTimeout(arm,0); }
   },{passive:true});
 
-  /*
-   * If the user cancels the exit dialog, keep the Home sentinel alive.
-   */
-  const oldCancel=window.cancelExit;
   window.cancelExit=function(){
-    if(typeof oldCancel==='function')oldCancel();
+    const modal=document.getElementById('exitModal');
+    if(modal)modal.classList.remove('show');
+    if(typeof exitFromBack!=='undefined')exitFromBack=false;
     setTimeout(arm,0);
   };
 
