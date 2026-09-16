@@ -1,12 +1,11 @@
 /* Dynamic HSK data-folder catalog bootstrap.
- *
  * Package categories come directly from folders under /data.
  * JSON filenames become package codes. Empty folders are ignored.
  */
 (function(){
   'use strict';
   const REPO='randirosandi-glitch/latihanhsk';
-  const BRANCH='main';
+  const BRANCH='refactor/dynamic-folder-catalog';
   const ROOT='https://api.github.com/repos/'+REPO+'/contents/data';
   const state=window.__folderCatalog={groups:[],byCode:new Map(),ready:false,error:null};
 
