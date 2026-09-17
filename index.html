@@ -857,7 +857,7 @@ body.dark .bootMark,body.dark .authMark,body.dark .topBrandMark{background:trans
 </section>
 <section class="screen" id="packagesScreen">
 <div class="section packagePageHead"><div class="sectionKicker" id="packageLevelKicker">HSK 4</div><h2 id="packagePageTitle">Pilih paket</h2><div class="sub" id="packagePageSub">25 paket latihan tersedia.</div></div>
-<div class="packageTools"><div class="packageSearchBox" id="packageSearchWrap"><span aria-hidden="true" class="material-symbols-rounded ico">search</span><input aria-label="Cari paket" autocomplete="off" id="packageSearchInput" inputmode="search" oninput="filterPackages(this.value)" placeholder="Cari paket" type="search"/><button aria-label="Hapus pencarian" onclick="clearPackageSearch()" title="Hapus" type="button"><span aria-hidden="true" class="material-symbols-rounded ico">close</span></button></div></div>
+<div class="packageTools"><div class="packageSearchBox" id="packageSearchWrap"><span aria-hidden="true" class="material-symbols-rounded ico">search</span><input aria-label="Cari paket" autocomplete="off" id="packageSearchInput" inputmode="search" oninput="filterPackages(this.value)" placeholder="Cari paket" type="search"/><button aria-label="Hapus pencarian" onclick="clearPackageSearch()" title="Hapus" type="button"><span aria-hidden="true" class="material-symbols-rounded ico">close</span></button></div></div><div class="packagePlanHint"><span aria-hidden="true" class="material-symbols-rounded ico">touch_long</span><span>Tekan lama kartu paket untuk memasukkannya ke <b>Rencana</b>.</span></div>
 <div class="comingSoonPanel" hidden="" id="hsk5Panel"><div class="comingIcon">5</div><div><strong>HSK 5</strong><span>Coming soon</span><small>Paket HSK 5 sedang dipersiapkan.</small></div></div>
 <div class="grid" id="packagesGrid"></div>
 </section>
@@ -1582,7 +1582,7 @@ document.addEventListener('hsk:data-ready',ensureWorkbook4bLevelCard,{once:true}
   let studyPlanPickerQuery="";
   let studyPlanPickerLevel=4;
   let studyPlanPickerSource="hsk:4";
-  let suppressPackageClickUntil=0;
+  let longPressTimer=null,longPressStartX=0,longPressStartY=0,longPressTriggered=false,suppressPackageClickUntil=0;
   function plansStore(){const s=readStore();return Array.isArray(s[PLAN_KEY])?s[PLAN_KEY]:[]}
   function savePlans(plans){const s=readStore();s[PLAN_KEY]=plans;writeStore(s);scheduleCloudSync()}
   function getPlan(id){return plansStore().find(p=>p.id===id)||null}
@@ -1680,6 +1680,14 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   function removePackageFromStudyPlan(id,code){const plans=plansStore(),p=plans.find(x=>x.id===id);if(!p)return;p.packageCodes=p.packageCodes.filter(x=>x!==code);p.updatedAt=Date.now();savePlans(plans);renderStudyPlanDetail();renderStudyPlans()}
   function toggleStudyPlanMenu(id){const target=$('planMenu_'+id);if(!target)return;const wasOpen=target.classList.contains('show');document.querySelectorAll('.studyPlanCardMenu.show').forEach(x=>x.classList.remove('show'));if(!wasOpen)target.classList.add('show')}
   document.addEventListener('pointerdown',function(ev){const openMenu=document.querySelector('.studyPlanCardMenu.show');if(!openMenu)return;const card=openMenu.closest('.studyPlanCard');if(card&&!card.contains(ev.target))openMenu.classList.remove('show')});
+  function startPackageLongPress(ev,code){if(ev.pointerType==='mouse')return;longPressStartX=ev.clientX;longPressStartY=ev.clientY;clearTimeout(longPressTimer);longPressTimer=setTimeout(()=>{suppressPackageClickUntil=Date.now()+900;openStudyPlanPicker(code);},650)}
+  function cancelPackageLongPress(){clearTimeout(longPressTimer)}
+  function movePackageLongPress(ev){if(Math.hypot(ev.clientX-longPressStartX,ev.clientY-longPressStartY)>14)cancelPackageLongPress()}
+  function openPackageFromTile(code){if(Date.now()<suppressPackageClickUntil){suppressPackageClickUntil=0;return}openPackage(code)}
+  document.addEventListener('pointerdown',function(ev){const tile=ev.target.closest?.('#packagesScreen .packageTile[data-package-code]');if(!tile)return;startPackageLongPress(ev,tile.dataset.packageCode)}, {passive:true});
+  document.addEventListener('pointermove',function(ev){if(longPressTimer)movePackageLongPress(ev)}, {passive:true});
+  document.addEventListener('pointerup',function(){if(longPressTimer)cancelPackageLongPress()}, {passive:true});
+  document.addEventListener('pointercancel',function(){if(longPressTimer)cancelPackageLongPress()}, {passive:true});
   const oldRenderPackageTile=window.renderPackageTile;
   window.renderPackageTile=function(code,idx){const st=packageStats(code),total=st.total||0,metaParts=Object.entries(META).filter(([t])=>(DB[code]?.[t]||[]).length>0).map(([t,m])=>m.label),desc=metaParts.length?`${total} soal · ${metaParts.join(' · ')}`:'Belum ada soal interaktif',palette=['blue','purple','orange','pink','green'][idx%5],pct=st.pct||0,status=pct>=100?'Selesai':pct>0?'Sedang berjalan':'Belum dimulai';return `<button class="tile packageTile packageTile-${palette}" type="button" data-package-code="${escPlan(code)}" onclick="openPackageFromTile('${escPlan(code)}')"><div class="pkgTop"><div class="tileIcon" aria-hidden="true">${svg('box')}</div><span class="statusPill">${status}</span></div><div class="pkgTitleRow"><div><b>Paket ${escPlan(code)}</b><small>${escPlan(desc)}</small></div></div>${total?progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket'):''}<div class="pkgFooter"><span>Listening · Reading · Writing</span><span>${pct}%</span></div></button>`}
 
@@ -1694,7 +1702,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     e.stopImmediatePropagation();
     closeStudyPlanPicker();
   },true);
-  window.openStudyPlans=openStudyPlans;window.renderStudyPlans=renderStudyPlans;window.openStudyPlan=openStudyPlan;window.renderStudyPlanDetail=renderStudyPlanDetail;window.continueStudyPlan=continueStudyPlan;window.openStudyPlanPicker=openStudyPlanPicker;window.openStudyPlanAddPicker=openStudyPlanAddPicker;window.renderStudyPlanAddPicker=renderStudyPlanAddPicker;window.addPackageDirectlyToStudyPlan=addPackageDirectlyToStudyPlan;window.renderStudyPlanPicker=renderStudyPlanPicker;window.togglePackageInStudyPlan=togglePackageInStudyPlan;window.closeStudyPlanPicker=closeStudyPlanPicker;window.openStudyPlanCreator=openStudyPlanCreator;window.closeStudyPlanCreator=closeStudyPlanCreator;window.createStudyPlan=createStudyPlan;window.openStudyPlanEdit=openStudyPlanEdit;window.closeStudyPlanEdit=closeStudyPlanEdit;window.saveStudyPlanEdit=saveStudyPlanEdit;window.deleteStudyPlan=deleteStudyPlan;window.removePackageFromStudyPlan=removePackageFromStudyPlan;window.toggleStudyPlanMenu=toggleStudyPlanMenu;window.filterStudyPlanPicker=filterStudyPlanPicker;window.openPackageFromTile=openPackageFromTile;
+  window.openStudyPlans=openStudyPlans;window.renderStudyPlans=renderStudyPlans;window.openStudyPlan=openStudyPlan;window.renderStudyPlanDetail=renderStudyPlanDetail;window.continueStudyPlan=continueStudyPlan;window.openStudyPlanPicker=openStudyPlanPicker;window.openStudyPlanAddPicker=openStudyPlanAddPicker;window.renderStudyPlanAddPicker=renderStudyPlanAddPicker;window.addPackageDirectlyToStudyPlan=addPackageDirectlyToStudyPlan;window.renderStudyPlanPicker=renderStudyPlanPicker;window.togglePackageInStudyPlan=togglePackageInStudyPlan;window.closeStudyPlanPicker=closeStudyPlanPicker;window.openStudyPlanCreator=openStudyPlanCreator;window.closeStudyPlanCreator=closeStudyPlanCreator;window.createStudyPlan=createStudyPlan;window.openStudyPlanEdit=openStudyPlanEdit;window.closeStudyPlanEdit=closeStudyPlanEdit;window.saveStudyPlanEdit=saveStudyPlanEdit;window.deleteStudyPlan=deleteStudyPlan;window.removePackageFromStudyPlan=removePackageFromStudyPlan;window.toggleStudyPlanMenu=toggleStudyPlanMenu;window.filterStudyPlanPicker=filterStudyPlanPicker;window.startPackageLongPress=startPackageLongPress;window.cancelPackageLongPress=cancelPackageLongPress;window.movePackageLongPress=movePackageLongPress;window.openPackageFromTile=openPackageFromTile;
   // Preserve the custom plan id in browser history when opening a plan detail.
   const originalOpenStudyPlan=openStudyPlan;
   window.openStudyPlan=function(id,push=true){studyPlanDetailId=id;route={screen:'studyPlanDetail',packageCode:null,type:null,sectionIndex:null,studyPlanId:id};renderStudyPlanDetail();setScreen('studyPlanDetail',push);window.scrollTo({top:0,left:0,behavior:'auto'})};
@@ -2482,6 +2490,41 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     window.goHome(false);
   };
 
+  /* ---------- Long press package -> plan picker ---------- */
+
+  window.openPackageFromTile=function(code){
+    if(Date.now() < Number(MASTER.suppressPackageClickUntil||0)){
+      MASTER.suppressPackageClickUntil=0;
+      return;
+    }
+    if(DB[code]) window.openPackage(code);
+  };
+
+  MASTER.longPressTimer=null;
+  MASTER.longX=0;MASTER.longY=0;
+  MASTER.suppressPackageClickUntil=0;
+
+  function cancelLongPress(){
+    if(MASTER.longPressTimer){clearTimeout(MASTER.longPressTimer);MASTER.longPressTimer=null;}
+  }
+  document.addEventListener('pointerdown',e=>{
+    const tile=e.target.closest?.('#packagesScreen .packageTile[data-package-code]');
+    if(!tile || e.pointerType==='mouse')return;
+    MASTER.longX=e.clientX;MASTER.longY=e.clientY;
+    cancelLongPress();
+    const code=tile.dataset.packageCode;
+    MASTER.longPressTimer=setTimeout(()=>{
+      MASTER.longPressTimer=null;
+      MASTER.suppressPackageClickUntil=Date.now()+900;
+      window.openStudyPlanPicker(code);
+    },650);
+  },{passive:true});
+  document.addEventListener('pointermove',e=>{
+    if(!MASTER.longPressTimer)return;
+    if(Math.hypot(e.clientX-MASTER.longX,e.clientY-MASTER.longY)>14)cancelLongPress();
+  },{passive:true});
+  document.addEventListener('pointerup',cancelLongPress,{passive:true});
+  document.addEventListener('pointercancel',cancelLongPress,{passive:true});
 
   /* ---------- Make picker selection / close behavior deterministic ---------- */
 
@@ -2888,6 +2931,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 
   /* ------------------------------------------------------------
      TOUCH INTERACTIONS
+     - long press package list => add to a plan
      - long press plan-detail package => remove from plan
      ------------------------------------------------------------ */
   R.timer=null;R.x=0;R.y=0;R.suppressUntil=0;R.target=null;R.planTarget=null;
@@ -2921,6 +2965,19 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       return;
     }
 
+    /* Package list: long press opens the add-to-plan picker. */
+    const tile=e.target.closest?.('#packagesScreen .packageTile[data-package-code]');
+    if(tile && e.pointerType!=='mouse'){
+      e.stopImmediatePropagation();
+      R.target=tile;R.x=e.clientX;R.y=e.clientY;clearTimeout(R.timer);
+      const code=tile.dataset.packageCode;
+      R.timer=setTimeout(()=>{
+        R.timer=null;tile.classList.add('longPressing');
+        R.suppressUntil=Date.now()+900;
+        window.openStudyPlanPicker(code);
+        setTimeout(()=>tile.classList.remove('longPressing'),250);
+      },650);
+    }
   },true);
 
   document.addEventListener('pointermove',function(e){
@@ -2934,7 +2991,8 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   document.addEventListener('click',function(e){
     if(Date.now()<R.suppressUntil){
       const row=e.target.closest?.('#studyPlanPackages .studyPlanPackage');
-      if(row){e.preventDefault();e.stopImmediatePropagation();R.suppressUntil=0;return}
+      const tile=e.target.closest?.('#packagesScreen .packageTile[data-package-code]');
+      if(row||tile){e.preventDefault();e.stopImmediatePropagation();R.suppressUntil=0;return}
     }
 
     /* Normal click on a plan package row opens it with return context. */
@@ -3837,7 +3895,7 @@ body.dark #packagesGrid .packageHanziIcon{
   window.openPackages=function(push=true){route={screen:'levels',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};renderLevels();setScreen('levelsScreen',push);window.scrollTo({top:0,left:0,behavior:'auto'})};
   window.openLevelPackages=function(key,push=true){let g;if(/^\d+$/.test(String(key)))g=state.groups.find(x=>x.kind==='hsk'&&x.level===Number(key));else g=state.groups.find(x=>x.name===String(key))||state.groups.find(x=>x.name.toLowerCase()===String(key).toLowerCase());if(!g)return window.openPackages(push);window.openDynamicFolder(state.groups.indexOf(g),push)};
   window.renderLevelsScreen=renderLevels;window.renderPackagesScreen=renderPackages;window.filterPackages=v=>{const i=$('packageSearchInput');if(i)i.value=String(v??'');window.__dbPackagePage=0;renderPackages()};window.clearPackageSearch=()=>{const i=$('packageSearchInput');if(i)i.value='';window.__dbPackagePage=0;renderPackages();i?.focus()};
-  window.openPackage=async function(code,push=true){try{await loadPackage(code);const keep=route?.studyPlanId||null;route={screen:'package',packageCode:String(code),type:null,sectionIndex:null,studyPlanId:keep};if(typeof renderPackage==='function')renderPackage();setScreen('package',push);window.scrollTo({top:0,left:0,behavior:'auto'})}catch(e){console.error(e);if(typeof window.appNotice==='function')window.appNotice('Paket gagal dimuat',e.message||'Silakan coba lagi.',{icon:'!'});else alert('Paket gagal dimuat. '+(e.message||''))}};
+  window.openPackage=async function(code,push=true){try{await loadPackage(code);const keep=R.returnPlanId||route?.studyPlanId||null;R.returnPlanId=null;route={screen:'package',packageCode:String(code),type:null,sectionIndex:null,studyPlanId:keep};if(typeof renderPackage==='function')renderPackage();setScreen('package',push);window.scrollTo({top:0,left:0,behavior:'auto'})}catch(e){console.error(e);if(typeof window.appNotice==='function')window.appNotice('Paket gagal dimuat',e.message||'Silakan coba lagi.',{icon:'!'});else alert('Paket gagal dimuat. '+(e.message||''))}};
   window.openPackageFromTile=window.openPackage;
   window.openSections=async function(code,type,push=true){try{await loadPackage(code);if(!META[type])return;route={screen:'parts',packageCode:String(code),type,sectionIndex:null,studyPlanId:route?.studyPlanId||null};if(typeof renderSections==='function')renderSections();setScreen('partsScreen',push)}catch(e){console.error(e);if(typeof window.appNotice==='function')window.appNotice('Bagian gagal dimuat',e.message||'Silakan coba lagi.',{icon:'!'})}};
   window.startSection=async function(i,push=true){const code=String(route?.packageCode||''),type=route?.type;if(!code||!META[type])return;try{await loadPackage(code);const arr=DB[code]?.[type]||[];if(!arr[i])return;route={screen:'exercise',packageCode:code,type,sectionIndex:Number(i),studyPlanId:route?.studyPlanId||null};resumeQuestionId=null;window.__hskResumePage=0;loadCurrentSectionState();renderExercise();setScreen('exercise',push)}catch(e){console.error(e)}};
@@ -4396,6 +4454,37 @@ body.dark #packagesGrid .packageHanziIcon{
 </script>
 
 
+<script id="finalLongPressClickGuardV1">
+(function(){
+  'use strict';
+  /* Final guard: after a package long-press opens the Rencana picker,
+     stop the button's inline onclick from immediately opening the package.
+     This must run in capture phase because inline onclick fires before
+     document bubble listeners. */
+  document.addEventListener('click',function(e){
+    const tile=e.target.closest?.('#packagesScreen .packageTile[data-package-code]');
+    if(!tile)return;
+    const r=window.__functionalRepairV4;
+    const master=window.__packageLongPressMaster;
+    const until=Math.max(
+      Number(r?.suppressUntil||0),
+      Number(master?.suppressPackageClickUntil||0),
+      Number(window.suppressPackageClickUntil||0),
+      Number(window.__suppressPackageClickUntil||0)
+    );
+    if(until>Date.now()){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      if(r)r.suppressUntil=0;
+      if(master)master.suppressPackageClickUntil=0;
+      window.suppressPackageClickUntil=0;
+      window.__suppressPackageClickUntil=0;
+    }
+  },true);
+})();
+</script>
+
+
 <!-- V12 FINAL NAV/UI: fixed app top bar + persistent app Back -->
 <style id="hskFinalTargetedNavigation20260917">
 /* FINAL TARGETED UI FIX — navigation/topbar only. No other app behavior is changed. */
@@ -4459,178 +4548,6 @@ body:has(#home.active) #topBack{display:none!important;}
 @media (min-width:761px){
   main:not(:has(#home.active)){padding-top:102px!important;}
   main:has(#home.active){padding-top:26px!important;}
-}
-</style>
-
-
-<script id="universalReadingPassageLoaderV1">
-(function(){
-  'use strict';
-
-  /*
-   * Reading Passage Integrity Layer
-   * --------------------------------
-   * Keeps the existing READING_PASSAGES renderer/UI untouched.
-   * The central data file is the source for all package passages, so newly
-   * added packages do not require another hard-coded entry in index.html.
-   *
-   * Supported source shapes:
-   *   1) { "H41001": { ... } }
-   *   2) { "content": "{\"H41001\":{...}}" }
-   *   3) { "content": { "H41001": { ... } } }
-   *   4) { "reading_passages": { ... } } / { "passages": { ... } }
-   */
-  var passageLoadPromise=null;
-
-  function parsePassagePayload(payload){
-    var value=payload;
-    for(var i=0;i<3;i++){
-      if(typeof value==='string'){
-        try{value=JSON.parse(value)}catch(e){return null}
-        continue;
-      }
-      if(value && typeof value==='object'){
-        if(value.reading_passages && typeof value.reading_passages==='object'){
-          value=value.reading_passages; continue;
-        }
-        if(value.passages && typeof value.passages==='object'){
-          value=value.passages; continue;
-        }
-        if(typeof value.content==='string'){
-          try{value=JSON.parse(value.content);continue}catch(e){}
-        }
-        if(value.content && typeof value.content==='object'){
-          value=value.content; continue;
-        }
-      }
-      break;
-    }
-    return value && typeof value==='object' && !Array.isArray(value) ? value : null;
-  }
-
-  function normalizePassageMap(payload){
-    var source=parsePassagePayload(payload);
-    if(!source)return null;
-    var map={};
-
-    Object.keys(source).forEach(function(code){
-      var entry=source[code];
-      entry=parsePassagePayload(entry)||entry;
-      if(!entry || typeof entry!=='object' || Array.isArray(entry))return;
-
-      var clean={};
-      Object.keys(entry).forEach(function(key){
-        var text=entry[key];
-        if(typeof text==='string' && text.trim())clean[String(key)]=text;
-      });
-      if(Object.keys(clean).length)map[String(code)]=clean;
-    });
-
-    return map;
-  }
-
-  function mergePassages(map){
-    if(!map || typeof READING_PASSAGES!=='object')return 0;
-    var count=0;
-    Object.keys(map).forEach(function(code){
-      var incoming=map[code];
-      if(!incoming || typeof incoming!=='object')return;
-      if(!READING_PASSAGES[code] || typeof READING_PASSAGES[code]!=='object'){
-        READING_PASSAGES[code]={};
-      }
-      Object.keys(incoming).forEach(function(key){
-        READING_PASSAGES[code][key]=incoming[key];
-        count++;
-      });
-    });
-    return count;
-  }
-
-  function ensureReadingPassages(){
-    if(passageLoadPromise)return passageLoadPromise;
-
-    passageLoadPromise=fetch('./data/reading-passages.json',{
-      cache:'no-store',
-      headers:{Accept:'application/json'}
-    }).then(function(r){
-      if(!r.ok)throw new Error('Reading passages HTTP '+r.status);
-      return r.json();
-    }).then(function(payload){
-      var map=normalizePassageMap(payload);
-      if(!map)throw new Error('Format reading-passages.json tidak valid');
-      var merged=mergePassages(map);
-      window.__hskReadingPassagesReady=true;
-      window.__hskReadingPassageCount=Object.keys(map).length;
-      console.info('HSK reading passages ready:',Object.keys(map).length,'packages /',merged,'passages');
-      return true;
-    }).catch(function(err){
-      /*
-       * Never break the app when the optional passage source is unavailable.
-       * Existing embedded passages remain usable as fallback.
-       */
-      window.__hskReadingPassagesReady=false;
-      console.warn('HSK reading passages unavailable; embedded fallback retained.',err);
-      return false;
-    });
-
-    return passageLoadPromise;
-  }
-
-  window.__hskEnsureReadingPassages=ensureReadingPassages;
-
-  /*
-   * Gate only Reading navigation. Listening/Writing and all other routes keep
-   * their existing execution path unchanged.
-   */
-  var originalOpenSections=window.openSections;
-  if(typeof originalOpenSections==='function'){
-    window.openSections=async function(code,type,push){
-      if(type==='reading')await ensureReadingPassages();
-      return originalOpenSections.apply(this,arguments);
-    };
-  }
-
-  var originalStartSection=window.startSection;
-  if(typeof originalStartSection==='function'){
-    window.startSection=async function(i,push){
-      if(route && route.type==='reading')await ensureReadingPassages();
-      return originalStartSection.apply(this,arguments);
-    };
-  }
-
-  /*
-   * If a reading exercise is restored/re-entered through another route,
-   * make the same guarantee before rendering. This is deliberately isolated
-   * from the question renderer itself.
-   */
-  var originalOpenPackage=window.openPackage;
-  if(typeof originalOpenPackage==='function'){
-    window.openPackage=async function(code,push){
-      return originalOpenPackage.apply(this,arguments);
-    };
-  }
-
-  /* Warm the cache in the background; failure is non-blocking. */
-  ensureReadingPassages();
-})();
-</script>
-
-<style id="landscapeTopbarFullWidthFixV1">
-@media (min-width:761px) and (orientation:landscape){
-  .top{
-    left:0!important;
-    right:0!important;
-    width:100vw!important;
-    max-width:none!important;
-    margin-left:0!important;
-    margin-right:0!important;
-  }
-  .topin{
-    width:min(1180px,calc(100vw - 168px))!important;
-    max-width:1180px!important;
-    margin-left:auto!important;
-    margin-right:auto!important;
-  }
 }
 </style>
 
