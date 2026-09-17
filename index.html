@@ -4615,5 +4615,24 @@ body:has(#home.active) #topBack{display:none!important;}
 })();
 </script>
 
+<style id="landscapeTopbarFullWidthFixV1">
+@media (min-width:761px) and (orientation:landscape){
+  .top{
+    left:0!important;
+    right:0!important;
+    width:100vw!important;
+    max-width:none!important;
+    margin-left:0!important;
+    margin-right:0!important;
+  }
+  .topin{
+    width:min(1180px,calc(100vw - 168px))!important;
+    max-width:1180px!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+  }
+}
+</style>
+
 </body>
 </html>
