@@ -1191,45 +1191,30 @@
         "parts": [
           {
             "title": "听力 · 第一部分",
-            "range": "1–10",
-            "rules": [
-              {
-                "range": [
-                  1,
-                  10
-                ],
-                "type": "choice",
-                "input": "single_select"
-              }
-            ]
+            "range": [
+              1,
+              10
+            ],
+            "type": "choice",
+            "input": "single_select"
           },
           {
             "title": "听力 · 第二部分",
-            "range": "11–25",
-            "rules": [
-              {
-                "range": [
-                  11,
-                  25
-                ],
-                "type": "choice",
-                "input": "single_select"
-              }
-            ]
+            "range": [
+              11,
+              25
+            ],
+            "type": "choice",
+            "input": "single_select"
           },
           {
             "title": "听力 · 第三部分",
-            "range": "26–45",
-            "rules": [
-              {
-                "range": [
-                  26,
-                  45
-                ],
-                "type": "choice",
-                "input": "single_select"
-              }
-            ]
+            "range": [
+              26,
+              45
+            ],
+            "type": "choice",
+            "input": "single_select"
           }
         ]
       },
@@ -1237,149 +1222,129 @@
         "parts": [
           {
             "title": "阅读 · 第一部分",
-            "range": "46–50",
-            "rules": [
-              {
-                "range": [
-                  46,
-                  50
-                ],
-                "type": "choice",
-                "input": "single_select"
-              }
-            ]
+            "range": [
+              46,
+              50
+            ],
+            "type": "choice",
+            "input": "single_select"
           },
           {
             "title": "阅读 · 第二部分",
-            "range": "51–55",
-            "rules": [
-              {
-                "range": [
-                  51,
-                  55
-                ],
-                "type": "choice",
-                "input": "single_select"
-              }
-            ]
+            "range": [
+              51,
+              55
+            ],
+            "type": "choice",
+            "input": "single_select"
           },
           {
             "title": "阅读 · 第三部分",
-            "range": "56–65",
-            "rules": [
-              {
-                "range": [
-                  56,
-                  65
-                ],
-                "type": "sentence_ordering",
-                "input": "ordering"
-              }
-            ]
+            "range": [
+              56,
+              65
+            ],
+            "type": "sentence_ordering",
+            "input": "ordering"
           },
           {
             "title": "阅读 · 第四部分",
-            "range": "66–85",
-            "rules": [
-              {
-                "range": [
-                  66,
-                  85
-                ],
-                "type": "choice",
-                "input": "single_select",
-                "group": {
+            "range": [
+              66,
+              85
+            ],
+            "type": "choice",
+            "input": "single_select",
+            "group": {
+              "type": "passage",
+              "groups": [
+                {
+                  "id": "66",
                   "type": "passage",
-                  "groups": [
-                    {
-                      "id": "66",
-                      "type": "passage",
-                      "source": "reading_passages.H41008.66"
-                    },
-                    {
-                      "id": "67",
-                      "type": "passage",
-                      "source": "reading_passages.H41008.67"
-                    },
-                    {
-                      "id": "68",
-                      "type": "passage",
-                      "source": "reading_passages.H41008.68"
-                    },
-                    {
-                      "id": "69",
-                      "type": "passage",
-                      "source": "reading_passages.H41008.69"
-                    },
-                    {
-                      "id": "70",
-                      "type": "passage",
-                      "source": "reading_passages.H41008.70"
-                    },
-                    {
-                      "id": "71",
-                      "type": "passage",
-                      "source": "reading_passages.H41008.71"
-                    },
-                    {
-                      "id": "72",
-                      "type": "passage",
-                      "source": "reading_passages.H41008.72"
-                    },
-                    {
-                      "id": "73",
-                      "type": "passage",
-                      "source": "reading_passages.H41008.73"
-                    },
-                    {
-                      "id": "74",
-                      "type": "passage",
-                      "source": "reading_passages.H41008.74"
-                    },
-                    {
-                      "id": "75",
-                      "type": "passage",
-                      "source": "reading_passages.H41008.75"
-                    },
-                    {
-                      "id": "76",
-                      "type": "passage",
-                      "source": "reading_passages.H41008.76"
-                    },
-                    {
-                      "id": "77",
-                      "type": "passage",
-                      "source": "reading_passages.H41008.77"
-                    },
-                    {
-                      "id": "78",
-                      "type": "passage",
-                      "source": "reading_passages.H41008.78"
-                    },
-                    {
-                      "id": "79",
-                      "type": "passage",
-                      "source": "reading_passages.H41008.79"
-                    },
-                    {
-                      "id": "80-81",
-                      "type": "passage",
-                      "source": "reading_passages.H41008.80-81"
-                    },
-                    {
-                      "id": "82-83",
-                      "type": "passage",
-                      "source": "reading_passages.H41008.82-83"
-                    },
-                    {
-                      "id": "84-85",
-                      "type": "passage",
-                      "source": "reading_passages.H41008.84-85"
-                    }
-                  ]
+                  "source": "reading_passages.H41008.66"
+                },
+                {
+                  "id": "67",
+                  "type": "passage",
+                  "source": "reading_passages.H41008.67"
+                },
+                {
+                  "id": "68",
+                  "type": "passage",
+                  "source": "reading_passages.H41008.68"
+                },
+                {
+                  "id": "69",
+                  "type": "passage",
+                  "source": "reading_passages.H41008.69"
+                },
+                {
+                  "id": "70",
+                  "type": "passage",
+                  "source": "reading_passages.H41008.70"
+                },
+                {
+                  "id": "71",
+                  "type": "passage",
+                  "source": "reading_passages.H41008.71"
+                },
+                {
+                  "id": "72",
+                  "type": "passage",
+                  "source": "reading_passages.H41008.72"
+                },
+                {
+                  "id": "73",
+                  "type": "passage",
+                  "source": "reading_passages.H41008.73"
+                },
+                {
+                  "id": "74",
+                  "type": "passage",
+                  "source": "reading_passages.H41008.74"
+                },
+                {
+                  "id": "75",
+                  "type": "passage",
+                  "source": "reading_passages.H41008.75"
+                },
+                {
+                  "id": "76",
+                  "type": "passage",
+                  "source": "reading_passages.H41008.76"
+                },
+                {
+                  "id": "77",
+                  "type": "passage",
+                  "source": "reading_passages.H41008.77"
+                },
+                {
+                  "id": "78",
+                  "type": "passage",
+                  "source": "reading_passages.H41008.78"
+                },
+                {
+                  "id": "79",
+                  "type": "passage",
+                  "source": "reading_passages.H41008.79"
+                },
+                {
+                  "id": "80-81",
+                  "type": "passage",
+                  "source": "reading_passages.H41008.80-81"
+                },
+                {
+                  "id": "82-83",
+                  "type": "passage",
+                  "source": "reading_passages.H41008.82-83"
+                },
+                {
+                  "id": "84-85",
+                  "type": "passage",
+                  "source": "reading_passages.H41008.84-85"
                 }
-              }
-            ]
+              ]
+            }
           }
         ]
       },
@@ -1387,33 +1352,23 @@
         "parts": [
           {
             "title": "书写 · 第一部分",
-            "range": "86–95",
-            "rules": [
-              {
-                "range": [
-                  86,
-                  95
-                ],
-                "type": "sentence_ordering",
-                "input": "ordering"
-              }
-            ]
+            "range": [
+              86,
+              95
+            ],
+            "type": "sentence_ordering",
+            "input": "ordering"
           },
           {
             "title": "书写 · 第二部分",
-            "range": "96–100",
-            "rules": [
-              {
-                "range": [
-                  96,
-                  100
-                ],
-                "type": "picture_writing",
-                "input": "text",
-                "media": [
-                  "image"
-                ]
-              }
+            "range": [
+              96,
+              100
+            ],
+            "type": "picture_writing",
+            "input": "text",
+            "media": [
+              "image"
             ]
           }
         ]
@@ -1438,6 +1393,11 @@
       "reading": 40,
       "writing": 15
     },
-    "answerPolicy": "Answers and media preserved exactly from source JSON; no generated answers."
+    "answerPolicy": "Answers and media preserved exactly from source JSON; no generated answers.",
+    "universalEngineCompatibility": {
+      "target": "HSK4 Universal Engine",
+      "format": "section.parts direct rule",
+      "convertedFromNestedRules": true
+    }
   }
 }
