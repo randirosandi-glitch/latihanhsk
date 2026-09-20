@@ -2211,15 +2211,58 @@ function mergePlanArrays(localPlans,remotePlans){
   ids.forEach(id=>{const l=lm.get(id),r=rm.get(id);if(!r){out.push(l);localWon=true;return}if(!l){out.push(r);return}const lt=Number(l.updatedAt||0),rt=Number(r.updatedAt||0);if(lt>=rt){out.push(l);if(lt>rt)localWon=true}else out.push(r)});
   return {out,localWon};
 }
+function progressResetAt(store,key){
+  const rm=store&&typeof store._progressResets==='object'&&store._progressResets?store._progressResets:{};
+  let at=Number(rm[key]||0)||0;
+  for(const [scope,stamp] of Object.entries(rm)){
+    const t=Number(stamp)||0;
+    if(!t)continue;
+    if(scope.startsWith('package:')&&key.startsWith(scope.slice(8)+'|'))at=Math.max(at,t);
+    else if(scope.startsWith('section:')&&key.startsWith(scope.slice(8)+'|'))at=Math.max(at,t);
+  }
+  return at;
+}
+function resetCoversResume(store,resume){
+  const rm=store&&typeof store._progressResets==='object'&&store._progressResets?store._progressResets:{};
+  if(!resume||typeof resume!=='object')return 0;
+  const code=String(resume.code||'');
+  const type=String(resume.type||'');
+  let at=Number(rm['_resume']||0)||0;
+  for(const [scope,stamp] of Object.entries(rm)){
+    const t=Number(stamp)||0;if(!t)continue;
+    if(scope==='package:'+code||scope==='section:'+code+'|'+type)at=Math.max(at,t);
+  }
+  return at;
+}
 function mergeStoresLatest(local,remote){
   const a=local&&typeof local==='object'?local:{}; const b=remote&&typeof remote==='object'?remote:{};
   const out={...b}; let localWon=false;
   const localActivityAt=Number(a._lastActivity?.updatedAt||a._lastActivity?.timestamp||0);
   const remoteActivityAt=Number(b._lastActivity?.updatedAt||b._lastActivity?.timestamp||0);
+  const resetA=a._progressResets&&typeof a._progressResets==='object'?a._progressResets:{};
+  const resetB=b._progressResets&&typeof b._progressResets==='object'?b._progressResets:{};
+  const mergedResets={...resetB,...resetA};
+  for(const [k,v] of Object.entries(resetB)){if(Number(resetB[k]||0)>Number(resetA[k]||0))mergedResets[k]=Number(resetB[k]||0)}
   const keys=new Set([...Object.keys(a),...Object.keys(b)]);
   for(const k of keys){
-    if(k==='_studyPlans'||k==='_attempts'||k==='_lastActivity'||k==='_syncMeta')continue;
+    if(k==='_studyPlans'||k==='_attempts'||k==='_lastActivity'||k==='_syncMeta'||k==='_progressResets')continue;
     const l=a[k],r=b[k];
+    const resetAt=Math.max(progressResetAt(a,k),progressResetAt(b,k));
+    if(resetAt && k!=='_resume'){
+      const lt0=Number(l?.updatedAt||0),rt0=Number(r?.updatedAt||0);
+      if(resetAt>=Math.max(lt0,rt0)){
+        delete out[k];
+        if(progressResetAt(a,k)>=progressResetAt(b,k))localWon=true;
+        continue;
+      }
+    }
+    if(k==='_resume'){
+      const lr=Math.max(resetCoversResume(a,l),resetCoversResume(a,r));
+      const rr=Math.max(resetCoversResume(b,l),resetCoversResume(b,r));
+      const ra=Math.max(lr,rr);
+      const lt=Number(l?.updatedAt||0),rt=Number(r?.updatedAt||0);
+      if(ra>=Math.max(lt,rt)){delete out[k];if(lr>=rr)localWon=true;continue}
+    }
     if(l===undefined)continue;
     if(r===undefined){out[k]=l;localWon=true;continue}
     /* A section snapshot can carry an older batch timestamp than the global
@@ -2262,6 +2305,18 @@ function mergeStoresLatest(local,remote){
   out._attempts=[...attempts.values()].sort((x,y)=>Number(x.timestamp||0)-Number(y.timestamp||0));
   const la=a._lastActivity,ra=b._lastActivity;
   if(la||ra){if(!ra){out._lastActivity=la;localWon=true}else if(!la)out._lastActivity=ra;else out._lastActivity=Number(la.updatedAt||0)>=Number(ra.updatedAt||0)?la:ra}
+  /* Keep reset tombstones in sync, but drop a tombstone once a newer answer snapshot exists. */
+  for(const k of Object.keys(mergedResets)){
+    const t=Number(mergedResets[k]||0);
+    if(!t)delete mergedResets[k];
+    else if(k.startsWith('package:')||k.startsWith('section:')){
+      const scope=k.startsWith('package:')?k.slice(8):k.slice(8);
+      const prefix=scope.endsWith('|')?scope:scope+'|';
+      const newer=Object.keys(out).some(key=>key.startsWith(prefix)&&Number(out[key]?.updatedAt||0)>t);
+      if(newer)delete mergedResets[k];
+    }
+  }
+  if(Object.keys(mergedResets).length)out._progressResets=mergedResets;else delete out._progressResets;
   out._syncMeta={version:1,updatedAt:Math.max(Number(a._syncMeta?.updatedAt||0),Number(b._syncMeta?.updatedAt||0),Date.now())};
   return {store:out,localWon};
 }
@@ -2359,6 +2414,13 @@ function stateKey(code,type,idx){return code+'|'+type+'|'+idx}
 function getSectionState(code,type,idx){const st=readStore()[stateKey(code,type,idx)]||{};return {answers:st.answers||{},checked:st.checked||{},answerEvents:st.answerEvents||{}}}
 function saveSectionState(code,type,idx,a=answers,c=checked,events){
   const st=readStore(); const now=Date.now(); const key=stateKey(code,type,idx); const prev=st[key]||{};
+  if(st._progressResets&&typeof st._progressResets==='object'){
+    delete st._progressResets[key];
+    delete st._progressResets['_resume'];
+    delete st._progressResets['package:'+String(code)];
+    delete st._progressResets['section:'+String(code)+'|'+String(type)];
+    if(!Object.keys(st._progressResets).length)delete st._progressResets;
+  }
   st[key]={answers:{...a},checked:{...c},answerEvents:{...(events||prev.answerEvents||{})},updatedAt:now};
   if(route.screen==='exercise'&&route.packageCode===code&&route.type===type&&Number(route.sectionIndex)===Number(idx)){
     st._resume={code,type,sectionIndex:Number(idx),questionId:resumeQuestionId||null,page:Number(window.__hskResumePage||0),updatedAt:now};
@@ -4907,8 +4969,10 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     appConfirm('Reset progres '+title+'?','Semua jawaban yang tersimpan dalam paket ini akan dihapus. Progres paket akan kembali ke 0%. Tindakan ini tidak dapat dibatalkan.',()=>{
     const store=readStore();
     const prefix=code+'|';
+    const resetAt=Date.now();
     Object.keys(store).forEach(k=>{if(k.startsWith(prefix))delete store[k]});
     if(store._resume?.code===code)delete store._resume;
+    store._progressResets={...(store._progressResets||{}),['package:'+code]:resetAt,_resume:resetAt};
     writeStore(store);
     if(route?.packageCode===code){
       answers={};
@@ -4939,8 +5003,10 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     appConfirm('Reset progres '+label+'?','Semua jawaban yang tersimpan pada '+label+' di paket ini akan dihapus. Progres '+label+' akan kembali ke 0%. Tindakan ini tidak dapat dibatalkan.',()=>{
     const store=readStore();
     const prefix=code+'|'+type+'|';
+    const resetAt=Date.now();
     Object.keys(store).forEach(k=>{if(k.startsWith(prefix))delete store[k]});
     if(store._resume&&store._resume.code===code&&store._resume.type===type)delete store._resume;
+    store._progressResets={...(store._progressResets||{}),['section:'+code+'|'+type]:resetAt,_resume:resetAt};
     writeStore(store);
     if(route?.packageCode===code&&route?.type===type){
       answers={};
