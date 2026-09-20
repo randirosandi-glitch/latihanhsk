@@ -684,7 +684,7 @@
       ]
     },
     {
-      "title": "阅读 · 第三部分",
+      "title": "阅读 · 第二部分",
       "range": "56–65",
       "questions": [
         [
@@ -790,7 +790,7 @@
       ]
     },
     {
-      "title": "阅读 · 第四部分",
+      "title": "阅读 · 第三部分",
       "range": "66–85",
       "questions": [
         [
@@ -1114,5 +1114,330 @@
     "listening": true,
     "reading": true,
     "writing": true
+  },
+  "reading_passages": {
+    "H41553B": {
+      "66": "森林里有一种植物,它开的花比普通的花大很多,并且特别香。这种植物会用它的香味吸引来一些小动物,然后把它们吃掉。",
+      "67": "人脑不是电脑,所以密码不能太复杂,不过也不能太简单,否则不安全。 想要密码安全,最好不要用手机号码、生日等。",
+      "68": "为了画好那棵树,他在那里站了很久,看了很久。等他开始画了,速度快得让人吃惊,不到10 分钟,他就画好了。",
+      "69": "中国有56 个民族,同汉族相比,其他民族的人数比较少,习惯上被叫做“少数民族”,每个民族都有不同的习惯和文化,许多民族都有自己的语言和文字。",
+      "70": "教孩子用筷子时,要提醒他们不能用筷子敲盘子、碗等,更不能拿筷子指着别人,这样会让别人觉得你很没礼貌。",
+      "71": "下班回到家,看到桌子上满满的都是我喜欢吃的菜。儿子走过来对我说:“妈妈,祝您母亲节快乐!”我的心里特别感动,我为有这样的儿子感到骄傲。",
+      "72": "你有一个苹果,我有一个香蕉,把我的给你,把你的给我,每个人仍仅有一个水果;你有一个想法,我有一个想法,把我的告诉你,把你的告诉我, 每个人就有了两个想法。",
+      "73": "《公共汽车、电车车票使用办法》规定:身高不满1.2 米的儿童乘车时可以免票。",
+      "74": "“笨鸟先飞早入林”这句话说的是:能力不高没关系,做任何事情,只要能比别人早一些开始,比别人更努力一些,同样可以成功。所以,人可以不那么聪明,但是不能懒。",
+      "75": "新闻报道中使用数字的目的是,通过它们来说明问题。所以这些数字必须是准确的,只有这样,才能证明报道的“真”,才是对读者负责。",
+      "76": "先生,这儿是南京路106 号没错,可是没有您说的王师傅这个人,您最好再问问,看这个地址是不是正确。",
+      "77": "笑话每个人至少都知道几个,但不是所有人都会讲。讲笑话也是一门艺术, 能不能使人发笑是笑话讲得好坏的主要标准。",
+      "78": "耳朵每天都被人使用,但它却不像眼睛、鼻子和嘴那样受到重视,很多时候人们都感觉不到它,忘记了它。可是,仔细看看耳朵吧,有研究发现, 通过它可以看出一个人是不是健康,甚至是什么样的性格。",
+      "79": "今天下出租车时,由于着急赶时间,我不小心把照相机忘在了出租车上。 司机师傅发现后马上叫住我,把相机还给了我。",
+      "80-81": "科学研究证明,颜色会影响人的心情,不同的颜色会给人带来不同的感情变化。红色会让人变得热情,使人兴奋;黄色和白色让人觉得心情愉快,给人带来快乐;黑色却容易让人感到伤心难过;人们在看到蓝色时会觉得很舒服,会变得安静下来;绿色会让我们的眼睛得到休息,对我们的身体也有好处。",
+      "82-83": "选择职业时,你最看重什么?工资、奖金还是将来的发展?在我看来,赚钱多少不是最重要的,兴趣才是关键。当你喜欢做一件事情的时候,你会带着热情去工作,就不会感到累,更不会觉得有太大的压力。如果每天都能这样愉快地工作,你会觉得很幸福。",
+      "84-85": "一只小鸟正忙着收拾东西,准备搬家。邻居问:“你要搬到哪里去?”小鸟回答: “我要搬到东边的森林去。”邻居又问: “这里住得好好的,为什么要搬呢?” 小鸟回答:“你不知道,这里的人都讨厌我的歌声,说我唱得太难听,所以我必须搬家。”邻居说:“为什么不试着改变你的声音呢?如果你不改变你的声音,就算搬到东边去,那里的人也一样会讨厌你。”"
+    }
+  },
+  "schemaVersion": 2,
+  "package": {
+    "code": "H41553B",
+    "title": "HSK 4 · H41553B",
+    "level": 4,
+    "kind": "exam",
+    "sourceCode": "H41553B"
+  },
+  "engineRules": {
+    "version": 1,
+    "resolver": {
+      "strategy": "section_rule_then_question_shape",
+      "questionIdPath": "question[0]"
+    },
+    "questionShapes": {
+      "choice": {
+        "fields": {
+          "id": 0,
+          "prompt": 1,
+          "options": 2,
+          "answer": 3,
+          "transcript": 4
+        },
+        "interaction": "single_choice",
+        "optionsSource": "question[2]",
+        "answerSource": "question[3]"
+      },
+      "sentence_ordering": {
+        "fields": {
+          "id": 0,
+          "prompt": 1,
+          "items": 2,
+          "answer": 3
+        },
+        "interaction": "ordering",
+        "itemsSource": "question[2]",
+        "answerSource": "question[3]"
+      },
+      "picture_writing": {
+        "fields": {
+          "id": 0,
+          "prompt": 1,
+          "answer": 2,
+          "image": 3
+        },
+        "interaction": "text",
+        "mediaSource": "question[3]",
+        "answerSource": "question[2]"
+      }
+    },
+    "sections": {
+      "listening": {
+        "parts": [
+          {
+            "title": "听力 · 第一部分",
+            "range": "1–10",
+            "rules": [
+              {
+                "range": [
+                  1,
+                  10
+                ],
+                "type": "choice",
+                "input": "single_select"
+              }
+            ]
+          },
+          {
+            "title": "听力 · 第二部分",
+            "range": "11–25",
+            "rules": [
+              {
+                "range": [
+                  11,
+                  25
+                ],
+                "type": "choice",
+                "input": "single_select"
+              }
+            ]
+          },
+          {
+            "title": "听力 · 第三部分",
+            "range": "26–45",
+            "rules": [
+              {
+                "range": [
+                  26,
+                  45
+                ],
+                "type": "choice",
+                "input": "single_select"
+              }
+            ]
+          }
+        ]
+      },
+      "reading": {
+        "parts": [
+          {
+            "title": "阅读 · 第一部分",
+            "range": "46–50",
+            "rules": [
+              {
+                "range": [
+                  46,
+                  50
+                ],
+                "type": "choice",
+                "input": "single_select"
+              }
+            ]
+          },
+          {
+            "title": "阅读 · 第二部分",
+            "range": "51–55",
+            "rules": [
+              {
+                "range": [
+                  51,
+                  55
+                ],
+                "type": "choice",
+                "input": "single_select"
+              }
+            ]
+          },
+          {
+            "title": "阅读 · 第二部分",
+            "range": "56–65",
+            "rules": [
+              {
+                "range": [
+                  56,
+                  65
+                ],
+                "type": "sentence_ordering",
+                "input": "ordering"
+              }
+            ]
+          },
+          {
+            "title": "阅读 · 第三部分",
+            "range": "66–85",
+            "rules": [
+              {
+                "range": [
+                  66,
+                  85
+                ],
+                "type": "choice",
+                "input": "single_select",
+                "group": {
+                  "type": "passage",
+                  "groups": [
+                    {
+                      "id": "66",
+                      "type": "passage",
+                      "source": "reading_passages.H41553B.66"
+                    },
+                    {
+                      "id": "67",
+                      "type": "passage",
+                      "source": "reading_passages.H41553B.67"
+                    },
+                    {
+                      "id": "68",
+                      "type": "passage",
+                      "source": "reading_passages.H41553B.68"
+                    },
+                    {
+                      "id": "69",
+                      "type": "passage",
+                      "source": "reading_passages.H41553B.69"
+                    },
+                    {
+                      "id": "70",
+                      "type": "passage",
+                      "source": "reading_passages.H41553B.70"
+                    },
+                    {
+                      "id": "71",
+                      "type": "passage",
+                      "source": "reading_passages.H41553B.71"
+                    },
+                    {
+                      "id": "72",
+                      "type": "passage",
+                      "source": "reading_passages.H41553B.72"
+                    },
+                    {
+                      "id": "73",
+                      "type": "passage",
+                      "source": "reading_passages.H41553B.73"
+                    },
+                    {
+                      "id": "74",
+                      "type": "passage",
+                      "source": "reading_passages.H41553B.74"
+                    },
+                    {
+                      "id": "75",
+                      "type": "passage",
+                      "source": "reading_passages.H41553B.75"
+                    },
+                    {
+                      "id": "76",
+                      "type": "passage",
+                      "source": "reading_passages.H41553B.76"
+                    },
+                    {
+                      "id": "77",
+                      "type": "passage",
+                      "source": "reading_passages.H41553B.77"
+                    },
+                    {
+                      "id": "78",
+                      "type": "passage",
+                      "source": "reading_passages.H41553B.78"
+                    },
+                    {
+                      "id": "79",
+                      "type": "passage",
+                      "source": "reading_passages.H41553B.79"
+                    },
+                    {
+                      "id": "80-81",
+                      "type": "passage",
+                      "source": "reading_passages.H41553B.80-81"
+                    },
+                    {
+                      "id": "82-83",
+                      "type": "passage",
+                      "source": "reading_passages.H41553B.82-83"
+                    },
+                    {
+                      "id": "84-85",
+                      "type": "passage",
+                      "source": "reading_passages.H41553B.84-85"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "writing": {
+        "parts": [
+          {
+            "title": "书写 · 第一部分",
+            "range": "86–95",
+            "rules": [
+              {
+                "range": [
+                  86,
+                  95
+                ],
+                "type": "sentence_ordering",
+                "input": "ordering"
+              }
+            ]
+          },
+          {
+            "title": "书写 · 第二部分",
+            "range": "96–100",
+            "rules": [
+              {
+                "range": [
+                  96,
+                  100
+                ],
+                "type": "picture_writing",
+                "input": "text",
+                "media": [
+                  "image"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "media": {
+      "questionImageSource": "question[3]"
+    },
+    "scoring": {
+      "choice": "exact_match",
+      "sentence_ordering": "accepted_permutation",
+      "picture_writing": "manual_or_non_binary"
+    }
+  },
+  "meta": {
+    "sourceSchema": "HSK4 legacy JSON v1.23-split-db",
+    "universalConversion": "v1",
+    "sourceVerified": true,
+    "questionCount": 100,
+    "questionCounts": {
+      "listening": 45,
+      "reading": 40,
+      "writing": 15
+    },
+    "answerPolicy": "Answers and media preserved exactly from source JSON; no generated answers."
   }
 }
