@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="id"><head>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Ma+Shan+Zheng&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"><style id="appStylesConsolidated">
+<html lang="id"><head><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Ma+Shan+Zheng&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"><style id="appStylesConsolidated">
 html.app-booting,html.app-booting body{background:#000000!important}html.app-booting body>:not(#appBootLoader){display:none!important}#appBootLoader{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(700px 420px at 12% 0%,rgba(255,255,255,.78),transparent 65%),radial-gradient(850px 600px at 100% 20%,rgba(205,220,232,.52),transparent 65%),#000000;color:#17181b;font-family:"Plus Jakarta Sans","Noto Sans SC",Arial,sans-serif;opacity:1;visibility:visible;transition:opacity .22s ease,visibility .22s ease}#appBootLoader.hide{opacity:0;visibility:hidden;pointer-events:none}.bootCard{text-align:center}.bootMark{width:64px;height:64px;margin:0 auto 18px;border-radius:20px;display:grid;place-items:center;background:linear-gradient(145deg,#ff7658,#ff4b4b);color:#fff;font:italic 48px Georgia,serif;font-weight:700;box-shadow:7px 8px 18px rgba(255,101,72,.16),-4px -4px 10px rgba(255,255,255,.78)}.bootTitle{font-size:17px;font-weight:800;letter-spacing:-.3px}.bootText{margin-top:6px;font-size:12px;color:#7b8491}.bootDots{display:flex;justify-content:center;gap:5px;margin-top:16px}.bootDots i{width:5px;height:5px;border-radius:50%;background:#ff6548;animation:bootPulse 1s ease-in-out infinite}.bootDots i:nth-child(2){animation-delay:.15s}.bootDots i:nth-child(3){animation-delay:.3s}@keyframes bootPulse{0%,70%,100%{opacity:.25;transform:scale(.8)}35%{opacity:1;transform:scale(1)}}body.dark #appBootLoader{background:#000000;color:#f3f6fa}body.dark .bootText{color:#aab3c0}@media(prefers-reduced-motion:reduce){#appBootLoader{transition:none}.bootDots i{animation:none;opacity:.7}}
 
 #exercise .writingImageWrap{min-height:150px;padding:12px;margin:14px 0 5px;background:color-mix(in srgb,var(--surface) 92%,var(--blue) 8%);}#exercise .writingImage{max-width:min(360px,100%);max-height:210px;width:auto;height:auto;object-fit:contain;border-radius:12px;}@media(max-width:760px){#exercise .writingImageWrap{min-height:135px;padding:10px;}#exercise .writingImage{max-width:100%;max-height:190px;}}
@@ -735,7 +732,7 @@ body.dark .bootMark,body.dark .authMark,body.dark .topBrandMark{background:trans
 }
 </style><link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&amp;family=Ma+Shan+Zheng&amp;family=Roboto:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&amp;display=swap" rel="stylesheet"/>
 <style>/* DIRECT LAYER BACK BUTTON — clean, non-history navigation */
 .backTextOnly:not(.logoutTop){border:0!important;background:transparent!important;box-shadow:none!important;border-radius:0!important;padding:4px 2px!important;min-height:38px!important;color:var(--muted)!important;font-weight:750!important;}
 .backTextOnly:not(.logoutTop):hover{transform:none!important;border-color:transparent!important;background:transparent!important;color:var(--blue)!important;}
@@ -1959,6 +1956,25 @@ body.dark #packagesScreen #packagesGrid.packageGridV16 .packageCardV16Progress{b
 .heroGlow,.heroGlowA,.heroGlowB,.heroGlowC{display:none!important;}
 body::before,body::after{display:none!important;background:none!important;background-image:none!important;content:none!important;opacity:0!important;}
 </style>
+
+<style id="packageDetailCleanV21">
+/* Clean package-detail section cards. This replaces the old icon/progress repetition without touching other screens. */
+.sectionTile{--section-accent:#ff6b55;--section-soft:rgba(255,107,85,.105);display:grid!important;grid-template-columns:76px minmax(0,1fr) 44px;align-items:center;column-gap:16px;min-height:158px;padding:22px!important;border:1px solid color-mix(in srgb,var(--section-accent) 24%,var(--line))!important;border-radius:24px!important;background:linear-gradient(135deg,color-mix(in srgb,var(--section-accent) 7%,var(--surface)),color-mix(in srgb,var(--section-accent) 2%,var(--surface)) 58%,var(--surface))!important;color:var(--text);box-shadow:none!important;overflow:hidden!important;position:relative;text-align:left;}
+.sectionTile:before{width:4px!important;background:var(--section-accent)!important;opacity:.9;}
+.sectionTile:hover{transform:translateY(-2px)!important;border-color:color-mix(in srgb,var(--section-accent) 42%,var(--line))!important;box-shadow:none!important;}
+.sectionTileIcon{width:76px!important;height:76px!important;margin:0!important;border-radius:21px!important;background:var(--section-soft)!important;color:var(--section-accent)!important;border:0!important;box-shadow:none!important;display:grid!important;place-items:center!important;font-family:"Ma Shan Zheng",sans-serif!important;font-size:34px!important;font-weight:400!important;line-height:1.05!important;letter-spacing:0!important;white-space:nowrap;}
+.sectionTileBody{min-width:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:3px;}
+.sectionTileKicker{font-family:"Roboto",sans-serif!important;font-size:11px!important;font-weight:700!important;letter-spacing:.16em!important;text-transform:uppercase;color:var(--muted)!important;line-height:1.2;}
+.sectionTile b{font-family:"Google Sans","Roboto",sans-serif!important;font-size:21px!important;font-weight:650!important;line-height:1.18!important;margin:1px 0 2px!important;color:var(--text)!important;}
+.sectionTile small{font-family:"Roboto",sans-serif!important;font-size:14px!important;line-height:1.35!important;color:var(--muted)!important;}
+.sectionTileArrow{width:44px;height:44px;display:grid!important;place-items:center!important;border-radius:50%;background:var(--section-soft);color:var(--section-accent);font-size:24px!important;}
+.sectionTile-listening{--section-accent:#ff6b55;--section-soft:rgba(255,107,85,.105);}
+.sectionTile-reading{--section-accent:#7893dc;--section-soft:rgba(120,147,220,.11);}
+.sectionTile-writing{--section-accent:#e4ad3f;--section-soft:rgba(228,173,63,.11);}
+body.dark .sectionTile{background:linear-gradient(135deg,color-mix(in srgb,var(--section-accent) 7%,#111216),color-mix(in srgb,var(--section-accent) 3%,#151618) 58%,#151618)!important;border-color:color-mix(in srgb,var(--section-accent) 25%,var(--line))!important;}
+body.dark .sectionTileIcon{background:color-mix(in srgb,var(--section-accent) 10%,#151618)!important;}
+@media(max-width:760px){.sectionTile{grid-template-columns:66px minmax(0,1fr) 40px;column-gap:13px;min-height:148px;padding:19px 18px!important;border-radius:22px!important;}.sectionTileIcon{width:66px!important;height:66px!important;border-radius:19px!important;font-size:29px!important;}.sectionTile b{font-size:20px!important;}.sectionTile small{font-size:14px!important;}.sectionTileArrow{width:40px;height:40px;font-size:22px!important;}}
+</style>
 </head><body><div aria-live="polite" id="appBootLoader" role="status"><div class="bootCard"><div aria-hidden="true" class="bootMark"><svg class="bootLogoSvg bootLogoLight" viewBox="0 0 1536 581" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 581" width="1536" height="581">
   <defs>
@@ -2384,7 +2400,7 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 window.addEventListener('focus',()=>{if(currentUsername)pullCloudState(true)});
 function restore(s){route={screen:s.screen||'home',packageCode:s.packageCode||null,type:s.type||null,sectionIndex:s.sectionIndex??null};if(route.screen==='home'){renderHome();setScreen('home',false);armHome();return}if(route.screen==='levels'){renderLevelsScreen();setScreen('levelsScreen',false)}else if(route.screen==='packages'){renderPackagesScreen();setScreen('packagesScreen',false)}else if(route.screen==='scores'){renderScores();setScreen('scores',false)}else if(route.screen==='package'){renderPackage();setScreen('package',false)}else if(route.screen==='parts'){renderSections();setScreen('partsScreen',false)}else if(route.screen==='exercise'){loadCurrentSectionState();renderExercise();setScreen('exercise',false)}else if(route.screen==='result'){renderResult();setScreen('result',false)}}
 function openPackage(code,push=true){if(!DB[code]){goHome(false);return}route={screen:'package',packageCode:code,type:null,sectionIndex:null};renderPackage();setScreen('package',push)}
-function renderPackage(){let code=route.packageCode;let d=DB[code]||{};$('pkgCrumb').textContent=code;$('pkgTitle').textContent='Paket '+code;let sourceNote='';$('parts').innerHTML=Object.entries(META).map(([t,m])=>{let arr=d[t]||[];let total=arr.reduce((a,s)=>a+s.questions.length,0);let ps=arr.reduce((a,s,i)=>{let st=sectionStats(code,t,i);return {answered:a.answered+st.answered,total:a.total+st.total}}, {answered:0,total:0});ps.pct=ps.total?Math.round(ps.answered/ps.total*100):0;let ok=total>0;return ok?`<button class="tile" onclick="openSections('${code}','${t}')"><div class="tileIcon">${m.icon}</div><b>${m.zh} · ${m.label}</b><small>${total} soal tersedia</small>${progressHTML(ps,'Progres bagian')}</button>`:`<div class="tile tile-disabled" aria-disabled="true"><div class="tileIcon">${m.icon}</div><b>${m.zh} · ${m.label}</b><small>Belum tersedia dari sumber paket</small></div>`}).join('')+sourceNote+`<div style="grid-column:1/-1">${renderPackageProgress(code)}</div>`}
+function renderPackage(){let code=route.packageCode;let d=DB[code]||{};$('pkgCrumb').textContent=code;$('pkgTitle').textContent='Paket '+code;let sourceNote='';$('parts').innerHTML=Object.entries(META).map(([t,m])=>{let arr=d[t]||[];let total=arr.reduce((a,s)=>a+s.questions.length,0);let ok=total>0;return ok?`<button class="tile sectionTile sectionTile-${t}" onclick="openSections('${code}','${t}')"><div class="tileIcon sectionTileIcon">${m.zh}</div><div class="sectionTileBody"><span class="sectionTileKicker">${m.label}</span><b>${m.zh}</b><small>${total} soal tersedia</small></div><span class="sectionTileArrow material-symbols-rounded" aria-hidden="true">arrow_forward</span></button>`:`<div class="tile tile-disabled sectionTile sectionTile-${t}" aria-disabled="true"><div class="tileIcon sectionTileIcon">${m.zh}</div><div class="sectionTileBody"><span class="sectionTileKicker">${m.label}</span><b>${m.zh}</b><small>Belum tersedia dari sumber paket</small></div></div>`}).join('')+sourceNote}
 function openSections(code,type,push=true){if(!DB[code]||!META[type]){goHome(false);return}route={screen:'parts',packageCode:code,type,sectionIndex:null};renderSections();setScreen('partsScreen',push)}
 function renderSections(){const d=DB[route.packageCode]?.[route.type]||[];const m=META[route.type];if(!m){goHome(false);return}$('partsPkg').textContent=route.packageCode;$('partsCrumb').textContent=m.label;$('partsTitle').innerHTML='<span class="kaiti-ui-hanzi">'+escV17(m.zh)+'</span><span aria-hidden="true"> · </span>'+escV17(m.label);const available=d.map((s,i)=>({s,i})).filter(x=>Array.isArray(x.s.questions)&&x.s.questions.length>0);let arr=available.map(({s,i})=>{let st=sectionStats(route.packageCode,route.type,i);const sectionName=s.title.replace(/^.*?·\s*/,'');return `<button class="tile sectionPartTile" onclick="startSection(${i})"><div class="sectionPartTitle kaiti-ui-hanzi">${esc(sectionName)}</div><small>Soal ${esc(s.range)} · ${s.questions.length} soal</small>${progressHTML(st,'Progres bagian')}</button>`});$('sections').innerHTML=arr.length?arr.join(''):`<div class="notice"><strong>${route.packageCode} · ${m.label}</strong><br>Bagian ini belum tersedia sebagai teks soal pada paket ini.</div>`}
 function loadCurrentSectionState(){const st=getSectionState(route.packageCode,route.type,route.sectionIndex);answers={...st.answers};checked={...st.checked};answerEvents={...st.answerEvents};resultState=null}
@@ -5936,161 +5952,88 @@ body.dark #appBootLoader .bootText{color:#aab3c0!important;}
 
 
 <style id="packageDetailRedesignV2">
-/* PACKAGE DETAIL — single clean implementation for #package only. */
-#package,
-#package *{font-family:"Google Sans","Roboto",Arial,sans-serif!important;}
-#package .material-symbols-rounded{font-family:"Material Symbols Rounded"!important;font-variation-settings:"FILL" 0,"wght" 450,"GRAD" 0,"opsz" 24!important;}
-#package .partHanzi{font-family:"Ma Shan Zheng",serif!important;font-weight:400!important;font-style:normal!important;font-synthesis:none!important;}
+/* PACKAGE DETAIL — clean card implementation. Only this package-detail screen is styled here. */
+#partsScreen,
+#partsScreen *{font-family:"Roboto","Noto Sans",Arial,sans-serif}
+#partsScreen .sectionPartTitle,
+#partsScreen .partsTitleHanzi,
+#partsScreen .partHanzi{font-family:"Kaiti SC","KaiTi","STKaiti","楷体","Ma Shan Zheng",serif!important;font-weight:400!important;font-synthesis:none!important}
+#partsScreen .crumb{margin:0 0 22px!important;padding:0!important;font-size:13px!important;line-height:1.3!important;gap:8px!important}
+#partsScreen .crumb .current{font-weight:750!important}
+#partsScreen .section{margin:0 0 18px!important}
+#partsScreen .section h2{margin:0!important;font-size:clamp(30px,4vw,40px)!important;line-height:1.08!important;letter-spacing:-1.25px!important;font-weight:900!important}
+#partsScreen .section .sub{margin:8px 0 0!important;font-size:16px!important;line-height:1.5!important;font-weight:500!important}
 
-#package .crumb{margin:0 0 22px!important;padding:0!important;font-size:13px!important;line-height:1.3!important;gap:8px!important;}
-#package .crumb .current{font-weight:750!important;}
-#package .section{margin:0 0 18px!important;}
-#package .section h2{margin:0!important;font-size:clamp(30px,4vw,40px)!important;line-height:1.08!important;letter-spacing:-1.25px!important;font-weight:800!important;}
-#package .section .sub{margin:8px 0 0!important;font-size:16px!important;line-height:1.5!important;font-weight:500!important;}
+/* Three-part package layout: desktop/tablet landscape = 3 cards in one row. */
+#partsScreen #parts{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:16px!important;margin-top:20px!important;align-items:stretch!important}
 
-/* Desktop / landscape: three cards in one row. */
-#package #parts{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:16px!important;margin-top:20px!important;align-items:stretch!important;}
-
-#package .flatPartCard{
+#partsScreen .flatPartCard{
   --part-accent:#ff6548;
   --part-soft:#fff0eb;
   position:relative!important;
   display:grid!important;
-  grid-template-columns:minmax(0,1fr) 44px!important;
-  grid-template-rows:auto auto 1fr auto!important;
+  grid-template-columns:minmax(0,1fr) 48px!important;
+  grid-template-rows:auto 1fr auto!important;
   align-items:start!important;
   width:100%!important;
   min-width:0!important;
   min-height:250px!important;
-  padding:22px 20px 18px 24px!important;
+  padding:24px 22px 20px 24px!important;
   margin:0!important;
   border:1px solid #d9dee5!important;
   border-radius:27px!important;
   overflow:hidden!important;
   text-align:left!important;
   color:#17181b!important;
-  background:linear-gradient(118deg,#fff 0%,#fff 50%,#fffaf8 76%,var(--part-soft) 100%)!important;
+  background:linear-gradient(118deg,#fff 0%,#fff 48%,#fffaf8 74%,var(--part-soft) 100%)!important;
   box-shadow:none!important;
   text-shadow:none!important;
   transform:none!important;
   transition:border-color .18s ease,transform .18s ease!important;
 }
-#package .flatPartCard:nth-child(2){--part-accent:#7890d8;--part-soft:#eef2ff;background:linear-gradient(118deg,#fff 0%,#fff 50%,#fafbff 76%,#eef2ff 100%)!important;}
-#package .flatPartCard:nth-child(3){--part-accent:#e5ad3d;--part-soft:#fff5df;background:linear-gradient(118deg,#fff 0%,#fff 50%,#fffdf7 76%,#fff5df 100%)!important;}
-#package .flatPartCard::before{content:""!important;position:absolute!important;left:0!important;top:0!important;bottom:0!important;width:6px!important;background:var(--part-accent)!important;opacity:1!important;pointer-events:none!important;}
-#package .flatPartCard:hover{transform:translateY(-1px)!important;border-color:color-mix(in srgb,var(--part-accent) 42%,#d9dee5)!important;box-shadow:none!important;}
+#partsScreen .flatPartCard:nth-child(2){--part-accent:#7890d8;--part-soft:#eef2ff;background:linear-gradient(118deg,#fff 0%,#fff 48%,#fafbff 74%,#eef2ff 100%)!important}
+#partsScreen .flatPartCard:nth-child(3){--part-accent:#e5ad3d;--part-soft:#fff5df;background:linear-gradient(118deg,#fff 0%,#fff 48%,#fffdf7 74%,#fff5df 100%)!important}
+#partsScreen .flatPartCard::before{content:""!important;position:absolute!important;left:0!important;top:0!important;bottom:0!important;width:6px!important;background:var(--part-accent)!important;opacity:1!important;pointer-events:none!important}
+#partsScreen .flatPartCard:hover{transform:translateY(-1px)!important;border-color:color-mix(in srgb,var(--part-accent) 42%,#d9dee5)!important;box-shadow:none!important}
 
-/* Chinese section name is the icon. No separate icon box. */
-#package .flatPartCard .partHanzi{
-  grid-column:1!important;
-  grid-row:1!important;
-  display:block!important;
-  width:max-content!important;
-  max-width:100%!important;
-  height:auto!important;
-  margin:0!important;
-  padding:0!important;
-  border:0!important;
-  border-radius:0!important;
-  background:transparent!important;
-  box-shadow:none!important;
-  color:var(--part-accent)!important;
-  font-size:56px!important;
-  line-height:.9!important;
-  letter-spacing:0!important;
-  white-space:nowrap!important;
-  overflow:visible!important;
-  text-shadow:none!important;
-}
-#package .flatPartCard .partMain{
-  grid-column:1!important;
-  grid-row:2!important;
-  min-width:0!important;
-  width:100%!important;
-  display:flex!important;
-  flex-direction:column!important;
-  align-items:flex-start!important;
-  justify-content:flex-start!important;
-  padding-top:10px!important;
-}
-#package .flatPartCard strong{
-  display:block!important;
-  margin:0!important;
-  color:#17181b!important;
-  font-family:"Google Sans","Roboto",Arial,sans-serif!important;
-  font-size:23px!important;
-  line-height:1.1!important;
-  letter-spacing:-.5px!important;
-  font-weight:750!important;
-}
-#package .flatPartCard .partMeta{
-  display:block!important;
-  margin-top:7px!important;
-  color:#697384!important;
-  font-family:"Google Sans","Roboto",Arial,sans-serif!important;
-  font-size:13px!important;
-  line-height:1.35!important;
-  font-weight:500!important;
-}
-#package .flatPartCard .partTags,
-#package .flatPartCard .partEyebrow{display:none!important;}
+/* The Chinese section name is now the visual icon. No separate icon box. */
+#partsScreen .flatPartCard .partHanzi{grid-column:1!important;grid-row:1!important;display:block!important;width:max-content!important;height:auto!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;color:var(--part-accent)!important;font-size:34px!important;line-height:1!important;letter-spacing:1px!important;white-space:nowrap!important;overflow:visible!important;text-shadow:none!important}
+#partsScreen .flatPartCard .partMain{grid-column:1!important;grid-row:2!important;min-width:0!important;width:100%!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:flex-start!important;padding-top:12px!important}
+#partsScreen .flatPartCard strong{margin:0!important;color:#17181b!important;font-size:24px!important;line-height:1.1!important;letter-spacing:-.6px!important;font-weight:900!important}
+#partsScreen .flatPartCard .partMeta{margin-top:7px!important;color:#697384!important;font-size:13px!important;line-height:1.35!important;font-weight:500!important}
+#partsScreen .flatPartCard .partTags,
+#partsScreen .flatPartCard .partEyebrow{display:none!important}
+#partsScreen .flatPartCard .partArrow{grid-column:2!important;grid-row:1 / span 2!important;justify-self:end!important;align-self:start!important;width:48px!important;height:48px!important;border-radius:50%!important;display:grid!important;place-items:center!important;background:color-mix(in srgb,var(--part-accent) 10%,transparent)!important;color:var(--part-accent)!important;margin:0!important}
+#partsScreen .flatPartCard .partArrow .ico{width:22px!important;height:22px!important;stroke-width:2!important}
+#partsScreen .flatPartCard .progressWrap{grid-column:1 / -1!important;grid-row:3!important;width:100%!important;margin:20px 0 0!important}
+#partsScreen .flatPartCard .progressMeta{display:flex!important;justify-content:space-between!important;align-items:center!important;margin:0 0 7px!important;color:#697384!important;font-size:11px!important}
+#partsScreen .flatPartCard .progressMeta strong{margin:0!important;color:#697384!important;font-size:11px!important;font-weight:650!important;letter-spacing:0!important}
+#partsScreen .flatPartCard .progressBar{width:100%!important;height:6px!important;border-radius:999px!important;background:#e6ebf0!important;box-shadow:none!important}
+#partsScreen .flatPartCard .progressBar .fill{background:var(--part-accent)!important;border-radius:999px!important;box-shadow:none!important}
 
-#package .flatPartCard .partArrow{
-  grid-column:2!important;
-  grid-row:1 / span 2!important;
-  justify-self:end!important;
-  align-self:start!important;
-  width:44px!important;
-  height:44px!important;
-  border-radius:50%!important;
-  display:grid!important;
-  place-items:center!important;
-  background:color-mix(in srgb,var(--part-accent) 10%,transparent)!important;
-  color:var(--part-accent)!important;
-  margin:0!important;
-}
-#package .flatPartCard .partArrow .ico{width:21px!important;height:21px!important;stroke-width:2!important;}
+/* Dark mode keeps the same geometry and only changes the color treatment. */
+body.dark #partsScreen .flatPartCard{border-color:#2d3035!important;color:#f3f5f8!important;background:linear-gradient(118deg,#08090b 0%,#101114 48%,#17120f 74%,#24120f 100%)!important}
+body.dark #partsScreen .flatPartCard:nth-child(2){background:linear-gradient(118deg,#08090b 0%,#101114 48%,#111722 74%,#18233d 100%)!important}
+body.dark #partsScreen .flatPartCard:nth-child(3){background:linear-gradient(118deg,#08090b 0%,#101114 48%,#1d170e 74%,#2a1e0b 100%)!important}
+body.dark #partsScreen .flatPartCard .partHanzi{color:var(--part-accent)!important}
+body.dark #partsScreen .flatPartCard strong{color:#f3f5f8!important}
+body.dark #partsScreen .flatPartCard .partMeta,
+body.dark #partsScreen .flatPartCard .progressMeta,
+body.dark #partsScreen .flatPartCard .progressMeta strong{color:#a9b1be!important}
+body.dark #partsScreen .flatPartCard .partArrow{background:color-mix(in srgb,var(--part-accent) 12%,#101114)!important;color:var(--part-accent)!important}
+body.dark #partsScreen .flatPartCard .progressBar{background:#202226!important}
+body.dark #partsScreen .flatPartCard .progressBar .fill{background:var(--part-accent)!important}
 
-#package .flatPartCard .progressWrap{
-  grid-column:1 / -1!important;
-  grid-row:4!important;
-  width:100%!important;
-  margin:22px 0 0!important;
-}
-#package .flatPartCard .progressMeta{display:flex!important;justify-content:space-between!important;align-items:center!important;margin:0 0 7px!important;color:#697384!important;font-size:11px!important;}
-#package .flatPartCard .progressMeta strong{margin:0!important;color:#697384!important;font-size:11px!important;font-weight:650!important;letter-spacing:0!important;}
-#package .flatPartCard .progressBar{width:100%!important;height:6px!important;border-radius:999px!important;background:#e6ebf0!important;box-shadow:none!important;}
-#package .flatPartCard .progressBar .fill{background:var(--part-accent)!important;border-radius:999px!important;box-shadow:none!important;}
-
-/* Dark mode: same geometry, only color treatment changes. */
-body.dark #package .flatPartCard{border-color:#2d3035!important;color:#f3f5f8!important;background:linear-gradient(118deg,#08090b 0%,#101114 50%,#17120f 76%,#24120f 100%)!important;}
-body.dark #package .flatPartCard:nth-child(2){background:linear-gradient(118deg,#08090b 0%,#101114 50%,#111722 76%,#18233d 100%)!important;}
-body.dark #package .flatPartCard:nth-child(3){background:linear-gradient(118deg,#08090b 0%,#101114 50%,#1d170e 76%,#2a1e0b 100%)!important;}
-body.dark #package .flatPartCard .partHanzi{color:var(--part-accent)!important;}
-body.dark #package .flatPartCard strong{color:#f3f5f8!important;}
-body.dark #package .flatPartCard .partMeta,
-body.dark #package .flatPartCard .progressMeta,
-body.dark #package .flatPartCard .progressMeta strong{color:#a9b1be!important;}
-body.dark #package .flatPartCard .partArrow{background:color-mix(in srgb,var(--part-accent) 12%,#101114)!important;color:var(--part-accent)!important;}
-body.dark #package .flatPartCard .progressBar{background:#202226!important;}
-body.dark #package .flatPartCard .progressBar .fill{background:var(--part-accent)!important;}
-
-@media(max-width:900px) and (min-width:761px){
-  #package #parts{gap:12px!important;}
-  #package .flatPartCard{min-height:235px!important;padding:20px 17px 17px 20px!important;}
-  #package .flatPartCard .partHanzi{font-size:48px!important;}
-  #package .flatPartCard strong{font-size:21px!important;}
-  #package .flatPartCard .partArrow{width:42px!important;height:42px!important;}
-}
+@media(max-width:900px) and (min-width:761px){#partsScreen #parts{gap:12px!important}#partsScreen .flatPartCard{min-height:235px!important;padding:21px 18px 18px 21px!important}#partsScreen .flatPartCard .partHanzi{font-size:30px!important}#partsScreen .flatPartCard strong{font-size:21px!important}#partsScreen .flatPartCard .partArrow{width:44px!important;height:44px!important}}
 @media(max-width:760px){
-  #package #parts{grid-template-columns:1fr!important;gap:14px!important;}
-  #package .flatPartCard{grid-template-columns:minmax(0,1fr) 44px!important;grid-template-rows:auto auto 1fr auto!important;min-height:250px!important;padding:21px 17px 17px 22px!important;border-radius:24px!important;}
-  #package .flatPartCard .partHanzi{font-size:58px!important;line-height:.88!important;}
-  #package .flatPartCard .partMain{padding-top:12px!important;}
-  #package .flatPartCard strong{font-size:22px!important;}
-  #package .flatPartCard .partMeta{font-size:13px!important;}
-  #package .flatPartCard .partArrow{width:44px!important;height:44px!important;}
-  #package .flatPartCard .progressWrap{margin-top:20px!important;}
+  #partsScreen #parts{grid-template-columns:1fr!important;gap:14px!important}
+  #partsScreen .flatPartCard{grid-template-columns:minmax(0,1fr) 46px!important;grid-template-rows:auto 1fr auto!important;min-height:205px!important;padding:21px 17px 17px 22px!important;border-radius:24px!important}
+  #partsScreen .flatPartCard .partHanzi{font-size:31px!important}
+  #partsScreen .flatPartCard .partMain{padding-top:11px!important}
+  #partsScreen .flatPartCard strong{font-size:22px!important}
+  #partsScreen .flatPartCard .partMeta{font-size:13px!important}
+  #partsScreen .flatPartCard .partArrow{width:46px!important;height:46px!important}
+  #partsScreen .flatPartCard .progressWrap{margin-top:17px!important}
 }
 </style>
 
