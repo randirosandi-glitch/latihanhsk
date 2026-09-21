@@ -689,101 +689,131 @@
       "questions": [
         [
           "56",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 而且环境保护得也很好\nB. 小城四季的风景都很美\nC. 因此每年都吸引着成千上万的游客去那儿旅游",
           [
-            "而且环境保护得也很好",
-            "小城四季的风景都很美",
-            "因此每年都吸引着成千上万的游客去那儿旅游"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "BAC"
         ],
         [
           "57",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 学会接受别人的批评\nB. 然后才会变得更优秀\nC. 才能发现自己的缺点",
           [
-            "学会接受别人的批评",
-            "然后才会变得更优秀",
-            "才能发现自己的缺点"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ACB"
         ],
         [
           "58",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 我从小就养成了写日记的习惯\nB. 把每天发生的事情记在笔记本上\nC. 也算是对一天生活的总结",
           [
-            "我从小就养成了写日记的习惯",
-            "把每天发生的事情记在笔记本上",
-            "也算是对一天生活的总结"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ABC"
         ],
         [
           "59",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 就好像站在镜子前面,看镜子里面的人\nB. 尊重别人的人,同样也会受到别人的尊重\nC. 你热情他也热情,你友好他也友好",
           [
-            "就好像站在镜子前面,看镜子里面的人",
-            "尊重别人的人,同样也会受到别人的尊重",
-            "你热情他也热情,你友好他也友好"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "BAC"
         ],
         [
           "60",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 不管在外面的世界遇到什么困难\nB. 家永远是我们心中最安全的地方\nC. 因为我们总是能够在家里找到爱和幸福",
           [
-            "不管在外面的世界遇到什么困难",
-            "家永远是我们心中最安全的地方",
-            "因为我们总是能够在家里找到爱和幸福"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ABC"
         ],
         [
           "61",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 对皮肤很有好处\nB. 例如，每天早晨吃一到两个新鲜西红柿\nC. 常吃西红柿对解决一些健康问题有很大的帮助",
           [
-            "对皮肤很有好处",
-            "例如，每天早晨吃一到两个新鲜西红柿",
-            "常吃西红柿对解决一些健康问题有很大的帮助"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "CBA"
         ],
         [
           "62",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 为人们交友提供了方便\nB. 网上各种免费的聊天工具\nC. 现在,连人们办公也离不开它了",
           [
-            "为人们交友提供了方便",
-            "网上各种免费的聊天工具",
-            "现在,连人们办公也离不开它了"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "BAC"
         ],
         [
           "63",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 但是时间不要太长,最好在半小时到一小时之间\nB. 一般来说,感到微微出汗的时候就可以了\nC. 散步能让人减轻压力,变得轻松起来",
           [
-            "但是时间不要太长,最好在半小时到一小时之间",
-            "一般来说,感到微微出汗的时候就可以了",
-            "散步能让人减轻压力,变得轻松起来"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "CAB"
         ],
         [
           "64",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 从他嘴里说出来也会变得十分有趣\nB. 他是一个幽默的人\nC. 即使是很普通的经历",
           [
-            "从他嘴里说出来也会变得十分有趣",
-            "他是一个幽默的人",
-            "即使是很普通的经历"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "BCA"
         ],
         [
           "65",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 因为红色能更好地保护皮肤\nB. 按照经验,人们往往认为夏天应该多穿白色衣服\nC. 但有研究证明,其实穿红色的更好",
           [
-            "因为红色能更好地保护皮肤",
-            "按照经验,人们往往认为夏天应该多穿白色衣服",
-            "但有研究证明,其实穿红色的更好"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "BCA"
         ]
@@ -1244,8 +1274,8 @@
               56,
               65
             ],
-            "type": "sentence_ordering",
-            "input": "ordering"
+            "type": "choice",
+            "input": "single_select"
           },
           {
             "title": "阅读 · 第四部分",
@@ -1384,7 +1414,7 @@
     }
   },
   "meta": {
-    "sourceSchema": "HSK4 legacy JSON v1.23-split-db",
+    "sourceSchema": "HSK4 PDF rebuild v2",
     "universalConversion": "v1",
     "sourceVerified": true,
     "questionCount": 100,
@@ -1397,7 +1427,23 @@
     "universalEngineCompatibility": {
       "target": "HSK4 Universal Engine",
       "format": "section.parts direct rule",
-      "convertedFromNestedRules": true
-    }
+      "questionShapes": "choice + sentence_ordering + picture_writing",
+      "noEngineChangeRequired": true
+    },
+    "sourceFile": "H41004.pdf",
+    "sourceBasis": "User-provided HSK 4 PDF archive",
+    "answerKeyVerifiedFromPdf": true,
+    "verifiedScoredQuestions": 85,
+    "dataVersion": "pdf-2026-09-21-v2",
+    "reading_part3_mode": "single_choice_six_permutations",
+    "reading_part3_options": [
+      "ABC",
+      "ACB",
+      "BAC",
+      "BCA",
+      "CAB",
+      "CBA"
+    ],
+    "reading_part3_note": "Practice mode: all 6 permutations are offered; answer remains the verified correct permutation."
   }
 }

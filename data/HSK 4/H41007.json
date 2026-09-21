@@ -689,101 +689,131 @@
       "questions": [
         [
           "56",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 每个人都有烦恼\nB. 只不过有的人把它写在脸上\nC. 有的人把它放在心间",
           [
-            "每个人都有烦恼",
-            "只不过有的人把它写在脸上",
-            "有的人把它放在心间"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ABC"
         ],
         [
           "57",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 是参加人数最多的一次\nB. 这次艺术节吸引了 3000 多人参加\nC. 亚洲艺术节于 9 月 21 日在北京举办",
           [
-            "是参加人数最多的一次",
-            "这次艺术节吸引了 3000 多人参加",
-            "亚洲艺术节于 9 月 21 日在北京举办"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "CBA"
         ],
         [
           "58",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 游泳和爬山都是很好的运动\nB. 就能收到理想的效果\nC. 你选择其中任何一个并且坚持下来",
           [
-            "游泳和爬山都是很好的运动",
-            "就能收到理想的效果",
-            "你选择其中任何一个并且坚持下来"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ACB"
         ],
         [
           "59",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 秋冬季节,皮肤容易干燥\nB. 这是让很多人烦恼的事\nC. 为了远离这个烦恼,我们要注意多喝水",
           [
-            "秋冬季节,皮肤容易干燥",
-            "这是让很多人烦恼的事",
-            "为了远离这个烦恼,我们要注意多喝水"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ABC"
         ],
         [
           "60",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 最能说的人不一定是最有能力的人\nB. 这是因为我们有两只耳朵、一张嘴\nC. 本来就是让我们多听少说的",
           [
-            "最能说的人不一定是最有能力的人",
-            "这是因为我们有两只耳朵、一张嘴",
-            "本来就是让我们多听少说的"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ABC"
         ],
         [
           "61",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 每天都吸引了大量的游客\nB. 动物园里的这几只大熊猫\nC. 在寒暑假的时候,来参观的游客尤其多",
           [
-            "每天都吸引了大量的游客",
-            "动物园里的这几只大熊猫",
-            "在寒暑假的时候,来参观的游客尤其多"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "BAC"
         ],
         [
           "62",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 它通过两个年轻人的爱情故事\nB. 反映了当时的社会情况\nC. 《红楼梦》是中国著名的长篇小说",
           [
-            "它通过两个年轻人的爱情故事",
-            "反映了当时的社会情况",
-            "《红楼梦》是中国著名的长篇小说"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "CAB"
         ],
         [
           "63",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 结果第二天就感冒了,又是咳嗽,又是发烧\nB. 所以在外边玩儿了很长时间\nC. 她从来没有见过这么大的雪,特别兴奋",
           [
-            "结果第二天就感冒了,又是咳嗽,又是发烧",
-            "所以在外边玩儿了很长时间",
-            "她从来没有见过这么大的雪,特别兴奋"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "CBA"
         ],
         [
           "64",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 只有尝过生活的酸、甜、苦、辣之后\nB. 最后变得成熟起来\nC. 我们才能更清楚地认识自己",
           [
-            "只有尝过生活的酸、甜、苦、辣之后",
-            "最后变得成熟起来",
-            "我们才能更清楚地认识自己"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ACB"
         ],
         [
           "65",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 现在突然改变主意\nB. 她肯定会非常失望的\nC. 上个星期六你就说女儿生日时要带她去海洋馆",
           [
-            "现在突然改变主意",
-            "她肯定会非常失望的",
-            "上个星期六你就说女儿生日时要带她去海洋馆"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "CAB"
         ]
@@ -1244,8 +1274,8 @@
               56,
               65
             ],
-            "type": "sentence_ordering",
-            "input": "ordering"
+            "type": "choice",
+            "input": "single_select"
           },
           {
             "title": "阅读 · 第四部分",
@@ -1384,7 +1414,7 @@
     }
   },
   "meta": {
-    "sourceSchema": "HSK4 legacy JSON v1.23-split-db",
+    "sourceSchema": "HSK4 PDF rebuild v2",
     "universalConversion": "v1",
     "sourceVerified": true,
     "questionCount": 100,
@@ -1397,7 +1427,23 @@
     "universalEngineCompatibility": {
       "target": "HSK4 Universal Engine",
       "format": "section.parts direct rule",
-      "convertedFromNestedRules": true
-    }
+      "questionShapes": "choice + sentence_ordering + picture_writing",
+      "noEngineChangeRequired": true
+    },
+    "sourceFile": "H41007.pdf",
+    "sourceBasis": "User-provided HSK 4 PDF archive",
+    "answerKeyVerifiedFromPdf": true,
+    "verifiedScoredQuestions": 85,
+    "dataVersion": "pdf-2026-09-21-v2",
+    "reading_part3_mode": "single_choice_six_permutations",
+    "reading_part3_options": [
+      "ABC",
+      "ACB",
+      "BAC",
+      "BCA",
+      "CAB",
+      "CBA"
+    ],
+    "reading_part3_note": "Practice mode: all 6 permutations are offered; answer remains the verified correct permutation."
   }
 }

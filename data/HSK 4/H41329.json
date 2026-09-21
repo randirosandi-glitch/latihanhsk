@@ -689,101 +689,131 @@
       "questions": [
         [
           "56",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 可是一直都占线\nB. 我给马经理打了好几次电话了\nC. 也不知道他到底是怎么回事",
           [
-            "可是一直都占线",
-            "我给马经理打了好几次电话了",
-            "也不知道他到底是怎么回事"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "BAC"
         ],
         [
           "57",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 相信不同的人会给出不同的答案\nB. 在 我 看 来 ,只要能做自己喜欢的事,就是幸福\nC. 究竟什么是幸福",
           [
-            "相信不同的人会给出不同的答案",
-            "在 我 看 来 ,只要能做自己喜欢的事,就是幸福",
-            "究竟什么是幸福"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "CAB"
         ],
         [
           "58",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 请 您 按 照 “先 下 后 上 ”的顺序上下车\nB. 各 位 乘 客 ,为了保证您和他人的安全\nC. 并 注 意 脚 下 ,照顾好老人和孩子",
           [
-            "请 您 按 照 “先 下 后 上 ”的顺序上下车",
-            "各 位 乘 客 ,为了保证您和他人的安全",
-            "并 注 意 脚 下 ,照顾好老人和孩子"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "BAC"
         ],
         [
           "59",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 既能看得清楚,眼睛也不容易累\nB. 科 学家通过研究发现,一般情况下\nC. 人 的 眼 睛 和 书 本 的 距 离 为 0．25米时",
           [
-            "既能看得清楚,眼睛也不容易累",
-            "科 学家通过研究发现,一般情况下",
-            "人 的 眼 睛 和 书 本 的 距 离 为 0．25米时"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "BCA"
         ],
         [
           "60",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 我要特别感谢一直支持和帮助我的朋友们\nB. 我是不可能取得今天这样的成绩的\nC. 没有他们的关心和鼓励",
           [
-            "我要特别感谢一直支持和帮助我的朋友们",
-            "我是不可能取得今天这样的成绩的",
-            "没有他们的关心和鼓励"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ACB"
         ],
         [
           "61",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 给我们留下很多美好的回忆\nB. 写日记是一个很好的习惯\nC. 它可以帮我们记住过去发生的事情",
           [
-            "给我们留下很多美好的回忆",
-            "写日记是一个很好的习惯",
-            "它可以帮我们记住过去发生的事情"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "BCA"
         ],
         [
           "62",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 我 晚 点 儿才能回去,桌子上有早上剩下的包子\nB. 就先吃点儿\nC. 冰箱里 还 有 面 包 ,你要是饿了",
           [
-            "我 晚 点 儿才能回去,桌子上有早上剩下的包子",
-            "就先吃点儿",
-            "冰箱里 还 有 面 包 ,你要是饿了"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ACB"
         ],
         [
           "63",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 你这个动作做得还是不太标准,我给你跳一遍\nB. 你 仔 细 看 着 ,应该像我这样\nC. 先 抬 胳 膊 ,然后再抬腿",
           [
-            "你这个动作做得还是不太标准,我给你跳一遍",
-            "你 仔 细 看 着 ,应该像我这样",
-            "先 抬 胳 膊 ,然后再抬腿"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ABC"
         ],
         [
           "64",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 现 在 只 卖 300 块\nB. 这种裙子今年非常流行,质量很好\nC. 价 格 也 不 贵 ,我找一件您试试吧",
           [
-            "现 在 只 卖 300 块",
-            "这种裙子今年非常流行,质量很好",
-            "价 格 也 不 贵 ,我找一件您试试吧"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "BAC"
         ],
         [
           "65",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 每 到 秋 季 ,随着气温的降低\nB. 吸引了很多游客前来观看\nC. 这里许多植物的叶子都会由绿变黄或者变红",
           [
-            "每 到 秋 季 ,随着气温的降低",
-            "吸引了很多游客前来观看",
-            "这里许多植物的叶子都会由绿变黄或者变红"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ACB"
         ]
@@ -1244,8 +1274,8 @@
               56,
               65
             ],
-            "type": "sentence_ordering",
-            "input": "ordering"
+            "type": "choice",
+            "input": "single_select"
           },
           {
             "title": "阅读 · 第四部分",
@@ -1384,7 +1414,7 @@
     }
   },
   "meta": {
-    "sourceSchema": "HSK4 legacy JSON v1.23-split-db",
+    "sourceSchema": "HSK4 PDF rebuild v2",
     "universalConversion": "v1",
     "sourceVerified": true,
     "questionCount": 100,
@@ -1397,7 +1427,23 @@
     "universalEngineCompatibility": {
       "target": "HSK4 Universal Engine",
       "format": "section.parts direct rule",
-      "convertedFromNestedRules": true
-    }
+      "questionShapes": "choice + sentence_ordering + picture_writing",
+      "noEngineChangeRequired": true
+    },
+    "sourceFile": "H41329.pdf",
+    "sourceBasis": "User-provided HSK 4 PDF archive",
+    "answerKeyVerifiedFromPdf": true,
+    "verifiedScoredQuestions": 85,
+    "dataVersion": "pdf-2026-09-21-v2",
+    "reading_part3_mode": "single_choice_six_permutations",
+    "reading_part3_options": [
+      "ABC",
+      "ACB",
+      "BAC",
+      "BCA",
+      "CAB",
+      "CBA"
+    ],
+    "reading_part3_note": "Practice mode: all 6 permutations are offered; answer remains the verified correct permutation."
   }
 }

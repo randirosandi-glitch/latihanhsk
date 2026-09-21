@@ -689,101 +689,131 @@
       "questions": [
         [
           "56",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 带来一天的好心情\nB. 一个笑话\nC. 也许就能带走我们的烦恼",
           [
-            "带来一天的好心情",
-            "一个笑话",
-            "也许就能带走我们的烦恼"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "BCA"
         ],
         [
           "57",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 就可以变得越来越优秀\nB. 但只要能发现自己的缺点并及时去改\nC. 每个人都有缺点",
           [
-            "就可以变得越来越优秀",
-            "但只要能发现自己的缺点并及时去改",
-            "每个人都有缺点"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "CBA"
         ],
         [
           "58",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 平时,儿子总是在学校上课\nB. 只有放了假,才有可能和我们一块儿去旅游\nC. 学习很紧张,很少有时间出去玩儿",
           [
-            "平时,儿子总是在学校上课",
-            "只有放了假,才有可能和我们一块儿去旅游",
-            "学习很紧张,很少有时间出去玩儿"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ACB"
         ],
         [
           "59",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 因为无论成功还是失败,努力过的人都应获得掌声\nB. 当然,也不要忘了鼓励那些失败的人\nC. 我们要为那些通过自己努力获得成功的人鼓掌",
           [
-            "因为无论成功还是失败,努力过的人都应获得掌声",
-            "当然,也不要忘了鼓励那些失败的人",
-            "我们要为那些通过自己努力获得成功的人鼓掌"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "CBA"
         ],
         [
           "60",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 所以对我来说,年龄只是一个数字\nB. 我的理解是,重要的是要有永远年轻的心\nC. 我从来不关心它",
           [
-            "所以对我来说,年龄只是一个数字",
-            "我的理解是,重要的是要有永远年轻的心",
-            "我从来不关心它"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "BAC"
         ],
         [
           "61",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 在原有的基础上,增加了一部分文化交流的内容\nB. 王校长,根据您的要求\nC. 我把这篇报道稍微改了一下",
           [
-            "在原有的基础上,增加了一部分文化交流的内容",
-            "王校长,根据您的要求",
-            "我把这篇报道稍微改了一下"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "BCA"
         ],
         [
           "62",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 放弃并不代表认输,而是代表新的开始\nB. 因此,为了获得更多\nC. 需要主动丢掉一些不重要的东西",
           [
-            "放弃并不代表认输,而是代表新的开始",
-            "因此,为了获得更多",
-            "需要主动丢掉一些不重要的东西"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ABC"
         ],
         [
           "63",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 人就容易梦到什么内容\nB. 例如，一个人脚冷时就可能会梦见在雪地里行走\nC. 晚上睡觉时,身体感觉到什么",
           [
-            "人就容易梦到什么内容",
-            "例如，一个人脚冷时就可能会梦见在雪地里行走",
-            "晚上睡觉时,身体感觉到什么"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "CAB"
         ],
         [
           "64",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 我打算毕业以后\nB. 为将来自己做生意积累一些管理经验\nC. 先在叔叔开的公司里干一段时间",
           [
-            "我打算毕业以后",
-            "为将来自己做生意积累一些管理经验",
-            "先在叔叔开的公司里干一段时间"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ACB"
         ],
         [
           "65",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 她是我的同学,从小就想成为一名警察\nB. 现在她决定,一定要找一个警察做丈夫\nC. 然而由于种种原因,她没能当上警察",
           [
-            "她是我的同学,从小就想成为一名警察",
-            "现在她决定,一定要找一个警察做丈夫",
-            "然而由于种种原因,她没能当上警察"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ACB"
         ]
@@ -1244,8 +1274,8 @@
               56,
               65
             ],
-            "type": "sentence_ordering",
-            "input": "ordering"
+            "type": "choice",
+            "input": "single_select"
           },
           {
             "title": "阅读 · 第四部分",
@@ -1384,7 +1414,7 @@
     }
   },
   "meta": {
-    "sourceSchema": "HSK4 legacy JSON v1.23-split-db",
+    "sourceSchema": "HSK4 PDF rebuild v2",
     "universalConversion": "v1",
     "sourceVerified": true,
     "questionCount": 100,
@@ -1397,7 +1427,23 @@
     "universalEngineCompatibility": {
       "target": "HSK4 Universal Engine",
       "format": "section.parts direct rule",
-      "convertedFromNestedRules": true
-    }
+      "questionShapes": "choice + sentence_ordering + picture_writing",
+      "noEngineChangeRequired": true
+    },
+    "sourceFile": "H41003.pdf",
+    "sourceBasis": "User-provided HSK 4 PDF archive",
+    "answerKeyVerifiedFromPdf": true,
+    "verifiedScoredQuestions": 85,
+    "dataVersion": "pdf-2026-09-21-v2",
+    "reading_part3_mode": "single_choice_six_permutations",
+    "reading_part3_options": [
+      "ABC",
+      "ACB",
+      "BAC",
+      "BCA",
+      "CAB",
+      "CBA"
+    ],
+    "reading_part3_note": "Practice mode: all 6 permutations are offered; answer remains the verified correct permutation."
   }
 }

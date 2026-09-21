@@ -689,101 +689,131 @@
       "questions": [
         [
           "56",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 筷子在中国已经有 3000 多年的历史了\nB. 而且还代表着一种文化\nC. 它不仅仅是人们吃饭用的一种工具",
           [
-            "筷子在中国已经有 3000 多年的历史了",
-            "而且还代表着一种文化",
-            "它不仅仅是人们吃饭用的一种工具"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ACB"
         ],
         [
           "57",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 观众们都非常喜爱它\nB. 样子可爱极了\nC. 大熊猫身子胖胖的、耳朵圆圆的",
           [
-            "观众们都非常喜爱它",
-            "样子可爱极了",
-            "大熊猫身子胖胖的、耳朵圆圆的"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "CBA"
         ],
         [
           "58",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 有的人却只停留在希望的脚下\nB. 不同的是,有人从一开始就努力地向着目的地前进\nC. 人们都希望自己能够成功",
           [
-            "有的人却只停留在希望的脚下",
-            "不同的是,有人从一开始就努力地向着目的地前进",
-            "人们都希望自己能够成功"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "CBA"
         ],
         [
           "59",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 《红楼梦》这本书在中国非常有名\nB. 只要是中国人\nC. 我相信没有不知道它的",
           [
-            "《红楼梦》这本书在中国非常有名",
-            "只要是中国人",
-            "我相信没有不知道它的"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ABC"
         ],
         [
           "60",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 区别只是,它们在南方和北方的名字不同\nB. 因为它们的做法都差不多\nC. 你们俩说的其实就是一种食品",
           [
-            "区别只是,它们在南方和北方的名字不同",
-            "因为它们的做法都差不多",
-            "你们俩说的其实就是一种食品"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "CBA"
         ],
         [
           "61",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 我丈夫是中学体育老师,他天天都要去运动\nB. 我现在也养成了每天跑步的习惯\nC. 受他的影响",
           [
-            "我丈夫是中学体育老师,他天天都要去运动",
-            "我现在也养成了每天跑步的习惯",
-            "受他的影响"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ACB"
         ],
         [
           "62",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 随便打断别人\nB. 当别人正在说话的时候\nC. 是对别人的不尊重,是很不礼貌的",
           [
-            "随便打断别人",
-            "当别人正在说话的时候",
-            "是对别人的不尊重,是很不礼貌的"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "BAC"
         ],
         [
           "63",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 一个人不应该轻言放弃\nB. 也应该找到信心,坚持下去\nC. 即使在最困难的时候",
           [
-            "一个人不应该轻言放弃",
-            "也应该找到信心,坚持下去",
-            "即使在最困难的时候"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ACB"
         ],
         [
           "64",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 地球是我们共同的家\nB. 我们必须减少污染,保护环境\nC. 才能使我们的家变得更美丽",
           [
-            "地球是我们共同的家",
-            "我们必须减少污染,保护环境",
-            "才能使我们的家变得更美丽"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ABC"
         ],
         [
           "65",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 吃不到葡萄就说葡萄酸\nB. 自己没有或者得不到的东西,就说它不好\nC. 这句话的意思是",
           [
-            "吃不到葡萄就说葡萄酸",
-            "自己没有或者得不到的东西,就说它不好",
-            "这句话的意思是"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ACB"
         ]
@@ -1244,8 +1274,8 @@
               56,
               65
             ],
-            "type": "sentence_ordering",
-            "input": "ordering"
+            "type": "choice",
+            "input": "single_select"
           },
           {
             "title": "阅读 · 第四部分",
@@ -1384,7 +1414,7 @@
     }
   },
   "meta": {
-    "sourceSchema": "HSK4 legacy JSON v1.23-split-db",
+    "sourceSchema": "HSK4 PDF rebuild v2",
     "universalConversion": "v1",
     "sourceVerified": true,
     "questionCount": 100,
@@ -1397,7 +1427,23 @@
     "universalEngineCompatibility": {
       "target": "HSK4 Universal Engine",
       "format": "section.parts direct rule",
-      "convertedFromNestedRules": true
-    }
+      "questionShapes": "choice + sentence_ordering + picture_writing",
+      "noEngineChangeRequired": true
+    },
+    "sourceFile": "H41219.pdf",
+    "sourceBasis": "User-provided HSK 4 PDF archive",
+    "answerKeyVerifiedFromPdf": true,
+    "verifiedScoredQuestions": 85,
+    "dataVersion": "pdf-2026-09-21-v2",
+    "reading_part3_mode": "single_choice_six_permutations",
+    "reading_part3_options": [
+      "ABC",
+      "ACB",
+      "BAC",
+      "BCA",
+      "CAB",
+      "CBA"
+    ],
+    "reading_part3_note": "Practice mode: all 6 permutations are offered; answer remains the verified correct permutation."
   }
 }

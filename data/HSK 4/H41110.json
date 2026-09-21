@@ -689,101 +689,131 @@
       "questions": [
         [
           "56",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 你弟弟的基础挺好的\nB. 喂,我打算放寒假后去学弹钢琴\nC. 要不要也给他报个名",
           [
-            "你弟弟的基础挺好的",
-            "喂,我打算放寒假后去学弹钢琴",
-            "要不要也给他报个名"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "BAC"
         ],
         [
           "57",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 所有的工作都在按计划进行着\nB. 还要继续辛苦大家\nC. 没出现任何问题,接下来的两个月",
           [
-            "所有的工作都在按计划进行着",
-            "还要继续辛苦大家",
-            "没出现任何问题,接下来的两个月"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ACB"
         ],
         [
           "58",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 这就是你哥?你们俩长得太像了\nB. 不仔细看的话\nC. 真的很难看出你们俩有什么区别",
           [
-            "这就是你哥?你们俩长得太像了",
-            "不仔细看的话",
-            "真的很难看出你们俩有什么区别"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ABC"
         ],
         [
           "59",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 当大部分人都在关心你飞得高不高时\nB. 这少数人,才是你的朋友\nC. 只有少数人关心你飞得累不累",
           [
-            "当大部分人都在关心你飞得高不高时",
-            "这少数人,才是你的朋友",
-            "只有少数人关心你飞得累不累"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ACB"
         ],
         [
           "60",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 那种既兴奋又紧张的感觉到现在仍然难以忘记\nB. 由于那是我第一次参加国际比赛\nC. 大学一年级时,我参加了世界大学生运动会",
           [
-            "那种既兴奋又紧张的感觉到现在仍然难以忘记",
-            "由于那是我第一次参加国际比赛",
-            "大学一年级时,我参加了世界大学生运动会"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "CBA"
         ],
         [
           "61",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 会后记得要全部收回来\nB. 请把这份调查表复印 35 份\nC. 明天上午会前发给各位代表,请他们填一下",
           [
-            "会后记得要全部收回来",
-            "请把这份调查表复印 35 份",
-            "明天上午会前发给各位代表,请他们填一下"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "BCA"
         ],
         [
           "62",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 既然你已经决定了\nB. 那我们尊重你的选择\nC. 有困难可以回来找我们,我们永远都支持你",
           [
-            "既然你已经决定了",
-            "那我们尊重你的选择",
-            "有困难可以回来找我们,我们永远都支持你"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "ABC"
         ],
         [
           "63",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 不要随便乱扔\nB. 否则,下次找起来会比较麻烦\nC. 东西用完后,最好放回原来的地方",
           [
-            "不要随便乱扔",
-            "否则,下次找起来会比较麻烦",
-            "东西用完后,最好放回原来的地方"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "CAB"
         ],
         [
           "64",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 但学艺术的小关还是拒绝了杂志社的邀请\nB. 尽管杂志社的收入不低\nC. 他的理想是开一个自己的工作室",
           [
-            "但学艺术的小关还是拒绝了杂志社的邀请",
-            "尽管杂志社的收入不低",
-            "他的理想是开一个自己的工作室"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "BAC"
         ],
         [
           "65",
-          "请排列下列句子的正确顺序。",
+          "请排列下列句子的正确顺序。\nA. 请他给你当导游保证没问题\nB. 对那个城市很熟悉\nC. 我这个同学就是在北京出生、长大的",
           [
-            "请他给你当导游保证没问题",
-            "对那个城市很熟悉",
-            "我这个同学就是在北京出生、长大的"
+            "ABC",
+            "ACB",
+            "BAC",
+            "BCA",
+            "CAB",
+            "CBA"
           ],
           "CBA"
         ]
@@ -1244,8 +1274,8 @@
               56,
               65
             ],
-            "type": "sentence_ordering",
-            "input": "ordering"
+            "type": "choice",
+            "input": "single_select"
           },
           {
             "title": "阅读 · 第四部分",
@@ -1384,7 +1414,7 @@
     }
   },
   "meta": {
-    "sourceSchema": "HSK4 legacy JSON v1.23-split-db",
+    "sourceSchema": "HSK4 PDF rebuild v2",
     "universalConversion": "v1",
     "sourceVerified": true,
     "questionCount": 100,
@@ -1397,7 +1427,23 @@
     "universalEngineCompatibility": {
       "target": "HSK4 Universal Engine",
       "format": "section.parts direct rule",
-      "convertedFromNestedRules": true
-    }
+      "questionShapes": "choice + sentence_ordering + picture_writing",
+      "noEngineChangeRequired": true
+    },
+    "sourceFile": "H41110.pdf",
+    "sourceBasis": "User-provided HSK 4 PDF archive",
+    "answerKeyVerifiedFromPdf": true,
+    "verifiedScoredQuestions": 85,
+    "dataVersion": "pdf-2026-09-21-v2",
+    "reading_part3_mode": "single_choice_six_permutations",
+    "reading_part3_options": [
+      "ABC",
+      "ACB",
+      "BAC",
+      "BCA",
+      "CAB",
+      "CBA"
+    ],
+    "reading_part3_note": "Practice mode: all 6 permutations are offered; answer remains the verified correct permutation."
   }
 }
