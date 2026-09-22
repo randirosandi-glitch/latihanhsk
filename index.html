@@ -1959,6 +1959,33 @@ body.dark #packagesScreen #packagesGrid.packageGridV16 .packageCardV16Progress{b
 .heroGlow,.heroGlowA,.heroGlowB,.heroGlowC{display:none!important;}
 body::before,body::after{display:none!important;background:none!important;background-image:none!important;content:none!important;opacity:0!important;}
 </style>
+
+<style id="inlineAssessmentResultStyles">
+/* Inline assessment result — no Result screen navigation */
+.inlineResult{margin:14px 0 18px;padding:22px;border:1px solid var(--line);border-radius:22px;background:var(--surface);color:var(--text);}
+.inlineResultHead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.inlineResultLabel{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.inlineResultScore{font-size:44px;line-height:1;font-weight:850;letter-spacing:-1.5px;margin-top:5px;color:var(--blue)}
+.inlineResultMeta{margin-top:7px;color:var(--muted);font-size:13px;line-height:1.5}
+.inlineResultBadge{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:color-mix(in srgb,var(--green) 10%,var(--surface));color:var(--green);font-size:11px;font-weight:800;white-space:nowrap}
+.inlineResultBar{height:8px;margin-top:15px;border-radius:999px;background:var(--surface2);overflow:hidden}
+.inlineResultBar i{display:block;height:100%;background:var(--blue);border-radius:inherit}
+.inlineResultNote{margin-top:12px;padding:11px 13px;border-radius:14px;background:color-mix(in srgb,var(--blue) 7%,var(--surface));color:var(--muted);font-size:12px;line-height:1.55}
+.finishCard.checked{border-color:color-mix(in srgb,var(--green) 24%,var(--line));}
+@media(max-width:760px){.inlineResult{padding:18px}.inlineResultScore{font-size:38px}.inlineResultHead{gap:10px}}
+
+<style id="inlineAssessmentBottomLayout">
+/* Assessment stays at the end of the exercise for an immersive flow. */
+.finishCard{box-shadow:none!important;}
+.finishCardBtn{box-shadow:none!important;filter:none!important;}
+.finishCardBtnSecondary{box-shadow:none!important;filter:none!important;}
+.finishCard.checked{box-shadow:none!important;}
+.finishCard.checked .inlineResult{margin:0 0 18px;padding:20px;border:0;border-radius:16px;background:var(--surface2);}
+.finishCardNav{margin-top:0!important;}
+.finishCardRepeat{margin-top:10px!important;}
+.finishCardRepeat .finishCardBtn{flex:1;}
+@media(max-width:760px){.finishCard.checked .inlineResult{padding:18px;}.finishCardNav{gap:10px!important;}.finishCardRepeat{margin-top:10px!important;}}
+</style>
 </head><body><div aria-live="polite" id="appBootLoader" role="status"><div class="bootCard"><div aria-hidden="true" class="bootMark"><svg class="bootLogoSvg bootLogoLight" viewBox="0 0 1536 581" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 581" width="1536" height="581">
   <defs>
@@ -2451,7 +2478,7 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 window.addEventListener('pagehide',()=>flushCloudSync());
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&currentUsername){pullCloudState(true)}});
 window.addEventListener('focus',()=>{if(currentUsername)pullCloudState(true)});
-function restore(s){route={screen:s.screen||'home',packageCode:s.packageCode||null,type:s.type||null,sectionIndex:s.sectionIndex??null};if(route.screen==='home'){renderHome();setScreen('home',false);armHome();return}if(route.screen==='levels'){renderLevelsScreen();setScreen('levelsScreen',false)}else if(route.screen==='packages'){renderPackagesScreen();setScreen('packagesScreen',false)}else if(route.screen==='scores'){renderScores();setScreen('scores',false)}else if(route.screen==='package'){renderPackage();setScreen('package',false)}else if(route.screen==='parts'){renderSections();setScreen('partsScreen',false)}else if(route.screen==='exercise'){loadCurrentSectionState();renderExercise();setScreen('exercise',false)}else if(route.screen==='result'){renderResult();setScreen('result',false)}}
+function restore(s){route={screen:s.screen||'home',packageCode:s.packageCode||null,type:s.type||null,sectionIndex:s.sectionIndex??null};if(route.screen==='home'){renderHome();setScreen('home',false);armHome();return}if(route.screen==='levels'){renderLevelsScreen();setScreen('levelsScreen',false)}else if(route.screen==='packages'){renderPackagesScreen();setScreen('packagesScreen',false)}else if(route.screen==='scores'){renderScores();setScreen('scores',false)}else if(route.screen==='package'){renderPackage();setScreen('package',false)}else if(route.screen==='parts'){renderSections();setScreen('partsScreen',false)}else if(route.screen==='exercise'){loadCurrentSectionState();renderExercise();setScreen('exercise',false)}else if(route.screen==='result'){route.screen='exercise';loadCurrentSectionState();renderExercise();setScreen('exercise',false)}}
 function openPackage(code,push=true){if(!DB[code]){goHome(false);return}route={screen:'package',packageCode:code,type:null,sectionIndex:null};renderPackage();setScreen('package',push)}
 function renderPackage(){let code=route.packageCode;let d=DB[code]||{};$('pkgCrumb').textContent=code;$('pkgTitle').textContent='Paket '+code;const palettes={listening:{accent:'#ff6548',soft:'#fff0eb'},reading:{accent:'#7890d8',soft:'#eef2ff'},writing:{accent:'#e5ad3d',soft:'#fff5df'}};$('parts').innerHTML=Object.entries(META).map(([t,m])=>{const arr=d[t]||[],total=arr.reduce((a,x)=>a+x.questions.length,0),ps=arr.reduce((a,x,i)=>{const st=sectionStats(code,t,i);return {answered:a.answered+st.answered,total:a.total+st.total}},{answered:0,total:0});ps.pct=ps.total?Math.round(ps.answered/ps.total*100):0;const pal=palettes[t]||palettes.listening;return total?`<button class="partCard flatPartCard" style="--part-accent:${pal.accent};--part-soft:${pal.soft}" type="button" onclick="openSections('${esc(code)}','${t}')"><span class="partHanzi" aria-hidden="true">${esc(m.zh)}</span><span class="partMain"><strong>${esc(m.label)}</strong><span class="partMeta">${total} soal tersedia</span>${progressHTML(ps,'Progres bagian')}</span><span class="partArrow" aria-hidden="true"><span class="material-symbols-rounded ico">arrow_forward</span></span></button>`:`<div class="partCard flatPartCard partDisabled" style="--part-accent:${pal.accent};--part-soft:${pal.soft}" aria-disabled="true"><span class="partHanzi" aria-hidden="true">${esc(m.zh)}</span><span class="partMain"><strong>${esc(m.label)}</strong><span class="partMeta">Belum tersedia dari sumber paket</span></span></div>`}).join('')+`<div style="grid-column:1/-1">${renderPackageProgress(code)}</div>`}
 function openSections(code,type,push=true){if(!DB[code]||!META[type]){goHome(false);return}route={screen:'parts',packageCode:code,type,sectionIndex:null};renderSections();setScreen('partsScreen',push)}
@@ -2473,10 +2500,10 @@ function renderQuestionCards(){let out='',lastPassage='';const pkg=getActivePack
 function restoreQuestionUI(){for(const q of currentQuestions){const id=String(q[0]);if(currentMode==='writing'){const e=$('w'+id);if(e)e.value=answers[id]??''}else if(answers[id]!==undefined){const b=document.querySelector(`.opt[data-q="${id}"][data-i="${answers[id]}"]`);if(b)b.classList.add('selected')}if(checked[id])checkOne(id,true)}}
 function saveWriting(el){const id=String(el.id).slice(1);resumeQuestionId=id;const previous=answers[id];answers[id]=el.value;checked[id]=false;if(String(el.value||'').trim()!==''&&(previous===undefined||String(previous)!==String(el.value))){if(!answerEvents[id])answerEvents[id]=createQuestionActivity(id);}const f=$('f'+id);if(f)f.className='feedback';saveSectionState(route.packageCode,route.type,route.sectionIndex,answers,checked,answerEvents);refreshCurrentProgress()}
 function refreshCurrentProgress(){const wrap=document.querySelector('.sectionProgress');if(!wrap)return;const st=sectionStats(route.packageCode,route.type,route.sectionIndex);const meta=wrap.querySelector('.progressMeta');if(meta)meta.innerHTML=`<strong>Progres bagian</strong><span>${st.answered}/${st.total} terjawab · ${st.pct}%</span>`;const fill=wrap.querySelector('.fill');if(fill)fill.style.width=st.pct+'%'}
-function choose(btn){let id=String(btn.dataset.q);resumeQuestionId=id;const previous=answers[id];const next=btn.dataset.i;const changed=previous===undefined||String(previous)!==String(next);answers[id]=next;checked[id]=false;if(changed){answerEvents[id]=createQuestionActivity(id);}document.querySelectorAll(`.opt[data-q="${id}"]`).forEach(x=>x.classList.remove('selected','correct','wrong'));btn.classList.add('selected');let f=$('f'+id);if(f)f.className='feedback';saveSectionState(route.packageCode,route.type,route.sectionIndex);refreshCurrentProgress()}
+function choose(btn){let id=String(btn.dataset.q);resumeQuestionId=id;resultState=null;const previous=answers[id];const next=btn.dataset.i;const changed=previous===undefined||String(previous)!==String(next);answers[id]=next;checked[id]=false;if(changed){answerEvents[id]=createQuestionActivity(id);}document.querySelectorAll(`.opt[data-q="${id}"]`).forEach(x=>x.classList.remove('selected','correct','wrong'));btn.classList.add('selected');let f=$('f'+id);if(f)f.className='feedback';saveSectionState(route.packageCode,route.type,route.sectionIndex);refreshCurrentProgress()}
 function permutations(){return ['ABC','ACB','BAC','BCA','CAB','CBA']}
 function escapeSequence(o,idx){let text=String(o);let m=text.match(/^([ABC])\s+(.*)$/);if(m)text=m[2];let label=['A','B','C'][idx]||'';return '<div class="sequenceLine"><b>'+label+'</b><span>'+esc(text)+'</span></div>'}
-function saveWritingAnswer(id){const e=$('w'+id);const v=e?e.value.trim():String(answers[id]??'');if(!v){appNotice('Jawaban belum diisi','Ketik jawaban terlebih dahulu.');return}const previous=answers[id];const changed=previous===undefined||String(previous)!==String(v);answers[id]=v;if(changed){answerEvents[id]=createQuestionActivity(id);}checked[id]=true;const f=$('f'+id);if(f){f.className='feedback show good';f.textContent='✓ Jawaban tersimpan. Silakan periksa kembali kalimatmu sendiri.'}saveSectionState(route.packageCode,route.type,route.sectionIndex,answers,checked,answerEvents);refreshCurrentProgress()}
+function saveWritingAnswer(id){resultState=null;const e=$('w'+id);const v=e?e.value.trim():String(answers[id]??'');if(!v){appNotice('Jawaban belum diisi','Ketik jawaban terlebih dahulu.');return}const previous=answers[id];const changed=previous===undefined||String(previous)!==String(v);answers[id]=v;if(changed){answerEvents[id]=createQuestionActivity(id);}checked[id]=true;const f=$('f'+id);if(f){f.className='feedback show good';f.textContent='✓ Jawaban tersimpan. Silakan periksa kembali kalimatmu sendiri.'}saveSectionState(route.packageCode,route.type,route.sectionIndex,answers,checked,answerEvents);refreshCurrentProgress()}
 function createQuestionActivity(questionId){
   const st=readStore();
   const now=Math.max(Date.now(),Number(st._lastActivity?.updatedAt||0)+1);
@@ -2521,9 +2548,43 @@ if(answers[id]===undefined){if(!silent)appNotice('Jawaban belum dipilih','Pilih 
 function repeatOne(id){const q=currentQuestions.find(x=>String(x[0])===String(id));if(!q)return;resumeQuestionId=String(id);delete answers[id];delete checked[id];delete answerEvents[String(id)];if(currentMode==='writing'){const e=$('w'+id);if(e){e.value='';e.dispatchEvent(new Event('input',{bubbles:true}));}if(isSequenceWriting(route.type,route.sectionIndex))refreshWordBank(id)}else{document.querySelectorAll(`.opt[data-q="${id}"]`).forEach(b=>b.classList.remove('selected','correct','wrong'));}const f=$('f'+id);if(f)f.className='feedback';const r=$('r'+id);if(r)r.className='reference';const t=$('t'+id);if(t)t.classList.remove('show');saveSectionState(route.packageCode,route.type,route.sectionIndex);refreshCurrentProgress()}
 function toggleTranscript(id){$('t'+id).classList.toggle('show')}
 function showReference(id){$('r'+id).classList.toggle('show')}
-function grade(push=true){if(!currentQuestions.length)return;let score=0,answered=0;currentQuestions.forEach(q=>{let id=String(q[0]);let u=answers[id];if(currentMode==='writing'){let e=$('w'+id);if(e){u=e.value.trim();answers[id]=u}}if(u!==undefined&&String(u).trim()!=='')answered++;if(isCorrect(q,u,route.type,route.sectionIndex))score++});saveSectionState(route.packageCode,route.type,route.sectionIndex);resultState={score,total:currentQuestions.length,answered};route={...route,screen:'result'};renderResult();setScreen('result',push);requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'smooth'}))}
+function grade(push=true){
+  if(!currentQuestions.length)return;
+  let score=0,answered=0;
+  currentQuestions.forEach(q=>{
+    const id=String(q[0]);
+    let u=answers[id];
+    if(currentMode==='writing'){
+      const e=$('w'+id);
+      if(e){u=e.value.trim();answers[id]=u}
+    }
+    const has=u!==undefined&&String(u).trim()!=='';
+    if(has)answered++;
+    if(has && isCorrect(q,u,route.type,route.sectionIndex))score++;
+    /* Checked state belongs to the exercise itself. Never navigate to a Result screen. */
+    if(has && !(route.type==='writing' && !isSequenceWriting(route.type,route.sectionIndex))) checked[id]=true;
+  });
+  saveSectionState(route.packageCode,route.type,route.sectionIndex);
+  resultState={score,total:currentQuestions.length,answered,checkedAt:Date.now()};
+  /* Keep the exact exercise route. Assessment is now an inline state. */
+  route={...route,screen:'exercise'};
+  loadCurrentSectionState();
+  resultState={score,total:currentQuestions.length,answered,checkedAt:Date.now()};
+  const preserveScrollY=window.scrollY||window.pageYOffset||0;
+  renderExercise();
+  setScreen('exercise',false);
+  // setScreen() has a legacy scroll-to-top hook. Assessment must not move the user.
+  // Restore the exact pre-check position after every pending navigation frame has run.
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        window.scrollTo({top:preserveScrollY,left:0,behavior:'auto'});
+      });
+    });
+  });
+}
 function renderResult(){let r=resultState||{score:0,total:currentQuestions.length,answered:0};const rp=$('resultPkg'),rt=$('resultType'),rpart=$('resultPart');if(rp)rp.textContent=route.packageCode;if(rt)rt.textContent=META[route.type]?.label||route.type;if(rpart)rpart.textContent='Hasil · '+((DB[route.packageCode]?.[route.type]?.[route.sectionIndex]?.title||'').replace(/^.*?·\s*/,''));const isWriting=route.type==='writing',sequenceWriting=isSequenceWriting(route.type,route.sectionIndex);let pct=r.total?Math.round(r.score/r.total*100):0;const summary=(isWriting&&!sequenceWriting)?`<p><b>${r.answered}/${r.total}</b> jawaban tersimpan.</p><div class="notice" style="text-align:left;margin-top:16px"><strong>Catatan Writing</strong><br>Jawaban membuat kalimat tidak dinilai benar atau salah secara otomatis. Periksa kembali penggunaan kata dan tata bahasa kalimatmu.</div>`:`<div class="score">${pct}%</div><div class="bar"><div class="fill" style="width:${pct}%"></div></div><p><b>${r.score}/${r.total}</b> benar · ${r.answered} dijawab · ${r.total-r.answered} belum dijawab</p>`;$('resultBody').innerHTML=`<div class="result"><div class="sub">${esc(DB[route.packageCode][route.type][route.sectionIndex]?.title||'Hasil')}</div>${summary}<div class="resultActions"><button class="btn soft" onclick="repeat()">↻ Ulangi</button><button class="btn" onclick="openSections('${route.packageCode}','${route.type}')">${svg('back')} Kembali</button></div></div>`}
-function repeat(){if(!route.packageCode)return;appConfirm('Ulangi bagian ini?','Semua jawaban pada bagian ini akan dihapus dan kamu akan mulai lagi dari awal.',()=>{clearSectionState(route.packageCode,route.type,route.sectionIndex);page=0;window.__hskResumePage=0;route.screen='exercise';loadCurrentSectionState();renderExercise();setScreen('exercise')},{icon:'↻',okText:'Ulangi',danger:true})}
+function repeat(){if(!route.packageCode)return;appConfirm('Ulangi bagian ini?','Semua jawaban pada bagian ini akan dihapus dan kamu akan mulai lagi dari awal.',()=>{clearSectionState(route.packageCode,route.type,route.sectionIndex);resultState=null;page=0;window.__hskResumePage=0;route.screen='exercise';loadCurrentSectionState();renderExercise();setScreen('exercise',false);requestAnimationFrame(()=>requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'})))},{icon:'↻',okText:'Ulangi',danger:true})}
 function showPackageScore(code){const st=packageStats(code);$('packageModalTitle').textContent='Nilai Paket '+code;let rows=st.rows.map(r=>{if(!r.graded)return `<div class="scoreRow"><div class="scoreHead"><span>${esc(r.zh)} · ${esc(r.section)}</span><span>—</span></div><div class="scoreSub">Soal ${esc(r.range)} · ${r.answered}/${r.total} terjawab · Tidak dinilai otomatis</div></div>`;const pct=r.total?Math.round(r.score/r.total*100):0;return `<div class="scoreRow"><div class="scoreHead"><span>${esc(r.zh)} · ${esc(r.section)}</span><span>${r.score}/${r.total} · ${pct}%</span></div><div class="scoreSub">Soal ${esc(r.range)} · ${r.answered}/${r.total} terjawab</div><div class="scoreMini"><i style="width:${pct}%"></i></div></div>`}).join('');$('packageModalBody').innerHTML=`<div class="modalNote">Nilai otomatis dihitung untuk pilihan ganda dan susun kata yang memiliki kunci jawaban. Soal membuat kalimat tetap tercatat sebagai progres, tetapi tidak dinilai benar/salah.</div><div class="packageScore">${st.gradedTotal?st.scorePct+'%':'—'}</div><div class="scoreSub">${st.gradedTotal?st.score+'/'+st.gradedTotal+' benar · ':''}${st.answered}/${st.total} terjawab</div><div style="margin:16px 0">${progressHTML(st,'Progres paket')}</div>${rows||'<div class="notice">Belum ada bagian soal yang tersedia.</div>'}`;$('packageModal').classList.add('show')}
 function closePackageScore(){$('packageModal').classList.remove('show')}
 function toggleTheme(){applyTheme(document.body.classList.contains('dark')?'light':'dark')}
@@ -2758,7 +2819,7 @@ async function initApp(){
         else if(r.screen==='package'){renderPackage();setScreen('package',false);}
         else if(r.screen==='parts'){renderSections();setScreen('partsScreen',false);}
         else if(r.screen==='exercise'){loadCurrentSectionState();renderExercise();setScreen('exercise',false);}
-        else if(r.screen==='result'){renderResult();setScreen('result',false);}
+        else if(r.screen==='result'){r.screen='exercise';route={...route,...r};loadCurrentSectionState();renderExercise();setScreen('exercise',false);}
         else {route={screen:'home',packageCode:null,type:null,sectionIndex:null};renderHome();setScreen('home',false);}
       }catch(e){
         console.warn('HSK last-route restore failed:',e);
@@ -2785,7 +2846,7 @@ removeStrayEscapedNewlines();
 function finishAppBoot(){const loader=document.getElementById('appBootLoader');document.documentElement.classList.remove('app-booting');if(loader){loader.classList.add('hide');setTimeout(()=>loader.remove(),240)}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>Promise.resolve(initApp()).finally(finishAppBoot),{once:true});else Promise.resolve(initApp()).finally(finishAppBoot);
 </script>
-<footer aria-label="Versi aplikasi" class="appFooter"><span>HSK Papers</span><span>v 1.26</span></footer>
+<footer aria-label="Versi aplikasi" class="appFooter"><span>HSK Papers</span><span>v 1.31</span></footer>
 <script>
 (function(){
   const originalApplyTheme=window.applyTheme;
@@ -2846,12 +2907,86 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   function cardsForVisible(){const all=currentQuestions;currentQuestions=visible();const h=originalCards();currentQuestions=all;return h;}
   function restoreVisible(){const all=currentQuestions;currentQuestions=visible();restoreQuestionUI();if(currentMode==='writing'&&isSequenceWriting(route.type,route.sectionIndex))currentQuestions.forEach(q=>refreshWordBank(String(q[0])));currentQuestions=all;}
   function pager(){const n=pageCount();if(n<=1)return '';const prev=page>0?'<button class="btn" type="button" onclick="changeQuestionPage(-1)">‹ Sebelumnya</button>':'';const next=page<n-1?'<button class="btn" type="button" onclick="changeQuestionPage(1)">Berikutnya ›</button>':'';return '<div class="questionPager">'+prev+'<span class="pageIndicator">Halaman '+(page+1)+' / '+n+'</span>'+next+'</div>';}
+  function nextSectionTarget(){
+    const code=String(route.packageCode||'');
+    const currentType=String(route.type||'');
+    const currentIndex=Number(route.sectionIndex);
+    const order=Object.keys(META);
+    const pkg=DB[code];
+    if(!pkg)return null;
+
+    // First: continue within the current paper/part.
+    const currentArr=Array.isArray(pkg[currentType])?pkg[currentType]:[];
+    for(let i=currentIndex+1;i<currentArr.length;i++){
+      if(Array.isArray(currentArr[i]?.questions)&&currentArr[i].questions.length){
+        return {type:currentType,index:i};
+      }
+    }
+
+    // No more sections here: continue to the next available paper.
+    const typePos=order.indexOf(currentType);
+    for(let t=Math.max(0,typePos+1);t<order.length;t++){
+      const type=order[t];
+      const arr=Array.isArray(pkg[type])?pkg[type]:[];
+      const first=arr.findIndex(sec=>Array.isArray(sec?.questions)&&sec.questions.length);
+      if(first>=0)return {type,index:first};
+    }
+    return null;
+  }
+
+  window.nextSection=async function(){
+    const target=nextSectionTarget();
+    if(!target)return;
+    const code=String(route.packageCode||'');
+    try{
+      if(typeof window.__hskLoadPackage==='function')await window.__hskLoadPackage(code);
+      const arr=DB[code]?.[target.type]||[];
+      const sec=arr[target.index];
+      if(!sec||!Array.isArray(sec.questions)||!sec.questions.length){
+        appNotice('Bagian belum tersedia','Data soal untuk bagian berikutnya belum berhasil dimuat.');
+        return;
+      }
+      route={
+        screen:'exercise',
+        packageCode:code,
+        type:target.type,
+        sectionIndex:Number(target.index),
+        studyPlanId:route.studyPlanId||null
+      };
+      resumeQuestionId=null;
+      page=0;
+      window.__hskResumePage=0;
+      loadCurrentSectionState();
+      renderExercise();
+      setScreen('exercise',true);
+    }catch(e){
+      console.error('nextSection failed',e);
+      appNotice('Bagian berikutnya gagal dimuat',e.message||'Silakan coba lagi.');
+    }
+  };
   function finishCard(){
     if(page!==pageCount()-1)return '';
     const isWriting=route.type==='writing';
+    const checkedNow=!!resultState;
+    if(checkedNow){
+      const r=resultState;
+      const writing=isWriting&&!isSequenceWriting(route.type,route.sectionIndex);
+      const pct=r.total?Math.round(r.score/r.total*100):0;
+      const next=nextSectionTarget();
+      const backCode=JSON.stringify(String(route.packageCode||''));
+      const backType=JSON.stringify(String(route.type||''));
+      const resultHtml=writing
+        ? '<div class="inlineResult"><div class="inlineResultLabel">Hasil bagian</div><div class="inlineResultScore">'+r.answered+'/'+r.total+'</div><div class="inlineResultMeta">jawaban tersimpan</div><div class="inlineResultNote"><b>Writing tidak dinilai otomatis.</b> Periksa kembali tata bahasa dan penggunaan kata.</div></div>'
+        : '<div class="inlineResult"><div class="inlineResultLabel">Nilai bagian</div><div class="inlineResultScore">'+pct+'%</div><div class="inlineResultMeta"><b>'+r.score+'/'+r.total+'</b> benar · '+r.answered+' dijawab · '+(r.total-r.answered)+' belum dijawab</div><div class="inlineResultBar"><i style="width:'+pct+'%"></i></div></div>';
+      const nextBtn=next?'<button class="finishCardBtn" type="button" onclick="nextSection()"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span><span>Lanjut ke Bagian Selanjutnya</span></button>':'';
+      return '<div class="finishCard checked">'+resultHtml+'<div class="finishCardActions finishCardNav">'+
+        '<button class="finishCardBtn" type="button" onclick="returnToParts()"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_back</span><span>Kembali ke Bagian</span></button>'+
+        nextBtn+
+        '</div><div class="finishCardActions finishCardRepeat"><button class="finishCardBtn finishCardBtnSecondary" type="button" onclick="repeat()"><span class="material-symbols-rounded ico actionRepeat" aria-hidden="true">refresh</span><span>Ulangi Bagian</span></button></div></div>';
+    }
     const note=isWriting&&!isSequenceWriting(route.type,route.sectionIndex)
       ? 'Periksa semua jawabanmu lalu lihat ringkasan jawaban. Writing tidak dinilai benar/salah otomatis.'
-      : 'Periksa semua jawaban sekaligus dan lihat nilai bagian ini. Kamu juga bisa mengulang bagian ini tanpa memeriksa terlebih dahulu.';
+      : 'Periksa semua jawaban sekaligus dan lihat nilai bagian ini. Hasil akan muncul di bawah soal tanpa meninggalkan halaman.';
     return '<div class="finishCard"><div class="finishCardTitle">Sudah selesai mengerjakan?</div><div class="finishCardText">'+esc(note)+'</div><div class="finishCardActions"><button class="finishCardBtn" type="button" onclick="grade()">'+svg('check')+' <span>Periksa &amp; Lihat Nilai</span></button><button class="finishCardBtn finishCardBtnSecondary" type="button" onclick="repeat()"><span class="material-symbols-rounded ico actionRepeat" aria-hidden="true">refresh</span><span>Ulangi Bagian</span></button></div></div>';
   }
   window.changeQuestionPage=function(delta){const n=pageCount(),next=Math.max(0,Math.min(n-1,page+delta));if(next===page)return;page=next;window.__hskResumePage=page;const qwrap=$('questions');if(!qwrap)return;const instruction=qwrap.querySelector('.instruction'),progress=qwrap.querySelector('.sectionProgress');const prefix=(instruction?instruction.outerHTML:'')+(progress?progress.outerHTML:'');qwrap.innerHTML=prefix+cardsForVisible()+pager()+finishCard();restoreVisible();window.scrollTo({top:Math.max(0,qwrap.getBoundingClientRect().top+window.scrollY-12),behavior:'auto'});};
@@ -2864,14 +2999,44 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     const prefix=(instruction?instruction.outerHTML:'')+(progress?progress.outerHTML:'');
     qwrap.innerHTML=prefix+cardsForVisible()+pager()+finishCard();restoreVisible();
   };
-  window.renderExercise=function(){const sec=DB[route.packageCode]?.[route.type]?.[route.sectionIndex];if(!sec){openSections(route.packageCode,route.type,false);return;}currentQuestions=Array.isArray(sec.questions)?sec.questions:[];currentMode=route.type==='writing'?'writing':'choice';$('exPkg').textContent=route.packageCode;$('exType').textContent=META[route.type]?.label||route.type;$('exPart').textContent=sec.title.replace(/^.*?·\s*/,'');$('exTitle').textContent=sec.title;const st=sectionStats(route.packageCode,route.type,route.sectionIndex);const instruction=instructionFor(route.type,route.sectionIndex);$('questions').innerHTML='<div class="instruction"><h2>Petunjuk</h2><p>'+esc(instruction)+'</p></div><div class="sectionProgress"><div class="progressMeta"><strong>Progres bagian</strong><span>'+st.answered+'/'+st.total+' terjawab · '+st.pct+'%</span></div><div class="progressBar"><div class="fill" style="width:'+st.pct+'%"></div></div></div>'+cardsForVisible()+pager()+finishCard();restoreVisible();};
+  function inlineResult(){
+    if(!resultState)return '';
+    const r=resultState;
+    const isWriting=route.type==='writing' && !isSequenceWriting(route.type,route.sectionIndex);
+    const pct=r.total?Math.round(r.score/r.total*100):0;
+    if(isWriting){
+      return '<div class="inlineResult"><div class="inlineResultHead"><div><div class="inlineResultLabel">Hasil bagian</div><div class="inlineResultScore">'+r.answered+'/'+r.total+'</div><div class="inlineResultMeta">jawaban tersimpan</div></div><span class="inlineResultBadge">✓ Sudah diperiksa</span></div><div class="inlineResultNote"><b>Writing tidak dinilai otomatis.</b> Gunakan contoh jawaban dan periksa kembali tata bahasa serta penggunaan kata.</div></div>';
+    }
+    return '<div class="inlineResult"><div class="inlineResultHead"><div><div class="inlineResultLabel">Nilai bagian</div><div class="inlineResultScore">'+pct+'%</div><div class="inlineResultMeta"><b>'+r.score+'/'+r.total+'</b> benar · '+r.answered+' dijawab · '+(r.total-r.answered)+' belum dijawab</div></div><span class="inlineResultBadge">✓ Sudah diperiksa</span></div><div class="inlineResultBar"><i style="width:'+pct+'%"></i></div></div>';
+  }
+  window.renderExercise=function(){const sec=DB[route.packageCode]?.[route.type]?.[route.sectionIndex];if(!sec){openSections(route.packageCode,route.type,false);return;}currentQuestions=Array.isArray(sec.questions)?sec.questions:[];currentMode=route.type==='writing'?'writing':'choice';$('exPkg').textContent=(DB[route.packageCode]?.title||route.packageCode);$('exType').textContent=META[route.type]?.label||route.type;$('exPart').textContent=sec.title.replace(/^.*?·\s*/,'');$('exTitle').textContent=sec.title;const st=sectionStats(route.packageCode,route.type,route.sectionIndex);const instruction=instructionFor(route.type,route.sectionIndex);$('questions').innerHTML='<div class="instruction"><h2>Petunjuk</h2><p>'+esc(instruction)+'</p></div><div class="sectionProgress"><div class="progressMeta"><strong>Progres bagian</strong><span>'+st.answered+'/'+st.total+' terjawab · '+st.pct+'%</span></div><div class="progressBar"><div class="fill" style="width:'+st.pct+'%"></div></div></div>'+cardsForVisible()+pager()+finishCard();restoreVisible();};
   window.startSection=(function(fn){return function(i,push=true){page=0;window.__hskResumePage=0;return fn(i,push)}})(startSection);
   window.repeat=(function(fn){return function(){page=0;return fn()}})(repeat);
   function userText(q){const id=String(q[0]),u=answers[id];if(u===undefined||String(u).trim()==='')return 'Belum dijawab';const model=getResolvedQuestionModel(getActivePackageData(),route.type,route.sectionIndex,q);if(model.type==='sentence_ordering'||model.type==='guided_writing'||model.type==='picture_writing')return String(u);const opt=model.options[Number(u)];return opt?`${opt.label}. ${opt.value}`:String(u)}
 function correctText(q){const model=getResolvedQuestionModel(getActivePackageData(),route.type,route.sectionIndex,q);if(model.type==='sentence_ordering'||model.type==='sequence'){const k=sequenceKeys(q);return k.length?k.join(' / '):'Tidak tersedia'}if(model.type==='guided_writing'||model.type==='picture_writing')return String(q[2]||'Tidak tersedia');const ci=correctIndex(q,route.type);const opt=model.options[ci];return opt?`${opt.label}. ${opt.value}`:String(q[3]??'Tidak tersedia')}
 window.renderResult=function(){const rp=$('resultPkg'),rt=$('resultType'),rpart=$('resultPart');if(rp)rp.textContent=route.packageCode;if(rt)rt.textContent=META[route.type]?.label||route.type;const _resTitle=DB[route.packageCode]?.[route.type]?.[route.sectionIndex]?.title||'';if(rpart)rpart.textContent='Hasil · '+_resTitle.replace(/^.*?·\s*/, '');const r=resultState||{score:0,total:currentQuestions.length,answered:0},seq=isSequenceWriting(route.type,route.sectionIndex),pct=r.total?Math.round(r.score/r.total*100):0;const list=currentQuestions.map((q,i)=>{const id=String(q[0]),u=answers[id],has=u!==undefined&&String(u).trim()!=='';if(route.type==='writing'&&!seq)return '<article class="resultQuestion"><div class="resultQuestionHead"><span>Soal '+(i+1)+' · 第 '+esc(id)+' 题</span><span class="resultStatus empty">Tidak dinilai</span></div><div class="resultQuestionText">'+esc(q[1]||'')+'</div><div class="resultAnswer"><b>Jawabanmu:</b> '+esc(userText(q))+'<br><b>Contoh jawaban:</b> '+esc(correctText(q))+'</div></article>';const ok=has&&isCorrect(q,u,route.type,route.sectionIndex);return '<article class="resultQuestion"><div class="resultQuestionHead"><span>Soal '+(i+1)+' · 第 '+esc(id)+' 题</span><span class="resultStatus '+(ok?'good':has?'bad':'empty')+'">'+(ok?'✓ Benar':has?'✗ Salah':'Belum dijawab')+'</span></div><div class="resultQuestionText">'+esc(q[1]||'')+'</div><div class="resultAnswer"><b>Jawabanmu:</b> '+esc(userText(q))+(has&&!ok?'<br><b>Jawaban benar:</b> '+esc(correctText(q)):'')+'</div></article>';}).join('');const title=DB[route.packageCode][route.type][route.sectionIndex]?.title||'Hasil';const summary=(route.type==='writing'&&!seq)?'<p><b>'+r.answered+'/'+r.total+'</b> jawaban tersimpan.</p>':'<div class="score">'+pct+'%</div><div class="bar"><div class="fill" style="width:'+pct+'%"></div></div><p><b>'+r.score+'/'+r.total+'</b> benar · '+r.answered+' dijawab · '+(r.total-r.answered)+' belum dijawab</p>';$('resultBody').innerHTML='<div class="result"><div class="sub">'+esc(title)+'</div>'+summary+'<div class="resultList">'+list+'</div><div class="resultActions"><button class="btn soft" onclick="returnToQuestions()">← Kembali ke Soal</button><button class="btn" onclick="returnToParts()">← Kembali ke List Bagian</button><button class="btn" onclick="repeat()">↻ Ulangi</button></div></div>';};
-  window.returnToQuestions=async function(){if(typeof window.backRoute==='function'){await window.backRoute();return;}const target={...route,screen:'exercise'};if(typeof window.__hskLoadPackage==='function'&&target.packageCode)await window.__hskLoadPackage(String(target.packageCode));page=0;route=target;loadCurrentSectionState();renderExercise();setScreen('exercise');};
-  window.returnToParts=function(){openSections(route.packageCode,route.type);};
+  window.returnToQuestions=async function(){const target={...route,screen:'exercise'};route=target;if(typeof window.__hskLoadPackage==='function'&&target.packageCode)await window.__hskLoadPackage(String(target.packageCode));loadCurrentSectionState();renderExercise();setScreen('exercise',false);};
+  window.returnToParts=async function(){
+    const code=String(route.packageCode||'');
+    const type=String(route.type||'');
+    if(!code||!type)return;
+    try{
+      if(typeof window.__hskLoadPackage==='function')await window.__hskLoadPackage(code);
+      route={
+        screen:'parts',
+        packageCode:code,
+        type:type,
+        sectionIndex:null,
+        studyPlanId:route.studyPlanId||null
+      };
+      if(typeof renderSections==='function')renderSections();
+      setScreen('partsScreen',true);
+      requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));
+    }catch(e){
+      console.error('returnToParts failed',e);
+      appNotice('Tidak dapat kembali ke bagian',e.message||'Silakan coba lagi.');
+    }
+  };
 })();
 </script>
 <script id="workbookHSK4aIntegration">
@@ -3937,7 +4102,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     if(route.screen==='package'){renderPackage();setScreen('package',false);return}
     if(route.screen==='parts'){renderSections();setScreen('partsScreen',false);return}
     if(route.screen==='exercise'){loadCurrentSectionState();renderExercise();setScreen('exercise',false);return}
-    if(route.screen==='result'){renderResult();setScreen('result',false);return}
+    if(route.screen==='result'){route.screen='exercise';loadCurrentSectionState();renderExercise();setScreen('exercise',false);return}
     if(route.screen==='studyPlans'){renderStudyPlans();setScreen('studyPlans',false);return}
     if(route.screen==='studyPlanDetail'){renderStudyPlanDetail();setScreen('studyPlanDetail',false);return}
     window.goHome(false);
@@ -4324,7 +4489,27 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     resumeQuestionId=null;window.__hskResumePage=0;loadCurrentSectionState();renderExercise();setScreen('exercise',push);
   };
 
-  window.returnToParts=function(){window.openSections(route.packageCode,route.type,true)};
+  window.returnToParts=async function(){
+    const code=String(route.packageCode||'');
+    const type=String(route.type||'');
+    if(!code||!type)return;
+    try{
+      if(typeof window.__hskLoadPackage==='function')await window.__hskLoadPackage(code);
+      route={
+        screen:'parts',
+        packageCode:code,
+        type:type,
+        sectionIndex:null,
+        studyPlanId:route.studyPlanId||null
+      };
+      if(typeof renderSections==='function')renderSections();
+      setScreen('partsScreen',true);
+      requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));
+    }catch(e){
+      console.error('returnToParts failed',e);
+      appNotice('Tidak dapat kembali ke bagian',e.message||'Silakan coba lagi.');
+    }
+  };
 
   window.restore=function(s){
     const st=s||{};
@@ -4341,7 +4526,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     if(route.screen==='package'){renderPackage();setScreen('package',false);return}
     if(route.screen==='parts'){renderSections();setScreen('partsScreen',false);return}
     if(route.screen==='exercise'){loadCurrentSectionState();renderExercise();setScreen('exercise',false);return}
-    if(route.screen==='result'){renderResult();setScreen('result',false);return}
+    if(route.screen==='result'){route.screen='exercise';loadCurrentSectionState();renderExercise();setScreen('exercise',false);return}
     if(route.screen==='studyPlans'){window.renderStudyPlans();setScreen('studyPlans',false);return}
     if(route.screen==='studyPlanDetail'){renderPlanDetailV4();setScreen('studyPlanDetail',false);return}
     window.goHome(false);
@@ -4904,8 +5089,13 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     .progressResetBtn{min-height:38px;padding:8px 13px;font-size:10px;border-radius:11px}
   }
 
-/* Remove duplicate exercise context text from the focus header. The main exercise title remains. */
-.focusHeader .focusContext{display:none!important;}
+/* Exercise top header: show only the active package name beside the theme toggle. */
+#exercise .focusHeader .focusContext{display:flex!important;align-items:center!important;min-width:0!important;flex:1 1 auto!important;}
+#exercise .focusHeader .focusMeta{display:flex!important;align-items:center!important;gap:0!important;font-size:15px!important;line-height:1.2!important;}
+#exercise .focusHeader .focusMeta span[aria-hidden="true"],#exercise .focusHeader .focusMeta span:nth-child(3){display:none!important;}
+#exercise .focusHeader #exPkg{display:block!important;color:var(--text)!important;font-weight:800!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
+#exercise .focusHeader #exType,#exercise .focusHeader #exPart{display:none!important;}
+@media(max-width:760px){#exercise .focusHeader .focusMeta{font-size:14px!important;}}
 </style>
 <script id="appDialogV1Script">
 (function(){
@@ -5193,7 +5383,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       if(r.screen==='package'){if(typeof renderPackage==='function')renderPackage();setScreen('package',false);return true;}
       if(r.screen==='parts'){if(typeof renderSections==='function')renderSections();setScreen('partsScreen',false);return true;}
       if(r.screen==='exercise'){if(typeof loadCurrentSectionState==='function')loadCurrentSectionState();if(typeof renderExercise==='function')renderExercise();setScreen('exercise',false);return true;}
-      if(r.screen==='result'){if(typeof renderResult==='function')renderResult();setScreen('result',false);return true;}
+      if(r.screen==='result'){r.screen='exercise';window.route=r;if(typeof loadCurrentSectionState==='function')loadCurrentSectionState();if(typeof renderExercise==='function')renderExercise();setScreen('exercise',false);return true;}
     }catch(e){
       console.error('HSK router render error',e);
       if(r.screen==='exercise'&&typeof showExerciseLoadRecovery==='function'){
