@@ -2870,7 +2870,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   function userText(q){const id=String(q[0]),u=answers[id];if(u===undefined||String(u).trim()==='')return 'Belum dijawab';const model=getResolvedQuestionModel(getActivePackageData(),route.type,route.sectionIndex,q);if(model.type==='sentence_ordering'||model.type==='guided_writing'||model.type==='picture_writing')return String(u);const opt=model.options[Number(u)];return opt?`${opt.label}. ${opt.value}`:String(u)}
 function correctText(q){const model=getResolvedQuestionModel(getActivePackageData(),route.type,route.sectionIndex,q);if(model.type==='sentence_ordering'||model.type==='sequence'){const k=sequenceKeys(q);return k.length?k.join(' / '):'Tidak tersedia'}if(model.type==='guided_writing'||model.type==='picture_writing')return String(q[2]||'Tidak tersedia');const ci=correctIndex(q,route.type);const opt=model.options[ci];return opt?`${opt.label}. ${opt.value}`:String(q[3]??'Tidak tersedia')}
 window.renderResult=function(){const rp=$('resultPkg'),rt=$('resultType'),rpart=$('resultPart');if(rp)rp.textContent=route.packageCode;if(rt)rt.textContent=META[route.type]?.label||route.type;const _resTitle=DB[route.packageCode]?.[route.type]?.[route.sectionIndex]?.title||'';if(rpart)rpart.textContent='Hasil · '+_resTitle.replace(/^.*?·\s*/, '');const r=resultState||{score:0,total:currentQuestions.length,answered:0},seq=isSequenceWriting(route.type,route.sectionIndex),pct=r.total?Math.round(r.score/r.total*100):0;const list=currentQuestions.map((q,i)=>{const id=String(q[0]),u=answers[id],has=u!==undefined&&String(u).trim()!=='';if(route.type==='writing'&&!seq)return '<article class="resultQuestion"><div class="resultQuestionHead"><span>Soal '+(i+1)+' · 第 '+esc(id)+' 题</span><span class="resultStatus empty">Tidak dinilai</span></div><div class="resultQuestionText">'+esc(q[1]||'')+'</div><div class="resultAnswer"><b>Jawabanmu:</b> '+esc(userText(q))+'<br><b>Contoh jawaban:</b> '+esc(correctText(q))+'</div></article>';const ok=has&&isCorrect(q,u,route.type,route.sectionIndex);return '<article class="resultQuestion"><div class="resultQuestionHead"><span>Soal '+(i+1)+' · 第 '+esc(id)+' 题</span><span class="resultStatus '+(ok?'good':has?'bad':'empty')+'">'+(ok?'✓ Benar':has?'✗ Salah':'Belum dijawab')+'</span></div><div class="resultQuestionText">'+esc(q[1]||'')+'</div><div class="resultAnswer"><b>Jawabanmu:</b> '+esc(userText(q))+(has&&!ok?'<br><b>Jawaban benar:</b> '+esc(correctText(q)):'')+'</div></article>';}).join('');const title=DB[route.packageCode][route.type][route.sectionIndex]?.title||'Hasil';const summary=(route.type==='writing'&&!seq)?'<p><b>'+r.answered+'/'+r.total+'</b> jawaban tersimpan.</p>':'<div class="score">'+pct+'%</div><div class="bar"><div class="fill" style="width:'+pct+'%"></div></div><p><b>'+r.score+'/'+r.total+'</b> benar · '+r.answered+' dijawab · '+(r.total-r.answered)+' belum dijawab</p>';$('resultBody').innerHTML='<div class="result"><div class="sub">'+esc(title)+'</div>'+summary+'<div class="resultList">'+list+'</div><div class="resultActions"><button class="btn soft" onclick="returnToQuestions()">← Kembali ke Soal</button><button class="btn" onclick="returnToParts()">← Kembali ke List Bagian</button><button class="btn" onclick="repeat()">↻ Ulangi</button></div></div>';};
-  window.returnToQuestions=function(){page=0;route={...route,screen:'exercise'};loadCurrentSectionState();renderExercise();setScreen('exercise');};
+  window.returnToQuestions=async function(){if(typeof window.backRoute==='function'){await window.backRoute();return;}const target={...route,screen:'exercise'};if(typeof window.__hskLoadPackage==='function'&&target.packageCode)await window.__hskLoadPackage(String(target.packageCode));page=0;route=target;loadCurrentSectionState();renderExercise();setScreen('exercise');};
   window.returnToParts=function(){openSections(route.packageCode,route.type);};
 })();
 </script>
@@ -5167,9 +5167,23 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     String(a.studyPlanId??'')===String(b.studyPlanId??'');}
   function home(){return {screen:'home',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};}
   function stateFor(r){return {...norm(r),[APP]:true};}
-  function render(r){
+  async function ensurePackageForRoute(r){
+    r=norm(r);
+    if(!r.packageCode)return true;
+    const code=String(r.packageCode);
+    /* Preserve lazy loading: fetch only when the route actually needs the package. */
+    if(DB?.[code] && !DB[code].__lazy)return true;
+    if(typeof window.__hskLoadPackage!=='function'){
+      throw new Error('Loader paket belum siap: '+code);
+    }
+    await window.__hskLoadPackage(code);
+    return !!(DB?.[code] && !DB[code].__lazy);
+  }
+
+  async function render(r){
     r=norm(r); window.route=r;
     try{
+      await ensurePackageForRoute(r);
       if(r.screen==='home'){if(typeof renderHome==='function')renderHome();setScreen('home',false);return true;}
       if(r.screen==='levels'){if(typeof renderLevelsScreen==='function')renderLevelsScreen();setScreen('levelsScreen',false);return true;}
       if(r.screen==='packages'){if(typeof renderPackagesScreen==='function')renderPackagesScreen();setScreen('packagesScreen',false);return true;}
@@ -5180,7 +5194,13 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       if(r.screen==='parts'){if(typeof renderSections==='function')renderSections();setScreen('partsScreen',false);return true;}
       if(r.screen==='exercise'){if(typeof loadCurrentSectionState==='function')loadCurrentSectionState();if(typeof renderExercise==='function')renderExercise();setScreen('exercise',false);return true;}
       if(r.screen==='result'){if(typeof renderResult==='function')renderResult();setScreen('result',false);return true;}
-    }catch(e){console.error('HSK router render error',e);}
+    }catch(e){
+      console.error('HSK router render error',e);
+      if(r.screen==='exercise'&&typeof showExerciseLoadRecovery==='function'){
+        setScreen('exercise',false);
+        showExerciseLoadRecovery('Soal belum berhasil dimuat','Data paket belum siap. Coba lagi untuk memuat paket secara lazy.');
+      }
+    }
     return false;
   }
   function parentOf(r){
@@ -5280,7 +5300,8 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       b.classList.toggle('active',activeNav);
     });
   }
-  function back(){
+  async function back(){
+    if(internalChange)return;
     const r=visibleRoute();
     /* Only the real Home screen may open the Exit confirmation. */
     if(r.screen==='home'){
@@ -5296,7 +5317,8 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
         const candidate=r.studyPlanId;
         if(candidate!=null)studyPlanDetailId=candidate;
       }
-      render(p);
+      /* Back uses the same lazy-load gate as forward navigation. */
+      await render(p);
       syncChrome();
     }catch(e){
       console.error('HSK app Back error',e);
