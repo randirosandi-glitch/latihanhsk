@@ -37,7 +37,7 @@
         ],
         [
           "4",
-          "护士工作前要通过考试。",
+          "护士工作前要通过考试。 -1-",
           [
             "对",
             "错"
@@ -125,7 +125,7 @@
         ],
         [
           "12",
-          "男的希望女的怎么做?",
+          "男的希望女的怎么做? -2-",
           [
             "发邮件",
             "重新写",
@@ -257,7 +257,7 @@
         ],
         [
           "23",
-          "男的是什么意思?",
+          "男的是什么意思? -3-",
           [
             "别着急",
             "想睡觉",
@@ -323,7 +323,7 @@
         ],
         [
           "28",
-          "关于男的,下列哪个正确?",
+          "关于男的,下列哪个正确? -4-",
           [
             "很幽默",
             "爱照相",
@@ -407,7 +407,7 @@
         ],
         [
           "35",
-          "女的怎么了?",
+          "女的怎么了? -5-",
           [
             "哭了",
             "没吃饱",
@@ -624,7 +624,7 @@
             "毕业",
             "温度",
             "不过",
-            "g",
+            "轻",
             "短信"
           ],
           "E"
@@ -637,7 +637,7 @@
             "毕业",
             "温度",
             "不过",
-            "g",
+            "轻",
             "短信"
           ],
           "A"
@@ -650,7 +650,7 @@
             "毕业",
             "温度",
             "不过",
-            "g",
+            "轻",
             "短信"
           ],
           "B"
@@ -663,7 +663,7 @@
             "毕业",
             "温度",
             "不过",
-            "g",
+            "轻",
             "短信"
           ],
           "F"
@@ -676,7 +676,7 @@
             "毕业",
             "温度",
             "不过",
-            "g",
+            "轻",
             "短信"
           ],
           "D"
@@ -689,131 +689,101 @@
       "questions": [
         [
           "56",
-          "请排列下列句子的正确顺序。\nA. 可是一直都占线\nB. 我给马经理打了好几次电话了\nC. 也不知道他到底是怎么回事",
+          "请排列下列句子的正确顺序。",
           [
-            "ABC",
-            "ACB",
-            "BAC",
-            "BCA",
-            "CAB",
-            "CBA"
+            "A 可是一直都占线",
+            "B 我给马经理打了好几次电话了",
+            "C 也不知道他到底是怎么回事"
           ],
           "BAC"
         ],
         [
           "57",
-          "请排列下列句子的正确顺序。\nA. 相信不同的人会给出不同的答案\nB. 在 我 看 来 ,只要能做自己喜欢的事,就是幸福\nC. 究竟什么是幸福",
+          "请排列下列句子的正确顺序。",
           [
-            "ABC",
-            "ACB",
-            "BAC",
-            "BCA",
-            "CAB",
-            "CBA"
+            "A 相信不同的人会给出不同的答案",
+            "B 在 我 看 来 ,只要能做自己喜欢的事,就是幸福",
+            "C 宄竟什么是幸福"
           ],
           "CAB"
         ],
         [
           "58",
-          "请排列下列句子的正确顺序。\nA. 请 您 按 照 “先 下 后 上 ”的顺序上下车\nB. 各 位 乘 客 ,为了保证您和他人的安全\nC. 并 注 意 脚 下 ,照顾好老人和孩子",
+          "请排列下列句子的正确顺序。",
           [
-            "ABC",
-            "ACB",
-            "BAC",
-            "BCA",
-            "CAB",
-            "CBA"
+            "A 请 您 按 照 “先 下 后 上 ”的顺序上下车",
+            "B 各 位 乘 客 ,为了保证您和他人的安全",
+            "C 并 注 意 脚 下 ,照顾好老人和孩子"
           ],
           "BAC"
         ],
         [
           "59",
-          "请排列下列句子的正确顺序。\nA. 既能看得清楚,眼睛也不容易累\nB. 科 学家通过研究发现,一般情况下\nC. 人 的 眼 睛 和 书 本 的 距 离 为 0．25米时",
+          "请排列下列句子的正确顺序。",
           [
-            "ABC",
-            "ACB",
-            "BAC",
-            "BCA",
-            "CAB",
-            "CBA"
+            "A 既能看得清楚,眼睛也不容易累",
+            "B 科 学家通过研宄发现,一般情况下",
+            "C 人 的 眼 睛 和 书 本 的 距 离 为 0．25米时"
           ],
           "BCA"
         ],
         [
           "60",
-          "请排列下列句子的正确顺序。\nA. 我要特别感谢一直支持和帮助我的朋友们\nB. 我是不可能取得今天这样的成绩的\nC. 没有他们的关心和鼓励",
+          "请排列下列句子的正确顺序。",
           [
-            "ABC",
-            "ACB",
-            "BAC",
-            "BCA",
-            "CAB",
-            "CBA"
+            "A 我要特别感谢一直支持和帮助我的朋友们",
+            "B 我是不可能取得今天这样的成绩的",
+            "C 没有他们的关心和鼓励"
           ],
           "ACB"
         ],
         [
           "61",
-          "请排列下列句子的正确顺序。\nA. 给我们留下很多美好的回忆\nB. 写日记是一个很好的习惯\nC. 它可以帮我们记住过去发生的事情",
+          "请排列下列句子的正确顺序。",
           [
-            "ABC",
-            "ACB",
-            "BAC",
-            "BCA",
-            "CAB",
-            "CBA"
+            "A 给我们留下很多美好的回忆",
+            "B 写日记是一个很好的习惯",
+            "C 它可以帮我们记住过去发生的事情"
           ],
           "BCA"
         ],
         [
           "62",
-          "请排列下列句子的正确顺序。\nA. 我 晚 点 儿才能回去,桌子上有早上剩下的包子\nB. 就先吃点儿\nC. 冰箱里 还 有 面 包 ,你要是饿了",
+          "请排列下列句子的正确顺序。",
           [
-            "ABC",
-            "ACB",
-            "BAC",
-            "BCA",
-            "CAB",
-            "CBA"
+            "A 我 晚 点 儿才能回去,桌子上有早上剩下的包子",
+            "B 就先吃点儿",
+            "C 冰箱里 还 有 面 包 ,你要是饿了"
           ],
           "ACB"
         ],
         [
           "63",
-          "请排列下列句子的正确顺序。\nA. 你这个动作做得还是不太标准,我给你跳一遍\nB. 你 仔 细 看 着 ,应该像我这样\nC. 先 抬 胳 膊 ,然后再抬腿",
+          "请排列下列句子的正确顺序。",
           [
-            "ABC",
-            "ACB",
-            "BAC",
-            "BCA",
-            "CAB",
-            "CBA"
+            "A 你这个动作做得还是不太标准,我给你跳一遍",
+            "B 你 仔 细 看 着 ,应该像我这样",
+            "C 先 抬 胳 膊 ,然后再抬腿"
           ],
           "ABC"
         ],
         [
           "64",
-          "请排列下列句子的正确顺序。\nA. 现 在 只 卖 300 块\nB. 这种裙子今年非常流行,质量很好\nC. 价 格 也 不 贵 ,我找一件您试试吧",
+          "请排列下列句子的正确顺序。",
           [
-            "ABC",
-            "ACB",
-            "BAC",
-            "BCA",
-            "CAB",
-            "CBA"
+            "A 现 在 只 卖 300 块",
+            "B 这种裙子今年非常流行,质量很好",
+            "C 价 格 也 不 贵 ,我找一件您试试吧"
           ],
           "BAC"
         ],
         [
           "65",
-          "请排列下列句子的正确顺序。\nA. 每 到 秋 季 ,随着气温的降低\nB. 吸引了很多游客前来观看\nC. 这里许多植物的叶子都会由绿变黄或者变红",
+          "请排列下列句子的正确顺序。",
           [
-            "ABC",
-            "ACB",
-            "BAC",
-            "BCA",
-            "CAB",
-            "CBA"
+            "A 每 到 秋 季 ,随着气温的降低",
+            "B 吸引了很多游客前来观看",
+            "C 这里许多植物的叶子都会由绿变黄或者变红"
           ],
           "ACB"
         ]
@@ -1110,32 +1080,27 @@
         [
           "96",
           "肚子",
-          "他突然觉得肚子疼。",
-          "data:image/jpeg;base64,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"
+          "他突然觉得肚子疼。"
         ],
         [
           "97",
           "擦",
-          "看，我把盘子擦干净了。",
-          "data:image/jpeg;base64,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"
+          "看，我把盘子擦干净了。"
         ],
         [
           "98",
           "打折",
-          "这双鞋现在打折，很便宜。",
-          "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAByAGADASIAAhEBAxEB/8QAHAABAAICAwEAAAAAAAAAAAAAAAcIBQYBAwQC/8QAOxAAAgEEAQIDBgQDBQkAAAAAAQIDAAQFEQYSIQcxURMiQWFxgRUyobEIFEIjorLB4TNDUmJyg5HC8f/EABgBAQEBAQEAAAAAAAAAAAAAAAADBAIB/8QAIhEAAwACAgICAwEAAAAAAAAAAAECAxEhMQQSEzIUQYFR/9oADAMBAAIRAxEAPwC1NYrkPIcVx20S5zV7FaQuwRWkP5m9AB3NZUnVVH/ib5bLlOa/gcWhaYtQNg/mkcAsT9BofY143o9S2WHxviXxLJXy2dpmYXmY6XqVlUn06iAN1uAbflVA8Rhb2SSGZLgxKxGmq7/BZHk4jijLMZ5BAqtITssR22fn2rmbVPSOqx1K2zPUpSuzgUpSgFKUoBSlKA1nxGzS4LiV9c+19lO8bRQNvWnKMQd/IAn7VR7D4jO8gvLi8x9nNee+TLI591ie+ixPc/rVo/4q7s2nhjEAvV7bIRx73+X+zkO/01961Hj8MGA4XjYHdYlSFXc/8Ujdz8yd7qVvXZXGm+jRY4Zlnto54pYJ4yA0TLrX+lWr4HjZMTxTH2cx99ELEbJ11Etrfy3UYcMymPyl7roEkyrpWlj8/jUxYm4NxaKXI6x2auMMJbaK+RbpJNHupSlaDKKUpQClKUApSlAQr/FivX4f4hCNhszCuv8AtTVrufxS3VnCOs7iX3Pl27/tUveJnDoubYW0sJ7hrdLe7W76lUEkqjqB3/6qjicFrUD0GqhlW+GacD1yR1gslLhMurNsKG0wqwvHszBBHBIzqILlPaH5HfdvofOoQ5RhmuDK9qNzQoPdH9XqK6+O8qaC1Fle9W0iaGNyewBHkfTv8ahjv43o03CyLZaZWDDakEHvX0KiPw851JHcRYnLEmM6WKVj3X0BPxHoalC9yNpYR9d7cwwJ6yOF/etcWqWzBeNw9M9lK8tnf2t4ga0uYZlPfcbhv2r1V2ns4FKVwT2oAzBRskAfOuQd1DPj3zO3x+OxtnYXrC5N8jTexfsqKDsH76OvlUocTyEuV45j76dCks8Ku4I1313rxPZ65aWzKP8AlqErk9LMmtdLEkfT/WpubyqIOaWzWXJLw6BWYCRR8j3P67qeXopifLRgYwRcqw89Kd103/GrXPyTydK2k7AezkUbDHvvr+vaum4vkeV4kRwIxosPLq+A3XXBdXCRMntWUDWgp0B2qHtL4fJbddpmJikznDLkJOiy2zdg66YfZvh9DXTyPMfjBgmaSR0QHqB/Mvl8KytxKZgUkJftv3u9aflVhtZwqse43oeZFRb1wujRD9nt9ndjeQC1uC+PumVwNdStogVskPOMxEAfxW52Ph7QmtCx8cH82sqKu1YMAPXz38xVsMHx7B3mNsb58Nj/AGssCSE/yyeZUHy1VMcOuJZzluY5pEN2nP8AlFw/s7O5up28tJCHP7Vxl81zR7aSXJR5eG0VSzu0TxoFHmToaqw8FtFAgSGKONR5BFAH6V9tGrKVZQQexBHmKv8AFTXNGb8hb2pKYcMvcbyLxIsvx2C8u8dF1NFbQwtK0r/AFR30fM/Srj4uX21mjC2ltlHZY5AAQB8gTqvFiOM4XD3c91i8XZ2lxP8A7R4Yghb5dqzAGhVZn1I1Tp7ZrXP+RHjOGhuwFJlnEO2/p2rHf92oc5HzH8UWKSJi9wpILOwAK+g15d6m3lvGsdynHRWWXSR4I5RMoRyp6grAd/oxqHcvwLCR+J+H4/YxTCzltmuLncpLf1a0fh+X9azeR8m9T0avHvElqlyaacpdqOmO3tlX5S6P6g19RZYbEcsO29I3DH/KpiufBzjUlu6QG9hcghWE29H/AMVgvA3CWNlf5m1uLWKbIWFwVW5kHW69ypAJ8h7u/vUpx2qU0+ylZcTncro1mDE3TX+NtJ45LRslv2DXCFdga3/iFSxY8OwfH8VNevYwXd7BAzPcTIGY9IJ7A9l+1YbxnBgvuIXanXssiU2P+Zd/+tSHkLcXWOuLc+UsbIfuNVoiFNNGa7bSZTrGRtPkQ7Adcj9RAHbZO/L71cmwhFvZwQr+WONUH2GqqnwLHm85rj7Jx3/mFDg+inZ/arZKNV54/wC2U8p9I+qUpWkyClKUBw3lUV4i4iuPG3kN5NIixWFnHbKzHQDMFOv8VSo3lUQjG5fjWVz91cixlkzV28oVgzhYlPub9D73l38qnk7R3HTN2xvO8Fkc5Hh7W7DZCSIzLGBsdOt7LDYB0d63v5VqfhYvRzzmi+l0x/vtUX5Xj2bx2ZiyOH9iQswbURG+k6BXR18u/wAq33w1lv7DOZK/ySQpe5Z1/slfYRie+z39fWp1uql66KJes0v9M747qRxzETj/AHOUhP0BVx/nUg3N5b2lhJd3cscFtGntJJJGCqigdySfIVpfjRaTXfBZFgjkmljuIHCopYn+0UeQ+td/iXgrrk3hnkMbZyNDdyQLIi6/MyaboP1I1Xa+7/hw/ov6Q54c3EE3i8txbkG2lupmjPwIPV0/uKs0DuqZ4XHZvgsODyebURY++RJ7S7RiyoSAwRz/AEnWj/8AO1peK8zw3IYoUsr2F7t06mhVgTsAb1615iTnaZ3mpXqkbP8AGlKVYgKUpQHDVG3NcrHkZof5JGZ7Yurq/YnuPL59vj+lSUfKouyfFM02WvJbe1DxPKzqwlQbBOx2Jqd7/R3CWzTMxkohFGytr3irK21Kn0Ir445koH5BjEE0ZkNzGOkMN/mFZ7M8J5DdGMx45GYb2TJF9vNqzfAeGXlnkJJM9YKI1QGImRCA+/RTUFNOuizaU9kmKARXJUEa+FcgaoK1mYxOR47islg/we+sYZ8b0LGIJBtQF8tfEEa8/OvJxnhnHuM7ODxNrZuRoyIm3I9Oo7OvvWw0+NABSlKAUpSgFKUoBSlKAUpSgFKUoBSlKAUpSgP/2Q=="
+          "这双鞋现在打折，很便宜。"
         ],
         [
           "99",
-          "果汁",
-          "我每天都要喝杯果汁。",
-          "data:image/jpeg;base64,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"
+          "Buat satu kalimat berdasarkan gambar pada soal.",
+          "我每天都要喝杯果汁。"
         ],
         [
           "100",
-          "重",
-          "这两个箱子太重了。",
-          "data:image/jpeg;base64,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"
+          "Buat satu kalimat berdasarkan gambar pada soal.",
+          "这两个箱子太重了。"
         ]
       ]
     }
@@ -1144,306 +1109,5 @@
     "listening": true,
     "reading": true,
     "writing": true
-  },
-  "reading_passages": {
-    "H41329": {
-      "66": "先生，这儿是南京路 1 0 6 号没错，可是没有您说的王师傅这个人，您最好再问问，看这个地址是不是正确。",
-      "67": "把你全部的热情和汗水都用到今天的工作中去，将今天的工作做到最好， 这才是我们能为明天所做的最理想的准备。",
-      "68": "当你为自己取得的成绩而得意时，应该想到，有很多人比你更优秀，所以千万不要骄傲； 同样，当你为自己的失败而伤心时，你也应该想到，别人也会失败，也会难过，所以千万不要因此失望甚至怀疑自己。",
-      "69": "教育学家建议，父母应该让 3 到 5 岁的孩子认识钱、 了解钱的作用，而对于 6 到 1 0 岁的孩子，要教他们管理自己的钱，并认识到存钱的重要性。",
-      "70": "当你觉得无聊时，就去读书吧。无论是普通杂志，还是著名小说，只要你打开就会发现，世界上有那么多有趣的事情，有那么多不一样的生活。阅读，确实是一件值得花时间去做的事。",
-      "71": "今年寒假我去广西玩儿了一趟，那里的气候和北方很不同，尽管是冬天， 但非常暖和，还能吃到许多新鲜的水果。",
-      "72": "中国有句话叫 “不管三七二十一”，意思是说一个人不管现有条件怎么样， 也不考虑最终的结果，就做起事来，这样往往会白费力气，得不到自己想要的结果。",
-      "73": "理想能够使人走出困境。一个人在遇到困难时，如果能继续坚持自己的理想，一步步走下去，那么困难对他来说就只是暂时的。",
-      "74": "很多自行车后面都有一个灯，虽然小，但用处却很大。每当后面汽车的灯光照到它时，它就会发光，这样就能提醒司机前方有人。",
-      "75": "输和赢都只是生活的一部分，没有人会永远输，也没有人会一直赢。生活的关键就是：只要你努力做了，不管是输是赢，都一样精彩。",
-      "76": "旅游前最好做个计划， 比如要去几个地方，怎么坐车，带哪些东西，一共要玩儿多少天等。把这些都详细计划好，旅游时才会更轻松。",
-      "77": "我上学校网站看了课表，发现李老师这学期开了一门 “汉字与文化”课， 我想去听听，之前看过他写的一篇关于这方面的文章，非常有趣。",
-      "78": "要想更快适应新环境，其实有很多办法。例如多和周围的人打招呼，在别人遇到麻烦的时候去帮一把，或者跟别人聊聊他感兴趣的事，这些都可以让身边的人更快地接受你。",
-      "79": "小蓝，你把这些材料按照时间顺序整理一下， 中午吃饭前交给我就行。另夕卜，关医生回来后，让她来我办公室一趟。",
-      "80-81": "别人的批评往往能帮助我们认清自己的缺点和错误，所以当我们听到批评时，先不要生气，尤其不要乱发脾气，而是应该冷静地想想他们提出的意见或者建议是否正确，对我们有没有帮助。",
-      "82-83": "这家网球馆的服务不错，给我的印象很好。比如说，他们会免费提供饼干和矿泉水，打球打累的时候，我们就可以吃点儿东西休息一下。他们还经常举办一些聚会，邀请的都是在这里打球的人。我参加过几次，每次都玩儿得很开心。",
-      "84-85": "每个人都希望获得更多的东西，但有时候，放弃才是一种聪明的选择。一个人只有两只手，不可能得到所有他想要的东西。只有学会放弃，把自己的能力用到最该做的事情上，才能获得成功。重要的不是你想要得到什么，而是你最后能留下什么。"
-    }
-  },
-  "schemaVersion": 2,
-  "package": {
-    "code": "H41329",
-    "title": "HSK 4 · H41329",
-    "level": 4,
-    "kind": "exam",
-    "sourceCode": "H41329"
-  },
-  "engineRules": {
-    "version": 1,
-    "resolver": {
-      "strategy": "section_rule_then_question_shape",
-      "questionIdPath": "question[0]"
-    },
-    "questionShapes": {
-      "choice": {
-        "fields": {
-          "id": 0,
-          "prompt": 1,
-          "options": 2,
-          "answer": 3,
-          "transcript": 4
-        },
-        "interaction": "single_choice",
-        "optionsSource": "question[2]",
-        "answerSource": "question[3]"
-      },
-      "sentence_ordering": {
-        "fields": {
-          "id": 0,
-          "prompt": 1,
-          "items": 2,
-          "answer": 3
-        },
-        "interaction": "ordering",
-        "itemsSource": "question[2]",
-        "answerSource": "question[3]"
-      },
-      "picture_writing": {
-        "fields": {
-          "id": 0,
-          "prompt": 1,
-          "answer": 2,
-          "image": 3
-        },
-        "interaction": "text",
-        "mediaSource": "question[3]",
-        "answerSource": "question[2]"
-      }
-    },
-    "sections": {
-      "listening": {
-        "parts": [
-          {
-            "title": "听力 · 第一部分",
-            "range": [
-              1,
-              10
-            ],
-            "type": "choice",
-            "input": "single_select"
-          },
-          {
-            "title": "听力 · 第二部分",
-            "range": [
-              11,
-              25
-            ],
-            "type": "choice",
-            "input": "single_select"
-          },
-          {
-            "title": "听力 · 第三部分",
-            "range": [
-              26,
-              45
-            ],
-            "type": "choice",
-            "input": "single_select"
-          }
-        ]
-      },
-      "reading": {
-        "parts": [
-          {
-            "title": "阅读 · 第一部分",
-            "range": [
-              46,
-              50
-            ],
-            "type": "choice",
-            "input": "single_select"
-          },
-          {
-            "title": "阅读 · 第二部分",
-            "range": [
-              51,
-              55
-            ],
-            "type": "choice",
-            "input": "single_select"
-          },
-          {
-            "title": "阅读 · 第三部分",
-            "range": [
-              56,
-              65
-            ],
-            "type": "choice",
-            "input": "single_select"
-          },
-          {
-            "title": "阅读 · 第四部分",
-            "range": [
-              66,
-              85
-            ],
-            "type": "choice",
-            "input": "single_select",
-            "group": {
-              "type": "passage",
-              "groups": [
-                {
-                  "id": "66",
-                  "type": "passage",
-                  "source": "reading_passages.H41329.66"
-                },
-                {
-                  "id": "67",
-                  "type": "passage",
-                  "source": "reading_passages.H41329.67"
-                },
-                {
-                  "id": "68",
-                  "type": "passage",
-                  "source": "reading_passages.H41329.68"
-                },
-                {
-                  "id": "69",
-                  "type": "passage",
-                  "source": "reading_passages.H41329.69"
-                },
-                {
-                  "id": "70",
-                  "type": "passage",
-                  "source": "reading_passages.H41329.70"
-                },
-                {
-                  "id": "71",
-                  "type": "passage",
-                  "source": "reading_passages.H41329.71"
-                },
-                {
-                  "id": "72",
-                  "type": "passage",
-                  "source": "reading_passages.H41329.72"
-                },
-                {
-                  "id": "73",
-                  "type": "passage",
-                  "source": "reading_passages.H41329.73"
-                },
-                {
-                  "id": "74",
-                  "type": "passage",
-                  "source": "reading_passages.H41329.74"
-                },
-                {
-                  "id": "75",
-                  "type": "passage",
-                  "source": "reading_passages.H41329.75"
-                },
-                {
-                  "id": "76",
-                  "type": "passage",
-                  "source": "reading_passages.H41329.76"
-                },
-                {
-                  "id": "77",
-                  "type": "passage",
-                  "source": "reading_passages.H41329.77"
-                },
-                {
-                  "id": "78",
-                  "type": "passage",
-                  "source": "reading_passages.H41329.78"
-                },
-                {
-                  "id": "79",
-                  "type": "passage",
-                  "source": "reading_passages.H41329.79"
-                },
-                {
-                  "id": "80-81",
-                  "type": "passage",
-                  "source": "reading_passages.H41329.80-81"
-                },
-                {
-                  "id": "82-83",
-                  "type": "passage",
-                  "source": "reading_passages.H41329.82-83"
-                },
-                {
-                  "id": "84-85",
-                  "type": "passage",
-                  "source": "reading_passages.H41329.84-85"
-                }
-              ]
-            }
-          }
-        ]
-      },
-      "writing": {
-        "parts": [
-          {
-            "title": "书写 · 第一部分",
-            "range": [
-              86,
-              95
-            ],
-            "type": "sentence_ordering",
-            "input": "ordering"
-          },
-          {
-            "title": "书写 · 第二部分",
-            "range": [
-              96,
-              100
-            ],
-            "type": "picture_writing",
-            "input": "text",
-            "media": [
-              "image"
-            ]
-          }
-        ]
-      }
-    },
-    "media": {
-      "questionImageSource": "question[3]"
-    },
-    "scoring": {
-      "choice": "exact_match",
-      "sentence_ordering": "accepted_permutation",
-      "picture_writing": "manual_or_non_binary"
-    }
-  },
-  "meta": {
-    "sourceSchema": "HSK4 PDF rebuild v2",
-    "universalConversion": "v1",
-    "sourceVerified": true,
-    "questionCount": 100,
-    "questionCounts": {
-      "listening": 45,
-      "reading": 40,
-      "writing": 15
-    },
-    "answerPolicy": "Answers and media preserved exactly from source JSON; no generated answers.",
-    "universalEngineCompatibility": {
-      "target": "HSK4 Universal Engine",
-      "format": "section.parts direct rule",
-      "questionShapes": "choice + sentence_ordering + picture_writing",
-      "noEngineChangeRequired": true
-    },
-    "sourceFile": "H41329.pdf",
-    "sourceBasis": "User-provided HSK 4 PDF archive",
-    "answerKeyVerifiedFromPdf": true,
-    "verifiedScoredQuestions": 85,
-    "dataVersion": "pdf-2026-09-21-v2",
-    "reading_part3_mode": "single_choice_six_permutations",
-    "reading_part3_options": [
-      "ABC",
-      "ACB",
-      "BAC",
-      "BCA",
-      "CAB",
-      "CBA"
-    ],
-    "reading_part3_note": "Practice mode: all 6 permutations are offered; answer remains the verified correct permutation."
   }
 }
