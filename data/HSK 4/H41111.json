@@ -1274,8 +1274,8 @@
               56,
               65
             ],
-            "type": "sentence_ordering",
-            "input": "ordering"
+            "type": "choice",
+            "input": "single_select"
           },
           {
             "title": "阅读 · 第四部分",
@@ -1445,6 +1445,6 @@
       "CBA"
     ],
     "reading_part3_note": "Practice mode: all 6 permutations are offered; answer remains the verified correct permutation.",
-    "schemaRepair": "v5: restored HSK4 universal question shape; reading 56–65 uses [id,prompt,options,answer] with six permutation options; section titles/rules corrected."
+    "schemaRepair": "v6: Fixed the actual live-engine bug. Reading 56–65 keeps the verified [id,prompt,A/B/C fragments + six permutation options,answer] question data, but its engine rule is choice/single_select so HSK Papers v1.31 renders the six ABC/ACB/BAC/BCA/CAB/CBA choices instead of the writing-style input."
   }
 }
