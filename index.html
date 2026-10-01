@@ -652,13 +652,14 @@ body.dark #studyPlanPackages .studyPlanPackageBar{background:#111214!important;}
 #topBack .material-symbols-rounded.ico{--icon-size:24px!important;width:24px!important;height:24px!important;min-width:24px!important;min-height:24px!important;flex-basis:24px!important;font-size:24px!important;}
 @media(max-width:760px){.brandTitleWrap .brandTitle{font-size:20px!important;letter-spacing:-.5px!important}.brandTitleWrap .brandSubtitle{font-size:9px!important}.brandTitleWrap{gap:2px!important}#topBack .material-symbols-rounded.ico{--icon-size:23px!important;width:23px!important;height:23px!important;min-width:23px!important;min-height:23px!important;flex-basis:23px!important;font-size:23px!important;}}
 body.dark .authCard h1,body.dark .authCard .authFormTitle{color:var(--text)!important;}body.dark .authIntro,body.dark .authFoot,body.dark .authHint,body.dark .authChoice span{color:var(--muted)!important;}body.dark .authChoice{color:var(--text)!important;}body.dark .authForm label{color:var(--muted)!important;}<style id="hsk5-question-model-v1">
-.hsk5ClozePassage{margin:15px 0 8px;border:1px solid var(--line);border-radius:20px;background:var(--surface);overflow:hidden}
-.hsk5ClozeHead{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px;letter-spacing:.06em}
-.hsk5ClozeHead strong{color:var(--text);font-size:14px;letter-spacing:0}
-.hsk5ClozeText{padding:19px 18px;font-size:18px;line-height:2;color:var(--text);white-space:pre-wrap}
-.hsk5ClozeQuestions{display:grid;gap:10px;margin:0 0 18px}
+.hsk5PassageGroup{display:grid;gap:10px;margin-bottom:18px}
+.hsk5ClozePassage{border:1px solid var(--line);border-radius:20px;background:var(--surface);overflow:hidden}
+.hsk5ClozeHead{display:flex;align-items:center;gap:8px;padding:11px 16px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px;letter-spacing:.06em}
+.hsk5ClozeHead strong{display:none}
+.hsk5ClozeText{padding:18px;font-size:18px;line-height:2;color:var(--text);white-space:pre-wrap}
 .hsk5ClozeQuestion{border:1px solid var(--line);border-radius:17px;padding:13px 14px;background:var(--surface)}
-.hsk5ClozeQnum{font-size:17px;font-weight:800;margin-bottom:9px}
+.hsk5ClozeQtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;font-size:13px;color:var(--muted)}
+.hsk5ClozeQtop strong{font-size:15px;color:var(--text)}
 .hsk5ClozeOpts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .hsk5ClozeOpt{border:1px solid var(--line);border-radius:13px;padding:11px 12px;text-align:left;background:var(--surface);color:var(--text);cursor:pointer;min-height:46px}
 .hsk5ClozeOpt.selected{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 10%,var(--surface))}
@@ -2537,28 +2538,72 @@ function originalRenderQuestionCards(){let out='',lastPassage='';const pkg=getAc
 function renderQuestionCards(){
   const pkg=getActivePackageData();
   if(!isHsk5Model(pkg) || route.type!=="reading") return originalRenderQuestionCards();
-  let out="", renderedCloze=new Set();
-  currentQuestions.forEach((q,i)=>{
+
+  let out="";
+  const seenGroups=new Set();
+
+  // HSK5 Reading 46–60: render each passage group exactly once.
+  for(const q of currentQuestions){
     const model=getResolvedQuestionModel(pkg,route.type,route.sectionIndex,q);
     const gid=model.group?.id;
+
     if(model.type==="fill_blank" && gid){
-      if(renderedCloze.has(String(gid))) return;
+      const key=String(gid);
+      if(seenGroups.has(key)) continue;
+
       const groupQs=currentQuestions.filter(x=>{
         const m=getResolvedQuestionModel(pkg,route.type,route.sectionIndex,x);
-        return m.type==="fill_blank" && String(m.group?.id||"")===String(gid);
+        return m.type==="fill_blank" && String(m.group?.id||"")===key;
       });
-      out+=renderPassageClozeGroup(pkg,gid,groupQs);
-      renderedCloze.add(String(gid));
-      return;
+
+      let passage="";
+      const root=pkg?.reading_passages?.[pkg.code]||{};
+      const raw=root[key]||root[gid]||"";
+      passage=String(raw);
+
+      // Source data uses bare question numbers in the passage. Convert only
+      // those numbers belonging to this group into visible blanks.
+      for(const gq of groupQs){
+        const id=String(gq[0]);
+        const re=new RegExp("(?<!\\d)"+id+"(?!\\d)","g");
+        passage=passage.replace(re,"____"+id+"____");
+      }
+
+      out += '<section class="hsk5PassageGroup">';
+      out += '<div class="hsk5ClozePassage"><div class="hsk5ClozeHead"><span>TEKS BACAAN</span><strong>'+esc(key)+'</strong></div>';
+      out += '<div class="hsk5ClozeText">'+esc(passage)+'</div></div>';
+
+      for(const gq of groupQs){
+        const id=String(gq[0]);
+        const opts=Array.isArray(gq[2])?gq[2]:[];
+        const labels=opts.map((v,i)=>{
+          const selected=Number(answers[id])===i;
+          const state=checked[id]?(isCorrect(gq,answers[id],route.type,route.sectionIndex)?'correct':'wrong'):'';
+          return '<button type="button" class="hsk5ClozeOpt '+(selected?'selected ':'')+state+'" data-q="'+esc(id)+'" data-i="'+i+'" onclick="choose(this)"><span class="optText">'+String.fromCharCode(65+i)+'. '+esc(v)+'</span></button>';
+        }).join("");
+
+        out += '<div class="hsk5ClozeQuestion">';
+        out += '<div class="hsk5ClozeQtop"><strong>第 '+esc(id)+' 题</strong><span>'+esc(String(currentQuestions.indexOf(gq)+1))+'/'+esc(String(currentQuestions.length))+'</span></div>';
+        out += '<div class="hsk5ClozeOpts">'+labels+'</div>';
+        out += '<div class="row"><button class="btn soft" onclick="checkOne(\''+esc(id)+'\')">'+svg('check')+' Periksa</button></div>';
+        out += '<div class="feedback" id="f'+esc(id)+'"></div>';
+        out += '</div>';
+      }
+
+      out += '</section>';
+      seenGroups.add(key);
+      continue;
     }
+
+    // Other HSK5 reading types keep the existing card model for now.
     const id=String(q[0]);
     const labels=model.options.map((o,oi)=>{
       const selected=Number(answers[id])===oi;
       const state=checked[id]?(isCorrect(q,answers[id],route.type,route.sectionIndex)?'correct':'wrong'):'';
       return '<button type="button" class="opt '+(selected?'selected ':'')+state+'" data-q="'+esc(id)+'" data-i="'+oi+'" onclick="choose(this)"><span class="optText">'+o.label+'. '+esc(o.value)+'</span></button>';
     }).join('');
-    out+='<article class="question"><div class="qtop"><span>第 '+esc(id)+' 题</span><span>'+ (i+1)+'/'+currentQuestions.length+'</span></div><div class="qtext">'+esc(q[1]||'')+'</div><div class="opts">'+labels+'</div><div class="row"><button class="btn soft" onclick="checkOne(\''+esc(id)+'\')">'+svg('check')+' Periksa</button></div><div class="feedback" id="f'+esc(id)+'"></div></article>';
-  });
+    out+='<article class="question"><div class="qtop"><span>第 '+esc(id)+' 题</span><span>'+ (currentQuestions.indexOf(q)+1)+'/'+currentQuestions.length+'</span></div><div class="qtext">'+esc(q[1]||'')+'</div><div class="opts">'+labels+'</div><div class="row"><button class="btn soft" onclick="checkOne(\''+esc(id)+'\')">'+svg('check')+' Periksa</button></div><div class="feedback" id="f'+esc(id)+'"></div></article>';
+  }
   return out;
 }
 function restoreQuestionUI(){for(const q of currentQuestions){const id=String(q[0]);if(currentMode==='writing'){const e=$('w'+id);if(e)e.value=answers[id]??''}else if(answers[id]!==undefined){const b=document.querySelector(`.opt[data-q="${id}"][data-i="${answers[id]}"]`);if(b)b.classList.add('selected')}if(checked[id])checkOne(id,true)}}
