@@ -27,7 +27,7 @@
             "scoring": {
               "mode": "exact_match"
             },
-            "instruction": "第1-20题：请选出正确答案。"
+            "instruction": "Dengarkan percakapan, lalu pilih jawaban yang paling tepat."
           },
           {
             "range": [
@@ -39,7 +39,7 @@
             "scoring": {
               "mode": "exact_match"
             },
-            "instruction": "第21-45题：请选出正确答案。"
+            "instruction": "Dengarkan percakapan atau bacaan, lalu pilih jawaban yang paling tepat."
           }
         ]
       },
@@ -56,7 +56,8 @@
               "type": "passage",
               "textSource": "reading_passages.H51005",
               "key": "questionRange"
-            }
+            },
+            "instruction": "Pilih kata yang paling tepat untuk melengkapi kalimat."
           },
           {
             "range": [
@@ -64,7 +65,8 @@
               70
             ],
             "type": "choice",
-            "shape": "choice"
+            "shape": "choice",
+            "instruction": "Pilih jawaban yang paling sesuai dengan isi kalimat."
           },
           {
             "range": [
@@ -79,7 +81,8 @@
               "mediaSource": "reading_passage_media.H51005",
               "key": "questionRange"
             },
-            "input": "single_select"
+            "input": "single_select",
+            "instruction": "Baca teks dengan saksama, lalu pilih jawaban yang paling sesuai dengan isi bacaan."
           }
         ]
       },
@@ -95,7 +98,7 @@
             "scoring": {
               "mode": "accepted_answer_match"
             },
-            "instruction": "第91-98题：完成句子。"
+            "instruction": "Susun kata-kata yang diberikan menjadi kalimat yang benar."
           },
           {
             "range": [
@@ -107,7 +110,7 @@
             "scoring": {
               "mode": "manual"
             },
-            "instruction": "第99题：请结合下列词语（要全部使用），写一篇80字左右的短文。"
+            "instruction": "Gunakan kata yang diberikan untuk membuat kalimat yang benar."
           },
           {
             "range": [
@@ -122,7 +125,7 @@
             "scoring": {
               "mode": "manual"
             },
-            "instruction": "第100题：请结合这张图片写一篇80字左右的短文。",
+            "instruction": "Buat kalimat berdasarkan gambar.",
             "mediaSource": "question[3]"
           }
         ]
@@ -142,18 +145,18 @@
   },
   "instructions": {
     "listening": [
-      "第1-20题：请选出正确答案。",
-      "第21-45题：请选出正确答案。"
+      "Dengarkan percakapan, lalu pilih jawaban yang paling tepat.",
+      "Dengarkan percakapan atau bacaan, lalu pilih jawaban yang paling tepat."
     ],
     "reading": [
-      "第46-60题：请选出正确答案。",
-      "第61-70题：请选出与试题内容一致的一项。",
-      "第71-90题：请选出正确答案。"
+      "Pilih kata yang paling tepat untuk melengkapi kalimat.",
+      "Pilih jawaban yang paling sesuai dengan isi kalimat.",
+      "Baca teks dengan saksama, lalu pilih jawaban yang paling sesuai dengan isi bacaan."
     ],
     "writing": [
-      "第91-98题：完成句子。",
-      "第99题：请结合下列词语（要全部使用），写一篇80字左右的短文。",
-      "第100题：请结合这张图片写一篇80字左右的短文。"
+      "Susun kata-kata yang diberikan menjadi kalimat yang benar.",
+      "Gunakan kata yang diberikan untuk membuat kalimat yang benar.",
+      "Buat kalimat berdasarkan gambar."
     ]
   },
   "listening": [

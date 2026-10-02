@@ -1207,7 +1207,8 @@
               20
             ],
             "type": "choice",
-            "shape": "choice"
+            "shape": "choice",
+            "instruction": "Dengarkan percakapan, lalu pilih jawaban yang paling tepat."
           },
           {
             "range": [
@@ -1215,7 +1216,8 @@
               45
             ],
             "type": "choice",
-            "shape": "choice"
+            "shape": "choice",
+            "instruction": "Dengarkan percakapan atau bacaan, lalu pilih jawaban yang paling tepat."
           }
         ]
       },
@@ -1232,7 +1234,8 @@
               "type": "passage",
               "textSource": "reading_passages.H51002",
               "key": "questionRange"
-            }
+            },
+            "instruction": "Pilih kata yang paling tepat untuk melengkapi kalimat."
           },
           {
             "range": [
@@ -1240,7 +1243,8 @@
               70
             ],
             "type": "choice",
-            "shape": "choice"
+            "shape": "choice",
+            "instruction": "Pilih jawaban yang paling sesuai dengan isi kalimat."
           },
           {
             "range": [
@@ -1255,7 +1259,8 @@
               "mediaSource": "reading_passage_media.H51002",
               "key": "questionRange"
             },
-            "input": "single_select"
+            "input": "single_select",
+            "instruction": "Baca teks dengan saksama, lalu pilih jawaban yang paling sesuai dengan isi bacaan."
           }
         ]
       },
@@ -1268,7 +1273,8 @@
             ],
             "type": "sentence_ordering",
             "shape": "sequence",
-            "input": "ordering"
+            "input": "ordering",
+            "instruction": "Susun kata-kata yang diberikan menjadi kalimat yang benar."
           },
           {
             "range": [
@@ -1277,7 +1283,8 @@
             ],
             "type": "guided_writing",
             "shape": "writing_prompt",
-            "input": "text"
+            "input": "text",
+            "instruction": "Gunakan kata yang diberikan untuk membuat kalimat yang benar."
           },
           {
             "range": [
@@ -1289,7 +1296,8 @@
             "input": "text",
             "media": [
               "image"
-            ]
+            ],
+            "instruction": "Buat kalimat berdasarkan gambar."
           }
         ]
       }

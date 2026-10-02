@@ -1208,7 +1208,7 @@
             ],
             "type": "choice",
             "shape": "choice",
-            "instruction": "Dengarkan pernyataan lalu pilih jawaban yang paling tepat."
+            "instruction": "Dengarkan percakapan, lalu pilih jawaban yang paling tepat."
           },
           {
             "range": [
@@ -1217,7 +1217,7 @@
             ],
             "type": "choice",
             "shape": "choice",
-            "instruction": "Dengarkan percakapan lalu pilih jawaban yang paling tepat berdasarkan informasi yang kamu dengar."
+            "instruction": "Dengarkan percakapan atau bacaan, lalu pilih jawaban yang paling tepat."
           }
         ]
       },
@@ -1230,7 +1230,7 @@
             ],
             "type": "fill_blank",
             "shape": "choice",
-            "instruction": "Baca teks dan pilihan jawaban, lalu pilih kata atau ungkapan yang paling tepat untuk mengisi bagian kosong.",
+            "instruction": "Pilih kata yang paling tepat untuk melengkapi kalimat.",
             "group": {
               "type": "passage",
               "textSource": "reading_passages.H51004",
@@ -1244,7 +1244,7 @@
             ],
             "type": "choice",
             "shape": "choice",
-            "instruction": "Baca setiap teks dan pilih pilihan yang sesuai dengan isi. "
+            "instruction": "Pilih jawaban yang paling sesuai dengan isi kalimat."
           },
           {
             "range": [
@@ -1253,7 +1253,7 @@
             ],
             "type": "choice",
             "shape": "choice",
-            "instruction": "Baca teks dengan saksama lalu pilih jawaban yang paling tepat.",
+            "instruction": "Baca teks dengan saksama, lalu pilih jawaban yang paling sesuai dengan isi bacaan.",
             "group": {
               "type": "passage",
               "textSource": "reading_passages.H51004",
@@ -1274,7 +1274,7 @@
             "type": "sentence_ordering",
             "shape": "sequence",
             "input": "ordering",
-            "instruction": "Susun kata-kata berikut menjadi kalimat Mandarin yang benar."
+            "instruction": "Susun kata-kata yang diberikan menjadi kalimat yang benar."
           },
           {
             "range": [
@@ -1284,7 +1284,7 @@
             "type": "guided_writing",
             "shape": "writing_prompt",
             "input": "text",
-            "instruction": "Gunakan semua kata yang diberikan untuk menulis sebuah paragraf sekitar 80 karakter."
+            "instruction": "Gunakan kata yang diberikan untuk membuat kalimat yang benar."
           },
           {
             "range": [
@@ -1297,7 +1297,7 @@
             "media": [
               "image"
             ],
-            "instruction": "Perhatikan gambar lalu tulis sebuah paragraf sekitar 80 karakter."
+            "instruction": "Buat kalimat berdasarkan gambar."
           }
         ]
       }
