@@ -656,7 +656,7 @@ body.dark .authCard h1,body.dark .authCard .authFormTitle{color:var(--text)!impo
 .hsk5ClozePassage{padding:0 0 15px}
 .hsk5ClozeHead{display:flex;align-items:center;gap:8px;margin-bottom:10px;color:var(--muted);font-size:12px;letter-spacing:.06em}
 .hsk5ClozeHead strong{font-size:12px;color:var(--text)}
-.hsk5ClozeText{font-family:Kaiti,STKaiti,serif;font-size:18px;line-height:2;color:var(--text);white-space:pre-wrap}
+.hsk5ClozeText{font-family:Kaiti,STKaiti,serif;font-size:18px;line-height:2;color:var(--text);white-space:pre-wrap}.hsk5ClozeBlank{display:inline-block;text-decoration-line:underline;text-decoration-thickness:1px;text-underline-offset:3px;text-decoration-color:currentColor;font-family:inherit;min-width:1.35em;text-align:center}
 .hsk5ClozeQuestions{border-top:1px solid var(--line);padding-top:12px}
 .hsk5ClozeQuestion{padding:11px 0 13px;border-bottom:1px solid var(--line)}
 .hsk5ClozeQuestion:last-child{border-bottom:0;padding-bottom:0}
@@ -2625,10 +2625,17 @@ function renderPassageClozeGroup(pkg,gid,qs){
   let displayText=String(text);
   qs.forEach(q=>{
     const marker=String(q[0]);
+    const token='@@HSK5BLANK_'+marker+'@@';
     const re=new RegExp('(^|[^0-9])\\s*'+marker+'\\s*(?=[^0-9]|$)','g');
-    displayText=displayText.replace(re,'$1……');
+    displayText=displayText.replace(re,'$1'+token);
   });
-  const passage='<div class="hsk5ClozePassage"><div class="hsk5ClozeHead"><span>TEKS BACAAN</span><strong>'+esc(gid)+'</strong></div><div class="hsk5ClozeText">'+esc(displayText)+'</div></div>';
+  let safeText=esc(displayText);
+  qs.forEach(q=>{
+    const marker=String(q[0]);
+    const token='@@HSK5BLANK_'+marker+'@@';
+    safeText=safeText.replaceAll(token,'<span class="hsk5ClozeBlank">'+esc(marker)+'</span>');
+  });
+  const passage='<div class="hsk5ClozePassage"><div class="hsk5ClozeHead"><span>TEKS BACAAN</span><strong>'+esc(gid)+'</strong></div><div class="hsk5ClozeText">'+safeText+'</div></div>';
   const body=qs.map(q=>{
     const id=String(q[0]);
     const model=getResolvedQuestionModel(pkg,route.type,route.sectionIndex,q);
