@@ -2516,12 +2516,7 @@ function renderPassageClozeGroup(pkg,gid,qs){
   const root=pkg?.reading_passages?.[pkg.code]||{};
   let text=root[String(gid)]||"";
   if(!text)return "";
-  qs.forEach(q=>{
-    const id=String(q[0]);
-    const re=new RegExp("(?<![0-9])"+id+"(?![0-9])","g");
-    text=text.replace(re,"____"+id+"____");
-  });
-  const passage='<div class="hsk5ClozePassage"><div class="hsk5ClozeHead"><span>阅读</span><strong>'+esc(gid)+'</strong></div><div class="hsk5ClozeText">'+esc(text)+'</div></div>';
+  const passage='<div class="hsk5ClozePassage"><div class="hsk5ClozeHead"><span>TEKS BACAAN</span><strong>'+esc(gid)+'</strong></div><div class="hsk5ClozeText">'+esc(text)+'</div></div>';
   const body=qs.map(q=>{
     const id=String(q[0]), opts=Array.isArray(q[2])?q[2]:[];
     const labels=opts.map((v,i)=>{
@@ -2529,83 +2524,34 @@ function renderPassageClozeGroup(pkg,gid,qs){
       const state=checked[id]?(isCorrect(q,answers[id],route.type,route.sectionIndex)?'correct':'wrong'):'';
       return '<button type="button" class="hsk5ClozeOpt '+(selected?'selected ':'')+state+'" data-q="'+esc(id)+'" data-i="'+i+'" onclick="choose(this)"><span class="optText">'+String.fromCharCode(65+i)+'. '+esc(v)+'</span></button>';
     }).join("");
-    return '<div class="hsk5ClozeQuestion"><div class="hsk5ClozeQnum">'+esc(id)+'.</div><div class="hsk5ClozeOpts">'+labels+'</div><div class="row"><button class="btn soft" onclick="checkOne(\''+esc(id)+'\')">'+svg('check')+' Periksa</button></div><div class="feedback" id="f'+esc(id)+'"></div></div>';
+    const globalIndex=currentQuestions.findIndex(x=>String(x[0])===id)+1;
+    return '<div class="hsk5ClozeQuestion"><div class="hsk5ClozeQtop"><strong>第 '+esc(id)+' 题</strong><span>'+esc(String(globalIndex))+'/'+esc(String(currentQuestions.length))+'</span></div><div class="hsk5ClozeOpts">'+labels+'</div><div class="row"><button class="btn soft" onclick="checkOne(\''+esc(id)+'\')">'+svg('check')+' Periksa</button></div><div class="feedback" id="f'+esc(id)+'"></div></div>';
   }).join("");
-  return passage+'<div class="hsk5ClozeQuestions">'+body+'</div>';
+  return '<section class="hsk5PassageGroup">'+passage+'<div class="hsk5ClozeQuestions">'+body+'</div></section>';
 }
-function renderPassageGroup(pkg,gid){let out=renderReadingPassage(gid);const root=pkg?.reading_passage_media?.[pkg.code]||{};const g=root[gid];const imgs=g?.images||g?.media||[];if(imgs.length){out+=`<div class="readingPassageMedia">${imgs.map((src,i)=>`<img src="${esc(src)}" alt="Gambar bacaan ${esc(gid)} ${i+1}" loading="lazy" decoding="async">`).join('')}</div>`}return out}
-function originalRenderQuestionCards(){let out='',lastPassage='';const pkg=getActivePackageData();currentQuestions.forEach((q,i)=>{const id=String(q[0]);const model=getResolvedQuestionModel(pkg,route.type,route.sectionIndex,q);const isSeq=model.type==='sentence_ordering'||model.type==='sequence';const isWriting=model.type==='guided_writing'||model.type==='picture_writing';if(isSeq){out+=`<article class="question"><div class="qtop"><span>第 ${esc(id)} 题</span><span>${i+1}/${currentQuestions.length}</span></div><div class="qtext">Susun kata berikut menjadi kalimat yang benar:</div>${renderWordBank(q,id)}<input class="write" id="w${id}" value="${esc(answers[id]||'')}" placeholder="Ketik atau pilih susunan kata di sini" autocomplete="off" oninput="saveWriting(this);refreshWordBank('${id}')"><div class="writingHint">✓ Bagian ini dinilai benar atau salah berdasarkan kunci jawaban. Urutan kata harus sesuai kunci.</div><div class="row"><button class="btn soft" onclick="checkOne('${id}')">${svg('check')} Periksa</button><button class="btn" onclick="showReference('${id}')">Lihat kunci jawaban</button></div><div class="feedback" id="f${id}"></div><div class="reference" id="r${id}">Kunci jawaban: ${esc(q[2]||'Tidak tersedia')}</div></article>`;return}if(isWriting){const img=model.media.find(m=>m.type==='image');out+=`<article class="question"><div class="qtop"><span>第 ${esc(id)} 题</span><span>${i+1}/${currentQuestions.length}</span></div><div class="qtext">${esc(q[1])}</div>${img?`<div class="writingImageWrap"><img class="writingImage" src="${esc(img.source)}" alt="Gambar soal ${esc(id)}" loading="lazy" decoding="async"></div>`:''}${renderWordBank(q,id)}<input class="write" id="w${id}" value="${esc(answers[id]||'')}" placeholder="Ketik jawaban di sini" autocomplete="off" oninput="saveWriting(this)"><div class="writingDisclaimer">💡 Jawaban membuat kalimat dapat memiliki banyak bentuk yang benar. Jawaban ini tidak dinilai benar atau salah secara otomatis. Periksa kembali penggunaan kata dan tata bahasa kalimatmu.</div><div class="row"><button class="btn soft" onclick="checkOne('${id}')">${svg('check')} Periksa</button><button class="btn" onclick="showReference('${id}')">Lihat contoh jawaban</button></div><div class="feedback" id="f${id}"></div><div class="reference" id="r${id}">Contoh jawaban: ${esc(q[2]||'Tidak tersedia')}</div></article>`;return}const gid=model.group?.id;if(gid&&gid!==lastPassage){out+=renderPassageGroup(pkg,gid);lastPassage=gid}else if(!gid&&route.type==='reading'&&!getPackageEngineRules(pkg)&&!isSequenceReadingQuestion(id)){const legacyPassage=renderReadingPassage(id);if(legacyPassage){out+=legacyPassage;lastPassage=id}}const labels=model.options.map((o,oi)=>{const selected=Number(answers[id])===oi;const state=checked[id]?(isCorrect(q,answers[id],route.type,route.sectionIndex)?'correct':'wrong'):'';return `<button type="button" class="opt ${selected?'selected':''} ${state}" data-q="${esc(id)}" data-i="${oi}" onclick="choose(this)"><span class="optText">${o.label}. ${esc(o.value)}</span></button>`}).join('');const img=model.media.find(m=>m.type==='image');out+=`<article class="question"><div class="qtop"><span>第 ${esc(id)} 题</span><span>${i+1}/${currentQuestions.length}</span></div><div class="qtext">${esc(q[1])}</div>${img?`<div class="questionMedia"><img src="${esc(img.source)}" alt="Gambar soal ${esc(id)}" loading="lazy" decoding="async"></div>`:''}${route.type==='listening'?`<div class="listeningNotice"><strong>⚠️ Perhatian:</strong> Versi saat ini belum mendukung audio. Silakan sediakan audio sendiri untuk mengerjakan soal Listening.</div>`:''}<div class="opts">${labels}</div><div class="row"><button class="btn soft" onclick="checkOne('${id}')">${svg('check')} Periksa</button>${route.type==='listening'?`<button class="btn" onclick="toggleTranscript('${id}')">Lihat teks</button>`:''}</div>${route.type==='listening'?`<div class="transcript" id="t${id}">${esc(q[4]||'Teks dengar tidak tersedia di sumber.')}</div>`:''}<div class="feedback" id="f${id}"></div></article>`});return out}
+function renderStandardQuestionCards(){let out='',lastPassage='';const pkg=getActivePackageData();currentQuestions.forEach((q,i)=>{const id=String(q[0]);const model=getResolvedQuestionModel(pkg,route.type,route.sectionIndex,q);const isSeq=model.type==='sentence_ordering'||model.type==='sequence';const isWriting=model.type==='guided_writing'||model.type==='picture_writing';if(isSeq){out+=`<article class="question"><div class="qtop"><span>第 ${esc(id)} 题</span><span>${i+1}/${currentQuestions.length}</span></div><div class="qtext">Susun kata berikut menjadi kalimat yang benar:</div>${renderWordBank(q,id)}<input class="write" id="w${id}" value="${esc(answers[id]||'')}" placeholder="Ketik atau pilih susunan kata di sini" autocomplete="off" oninput="saveWriting(this);refreshWordBank('${id}')"><div class="writingHint">✓ Bagian ini dinilai benar atau salah berdasarkan kunci jawaban. Urutan kata harus sesuai kunci.</div><div class="row"><button class="btn soft" onclick="checkOne('${id}')">${svg('check')} Periksa</button><button class="btn" onclick="showReference('${id}')">Lihat kunci jawaban</button></div><div class="feedback" id="f${id}"></div><div class="reference" id="r${id}">Kunci jawaban: ${esc(q[2]||'Tidak tersedia')}</div></article>`;return}if(isWriting){const img=model.media.find(m=>m.type==='image');out+=`<article class="question"><div class="qtop"><span>第 ${esc(id)} 题</span><span>${i+1}/${currentQuestions.length}</span></div><div class="qtext">${esc(q[1])}</div>${img?`<div class="writingImageWrap"><img class="writingImage" src="${esc(img.source)}" alt="Gambar soal ${esc(id)}" loading="lazy" decoding="async"></div>`:''}${renderWordBank(q,id)}<input class="write" id="w${id}" value="${esc(answers[id]||'')}" placeholder="Ketik jawaban di sini" autocomplete="off" oninput="saveWriting(this)"><div class="writingDisclaimer">💡 Jawaban membuat kalimat dapat memiliki banyak bentuk yang benar. Jawaban ini tidak dinilai benar atau salah secara otomatis. Periksa kembali penggunaan kata dan tata bahasa kalimatmu.</div><div class="row"><button class="btn soft" onclick="checkOne('${id}')">${svg('check')} Periksa</button><button class="btn" onclick="showReference('${id}')">Lihat contoh jawaban</button></div><div class="feedback" id="f${id}"></div><div class="reference" id="r${id}">Contoh jawaban: ${esc(q[2]||'Tidak tersedia')}</div></article>`;return}const gid=model.group?.id;if(gid&&gid!==lastPassage){out+=renderReadingPassage(gid);lastPassage=gid}else if(!gid&&route.type==='reading'&&!getPackageEngineRules(pkg)&&!isSequenceReadingQuestion(id)){const legacyPassage=renderReadingPassage(id);if(legacyPassage){out+=legacyPassage;lastPassage=id}}const labels=model.options.map((o,oi)=>{const selected=Number(answers[id])===oi;const state=checked[id]?(isCorrect(q,answers[id],route.type,route.sectionIndex)?'correct':'wrong'):'';return `<button type="button" class="opt ${selected?'selected':''} ${state}" data-q="${esc(id)}" data-i="${oi}" onclick="choose(this)"><span class="optText">${o.label}. ${esc(o.value)}</span></button>`}).join('');const img=model.media.find(m=>m.type==='image');out+=`<article class="question"><div class="qtop"><span>第 ${esc(id)} 题</span><span>${i+1}/${currentQuestions.length}</span></div><div class="qtext">${esc(q[1])}</div>${img?`<div class="questionMedia"><img src="${esc(img.source)}" alt="Gambar soal ${esc(id)}" loading="lazy" decoding="async"></div>`:''}${route.type==='listening'?`<div class="listeningNotice"><strong>⚠️ Perhatian:</strong> Versi saat ini belum mendukung audio. Silakan sediakan audio sendiri untuk mengerjakan soal Listening.</div>`:''}<div class="opts">${labels}</div><div class="row"><button class="btn soft" onclick="checkOne('${id}')">${svg('check')} Periksa</button>${route.type==='listening'?`<button class="btn" onclick="toggleTranscript('${id}')">Lihat teks</button>`:''}</div>${route.type==='listening'?`<div class="transcript" id="t${id}">${esc(q[4]||'Teks dengar tidak tersedia di sumber.')}</div>`:''}<div class="feedback" id="f${id}"></div></article>`});return out}
 function renderQuestionCards(){
   const pkg=getActivePackageData();
-  if(!isHsk5Model(pkg) || route.type!=="reading") return originalRenderQuestionCards();
+  if(!isHsk5Model(pkg) || route.type!=="reading") return renderStandardQuestionCards();
 
-  let out="";
-  const seenGroups=new Set();
-
-  // HSK5 Reading 46–60: render each passage group exactly once.
+  const groups=[];
+  const seen=new Set();
   for(const q of currentQuestions){
     const model=getResolvedQuestionModel(pkg,route.type,route.sectionIndex,q);
     const gid=model.group?.id;
-
-    if(model.type==="fill_blank" && gid){
-      const key=String(gid);
-      if(seenGroups.has(key)) continue;
-
-      const groupQs=currentQuestions.filter(x=>{
-        const m=getResolvedQuestionModel(pkg,route.type,route.sectionIndex,x);
-        return m.type==="fill_blank" && String(m.group?.id||"")===key;
-      });
-
-      let passage="";
-      const root=pkg?.reading_passages?.[pkg.code]||{};
-      const raw=root[key]||root[gid]||"";
-      passage=String(raw);
-
-      // Source data uses bare question numbers in the passage. Convert only
-      // those numbers belonging to this group into visible blanks.
-      for(const gq of groupQs){
-        const id=String(gq[0]);
-        const re=new RegExp("(?<!\\d)"+id+"(?!\\d)","g");
-        passage=passage.replace(re,"____"+id+"____");
-      }
-
-      out += '<section class="hsk5PassageGroup">';
-      out += '<div class="hsk5ClozePassage"><div class="hsk5ClozeHead"><span>TEKS BACAAN</span><strong>'+esc(key)+'</strong></div>';
-      out += '<div class="hsk5ClozeText">'+esc(passage)+'</div></div>';
-
-      for(const gq of groupQs){
-        const id=String(gq[0]);
-        const opts=Array.isArray(gq[2])?gq[2]:[];
-        const labels=opts.map((v,i)=>{
-          const selected=Number(answers[id])===i;
-          const state=checked[id]?(isCorrect(gq,answers[id],route.type,route.sectionIndex)?'correct':'wrong'):'';
-          return '<button type="button" class="hsk5ClozeOpt '+(selected?'selected ':'')+state+'" data-q="'+esc(id)+'" data-i="'+i+'" onclick="choose(this)"><span class="optText">'+String.fromCharCode(65+i)+'. '+esc(v)+'</span></button>';
-        }).join("");
-
-        out += '<div class="hsk5ClozeQuestion">';
-        out += '<div class="hsk5ClozeQtop"><strong>第 '+esc(id)+' 题</strong><span>'+esc(String(currentQuestions.indexOf(gq)+1))+'/'+esc(String(currentQuestions.length))+'</span></div>';
-        out += '<div class="hsk5ClozeOpts">'+labels+'</div>';
-        out += '<div class="row"><button class="btn soft" onclick="checkOne(\''+esc(id)+'\')">'+svg('check')+' Periksa</button></div>';
-        out += '<div class="feedback" id="f'+esc(id)+'"></div>';
-        out += '</div>';
-      }
-
-      out += '</section>';
-      seenGroups.add(key);
-      continue;
-    }
-
-    // Other HSK5 reading types keep the existing card model for now.
-    const id=String(q[0]);
-    const labels=model.options.map((o,oi)=>{
-      const selected=Number(answers[id])===oi;
-      const state=checked[id]?(isCorrect(q,answers[id],route.type,route.sectionIndex)?'correct':'wrong'):'';
-      return '<button type="button" class="opt '+(selected?'selected ':'')+state+'" data-q="'+esc(id)+'" data-i="'+oi+'" onclick="choose(this)"><span class="optText">'+o.label+'. '+esc(o.value)+'</span></button>';
-    }).join('');
-    out+='<article class="question"><div class="qtop"><span>第 '+esc(id)+' 题</span><span>'+ (currentQuestions.indexOf(q)+1)+'/'+currentQuestions.length+'</span></div><div class="qtext">'+esc(q[1]||'')+'</div><div class="opts">'+labels+'</div><div class="row"><button class="btn soft" onclick="checkOne(\''+esc(id)+'\')">'+svg('check')+' Periksa</button></div><div class="feedback" id="f'+esc(id)+'"></div></article>';
+    if(model.type!=="fill_blank" || !gid) return renderStandardQuestionCards();
+    const key=String(gid);
+    if(seen.has(key)) continue;
+    const groupQuestions=currentQuestions.filter(x=>{
+      const m=getResolvedQuestionModel(pkg,route.type,route.sectionIndex,x);
+      return m.type==="fill_blank" && String(m.group?.id||"")===key;
+    });
+    groups.push(renderPassageClozeGroup(pkg,key,groupQuestions));
+    seen.add(key);
   }
-  return out;
+  return groups.join('');
 }
+
 function restoreQuestionUI(){for(const q of currentQuestions){const id=String(q[0]);if(currentMode==='writing'){const e=$('w'+id);if(e)e.value=answers[id]??''}else if(answers[id]!==undefined){const b=document.querySelector(`.opt[data-q="${id}"][data-i="${answers[id]}"]`);if(b)b.classList.add('selected')}if(checked[id])checkOne(id,true)}}
 function saveWriting(el){const id=String(el.id).slice(1);resumeQuestionId=id;const previous=answers[id];answers[id]=el.value;checked[id]=false;if(String(el.value||'').trim()!==''&&(previous===undefined||String(previous)!==String(el.value))){if(!answerEvents[id])answerEvents[id]=createQuestionActivity(id);}const f=$('f'+id);if(f)f.className='feedback';saveSectionState(route.packageCode,route.type,route.sectionIndex,answers,checked,answerEvents);refreshCurrentProgress()}
 function refreshCurrentProgress(){const wrap=document.querySelector('.sectionProgress');if(!wrap)return;const st=sectionStats(route.packageCode,route.type,route.sectionIndex);const meta=wrap.querySelector('.progressMeta');if(meta)meta.innerHTML=`<strong>Progres bagian</strong><span>${st.answered}/${st.total} terjawab · ${st.pct}%</span>`;const fill=wrap.querySelector('.fill');if(fill)fill.style.width=st.pct+'%'}
@@ -3010,10 +2956,41 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 (function(){
   const PAGE_SIZE=10;
   let page=0;
-  const originalCards=renderQuestionCards;
-  function pageCount(){return Math.max(1,Math.ceil(currentQuestions.length/PAGE_SIZE));}
-  function visible(){return currentQuestions.slice(page*PAGE_SIZE,Math.min(currentQuestions.length,(page+1)*PAGE_SIZE));}
-  function cardsForVisible(){const all=currentQuestions;currentQuestions=visible();const h=originalCards();currentQuestions=all;return h;}
+  function questionPages(){
+    const pkg=getActivePackageData();
+    const isHsk5PassageSection=isHsk5Model(pkg)&&route.type==='reading'&&currentQuestions.length>0&&currentQuestions.every(q=>{
+      const m=getResolvedQuestionModel(pkg,route.type,route.sectionIndex,q);
+      return m.type==='fill_blank'&&!!m.group?.id;
+    });
+    if(!isHsk5PassageSection){
+      const pages=[];
+      for(let i=0;i<currentQuestions.length;i+=PAGE_SIZE)pages.push(currentQuestions.slice(i,i+PAGE_SIZE));
+      return pages.length?pages:[[]];
+    }
+    const groups=[];
+    let group=[];
+    let groupId='';
+    for(const q of currentQuestions){
+      const m=getResolvedQuestionModel(pkg,route.type,route.sectionIndex,q);
+      const gid=String(m.group.id);
+      if(group.length&&gid!==groupId){groups.push(group);group=[];}
+      group.push(q);
+      groupId=gid;
+    }
+    if(group.length)groups.push(group);
+
+    const pages=[];
+    let current=[];
+    for(const g of groups){
+      if(current.length&&current.length+g.length>PAGE_SIZE){pages.push(current);current=[];}
+      current.push(...g);
+    }
+    if(current.length)pages.push(current);
+    return pages.length?pages:[[]];
+  }
+  function pageCount(){return questionPages().length;}
+  function visible(){return questionPages()[Math.max(0,Math.min(page,pageCount()-1))]||[];}
+  function cardsForVisible(){const all=currentQuestions;const shown=visible();currentQuestions=shown;const h=renderQuestionCards();currentQuestions=all;return h;}
   function restoreVisible(){const all=currentQuestions;currentQuestions=visible();restoreQuestionUI();if(currentMode==='writing'&&isSequenceWriting(route.type,route.sectionIndex))currentQuestions.forEach(q=>refreshWordBank(String(q[0])));currentQuestions=all;}
   function pager(){const n=pageCount();if(n<=1)return '';const prev=page>0?'<button class="btn" type="button" onclick="changeQuestionPage(-1)">‹ Sebelumnya</button>':'';const next=page<n-1?'<button class="btn" type="button" onclick="changeQuestionPage(1)">Berikutnya ›</button>':'';return '<div class="questionPager">'+prev+'<span class="pageIndicator">Halaman '+(page+1)+' / '+n+'</span>'+next+'</div>';}
   function nextSectionTarget(){
