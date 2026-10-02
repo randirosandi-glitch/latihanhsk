@@ -1255,7 +1255,8 @@
               "mediaSource": "reading_passage_media.H51003",
               "key": "questionRange"
             },
-            "input": "single_select"
+            "input": "single_select",
+            "instruction": "Pilih jawaban yang benar berdasarkan teks bacaan."
           }
         ]
       },
@@ -1359,11 +1360,20 @@
       "listening_answer_key_alignment": "Verified questions 1–45 against the H51003 answer key in the PDF.",
       "reading_answer_key_alignment": "Verified questions 46–90 against the H51003 answer key in the PDF.",
       "reading_question_69_answer": "Corrected question 69 answer to A according to the H51003 PDF answer key.",
-      "reading_passage_media": "Extracted the five passage illustrations for 71–90 from PDF pages 11–15 and embedded them as base64 JPEGs.",
-      "writing_reference_alignment": "Verified writing 91–98 reference sentences against the PDF answer page."
+      "reading_passage_media": "Verified and embedded five passage images for 71–90; all image data URIs decode as valid images.",
+      "writing_reference_alignment": "Verified writing 91–98 reference sentences against the PDF answer page.",
+      "reading_part3_instruction": "Corrected Part 3 instruction to the PDF-supported choice format."
     },
     "notes": "Built from H51003 PDF and aligned to H51001 master schema.",
-    "readyForLive": true
+    "readyForLive": true,
+    "readingImageGroupRanges": [
+      "71-74",
+      "75-78",
+      "79-82",
+      "83-86",
+      "87-90"
+    ],
+    "readingImageMediaValidated": true
   },
   "package": {
     "id": "H51003",
