@@ -128,7 +128,8 @@
             "scoring": {
               "mode": "manual"
             },
-            "instruction": "第100题：请结合这张图片写一篇80字左右的短文。"
+            "instruction": "第100题：请结合这张图片写一篇80字左右的短文。",
+            "mediaSource": "question[3]"
           }
         ]
       }
@@ -139,7 +140,19 @@
     "writing_manual_grading": [
       99,
       100
-    ]
+    ],
+    "questionShapes": {
+      "picture_writing": {
+        "fields": {
+          "id": 0,
+          "prompt": 1,
+          "answer": 2,
+          "image": 3
+        },
+        "interaction": "text",
+        "mediaSource": "question[3]"
+      }
+    }
   },
   "instructions": {
     "listening": [
@@ -159,7 +172,7 @@
   },
   "listening": [
     {
-      "title": "听力 · 第一部分",
+      "title": "HSK 5 · H51005 · 听力第一部分",
       "range": "1-20",
       "questions": [
         [
@@ -405,7 +418,7 @@
       ]
     },
     {
-      "title": "听力 · 第二部分",
+      "title": "HSK 5 · H51005 · 听力第二部分",
       "range": "21-45",
       "questions": [
         [
@@ -713,7 +726,7 @@
   ],
   "reading": [
     {
-      "title": "阅读 · 第一部分",
+      "title": "HSK 5 · H51005 · 阅读第一部分",
       "range": "46-60",
       "questions": [
         [
@@ -884,7 +897,7 @@
       ]
     },
     {
-      "title": "阅读 · 第二部分",
+      "title": "HSK 5 · H51005 · 阅读第二部分",
       "range": "61-70",
       "questions": [
         [
@@ -1000,7 +1013,7 @@
       ]
     },
     {
-      "title": "阅读 · 第三部分",
+      "title": "HSK 5 · H51005 · 阅读第三部分",
       "range": "71-90",
       "questions": [
         [
@@ -1228,7 +1241,7 @@
   ],
   "writing": [
     {
-      "title": "书写 · 第一部分",
+      "title": "HSK 5 · H51005 · 书写第一部分",
       "range": "91-98",
       "questions": [
         [
@@ -1282,7 +1295,7 @@
       ]
     },
     {
-      "title": "书写 · 第二部分",
+      "title": "HSK 5 · H51005 · 书写第二部分",
       "range": "99",
       "questions": [
         [
@@ -1294,7 +1307,7 @@
       ]
     },
     {
-      "title": "书写 · 第三部分",
+      "title": "HSK 5 · H51005 · 书写第三部分",
       "range": "100",
       "questions": [
         [
