@@ -669,13 +669,12 @@ body.dark .authCard h1,body.dark .authCard .authFormTitle{color:var(--text)!impo
 
 /* HSK 5 Reading 71–90 — passage + image layout */
 .hsk5ReadingMediaGroup{margin:0 0 18px;border:0}
-.hsk5ReadingMediaPassage{margin:0 0 14px;padding:18px 18px 18px 20px;border:1px solid color-mix(in srgb,var(--purple) 35%,var(--line));border-radius:20px;background:linear-gradient(135deg,color-mix(in srgb,var(--purple) 8%,var(--surface)),color-mix(in srgb,var(--blue) 7%,var(--surface)));position:relative;overflow:hidden}
-.hsk5ReadingMediaPassage:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,var(--purple),var(--blue))}
-.hsk5ReadingMediaPassage .rpLabel{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--purple);margin-bottom:10px}
-.hsk5ReadingMediaPassage .rpText{font-size:17px;line-height:1.95;color:var(--text);white-space:normal}
-.hsk5ReadingMediaFigure{float:right;width:36%;max-width:180px;min-width:112px;margin:2px 0 10px 18px;display:grid;gap:8px}
-.hsk5ReadingMediaFigure img{display:block;width:100%;height:auto;max-height:175px;object-fit:contain;border-radius:10px;border:1px solid var(--line);background:var(--bg)}
-.hsk5ReadingMediaPassage:after{content:"";display:block;clear:both}
+/* 71–90: passage dan gambar berada dalam SATU blok. Tidak ada bar/garis ungu dekoratif. */
+.hsk5ReadingMediaPassage{margin:0 0 14px;padding:18px;border:1px solid var(--line);border-radius:20px;background:var(--surface);position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) minmax(112px,36%);column-gap:18px;align-items:start}
+.hsk5ReadingMediaPassage .rpLabel{grid-column:1/-1;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin:0 0 10px}
+.hsk5ReadingMediaPassage .rpText{grid-column:1;font-size:17px;line-height:1.95;color:var(--text);white-space:normal;min-width:0}
+.hsk5ReadingMediaFigure{grid-column:2;grid-row:2;width:100%;max-width:180px;justify-self:end;margin:2px 0 0;display:grid;gap:8px;align-self:start}
+.hsk5ReadingMediaFigure img{display:block;width:100%;height:auto;max-height:210px;object-fit:contain;border-radius:10px;border:1px solid var(--line);background:var(--bg)}
 .hsk5MediaQuestions{border-top:1px solid var(--line)}
 .hsk5MediaQuestion{padding:16px 0 18px;border-bottom:1px solid var(--line)}
 .hsk5MediaQuestion:last-child{border-bottom:0}
@@ -690,14 +689,14 @@ body.dark .authCard h1,body.dark .authCard .authFormTitle{color:var(--text)!impo
 .hsk5MediaOpt.correct{border-color:var(--green);background:var(--correct-bg);color:var(--correct-text)}
 .hsk5MediaOpt.wrong{border-color:var(--red);background:var(--wrong-bg);color:var(--wrong-text)}
 @media(max-width:520px){
-  .hsk5ReadingMediaFigure{width:38%;max-width:155px;min-width:100px;margin-left:14px}
+  .hsk5ReadingMediaFigure{width:100%;max-width:155px;min-width:0}
   .hsk5ReadingMediaPassage .rpText{font-size:16px;line-height:1.9}
   .hsk5MediaPrompt{font-size:16px}
   .hsk5MediaOpt{font-size:15px;padding:11px 12px}
 }
 @media(max-width:360px){
-  .hsk5ReadingMediaFigure{width:42%;min-width:92px}
-  .hsk5ReadingMediaPassage{padding-left:17px;padding-right:14px}
+  .hsk5ReadingMediaFigure{width:100%;min-width:0}
+  .hsk5ReadingMediaPassage{padding-left:15px;padding-right:12px;column-gap:12px;grid-template-columns:minmax(0,1fr) minmax(92px,38%)}
   .hsk5MediaOpts{gap:8px}
 }
 
