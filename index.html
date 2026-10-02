@@ -669,11 +669,12 @@ body.dark .authCard h1,body.dark .authCard .authFormTitle{color:var(--text)!impo
 
 /* HSK 5 Reading 71–90 — passage + image layout */
 .hsk5ReadingMediaGroup{margin:0 0 18px;border:0}
-/* 71–90: passage dan gambar berada dalam SATU blok. Tidak ada bar/garis ungu dekoratif. */
-.hsk5ReadingMediaPassage{margin:0 0 14px;padding:18px;border:1px solid var(--line);border-radius:20px;background:var(--surface);position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) minmax(112px,36%);column-gap:18px;align-items:start}
-.hsk5ReadingMediaPassage .rpLabel{grid-column:1/-1;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin:0 0 10px}
+/* 71–90: satu kartu passage. Gambar berada DI DALAM kartu, di sisi kanan teks. */
+.hsk5ReadingMediaPassage{margin:0 0 14px;padding:18px;border:1px solid var(--line);border-radius:20px;background:var(--surface);position:relative;overflow:hidden}
+.hsk5ReadingMediaPassage .rpLabel{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin:0 0 10px}
+.hsk5ReadingMediaBody{display:grid;grid-template-columns:minmax(0,1fr) minmax(112px,34%);gap:18px;align-items:start}
 .hsk5ReadingMediaPassage .rpText{grid-column:1;font-size:17px;line-height:1.95;color:var(--text);white-space:normal;min-width:0}
-.hsk5ReadingMediaFigure{grid-column:2;grid-row:2;width:100%;max-width:180px;justify-self:end;margin:2px 0 0;display:grid;gap:8px;align-self:start}
+.hsk5ReadingMediaFigure{grid-column:2;width:100%;max-width:180px;justify-self:end;margin:2px 0 0;display:grid;gap:8px;align-self:start}
 .hsk5ReadingMediaFigure img{display:block;width:100%;height:auto;max-height:210px;object-fit:contain;border-radius:10px;border:1px solid var(--line);background:var(--bg)}
 .hsk5MediaQuestions{border-top:1px solid var(--line)}
 .hsk5MediaQuestion{padding:16px 0 18px;border-bottom:1px solid var(--line)}
@@ -689,14 +690,16 @@ body.dark .authCard h1,body.dark .authCard .authFormTitle{color:var(--text)!impo
 .hsk5MediaOpt.correct{border-color:var(--green);background:var(--correct-bg);color:var(--correct-text)}
 .hsk5MediaOpt.wrong{border-color:var(--red);background:var(--wrong-bg);color:var(--wrong-text)}
 @media(max-width:520px){
+  .hsk5ReadingMediaBody{grid-template-columns:minmax(0,1fr) minmax(100px,34%);gap:12px}
   .hsk5ReadingMediaFigure{width:100%;max-width:155px;min-width:0}
   .hsk5ReadingMediaPassage .rpText{font-size:16px;line-height:1.9}
   .hsk5MediaPrompt{font-size:16px}
   .hsk5MediaOpt{font-size:15px;padding:11px 12px}
 }
 @media(max-width:360px){
+  .hsk5ReadingMediaBody{grid-template-columns:minmax(0,1fr) minmax(88px,38%);gap:10px}
   .hsk5ReadingMediaFigure{width:100%;min-width:0}
-  .hsk5ReadingMediaPassage{padding-left:15px;padding-right:12px;column-gap:12px;grid-template-columns:minmax(0,1fr) minmax(92px,38%)}
+  .hsk5ReadingMediaPassage{padding-left:15px;padding-right:12px}
   .hsk5MediaOpts{gap:8px}
 }
 
@@ -2631,11 +2634,12 @@ function renderQuestionCards(){
       out += '<section class="hsk5ReadingMediaGroup">';
       out += '<div class="hsk5ReadingMediaPassage">';
       out += '<div class="rpLabel">TEKS BACAAN <span style="opacity:.7">'+esc(key)+'</span></div>';
+      out += '<div class="hsk5ReadingMediaBody">';
+      out += '<div class="rpText">'+esc(passage)+'</div>';
       if(imgs.length){
         out += '<div class="hsk5ReadingMediaFigure">'+imgs.map((src,i)=>'<img src="'+esc(src)+'" alt="Gambar bacaan '+esc(key)+' '+(i+1)+'" loading="lazy" decoding="async">').join('')+'</div>';
       }
-      out += '<div class="rpText">'+esc(passage)+'</div>';
-      out += '</div>';
+      out += '</div></div>';
       out += '<div class="hsk5MediaQuestions">';
 
       for(const gq of groupQs){
