@@ -13,7 +13,52 @@
     ]
   },
   "engineRules": {
-    "version": "HSK5_UNIVERSAL_V2",
+    "version": 1,
+    "model": "declarative",
+    "resolver": {
+      "strategy": "section_part_range",
+      "questionIdPath": "question[0]"
+    },
+    "questionShapes": {
+      "choice": {
+        "fields": {
+          "id": 0,
+          "prompt": 1,
+          "options": 2,
+          "answer": 3,
+          "transcript": 4
+        },
+        "interaction": "single_choice",
+        "optionsSource": "question[2]",
+        "answerSource": "question[3]"
+      },
+      "sequence": {
+        "fields": {
+          "id": 0,
+          "prompt": 1,
+          "acceptedAnswers": 2
+        },
+        "interaction": "sequence"
+      },
+      "writing_prompt": {
+        "fields": {
+          "id": 0,
+          "prompt": 1,
+          "answer": 2
+        },
+        "interaction": "text"
+      },
+      "picture_writing": {
+        "fields": {
+          "id": 0,
+          "prompt": 1,
+          "answer": 2,
+          "image": 3
+        },
+        "interaction": "text",
+        "mediaSource": "question[3]"
+      }
+    },
     "sections": {
       "listening": {
         "parts": [
@@ -23,11 +68,7 @@
               20
             ],
             "type": "choice",
-            "input": "single_select",
-            "scoring": {
-              "mode": "exact_match"
-            },
-            "instruction": "第1-20题：请选出正确答案。"
+            "shape": "choice"
           },
           {
             "range": [
@@ -35,11 +76,7 @@
               45
             ],
             "type": "choice",
-            "input": "single_select",
-            "scoring": {
-              "mode": "exact_match"
-            },
-            "instruction": "第21-45题：请选出正确答案。"
+            "shape": "choice"
           }
         ]
       },
@@ -91,11 +128,8 @@
               98
             ],
             "type": "sentence_ordering",
-            "input": "ordering",
-            "scoring": {
-              "mode": "accepted_answer_match"
-            },
-            "instruction": "第91-98题：完成句子。"
+            "shape": "sequence",
+            "input": "ordering"
           },
           {
             "range": [
@@ -103,11 +137,8 @@
               99
             ],
             "type": "guided_writing",
-            "input": "text",
-            "scoring": {
-              "mode": "manual"
-            },
-            "instruction": "第99题：请结合下列词语（要全部使用），写一篇80字左右的短文。"
+            "shape": "writing_prompt",
+            "input": "text"
           },
           {
             "range": [
@@ -115,25 +146,31 @@
               100
             ],
             "type": "picture_writing",
+            "shape": "picture_writing",
             "input": "text",
             "media": [
               "image"
-            ],
-            "scoring": {
-              "mode": "manual"
-            },
-            "instruction": "第100题：请结合这张图片写一篇80字左右的短文。"
+            ]
           }
         ]
       }
     },
-    "source": "H51005.pdf",
-    "source_authority": "PDF source supplied by user",
-    "audio": "not_embedded_in_source_pdf",
-    "writing_manual_grading": [
-      99,
-      100
-    ]
+    "options": {
+      "source": "question[2]",
+      "labels": "derive",
+      "count": "dynamic"
+    },
+    "media": {
+      "questionImageSource": "question[3]",
+      "groupImageSource": "reading_passage_media.H51005"
+    },
+    "scoring": {
+      "choice": "exact_match",
+      "fill_blank": "exact_match",
+      "sentence_ordering": "accepted_answer_match",
+      "guided_writing": "manual_or_non_binary",
+      "picture_writing": "manual_or_non_binary"
+    }
   },
   "instructions": {
     "listening": [
@@ -153,11 +190,11 @@
   },
   "listening": [
     {
-      "title": "HSK 5 · H51005 · 听力第一部分",
-      "range": "1-20",
+      "title": "听力 · 第一部分",
+      "range": "1–20",
       "questions": [
         [
-          1,
+          "1",
           "男的准备去旅游多长时间？",
           [
             "一周",
@@ -169,7 +206,7 @@
           "1．女：你准备什么时候去旅游？\n  男：七月中旬，十五号左右吧，打算八月一号回来。\n  问：男的准备去旅游多长时间？"
         ],
         [
-          2,
+          "2",
           "他们最可能是什么关系？",
           [
             "同事",
@@ -181,7 +218,7 @@
           "2．男：办公室没水了，打电话叫一桶矿泉水吧。\n  女：刚才打了，占线，稍等一会儿我再打。\n  问：他们最可能是什么关系？"
         ],
         [
-          3,
+          "3",
           "他们最可能在哪儿？",
           [
             "商场",
@@ -193,7 +230,7 @@
           "3．女：这两条牛仔裤我都要了。\n  男：好的，给您小票，收款台在那边儿，请您去那儿付款。\n  问：他们最可能在哪儿？"
         ],
         [
-          4,
+          "4",
           "通过对话，可以知道什么？",
           [
             "女的是主持人",
@@ -205,7 +242,7 @@
           "4．男：这次活动的规模很大，还要上电视，一定要找一个合格的主持人。\n  女：小王经验丰富，反应快，您放心吧。\n  问：通过对话，可以知道什么？"
         ],
         [
-          5,
+          "5",
           "女的最近怎么了？",
           [
             "失眠",
@@ -217,7 +254,7 @@
           "5．女：真头疼，最近一直失眠，昨晚半夜两点了还睡不着。\n  男：那是比较痛苦，睡前喝杯牛奶试试？\n  问：女的最近怎么了？"
         ],
         [
-          6,
+          "6",
           "女的为什么说可惜？",
           [
             "没办法录音",
@@ -229,7 +266,7 @@
           "6．男：下午的讲座去不了了，你能帮我录一下音吗？\n  女：没问题。但你不去听，太可惜了。\n  问：女的为什么说可惜？"
         ],
         [
-          7,
+          "7",
           "关于男的，可以知道什么？",
           [
             "很有信心",
@@ -241,7 +278,7 @@
           "7．女：你去面试了？结果怎么样？\n  男：我没去。他们只要研究生，我只有本科学历。\n  问：关于男的，可以知道什么？"
         ],
         [
-          8,
+          "8",
           "男的为什么要感谢女的？",
           [
             "同意担任主角",
@@ -253,7 +290,7 @@
           "8．男：很高兴这次能一起拍电影，对你们资金方面的支持再次表示感谢。\n  女：导演，您别客气，能与您合作我们感到很荣幸。\n  问：男的为什么要感谢女的？"
         ],
         [
-          9,
+          "9",
           "男的是什么语气？",
           [
             "安慰",
@@ -265,7 +302,7 @@
           "9．女：手机没电了，你的充电器在吗？借我用用。\n  男：你的呢？又找不到了？总是乱丢东西，你这个坏习惯什么时候才能\n    改啊？\n  问：男的是什么语气？"
         ],
         [
-          10,
+          "10",
           "根据对话，可以知道什么？",
           [
             "男的住院了",
@@ -277,7 +314,7 @@
           "10．男：大夫，她这个星期能出院吗？\n   女：恐怕不行，虽然病情现在稳定了，但还需要观察一段时间。\n   问：根据对话，可以知道什么？"
         ],
         [
-          11,
+          "11",
           "女的有什么建议？",
           [
             "多照顾孩子",
@@ -289,7 +326,7 @@
           "11．女：平时要注意多锻炼身体，别整天光顾着工作。\n   男：话是这么说，可单位里一忙起来，就什么都顾不上了。\n   问：女的有什么建议？"
         ],
         [
-          12,
+          "12",
           "根据对话，下列哪项正确？",
           [
             "两人要去学车",
@@ -301,7 +338,7 @@
           "12．男：你这个暑假有什么安排吗？要不要和我一起报名去学车？\n   女：好，虽然还没买车，但是先把驾照拿到手再说。\n   问：根据对话，下列哪项正确？"
         ],
         [
-          13,
+          "13",
           "男的要把照片放哪儿？",
           [
             "卧室",
@@ -313,7 +350,7 @@
           "13．女：这张合影效果最好，背景选得好，色彩好，你的表情也好。\n   男：那就放大这张吧，放在我们客厅里。\n   问：男的要把照片放哪儿？"
         ],
         [
-          14,
+          "14",
           "女的乒乓球打得怎么样？",
           [
             "很出色",
@@ -325,7 +362,7 @@
           "14．男：你怎么没参加比赛？你乒乓球打得那么厉害，拿冠军绝对没问题。\n   女：最近工作忙，准备得不充分，等下一届再说吧。\n   问：女的乒乓球打得怎么样？"
         ],
         [
-          15,
+          "15",
           "男的想请女的做什么？",
           [
             "诊断病情",
@@ -337,7 +374,7 @@
           "15．女：你的那篇论文写得怎么样了？\n   男：刚写完，正想请你帮我看看有什么毛病，给我提提修改意见。\n   问：男的想请女的做什么？"
         ],
         [
-          16,
+          "16",
           "关于这个公司，下列哪项正确？",
           [
             "待遇很好",
@@ -349,7 +386,7 @@
           "16．男：你们公司刚成立不久，经营得还好吧？\n   女：已经陆续接了几个工程，相信会越来越好。\n   问：关于这个公司，下列哪项正确？"
         ],
         [
-          17,
+          "17",
           "女的遇到了什么问题？",
           [
             "不能上网",
@@ -361,7 +398,7 @@
           "17．女：我在网上买了一个衣柜，可是怎么都装不好。\n   男：再看看说明书，按照上面的步骤来，不行的话我明天去帮你。\n   问：女的遇到了什么问题？"
         ],
         [
-          18,
+          "18",
           "男的在找什么？",
           [
             "包裹",
@@ -373,7 +410,7 @@
           "18．男：我要快递一个包裹到上海，给我推荐一个好的快递公司吧。\n   女：这儿有一个，叫“顺风”快递，我经常用，还不错。\n   问：男的在找什么？"
         ],
         [
-          19,
+          "19",
           "男的觉得那件衣服怎么样？",
           [
             "很休闲",
@@ -385,7 +422,7 @@
           "19．女：我刚买了一件衣服，你看看这样式怎么样？\n   男：还可以，感觉挺时尚的。\n   问：男的觉得那件衣服怎么样？"
         ],
         [
-          20,
+          "20",
           "小王的腿是怎么受伤的？",
           [
             "被烫伤了",
@@ -399,11 +436,11 @@
       ]
     },
     {
-      "title": "HSK 5 · H51005 · 听力第二部分",
-      "range": "21-45",
+      "title": "听力 · 第二部分",
+      "range": "21–45",
       "questions": [
         [
-          21,
+          "21",
           "他们要庆祝什么？",
           [
             "女的搬新家了",
@@ -415,7 +452,7 @@
           "21．女：听说你工作已经定下来了？\n   男：对，在外交部当翻译。\n   女：太棒了！找到这么好的工作，应该庆祝一下啊。\n   男：那我请你去吃烤鸭吧，我今天特别想吃烤鸭。\n   问：他们要庆祝什么？"
         ],
         [
-          22,
+          "22",
           "女的最可能在哪儿工作？",
           [
             "旅行社",
@@ -427,7 +464,7 @@
           "22．男：我们想去云南放松放松，所以不希望时间安排得太紧。\n   女：您放心，我们会为您考虑这一点的。\n   男：具体时间，我回去跟太太商量一下再告诉你们。\n   女：好的，您决定了，随时都可以给我们打电话，这是我的名片。\n   问：女的最可能在哪儿工作？"
         ],
         [
-          23,
+          "23",
           "宴会被安排在什么时候？",
           [
             "今天中午",
@@ -439,7 +476,7 @@
           "23．女：出席明天会议的人员确定了吗？\n   男：确定了，二十一位专家，加上工作人员，一共二十七人。\n   女：好，另外，明天中午的宴会定在哪儿了？\n   男：就在四楼的那个餐厅。\n   问：宴会被安排在什么时候？"
         ],
         [
-          24,
+          "24",
           "男的正在咨询什么？",
           [
             "健身的好处",
@@ -451,7 +488,7 @@
           "24．男：你好，是在这儿办健身卡吗？\n   女：是的。您是办次卡还是办月卡？次卡一张六百，含三十次；月卡五\n     百，不限次数。\n   男：次卡有效期是多长时间？\n   女：一年。\n   问：男的正在咨询什么？"
         ],
         [
-          25,
+          "25",
           "男的为什么打喷嚏？",
           [
             "感冒了",
@@ -463,7 +500,7 @@
           "25．女：你感冒了吗？怎么一直打喷嚏？\n   男：不是，我一到春天，鼻子就过敏。\n   女：那能吃药缓解一下吗？\n   男：吃药也没用，我都习惯了，过几天就好了。\n   问：男的为什么打喷嚏？"
         ],
         [
-          26,
+          "26",
           "关于女的，可以知道什么？",
           [
             "想当教练",
@@ -475,7 +512,7 @@
           "26．男：昨天晚上的开幕式，你看了吗？\n   女：没赶上，我看了开幕式后的那场比赛，真的很精彩。\n   男：你觉得哪支球队能进决赛？\n   女：这个你得去问球迷，我还算不上真正的球迷。\n   问：关于女的，可以知道什么？"
         ],
         [
-          27,
+          "27",
           "男的以前从事哪个行业？",
           [
             "会计",
@@ -487,7 +524,7 @@
           "27．女：您以前是做什么工作的？\n   男：我在一个汽车公司工作，主要负责销售方面的业务。\n   女：那您为什么放弃原来的公司，选择我们公司呢？\n   男：因为我爱人现在在广州工作，我们希望能有更多的时间在一起。\n   女：我明白了。\n   问：男的以前从事哪个行业？"
         ],
         [
-          28,
+          "28",
           "男的想要什么？",
           [
             "信箱密码",
@@ -499,7 +536,7 @@
           "28．男：喂，小张，你知道咱们那个公共信箱的新密码吗？\n   女：知道，您现在方便记吗？\n   男：我现在没有笔，请你给我发个短信吧。\n   女：行，您稍等，我马上给您发过去。\n   问：男的想要什么？"
         ],
         [
-          29,
+          "29",
           "男的觉得时间怎么样？",
           [
             "来得及",
@@ -511,7 +548,7 @@
           "29．女：去机场，师傅，我赶飞机，咱们走高速。\n   男：好的。您是几点的飞机？\n   女：九点半的。\n   男：还有两个小时，来得及，不会耽误的。\n   问：男的觉得时间怎么样？"
         ],
         [
-          30,
+          "30",
           "女的为什么不关电脑？",
           [
             "在网上聊天",
@@ -523,7 +560,7 @@
           "30．男：你不用电脑就把它关了吧，让它也休息一下。\n   女：我正在下载一个软件，还有两分钟就下完了。\n   男：什么软件？\n   女：清理系统垃圾的软件，装上这个软件，以后电脑就不会那么慢了。\n   问：女的为什么不关电脑？\n\f第 31 到 33 题是根据下面一段话：\n  说起《围城》这部小说，大家就会想到钱钟书。《围城》是钱钟书先生\n写的唯一一部长篇小说。故事描写了一群二十世纪三四十年代中国高级知识\n分子的生活和思想。“围城”这个书名来自书中人物的对话——“婚姻就像\n被围困的城堡”，城外的人想冲进去，城里的人想逃出来。书中还描写了那\n个年代各式各样的人物，通过细节来表现人物的心理，让你清清楚楚地看到\n人物性格的各个方面。书中那些形象的比喻，体现了一个学者作家的智慧和\n幽默，也正因为如此，我们可以把《围城》看成一部“有趣”的小说。"
         ],
         [
-          31,
+          "31",
           "《围城》是一部什么作品？",
           [
             "歌曲",
@@ -535,7 +572,7 @@
           "说起《围城》这部小说，大家就会想到钱钟书。《围城》是钱钟书先生写的唯一一部长篇小说。故事描写了一群二十世纪三四十年代中国高级知识分子的生活和思想。“围城”这个书名来自书中人物的对话——“婚姻就像被围困的城堡”，城外的人想冲进去，城里的人想逃出来。书中还描写了那个年代各式各样的人物，通过细节来表现人物的心理，让你清清楚楚地看到人物性格的各个方面。书中那些形象的比喻，体现了一个学者作家的智慧和幽默，也正因为如此，我们可以把《围城》看成一部“有趣”的小说。"
         ],
         [
-          32,
+          "32",
           "《围城》的名字来自于什么？",
           [
             "作者的家乡",
@@ -547,7 +584,7 @@
           "说起《围城》这部小说，大家就会想到钱钟书。《围城》是钱钟书先生写的唯一一部长篇小说。故事描写了一群二十世纪三四十年代中国高级知识分子的生活和思想。“围城”这个书名来自书中人物的对话——“婚姻就像被围困的城堡”，城外的人想冲进去，城里的人想逃出来。书中还描写了那个年代各式各样的人物，通过细节来表现人物的心理，让你清清楚楚地看到人物性格的各个方面。书中那些形象的比喻，体现了一个学者作家的智慧和幽默，也正因为如此，我们可以把《围城》看成一部“有趣”的小说。"
         ],
         [
-          33,
+          "33",
           "",
           [
             "婚姻",
@@ -559,7 +596,7 @@
           "说起《围城》这部小说，大家就会想到钱钟书。《围城》是钱钟书先生写的唯一一部长篇小说。故事描写了一群二十世纪三四十年代中国高级知识分子的生活和思想。“围城”这个书名来自书中人物的对话——“婚姻就像被围困的城堡”，城外的人想冲进去，城里的人想逃出来。书中还描写了那个年代各式各样的人物，通过细节来表现人物的心理，让你清清楚楚地看到人物性格的各个方面。书中那些形象的比喻，体现了一个学者作家的智慧和幽默，也正因为如此，我们可以把《围城》看成一部“有趣”的小说。"
         ],
         [
-          34,
+          "34",
           "被调查的学生中多少人有目标？",
           [
             "4%",
@@ -571,7 +608,7 @@
           "一所大学曾经进行过一次长达二十年的调查。最初，研究人员对参加调查的学生们提了一个问题：“你们有目标吗？”百分之九十的学生回答说有。研究人员又问：“如果你们有了目标，那么，是否把它写下来呢？”这时只有百分之四的学生回答说：“写下来了。”二十年后，研究人员找到当年参加调查的学生们。结果发现，那些有目标并且将目标写下来的学生，无论是事业发展还是生活水平，都远远超过了那些没有这样做的学生。他们创造的价值超过其余百分之九十六的学生的总和。那么，那百分之九十六的学生今天在干什么呢？研究发现：这些人忙忙碌碌，一辈子都在直接或间接帮助那百分之四的人实现他们的理想。"
         ],
         [
-          35,
+          "35",
           "哪些学生获得了很大的成功？",
           [
             "有长远目标的",
@@ -583,7 +620,7 @@
           "一所大学曾经进行过一次长达二十年的调查。最初，研究人员对参加调查的学生们提了一个问题：“你们有目标吗？”百分之九十的学生回答说有。研究人员又问：“如果你们有了目标，那么，是否把它写下来呢？”这时只有百分之四的学生回答说：“写下来了。”二十年后，研究人员找到当年参加调查的学生们。结果发现，那些有目标并且将目标写下来的学生，无论是事业发展还是生活水平，都远远超过了那些没有这样做的学生。他们创造的价值超过其余百分之九十六的学生的总和。那么，那百分之九十六的学生今天在干什么呢？研究发现：这些人忙忙碌碌，一辈子都在直接或间接帮助那百分之四的人实现他们的理想。"
         ],
         [
-          36,
+          "36",
           "",
           [
             "只问了一个问题",
@@ -595,7 +632,7 @@
           "一所大学曾经进行过一次长达二十年的调查。最初，研究人员对参加调查的学生们提了一个问题：“你们有目标吗？”百分之九十的学生回答说有。研究人员又问：“如果你们有了目标，那么，是否把它写下来呢？”这时只有百分之四的学生回答说：“写下来了。”二十年后，研究人员找到当年参加调查的学生们。结果发现，那些有目标并且将目标写下来的学生，无论是事业发展还是生活水平，都远远超过了那些没有这样做的学生。他们创造的价值超过其余百分之九十六的学生的总和。那么，那百分之九十六的学生今天在干什么呢？研究发现：这些人忙忙碌碌，一辈子都在直接或间接帮助那百分之四的人实现他们的理想。"
         ],
         [
-          37,
+          "37",
           "这个故事发生在哪里？",
           [
             "北京",
@@ -607,7 +644,7 @@
           "文彦博，生于公元一零零六年，是北宋时期的政治家。文彦博自幼十分聪明，小时候与伙伴们玩球时，一不小心，球掉进一棵大树的树洞里去了。小朋友试着把手伸进树洞取球，可是树洞太深，怎么也够不着。文彦博看着树洞想了一会儿，说：“我有个办法，可以试一试。”随后他叫几个小朋友提来几桶水，把水一桶一桶往树洞里倒，不一会儿树洞里的水就满了，皮球也出来了。文彦博幼年用水取球的故事，就发生在他的祖籍——山西省介休市。这一故事在中国广为流传。"
         ],
         [
-          38,
+          "38",
           "文彦博为什么要往树洞里倒水？",
           [
             "给树浇水",
@@ -619,7 +656,7 @@
           "文彦博，生于公元一零零六年，是北宋时期的政治家。文彦博自幼十分聪明，小时候与伙伴们玩球时，一不小心，球掉进一棵大树的树洞里去了。小朋友试着把手伸进树洞取球，可是树洞太深，怎么也够不着。文彦博看着树洞想了一会儿，说：“我有个办法，可以试一试。”随后他叫几个小朋友提来几桶水，把水一桶一桶往树洞里倒，不一会儿树洞里的水就满了，皮球也出来了。文彦博幼年用水取球的故事，就发生在他的祖籍——山西省介休市。这一故事在中国广为流传。"
         ],
         [
-          39,
+          "39",
           "",
           [
             "喜欢游泳",
@@ -631,7 +668,7 @@
           "文彦博，生于公元一零零六年，是北宋时期的政治家。文彦博自幼十分聪明，小时候与伙伴们玩球时，一不小心，球掉进一棵大树的树洞里去了。小朋友试着把手伸进树洞取球，可是树洞太深，怎么也够不着。文彦博看着树洞想了一会儿，说：“我有个办法，可以试一试。”随后他叫几个小朋友提来几桶水，把水一桶一桶往树洞里倒，不一会儿树洞里的水就满了，皮球也出来了。文彦博幼年用水取球的故事，就发生在他的祖籍——山西省介休市。这一故事在中国广为流传。"
         ],
         [
-          40,
+          "40",
           "关于江南，下列哪项正确？",
           [
             "气候干燥",
@@ -643,7 +680,7 @@
           "江南是一个很漂亮的地方，是许多中国人的梦里水乡，它在地理上主要指长江中下游南岸地区。在很多中国人的心里，江南代表着富饶、繁荣、美好。这里景色优美，经济发达，文化教育事业繁荣，从古到今，都是理想的居住地。“上有天堂，下有苏杭”里的苏州、杭州正是江南的代表城市。人们常常用“人杰地灵”来形容江南，说明这里地方好、人才多。"
         ],
         [
-          41,
+          "41",
           "下列哪个词可以用来形容江南？",
           [
             "雄伟",
@@ -655,7 +692,7 @@
           "江南是一个很漂亮的地方，是许多中国人的梦里水乡，它在地理上主要指长江中下游南岸地区。在很多中国人的心里，江南代表着富饶、繁荣、美好。这里景色优美，经济发达，文化教育事业繁荣，从古到今，都是理想的居住地。“上有天堂，下有苏杭”里的苏州、杭州正是江南的代表城市。人们常常用“人杰地灵”来形容江南，说明这里地方好、人才多。"
         ],
         [
-          42,
+          "42",
           "",
           [
             "人口众多",
@@ -667,7 +704,7 @@
           "江南是一个很漂亮的地方，是许多中国人的梦里水乡，它在地理上主要指长江中下游南岸地区。在很多中国人的心里，江南代表着富饶、繁荣、美好。这里景色优美，经济发达，文化教育事业繁荣，从古到今，都是理想的居住地。“上有天堂，下有苏杭”里的苏州、杭州正是江南的代表城市。人们常常用“人杰地灵”来形容江南，说明这里地方好、人才多。"
         ],
         [
-          43,
+          "43",
           "主人为什么愿意把秘密告诉宠物？",
           [
             "宠物有爱心",
@@ -679,7 +716,7 @@
           "养宠物有很多好处。首先，养宠物有助于培养人的爱心和责任感，如果你养了宠物，每天必须喂它几次，从而会感到这是自己的责任。其次，你会有一个忠实的朋友，你可以告诉它任何心底的秘密，因为它不会告诉任何人，宠物还会促进主人们之间的人际交往，减少孤独。除此之外，如果有陌生人进来，它会马上告诉你。还有一个好处很重要，那就是宠物可以帮你调整情绪，和猫狗在一起，或观赏游动的鱼儿十五到三十分钟，就可减轻压力。"
         ],
         [
-          44,
+          "44",
           "关于宠物，下列哪项正确？",
           [
             "容易生病",
@@ -691,7 +728,7 @@
           "养宠物有很多好处。首先，养宠物有助于培养人的爱心和责任感，如果你养了宠物，每天必须喂它几次，从而会感到这是自己的责任。其次，你会有一个忠实的朋友，你可以告诉它任何心底的秘密，因为它不会告诉任何人，宠物还会促进主人们之间的人际交往，减少孤独。除此之外，如果有陌生人进来，它会马上告诉你。还有一个好处很重要，那就是宠物可以帮你调整情绪，和猫狗在一起，或观赏游动的鱼儿十五到三十分钟，就可减轻压力。"
         ],
         [
-          45,
+          "45",
           "这段话主要讲的是什么？",
           [
             "养宠物的好处",
@@ -707,11 +744,11 @@
   ],
   "reading": [
     {
-      "title": "HSK 5 · H51005 · 阅读第一部分",
-      "range": "46-60",
+      "title": "阅读 · 第一部分",
+      "range": "46–60",
       "questions": [
         [
-          46,
+          "46",
           "有个楚国人乘船渡江，一不小心，把自己的剑掉进了江里。他 ___ 在船上刻了一个记号。",
           [
             "始终",
@@ -722,7 +759,7 @@
           "D"
         ],
         [
-          47,
+          "47",
           "船靠 ___ 后，这个人顺着船上的记号下水去找剑。",
           [
             "弯",
@@ -733,7 +770,7 @@
           "B"
         ],
         [
-          48,
+          "48",
           "这个故事告诉我们，世界上的 ___，总是在不断地发展变化。",
           [
             "事物",
@@ -744,7 +781,7 @@
           "A"
         ],
         [
-          49,
+          "49",
           "你只不过是非常 ___ 罢了。",
           [
             "周到",
@@ -755,7 +792,7 @@
           "B"
         ],
         [
-          50,
+          "50",
           "人们重视黄金，但并不是说要 ___ 白银。",
           [
             "承认",
@@ -766,7 +803,7 @@
           "C"
         ],
         [
-          51,
+          "51",
           "如果你是个战士，胆小 ___ 是缺点。",
           [
             "显然",
@@ -777,7 +814,7 @@
           "A"
         ],
         [
-          52,
+          "52",
           "到那时候，___，也很困难了。",
           [
             "哪怕你非常勇敢",
@@ -788,7 +825,7 @@
           "D"
         ],
         [
-          53,
+          "53",
           "一段时间后，草原上的狼 ___ 上被杀光了。",
           [
             "基本",
@@ -799,7 +836,7 @@
           "A"
         ],
         [
-          54,
+          "54",
           "没过多久，很多羊都生病了，今天死一只，明天死两只，___。",
           [
             "死的羊越来越少",
@@ -810,7 +847,7 @@
           "C"
         ],
         [
-          55,
+          "55",
           "那个人很着急，便去 ___ 一个有经验的老人。",
           [
             "推荐",
@@ -821,7 +858,7 @@
           "B"
         ],
         [
-          56,
+          "56",
           "羊群又 ___ 到了以前的数量。",
           [
             "统一",
@@ -832,7 +869,7 @@
           "D"
         ],
         [
-          57,
+          "57",
           "尽管从 ___ 上看你少了5个苹果。",
           [
             "表现",
@@ -843,7 +880,7 @@
           "B"
         ],
         [
-          58,
+          "58",
           "___，你会从这个人手里得到一个橘子。",
           [
             "它们的味道各不相同",
@@ -854,7 +891,7 @@
           "B"
         ],
         [
-          59,
+          "59",
           "人一定要学会用你拥有的东西去换取 ___ 重要的东西。",
           [
             "简直",
@@ -865,7 +902,7 @@
           "D"
         ],
         [
-          60,
+          "60",
           "所以说，放弃有时候是一种 ___。",
           [
             "智慧",
@@ -878,11 +915,11 @@
       ]
     },
     {
-      "title": "HSK 5 · H51005 · 阅读第二部分",
-      "range": "61-70",
+      "title": "阅读 · 第二部分",
+      "range": "61–70",
       "questions": [
         [
-          61,
+          "61",
           "能源是人类活动的物质基础。从某种意义上讲，人类社会的发展离不开优质 能源的开发和先进能源技术的应用。当今世界，能源的发展、能源和环境的 关系等是全世界、全人类共同关心的问题，也是国家社会经济发展的重要课 题。",
           [
             "煤炭是一种能源",
@@ -893,7 +930,7 @@
           "C"
         ],
         [
-          62,
+          "62",
           "地震是一种自然现象，目前人类还不能阻止地震的发生。但是我们可以采取 有效措施，最大限度地减轻灾害损失。当遇到地震时切忌恐慌，我们要沉着 冷静，迅速采取正确行动。在高楼和人员密集的场所，原地躲避最现实。",
           [
             "地震是自然原因造成的",
@@ -904,7 +941,7 @@
           "A"
         ],
         [
-          63,
+          "63",
           "原本定在周三上午召开的会议因临时有事取消了，改在周五下午。我不得不 翻开通讯录，一个一个地电话通知所有要参加会议的人。秘书工作就是这样， 得随时准备着应对各种可能发生的变化。",
           [
             "周五的会议取消了",
@@ -915,7 +952,7 @@
           "B"
         ],
         [
-          64,
+          "64",
           "醋不但可以用来做菜，还有很多其他的功能。日常生活中喝点儿醋可以缓解 疲劳，醋可以帮助消化，让营养变得更容易吸收。醋还可以治疗失眠，失眠 者睡觉前喝点儿加醋的水，很快就会睡着。",
           [
             "醋能促进营养吸收",
@@ -926,7 +963,7 @@
           "A"
         ],
         [
-          65,
+          "65",
           "吐鲁番位于新疆中部，是中国葡萄主要生产基地，总产量占新疆的53%， 是全中国的五分之一。由于这里气温高，日照时间长，早晚温差大，地下水 丰富，特别适合葡萄的生长，因而瓜果丰茂，水果的含糖量非常高。现有葡 萄品种500 多种，仅无核白葡萄就有20 个品种，堪称“世界葡萄植物园”。",
           [
             "气温高利于葡萄生长",
@@ -937,7 +974,7 @@
           "A"
         ],
         [
-          66,
+          "66",
           "《清明上河图》是中国十大传世名画之一，画宽24.8 厘米，长528.7 厘米， 是北宋画家张择端的画作，现存于北京故宫博物院。作品以长卷形式将复杂 的景物纳入到统一的画卷中，记录了北宋都城汴京清明时节的日常社会生 活，具有极高的历史价值。",
           [
             "这幅画有500 多米长",
@@ -948,7 +985,7 @@
           "C"
         ],
         [
-          67,
+          "67",
           "对于现代人来说，似乎很难想象，如果回到没有手机的时代，我们的生活将 变成什么样？日前一项调查显示，只有37%的人愿意回到没有手机的时代， 而63%的人则明确表示不愿意。在后者看来，手机已经成为他们生活中重要 的组成部分。",
           [
             "手机的功能越来越多",
@@ -959,7 +996,7 @@
           "D"
         ],
         [
-          68,
+          "68",
           "握手是一种沟通思想、交流感情、增进友谊的重要方式。与别人握手时，要 看着对方，保持微笑，集中注意力，不可以戴着帽子或手套与人握手。在正 常情况下，握手的时间不应该超过3 秒，必须站立握手，表示对别人的尊重 和礼貌。",
           [
             "握手时不宜说话",
@@ -970,7 +1007,7 @@
           "B"
         ],
         [
-          69,
+          "69",
           "古时候，有位老人年纪很大了，在去世前，他把两个儿子叫到床前，说：“你 们俩骑马到西山，然后回来，谁的马跑得慢，财产就归谁。”两个儿子骑马 出去，缓缓而行。一个行人看到后，觉得很奇怪，问明原因后，对两人说了 一句话：“你们何不把马换过来骑？”二人听后，换过马，相互追赶了起来。",
           [
             "那个行人很聪明",
@@ -981,7 +1018,7 @@
           "A"
         ],
         [
-          70,
+          "70",
           "所谓私人空间，是指我们身体周围的一定的空间，在这个空间里，一旦有人 闯入，我们就会感觉不舒服、不自在。私人空间的大小因人而异，但大体上 是前后0.6-1.5 米，左右1 米。调查数据显示，女性的私人空间比男性大， 具有攻击性格的人的私人空间更大。",
           [
             "女性的私人空间更大",
@@ -994,11 +1031,11 @@
       ]
     },
     {
-      "title": "HSK 5 · H51005 · 阅读第三部分",
-      "range": "71-90",
+      "title": "阅读 · 第三部分",
+      "range": "71–90",
       "questions": [
         [
-          71,
+          "71",
           "那个农民为什么放弃爬山？",
           [
             "捡到了一条船",
@@ -1009,7 +1046,7 @@
           "C"
         ],
         [
-          72,
+          "72",
           "那个农民为什么要背着船往前走？",
           [
             "想用它来挡雨",
@@ -1020,7 +1057,7 @@
           "D"
         ],
         [
-          73,
+          "73",
           "那个农民的船：",
           [
             "质量很糟糕",
@@ -1031,7 +1068,7 @@
           "D"
         ],
         [
-          74,
+          "74",
           "最适合做上文标题的是：",
           [
             "辛苦的一天",
@@ -1042,7 +1079,7 @@
           "C"
         ],
         [
-          75,
+          "75",
           "“女主外，男主内”的家庭形式：",
           [
             "现在越来越少",
@@ -1053,7 +1090,7 @@
           "B"
         ],
         [
-          76,
+          "76",
           "过去，人们认为女性代替丈夫养家：",
           [
             "会感觉很疲劳",
@@ -1064,7 +1101,7 @@
           "B"
         ],
         [
-          77,
+          "77",
           "那位社会学教授有什么发现？",
           [
             "离婚率越来越高",
@@ -1075,7 +1112,7 @@
           "D"
         ],
         [
-          78,
+          "78",
           "关于那位社会学教授，可以知道：",
           [
             "不常做家务",
@@ -1086,7 +1123,7 @@
           "C"
         ],
         [
-          79,
+          "79",
           "关于这位画家，可以知道什么？",
           [
             "非常年轻",
@@ -1097,7 +1134,7 @@
           "D"
         ],
         [
-          80,
+          "80",
           "第2 段中“下了逐客令”的意思是：",
           [
             "让客人离开",
@@ -1108,7 +1145,7 @@
           "A"
         ],
         [
-          81,
+          "81",
           "40 年前的那个年轻人是谁？",
           [
             "我的父亲",
@@ -1119,7 +1156,7 @@
           "D"
         ],
         [
-          82,
+          "82",
           "上文主要告诉我们：",
           [
             "距离产生美",
@@ -1130,7 +1167,7 @@
           "C"
         ],
         [
-          83,
+          "83",
           "老总为什么没在热闹的街头租广告位？",
           [
             "成本太高",
@@ -1141,7 +1178,7 @@
           "A"
         ],
         [
-          84,
+          "84",
           "老总买下那个广告位花了多少钱？",
           [
             "没花钱",
@@ -1152,7 +1189,7 @@
           "B"
         ],
         [
-          85,
+          "85",
           "老总没有立刻做辣酱广告，是因为：",
           [
             "公司的资金不够",
@@ -1163,7 +1200,7 @@
           "C"
         ],
         [
-          86,
+          "86",
           "上文主要告诉我们：",
           [
             "要控制发展规模",
@@ -1174,7 +1211,7 @@
           "D"
         ],
         [
-          87,
+          "87",
           "那位妈妈为什么不开心？",
           [
             "孩子不听话",
@@ -1185,7 +1222,7 @@
           "A"
         ],
         [
-          88,
+          "88",
           "当我们把快乐的钥匙交给别人后，我们：",
           [
             "变得喜欢抱怨",
@@ -1196,7 +1233,7 @@
           "A"
         ],
         [
-          89,
+          "89",
           "根据上文，想要快乐，人们需要：",
           [
             "有责任心",
@@ -1207,7 +1244,7 @@
           "D"
         ],
         [
-          90,
+          "90",
           "上文主要讲了什么？",
           [
             "生活中有很多压力",
@@ -1222,79 +1259,64 @@
   ],
   "writing": [
     {
-      "title": "HSK 5 · H51005 · 书写第一部分",
-      "range": "91-98",
+      "title": "书写 · 第一部分",
+      "range": "91–98",
       "questions": [
         [
-          91,
+          "91",
           "新的调整 股票市场 面临 着",
-          "股票市场面临着新的调整。",
-          ""
+          "股票市场面临着新的调整。"
         ],
         [
-          92,
+          "92",
           "获得了 那个 设计 批准 方案",
-          "那个设计方案获得了批准。",
-          ""
+          "那个设计方案获得了批准。"
         ],
         [
-          93,
+          "93",
           "再 推迟了 会议日期 不能",
-          "会议日期不能再推迟了。/会议日期再不能推迟了。",
-          ""
+          "会议日期不能再推迟了。/会议日期再不能推迟了。"
         ],
         [
-          94,
+          "94",
           "游人止步 门上 的 牌子 挂着",
-          "门上挂着游人止步的牌子。",
-          ""
+          "门上挂着游人止步的牌子。"
         ],
         [
-          95,
+          "95",
           "小马 一直在 一家酒吧 经营",
-          "小马一直在经营一家酒吧。",
-          ""
+          "小马一直在经营一家酒吧。"
         ],
         [
-          96,
+          "96",
           "删除 了 文件 电脑里的 他把",
-          "他把电脑里的文件删除了。",
-          ""
+          "他把电脑里的文件删除了。"
         ],
         [
-          97,
+          "97",
           "她的 突出 工作 表现 非常",
-          "她的工作表现非常突出。",
+          "她的工作表现非常突出。"
+        ],
+        [
+          "98",
+          "从 不同的角度 我们 要学会 观察 事物",
+          "我们要学会从不同的角度观察事物。"
+        ]
+      ]
+    },
+    {
+      "title": "书写 · 第二部分",
+      "range": "99–100",
+      "questions": [
+        [
+          "99",
+          "请结合下列词语（要全部使用），写一篇80字左右的短文。\n虚心、效率、学期、鼓励、羡慕",
           ""
         ],
         [
-          98,
-          "从 不同的角度 我们 要学会 观察 事物",
-          "我们要学会从不同的角度观察事物。",
-          ""
-        ]
-      ]
-    },
-    {
-      "title": "HSK 5 · H51005 · 书写第二部分",
-      "range": "99",
-      "questions": [
-        [
-          99,
-          "请结合下列词语（要全部使用），写一篇80字左右的短文。\n虚心、效率、学期、鼓励、羡慕",
-          [],
-          ""
-        ]
-      ]
-    },
-    {
-      "title": "HSK 5 · H51005 · 书写第三部分",
-      "range": "100",
-      "questions": [
-        [
-          100,
+          "100",
           "请结合这张图片写一篇80字左右的短文。",
-          [],
+          "",
           "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAFIARMDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD3+iiigAooooAKKKKACiiigAopM4qNriFPvSxr9WAouNJvYloqm+q2Ef37yAf9tBVG+8T6ba2skkVwksgHyoueT2qXOK3ZTpzS5rOxtUV5LZfFbUbLUZLbW7CJo1bG6DKsB64PWuuh+IGlXcPmWqSyr+AwfQ81CrwfUKMJVny09WdZRXFy+OJDMUgs1A25Bds1E3i/UWHyxwr/AMBJ/rS9vAVWMqM+SaszuaK89k8T6s/SZV/3UFQDWdTkkDPeS8HPDYqXiImXtEek0hYDqQPqa8ym1XUGYh7uY8/3zVV7mdvvSu31Y1P1ldEe5DJ5SV3M9Se7to/vzxL9XFV31nTo/vXkX4NmvMfMY9SaTLHvUvEvsbxyaP2pHoz+JdLT/luW/wB1TVWTxhp6/cSVvwArgSSKTJPSpeImbRyegt22drJ41iH+rtCf956qSeNbk/6u3iX65NcrRipdab6m0ctw0fsnQP4t1OT7siIP9lB/WqreI9TVt/2tyfTt+VZDN6cUxjke9Q6ku5vHB0FtBfcdx4c8QXt9e+ReNGyspKMq4OfQ11leVaRdG1vonB6MDXqaOHjV15DDIrsoTco6ngZrh40qqcVZMdRRRW55YUUUUAFFFFABRRRQAGuDl+Iv+kyxw2I2oxUMz9cV3Fw2y2lf+6hP6V4OCRctnua5cTUlC3Kezk+EpYiUvaq9ju38eX7fctoF/M/1qu/jXVm6NEv0T/GuaQ8VJ1xgc1ze1m+p7qy/Cx+wjabxVrMv/L2V/wB1QKhfW9Tk+/fTn/gZFZoGKfS55PdlrD0Y7QX3Ez3lzJ9+eRvq5pgZjyWP503FPApF2S2QDk0RDz5c/wDLND+ZqOdio8tPvt+gqxFi3tcdCetS2fMZzjeeXsIbLcxPEVtBfgFSEnQYV/6H2rj7e8u9MvC0TGOQcMh+6w966bUpf3hNYM/l3DbXwrj7r+nsfaqjsfPxnKMuaLszrtJ1m31KWJlBjmGVeNuoyOo9RnFboHNeaQB4JlIJSVOVYHpXc6Nqy3yiKXC3CjkdmHqKT0OjEYmWIkpT3St6mmVpwXDCnGk7ClcwI7hMOD6ioCMVam+aIHuDVYiqR9nllX2mGi+2n3DdtBHHSnDP1ozntQd9yPHrSjHpT9ozSHCimO4zGKTPFJmlNIoYwph61IRTCKRSHRuVYGvTPDl59r0pATlo/lP07V5iK63wfe+XdmBj8sgwPrW9CVpHm5rR9pQut1qdxRRRXefKBRRRQAUUUUAFFFFAEF5zZT/9c2/lXhU423TfWveJxut5B6qR+leFXg23bf71ceL2R7+QytUkizFyoqwp4wKrQ/cFWVOBXGj6Oe48ClxQuT2p+DVGTYgpfpRinbKYmyC2Vmvd0lWdSAEZK9MUgBj+bFZ2o3TKpGT9DUdT4THYeWHquMvk+5hXr53AmsY8u2auXs+5iQaz5mIiLDmtEcIq3ieaIpOP7rVpQzSRsroxV1OVYHpXNP8Avs+tXrG8eOIwzAk/wH0ptaCueg2HiS2uI40n3JcdGAXjPrWys0RUHzBz68V5xY/65ee/U11M4zar1B9jWb0LTOjwHRl9RxVIg1nabcSx9HOPSr8E4uIyxGGDFSPQ0RZ9Dkdf4qT9f8/0FHBxTqO9LkY56VR9C3bVhio2GT1p3mxs2FcMf9nmrVvYSXJAXcM9ytByyx2Hg/emvzKBpa3f+Eccrn7SufdapXWkzW3R0kH+yeaBwzDDTdlNGaaaRU3lSH/lm35Un2aZukbVN0dftYLdogq7p1w0FzHIpwVYEVD9kn/55mlSGaNgShFNOzIlVozjy8y+9HrNvMs9vHKp4dQakrB8L3fn6eYWPzRH9DW9XqQlzRTPjq1P2dRw7BRRRVGQUUUUAFFFFACEZBFeG6suy+lHoxr3OvFPEcfl6tcL6SH+dcuKXuo9nJJWrNEFsx2Craj2qjasMVoJXAj6mpuPVSKdgk05EZ/4SfoKspaTtwsTflV3OSdWEPiaRWxig8etXl026b/lnge9POk3JXnAouc0sfho7zRz95e+Qp5rBk1S2uX8mSQI54VieD7GtfxDot2EJDZHtXn15ZSpKQ+fxp3vpY87G4nL68OWc9fJPT8DXvLOaJySp21SBYHGKu6Jd3MKrG0okiA4SRdwH9as3+raDak/adqyd1hbcfy7fnT12sfLzik2ou6Klrpkd4+NhBPQil1nSJ9MmswW3JKGI9eMU2Dxh4et5Mh7tVHYQjP86tXWuWfie6t209ZvKgQqTKoBLHHSi007taEW6kVlDJ5qEA9a2rrUFSIIeoFKBFpVpmQAyuOB3Fc/cmS6kLE4zzip3KWiOj0m/jaXy3bG7pmoIvEH2K/vrV4h5iuDh2wB/nArmAl3G48p+h4Bq9qP2e60wXeqRsk0eFEsLYZx6H1o5VculWnSlzU3ZnTRa8JcfvUB/wBgf4077fbkguxk/wB85ryqz1TDcyqqZ43NW5ba3ZsVU3Ks3oMmqdJpjniK1X+JJs9Fg1mGPAVEx9K27DxHCWCsAB7VxNjptxeRLLEYmjPcuP6ZrWg0a5TBMkQ/4ET/AErO1jNNnoUN1Hcxgq3Ws++BDdeKxbIXdowxPE2OxQ/41eudQd490sIAGcuhyB9Qady73GQy7pfLPJ7VZ2HPWshpdjiQHABzVqXW9Mh4k1G0Qjs065/nQhpNl0xnGeKYy1lv4n0RTg6vZfhMKcniDSJD8mqWbfSZf8aY+SXY2dLv203UEfrE3yuPb1rvwcgEdK8vE0NwhMM0cg6/I4P8q7/Q7v7ZpMDk5dRsb6iuvDT3iaQb2Zo0UUV1lhRRRQAUUUUAFeOeNClvrV0znAMh/GvY68P+IkpfxZcID8seBj3IBNc+IV4nRh8U8M3UW5Bpk8UjDchI+tdjZLb7ARAufU1wmkyKpXNdxp8ilAa4OVIwq4/E13epNs10IHRFH4VKGNQK67QRTmmRBlmAA7k4oOa5JnmkOajE6HlWDZ6beaQmVugCD1bk/lRcCteW6zphsfjXJah4aju3Plrlj6V2LwgnLsz+x6flUbLgYAA9qV2iWrnCf8IXtjIaUrnrtNYd94IiUnyotxr05wT1OAOwpgkij4ChmpqckLlR4Xqfhi5t87LNj6cVN4ctdX0mRpTaRRwg72MpPT2xXtMtossbysgZgOBXG+JXttM0S6lvJkjlmG1Qx5/AVftm1y2DlZwc/jy3uLxvtNrL1wGRgf04rWt9TsruESRyMoPOGHP6fhXnDRCWRmiRimSNzcZq7afbEIEK7ce2a63Qp2Kkl1PQoL3T3nMYvIt4ONpbBz9DUXiW9iltEtIgWkzyqjJqncWsHmRXZjCeaokVgPzGfY8fhT3u/tl7FheE6t3NctknczukWLXwxLZQi40/7PqtiescmI5k9ird/oTTn0rQL0kESabc/wBy4QoD+PT9a6+Hw9b6xpojHyS4yki9Qa8517UPEXhy6axlURKpwjhchh6gmtIzU3pozsoUKdVb2Z0lnpeqaOVltZC8J6Mh3Kwqy19r93cbV1WOyjPQG2BI/E15ifE+uhyyXzofVAB/IU4eLPEPQ6lK3++A38xVOk3vY2hhpU5ppc3qesroeqTLmfxJfvn/AJ5FUH6CqOq6ZpumWzSX2p30rkfKkl0xLH6ZrzqDxTrDfJPe3JjPUQuIz+grodHt/D2pTrJeXV88xOSk7jB/ECs5U7bs9ujLmjaFFJ/I7HTdROuRrFGGEAGJW/pVgeE9GX7tnGPwrQs47WC3SK1jSOJR8oTpVjdWVrHoYLDxw0LQ3e5lr4f01MYsov8AvipBpNih+W0hH/ABWgTTTn0pWR3c8u5SGnWYbK26KfVBtP5iu08F3UtndNZyStJbz8xs33kcDofXIz+Vcq30rZ8PXAj1CEOflLj8Oa0pPlmmcGY4eNai3bVHplFFFemfIBRRRQAUUUUAFeC+Nzu8V6gSePOI/Kveq8D8X2zX3jS8tACV815JMdSM8D8c/pWFfZDjSdWSprqZum3O5v3ELTY/iztT8/8AAGult5tUlARJYYAeMRR7m/M/4U7SPD0rhTJiKMdFHpXX2dhb2q4jQE+przrts9Oostwi5YL2ku/T/L8zCh0K8u8G4v7xgfSXYP8Ax3FX7fwzpcDh3gE0g/ilJc/+PZraPTrTduOadjzKuKnU0SUV2SsNVVRdqgKo7Cg89qcQKzNU17S9Fi36hewweis3zH6DqaDmSbdkX2HFV5B6Vwd98UftLmHQtKnu3PAklG1fy6n9KzzB421/m81D7DA3/LOAbDj6jn9aLHo0cpxNVXtZd3odxfXVvaIWubqGBfWRwv8AOsJfEOnSzEWckl647W8ZYf8AfXC/rVKx8CaZBIJrvfeT5yXmYtk10cdnDDF5cSLGo6KoxijlO+nktJfxJ39P83/kZ1xq2s3EJitVhsFI++482T8ug/WuL1Twok0rXV7cz3lweskr5/TtXowtVHQVnapY7ouM0rNLQ9rB4bC0ZJRgvV6nli6MnnOioABg9P8APtWpaaOigER9q6O100Jd5ZeoI/r/AEq5JBsUhUzTVR8tj5rPaKp46Tjs7MwtP+w3d0NEvSI/OJNtIf4X9Px/nTpPCt7p9yQ8e4A9R3FYPimznDCePcrodysOoPUV694G1mHxh4Yinm2/bYf3Vwv+0O/49apr3eZHjOKkypoQeCNBtNW/Enhu08R6a8M6fMR8rgcqexrZOleSxZV+oqwkLKuDyKz21NINxaaPl/VNBn0rUJrO4TEkTY9iOxFUDaY7V73498KrqNiL+CPNzAPmwOWT/wCt/jXlEmnEHp+FV7drRn3mW0aOOoKpH4lo15nPJbYPSr1rEVdcVdNiwP3amgtWDDiplWuepSwCpnXeH7mYRqjMSK62N8gAiuY0KHagwufeuojQ4GKqLujkrRSmx2R6CmttzTtvtQQDTMyBue9Pt5DHKrD1odeODUQ+VqC91Y9a0y6F5p0M2ckrg/Wrdcr4NvRJBJak8j5l/rXVV6dOXNFM+LxVL2VaUAoooqznCiiigArzGXT44vEmrX0q5kmnKqD2VSf6n9K9NdgiFmOABk15vdXBubyWZv42JrkxT0SIm7IuxSDAwKtIxPtWdCwHT9ap3niS3tXMFqjXl0P+WcR4U/7TdB/P2rjJp051JcsFdnR5AGScD1Ncvrfj/RtIcwJI17dg48m3G4g+56Csq6sdW14kalqJhtj/AMutoSox6M3U1b0/w9pmmgLbWqKw/iIyfzp2PZoZR1ryt5L/AD/4c5u61zxn4lYpaxDS7Rv7v3yP94/0AqbTvh5ZiUXGozSXc5OWZ2zk128Vuo7YqwECjgVSierBUaCtRil57v7zOtdIsrJAtvAkYHoKtMm7oBU+PekyB1xVWQOpKTu3cqGMnpxShMd+at4DdP5U1ovrRYFU7kAXIwRTJLdWHSpymO5oz2waLDUmtUZ7WsUbK4UBsjmllsIyMBcmrki5RsDqPSpxHvRHA6isZqzPGzdXlGb9Dj9Y0JZ4HXb19q57wJey+FfGotZCVtL/APdMOwb+E/0/GvUZLTzEIIzXFeKfDxaMzxKRIh3KQOhFEZW0Z4rXVHq+4H8aPLU9OlYnhzVP7W0G1uz/AKwrtkHow4P61rJLg9aku4slurgqwyD2ryzxL4d/s7UXEcY8l/mT29q9ZDg1m69piajp7cfvE+ZTSauetlGPeExCd/dej/z+R4rNZZONoBqNLAlsAV1lxpLocjn8KijsCH5Q8eoqORn36xcXHQk0izZIwT1rbWP5cH9KitoiiDr+VWhit4qyPHrVHKTZE0W4cVG8RXpzVo4zxSZqzJSZRIPpUDqa0ygNV5Ysg8VNjaEy34evfsWpwuThS2G+hr04civHoyY5B2Oa9T0e5+16VBLnJ24b6jiuvDS3ieJnVGzjVXoXqKKK6zwgooooAztdnNvo1w46ldo/HivN3uRGGcgtt5OBmvStWsX1Ky+yq4RWcb29F9veuV1TS7ewXVrW3UhDawycnJJy4J/SuStTcpXewuTnmkeZXmuajq189rGzWtin3thw8ntnsPpW1psUcUaxxqFUdhWKYhHdNgYzit3TcsVwM+lcT+I+5w2FpYfDpU16vubcKE4HSr8UKr2qG1hJHWrmNgrWKOCrPWyFwAKYR3oJPekUE9jVGSEwXOKeIVHNPAIHWlpicuw3FGz8adg0m055zQK40qp7c0woQam2+1GygFKxXKNjjFXbCDzIVGOV4qFgO9XtNdVDhiAM5rKotDizFc1JPsycWoqvc6dHPEVcAgjmrn2yAH744qCfUIVU/OOnrWB4l0czotsdE1W6sMYhn/fR/XoR/Kt8yYrlNe1uGK6trjcAYpBk/wCyeD+lbouAyggjB9Koi/Y0Um6VbjkBUg9DWOsverMUvSgaZlajaeTdMAPlbkVT8tR1rW1sk6c065LRDcfp3rin1+MHrmrUl1Pr8slPE0E1utGdBlQKaWHtXMv4iT0/Won8RE/dUfjRzo9NYSZ1RkUd6b5q56iuOfXpmPBAqBtXuH/jxS5y1hH1Z2xmQfxCmvcxKOXUfU1wzX0z8mRjUZndurH8TRzsr6rHqzspri2blZU3D3rt/Bl4JLWW3J5U7hXiu85ya67wDqN0niOCIP8Au3+VlPpWlGdpo5MxwqnhpJPbU9mooor1D4sKKKKACuc15P8AS7jj/WWJGf8Adf8A+yro6ytYhDqZO4gkX8yp/pUz2Kh8SPFbhdt2RXQ6BAZDnHHrWJqCbb1gSF+bGTxXQ2fiDQdItREb0SSY+YopPNeXZc+p9tKcnhkoK7Z0SIEXAo2FjXMTfEDSEY+WsjY7kAVRl+I0P/LOID6mr54nFHBYiX2TuBEO9O2CvOZfiJKT8mwVRm8eXz9JD/wFaXtYmiy2u92keplVH3iKYZoYx80igfWvHp/Ft9LyZJfzqjJrt5IOrnPqaXtvI2jlTfxTPaJNTsoxlp4x+NUpfEumxf8ALbcfavHG1O8fqTUJu7tu9T7WRvHK6S+KR65N4xsk+6pNZ83jdOdkYH415kZblurmmlZTyWYmpdSTN44DDx6HoUvjNiOGANQw+NHDSKZMkgGuDEbse9KIWVzgkfL/AFojeTszz86oUo4GbgtdPzR2c3i6Tn5/wzWZd+L58H565xkcnnNV5YGPrW6po/Px+qeIp5wQSea9W8J6w2p+G7O4ZsyeXsf13Dg1409kzv0r0PwOzWljJbNnbu3jPbPWirGKjoNHoCz8dat29wD3rDWbnrU8U+1hiucaNwusitG3KsMEGvItVsXsNTuLYk7Uc7fcdq9LSf5utct4wtwZ4bwD7w2N+HT+tI9/IMU6WIdN7S/NHIhGx6mnbPzqQkdqUCg+05mMCetOxj3pxwOKbQK4nSgnPalxT4491MLjlTgV1/gO3DeI7ZiOmT+lcyi9sV23gC3ZtcVgPlRSc/hWlJe+jhx87Yefoz1WiiivWPhgooooAKzNdk8nTJ5RjIikxn1Ck/0rTrC8Yy/Z/Ct/cbSwiiLEDrjof0JqZ/Cyo/Ej5/KXGozahqE+oNd7vKVSBhI9y7iqj2ytZNzauj8sTmup0hI38KXIiU4gmiQn38lc/rmsW5Xdz6V59aKbufWZdWlCPJfQzktwBzk/U1KsCDtTwD3qQCsD2OZsasajsPyp2AOTSjpSnGKRIwJn6UuwZ6U4E07FA7jPLFKI1Han8CjikF2IFHpR5YxThTvYUBcaEAojXN0q+qn+Yp2KIc/b4x/sn+lVHc83NnfBz/rqSGzDdB3qN7LnGK1lUc0jR8niteY+CsZCWADZxWxa4s3gI43EqfyoWIfWjUT5UMDDs+amUrnRhaXtaqh3v+R0Ec+cH1q1HLyKxIpwUUjt0q5HN71Fjk2NpZhVLWoxd6VMv8SjcPwpizdOetTb96kdcjpUm1Gq6VSNRdHc4YAZpxIFSXEXkXMkfoTj6VEaD9KhJSipLZgDnNAFKBjinAe1BdwC1PEmKagqzGB2pkNkscW5xXovgG18qWR++yuBt1+cV6h4Li228r+wFb4dXmjyc1nag0dXRRRXpnyQUUUUAFUtXtBf6Ne2jDImgeP81Iq7SHkYoYHi2iaXHH8MRdIuZLmUyy/7+Np/UVxVyMMRXpmnSRR+HLrQwMSwSXLkegE7Afzrzm+QrMyn1rhra6nv5ZL3bGdjBp1BHNLXIz6KDugxRt96Uc0opFgBjpTugpP0oxmgBM5pcZoApwHFIAxilpaSgQUQj/iYxD/Zb+lKBRBxqEX0aqiefmv+6T9DYX0NOI5pFGDmnnOKZ8GAXtUOqj/Rof8Ae/pVgVX1T/j3iH+1SZ35X/vcPUbazfu9p6gdc1eikyBWLE+1gCetXoZMcGmc+PpeyxM4ef8AwTVSUg8VZ+0xW8JklfC+nc+wrN8+OGMyOfYDu1ZtxcvcPuY9OAOwqWd2WZVLFPnnpD8/QdfXC3V00qpsBxxnNVqWkHWkfbU4RpxUI7IUDmpF5ptPUUFj1FWI+vSoRViIc0yGXrVcyLmvV/CkezTCcdSK8x0+MNMuRXrOgJs0xPc11YZe8eDnE/3djUooor0D5sKKKKACiiigDyr7A8PxM1xfMJjeyfEeOmXR8/iWb8q4XWItly4969kvIY4vG82QN15puQfUxuQf0kH5V5V4mg8q/lGOM1x1lY9jLZ3lY5hh81FOYc0gFcTPp6b0FxS9B0oFGcUjUUClApBTqQCUtFLzQAUmKdiigAFEX/H/AAe+7+VKTSR5F9bn3b/0E1UdzgzNf7JP0NpB3qQjj8KjTjGKlHTrTPgQ96ran/x7xf71WD1OKh1P/j2h5/i/pSZ6GV/75D1/Qym4weetXIcKC7H5R6dSfSqwRXYK7bVzycVI77jxwo6Ci+lj3cTlX1nHc8vgsr+fkLLM0z7m47AelM70UoqT34wjCKjFWSAUtFOAoGABqQCmg04UASCrMIqslXIR0pkyNnS0zMoHUmvWNIXbpsQ9q8u0Zc3CivVtPXbYQj/Zrtwq1Pm84lsizRRRXaeCFFFFABRRRQByfihjbeKPDF0OFeaa1Y+zpkfqgrz7xrb+XfOccZr0Tx4m3RbS9HWyv4J8+28Kf0Y1x/j2EFzIBwwyK5q60PQy6Vqp5q/WmVI/LUzFcDPraewtKAKQU4VJuhaKKBSGFLRS0AGaAc0UooHYB1pEx9vtv94/+gmnVHnF7bE/3z/6CaqO5w5iv9lqejNxalBx1qJDkc0/vimfnwOag1E5tovXcf5VYYcYqrfnEMY/2jSPQyr/AHyHr+hRFFJSipPvh4pT0po9qdQFgp1NxTqAFFPWmCnjrQBKgyauxAZHrVSMZNXIe2KZnI6PQkzOnHevVLZdttGP9kV5noCZmSvT4xiNR6AV34VaM+Wzd++kOooorrPHCiiigAooooAxPGEBufB+rRgZb7M7D6qMj+VcN4mZbzQLG7TkSW6MPyr0vUYxNpl3ERkPC6/mDXltmTd/DXS3PLRRtEf+AsV/pWFbY6sHK1VHnUi4Y1HxU1wMSsPeoq85n2dPYKWk5pag6ELS5pKKCrC0UClpBYKWm96cKAFqNv8Aj5tz/wBNP6VIOlRyf663/wCuq/zqo7nJj1fDVPRm2p4FPzz9ajXlcin9Ko/OhxPTFVtRGIoz6nNWM8CodR5gi/3jSZ6GVf75D+uhnjGKUCkFO7ZqT74UUtJntRQMcKWm55paAHDmnqKYKkWgROnFXbfkiqKc1fthgimjOex1/h1MzoPUivSh0rz3wwmbqL/eFehV6OGXunyWau9VIKKKK6TywooooAKKKKAGuu5GU9xivK9BhI8IalZMObTUJ48egJ3D+derV59b2v2bUfFNpjCtOtwo/wB5f/rVlVRtQdqiPKL5dty496q1pawmy9f61mmvMlufbUHeKCiiioOlC/SikpetBaFopKWkMWlFNBpc80BYdUcn+sg/66r/ADp+ajlOGiP/AE1T/wBCFVHc5car4efozaQ8U/qOKiTsPapAflqj83EPrUV8d0Ef+9UxHHFV7ziJP96kz0cp/wB8p+v6FQUtNpc1J9/YcOtKabmlB70DsKKcOtNzk5pRSEPAqRRUYqRaYmTx1fteWFZ6nnitG14Ipoznsd54TTN3H7V3dcX4RT/SFPopNdpXp4f4D43MneuFFFFbnnhRRRQAUUUUAFc5qFn5euXE4Hy3NqFP1Un/ABro6p6hGphDkcqev14qJq6Lpu0keDeIotl/J9awz1rqPF8Pl6jJ9a5Y9a8ye59rhHemgozSZorI7ULS9KbmjNItC0uabmloKHCjNNzRQMfxUVwflQ+jr/MU8Gobo4iJ9CD+tVHc5sUr0ZLyZtIegqUGqyt3qUNzVs/NCTdxUN9/qYz/ALVKz1HeNm3j/wB7+lS9j0Mp/wB9p+v6FUGlpgNO7VB+hDhS03NGaAH04dajzT1NAiRakX2qIGpFNMTLEdX7U/MKz0PNaFr94U0ZT2PSvBy5Zz6JXXVyvg1f3ErewFdVXqUPgR8Tj3fESCiiitjjCiiigAooooAKr3wzZS+y5/KrFRzrvt5F9VIpPYcdGeNeOYsXpf1rhm616L44j3RpJ6rXnbda8uqtT7LL3ekhtJmlOaaTWJ6aFpM0mTmk5pFodmnA8UyjNBSH9qM03tRmgY/NV7z/AI9n9hU2ar3p/wBFk+hqo7mNdXpy9DXU1IrdPpVZGBFSbun0rQ/MCUmo7k/6PH/vUEnFNuv+PdP96plsejlP++0/X9CAHilzTAcUu6sz9BHZpQaZmlzigZJ0FOBqLdTwaBEy4zUimoVNSKaYmWENaNofnHrWalaFny4poynser+Dlxp0jerAV0lYXhJNuiK395ia3a9akvcR8LjHevL1CiiitDmCiiigAooooAKD0oooA8v8aQf6Ew7oxH615dJwxr2PxpB+7ulx1w4/EV47MMSN9a8yurSPrcqlemRc0hoJ9KaW5rnPZQucUmaQmkoNEOozTc0A0hj8mjNNzRmgY4GoLvm3kH+yalzUNwf3D/SnHczq/Ay/CwMan2FTbqp2z5gjP+yP5VYzWx+YNWZLupLlv9HT/epmeKS5P7lP96plsehlP++U/X9CLNLmowadnisz9BH5ozTc0A0ASA08NUQNOBFICYGpUPeq6n3qVTQJlpDmtCyP7wVmp0rQsjmUD1NUjGex7V4bTZoFr7qT+tatVNLj8rSrWP0iX+VW69iCtFI+ArS5qkn5sKKKKozCiiigAooooAKKKKAOU8ZQboA+PvRlfyrw68Gy4ce9fQXieHzdIdgOUOfwrwPVk2Xsg964MSvePpMmneLRnMc0wmlJphNch9FEXIpKSkzSLHZozTc0ZpDH0ZpmeaM0DuOJqOc5ib6U7NMl5jP0prczqfCySzfNrEf9gfyq2DWfZt/osX+6KuA1u0fmdRWm15kuaLg/uk+tMDUTtmNfrUS2O7Kf98h/XQjBpQajBpc1mfoJJmlBqLdilzQBKGpwaoc0oNAE6tUyP6VVBqRSegzQJl1XCjJ5PpWrpCmW7iXuzAAfjWNFDNIRsikY+yk11/hPQdUn1a1l+xSLAkgZ3cYAANVCLbsjmxFWEKbbaPZo12Rqo7ACnUUV7J+fhRRRQAUUUUAFFFFABRRRQBW1CIT2E0Z/iU189+IojHqMgPXJr6MYblI9RivCPH1obXWpeMBjuH41yYpaJns5NO1VxOMY0wsaHbJqMmuA+tjsOzRmmbqM0FD80bqj5NPWNm6An8KAvYM0ZqwljdS4EdvIfopq7D4a1af7llKc+oxT5W+hlLEUo/FJGUTTZOUNdRB4D1ub/l32/wC8avx/DTVXHzui1SpT7HNUzDDJWczhbP8A490HpV5c4rtLb4YXUQCvcZA9FrTh+GqnG+SRq6PZyZ8HVi5TbXc85olBZFABPPavW7X4aWmRuiY/UmujsPA+l2ij/R48/wC7mn9XkzfB1Pq9aNV62PAo7O6lOI4JG+imr0PhvVp/uWcv4ivoiHRLCEfLbp+VW0tYI/uxIPwprB92e5PP5/ZijwC38B63Pj/R9v1Natv8L9WlxvKr+Fe3BQOgA+lLVrCQW5zTzvFS2sjySD4SzH/W3OPoK1bb4UWK486d2/GvRqKtYemuhzSzPFS3mcfb/DfQ4cboi5961LfwjolvjZYxn6ityitFTgtkc0sTWn8Un95Vh06yg/1VrEv0UVZAA4AxS0VdrGTbe4UUUUCCiiigAooooAKKKKACiiigArgPiN4TvNZgiu9NiElwhw8fciiioqRUo2Zth60qNRTjueaJ8P8AxJK3Ngyf7xrQt/hXrsuPM2IKKK5o4eB6s83xPSy+Rq23wfumx511j6Cte2+ENkmPOndvxoorVUKfY455lipbzNi2+GWiQY3RBj781rQeDdHt8bbVP++aKK0VOK2RzSxFWXxSZoRaLYQ/ct0H4VZWzt0+7Eo/Ciiq5UZuTfUf5EX/ADzX8qXyY/7i/lRRTsK7FEaAcIv5U7AHaiigQUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAH/9k="
         ]
       ]
@@ -1351,5 +1373,9 @@
       98
     ],
     "status": "built_from_pdf_master"
-  }
+  },
+  "writing_manual_grading": [
+    99,
+    100
+  ]
 }

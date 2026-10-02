@@ -1369,5 +1369,9 @@
     "id": "H51001",
     "schema": "HSK5_UNIVERSAL_V2",
     "readyForLive": true
-  }
+  },
+  "writing_manual_grading": [
+    99,
+    100
+  ]
 }
