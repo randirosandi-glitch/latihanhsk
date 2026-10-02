@@ -2622,7 +2622,13 @@ function renderPassageClozeGroup(pkg,gid,qs){
   const root=pkg?.reading_passages?.[pkg.code]||{};
   let text=root[String(gid)]||"";
   if(!text)return "";
-  const passage='<div class="hsk5ClozePassage"><div class="hsk5ClozeHead"><span>TEKS BACAAN</span><strong>'+esc(gid)+'</strong></div><div class="hsk5ClozeText">'+esc(text)+'</div></div>';
+  let displayText=String(text);
+  qs.forEach(q=>{
+    const marker=String(q[0]);
+    const re=new RegExp('(^|[^0-9])\\s*'+marker+'\\s*(?=[^0-9]|$)','g');
+    displayText=displayText.replace(re,'$1……');
+  });
+  const passage='<div class="hsk5ClozePassage"><div class="hsk5ClozeHead"><span>TEKS BACAAN</span><strong>'+esc(gid)+'</strong></div><div class="hsk5ClozeText">'+esc(displayText)+'</div></div>';
   const body=qs.map(q=>{
     const id=String(q[0]);
     const model=getResolvedQuestionModel(pkg,route.type,route.sectionIndex,q);
