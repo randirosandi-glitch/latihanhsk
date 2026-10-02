@@ -2108,6 +2108,78 @@ body:not(.dark) #exercise .hsk5ClozeQuestion{border-bottom-color:#e3e8ef!importa
   #exercise .hsk5ClozeOpts .opt{min-height:48px!important;padding:10px 11px!important;font-size:15px!important;border-radius:12px!important;}
 }
 </style>
+
+<style id="hsk5-reading-bagian3-flat-ui">
+/* HSK 5 Reading Part 3 — one passage container, flat questions */
+#exercise .hsk5Part3Group{
+  margin:0 0 18px!important;
+  padding:16px!important;
+  border:1px solid #d9e3f0!important;
+  border-radius:20px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+}
+body.dark #exercise .hsk5Part3Group{
+  border-color:#2d3138!important;
+  background:#151618!important;
+}
+#exercise .hsk5Part3Passage{padding:0 0 14px!important;}
+#exercise .hsk5Part3Head{
+  display:flex!important;align-items:center!important;gap:8px!important;
+  margin:0 0 9px!important;color:#ff7658!important;
+  font-size:11px!important;font-weight:800!important;letter-spacing:.08em!important;
+}
+#exercise .hsk5Part3Head strong{color:var(--muted)!important;font-size:11px!important;font-weight:700!important;}
+#exercise .hsk5Part3Text{
+  font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;
+  font-size:19px!important;line-height:1.95!important;color:var(--text)!important;
+  white-space:pre-wrap!important;
+}
+#exercise .hsk5Part3Media{
+  float:right!important;width:min(42%,320px)!important;margin:0 0 12px 18px!important;
+}
+#exercise .hsk5Part3Media img{
+  display:block!important;width:100%!important;height:auto!important;max-height:360px!important;
+  object-fit:contain!important;border-radius:14px!important;
+  border:1px solid #e2e7ee!important;box-shadow:none!important;background:#f7f8fa!important;
+}
+body.dark #exercise .hsk5Part3Media img{border-color:#30343b!important;background:#111214!important;}
+#exercise .hsk5Part3Text:after{content:"";display:block;clear:both;}
+#exercise .hsk5Part3Questions{
+  border-top:1px solid #e0e6ee!important;padding-top:4px!important;
+}
+body.dark #exercise .hsk5Part3Questions{border-top-color:#2d3138!important;}
+#exercise .hsk5Part3Question{
+  margin:0!important;padding:15px 0 17px!important;
+  border-bottom:1px solid #e3e8ef!important;background:transparent!important;
+  box-shadow:none!important;border-radius:0!important;
+}
+body.dark #exercise .hsk5Part3Question{border-bottom-color:#2d3138!important;}
+#exercise .hsk5Part3Question:last-child{padding-bottom:2px!important;border-bottom:0!important;}
+#exercise .hsk5Part3Qtop{margin:0 0 8px!important;}
+#exercise .hsk5Part3Qtop strong{font-size:16px!important;line-height:1.2!important;color:var(--text)!important;font-weight:800!important;}
+#exercise .hsk5Part3Qtext{margin:0 0 10px!important;font-size:16px!important;line-height:1.6!important;color:var(--text)!important;font-weight:650!important;}
+#exercise .hsk5Part3Opts{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;}
+#exercise .hsk5Part3Opt{
+  min-height:48px!important;padding:10px 12px!important;border-radius:12px!important;
+  font-size:15px!important;line-height:1.35!important;text-align:left!important;box-shadow:none!important;
+}
+#exercise .hsk5Part3Opt .optText{display:block!important;white-space:normal!important;overflow-wrap:anywhere!important;}
+#exercise .hsk5Part3Row{margin-top:9px!important;}
+#exercise .hsk5Part3Row .btn{min-height:40px!important;padding:8px 13px!important;border-radius:12px!important;font-size:13px!important;box-shadow:none!important;}
+#exercise .hsk5Part3Feedback{margin-top:8px!important;padding:9px 11px!important;border-radius:11px!important;font-size:12px!important;line-height:1.4!important;}
+@media(max-width:760px){
+  #exercise .hsk5Part3Group{margin-bottom:16px!important;padding:15px!important;border-radius:18px!important;}
+  #exercise .hsk5Part3Text{font-size:18px!important;line-height:1.9!important;}
+  #exercise .hsk5Part3Media{float:none!important;width:100%!important;margin:0 0 13px!important;}
+  #exercise .hsk5Part3Media img{max-height:none!important;max-width:100%!important;margin:0 auto!important;}
+  #exercise .hsk5Part3Question{padding:14px 0 16px!important;}
+  #exercise .hsk5Part3Qtext{font-size:15px!important;}
+  #exercise .hsk5Part3Opts{grid-template-columns:1fr!important;gap:7px!important;}
+  #exercise .hsk5Part3Opt{min-height:46px!important;border-radius:11px!important;}
+}
+</style>
 </head><body><div aria-live="polite" id="appBootLoader" role="status"><div class="bootCard"><div aria-hidden="true" class="bootMark"><svg class="bootLogoSvg bootLogoLight" viewBox="0 0 1536 581" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 581" width="1536" height="581">
   <defs>
@@ -2651,6 +2723,31 @@ function renderPassageClozeGroup(pkg,gid,qs){
 }
 
 function renderStandardQuestionCards(){let out='',lastPassage='';const pkg=getActivePackageData();currentQuestions.forEach((q,i)=>{const id=String(q[0]);const model=getResolvedQuestionModel(pkg,route.type,route.sectionIndex,q);const isSeq=model.type==='sentence_ordering'||model.type==='sequence';const isWriting=model.type==='guided_writing'||model.type==='picture_writing';if(isSeq){out+=`<article class="question"><div class="qtop"><span>第 ${esc(id)} 题</span><span>${i+1}/${currentQuestions.length}</span></div><div class="qtext">Susun kata berikut menjadi kalimat yang benar:</div>${renderWordBank(q,id)}<input class="write" id="w${id}" value="${esc(answers[id]||'')}" placeholder="Ketik atau pilih susunan kata di sini" autocomplete="off" oninput="saveWriting(this);refreshWordBank('${id}')"><div class="writingHint">✓ Bagian ini dinilai benar atau salah berdasarkan kunci jawaban. Urutan kata harus sesuai kunci.</div><div class="row"><button class="btn soft" onclick="checkOne('${id}')">${svg('check')} Periksa</button><button class="btn" onclick="showReference('${id}')">Lihat kunci jawaban</button></div><div class="feedback" id="f${id}"></div><div class="reference" id="r${id}">Kunci jawaban: ${esc(q[2]||'Tidak tersedia')}</div></article>`;return}if(isWriting){const img=model.media.find(m=>m.type==='image');out+=`<article class="question"><div class="qtop"><span>第 ${esc(id)} 题</span><span>${i+1}/${currentQuestions.length}</span></div><div class="qtext">${esc(q[1])}</div>${img?`<div class="writingImageWrap"><img class="writingImage" src="${esc(img.source)}" alt="Gambar soal ${esc(id)}" loading="lazy" decoding="async"></div>`:''}${renderWordBank(q,id)}<input class="write" id="w${id}" value="${esc(answers[id]||'')}" placeholder="Ketik jawaban di sini" autocomplete="off" oninput="saveWriting(this)"><div class="writingDisclaimer">💡 Jawaban membuat kalimat dapat memiliki banyak bentuk yang benar. Jawaban ini tidak dinilai benar atau salah secara otomatis. Periksa kembali penggunaan kata dan tata bahasa kalimatmu.</div><div class="row"><button class="btn soft" onclick="checkOne('${id}')">${svg('check')} Periksa</button><button class="btn" onclick="showReference('${id}')">Lihat contoh jawaban</button></div><div class="feedback" id="f${id}"></div><div class="reference" id="r${id}">Contoh jawaban: ${esc(q[2]||'Tidak tersedia')}</div></article>`;return}const gid=model.group?.id;if(gid&&gid!==lastPassage){out+=renderReadingPassage(gid);lastPassage=gid}else if(!gid&&route.type==='reading'&&!getPackageEngineRules(pkg)&&!isSequenceReadingQuestion(id)){const legacyPassage=renderReadingPassage(id);if(legacyPassage){out+=legacyPassage;lastPassage=id}}const labels=model.options.map((o,oi)=>{const selected=Number(answers[id])===oi;const state=checked[id]?(isCorrect(q,answers[id],route.type,route.sectionIndex)?'correct':'wrong'):'';return `<button type="button" class="opt ${selected?'selected':''} ${state}" data-q="${esc(id)}" data-i="${oi}" onclick="choose(this)"><span class="optText">${o.label}. ${esc(o.value)}</span></button>`}).join('');const img=model.media.find(m=>m.type==='image');out+=`<article class="question"><div class="qtop"><span>第 ${esc(id)} 题</span><span>${i+1}/${currentQuestions.length}</span></div><div class="qtext">${esc(q[1])}</div>${img?`<div class="questionMedia"><img src="${esc(img.source)}" alt="Gambar soal ${esc(id)}" loading="lazy" decoding="async"></div>`:''}${route.type==='listening'?`<div class="listeningNotice"><strong>⚠️ Perhatian:</strong> Versi saat ini belum mendukung audio. Silakan sediakan audio sendiri untuk mengerjakan soal Listening.</div>`:''}<div class="opts">${labels}</div><div class="row"><button class="btn soft" onclick="checkOne('${id}')">${svg('check')} Periksa</button>${route.type==='listening'?`<button class="btn" onclick="toggleTranscript('${id}')">Lihat teks</button>`:''}</div>${route.type==='listening'?`<div class="transcript" id="t${id}">${esc(q[4]||'Teks dengar tidak tersedia di sumber.')}</div>`:''}<div class="feedback" id="f${id}"></div></article>`});return out}
+function getHsk5PassageMedia(pkg,gid){
+  const root=pkg?.reading_passage_media?.[pkg.code]||pkg?.reading_passage_media?.[String(pkg.code)]||{};
+  const item=root?.[String(gid)];
+  const images=Array.isArray(item?.images)?item.images:[];
+  return images.filter(src=>typeof src==='string'&&src.trim()).map((src,i)=>({source:src,alt:'Gambar teks bacaan '+String(gid)+(images.length>1?' '+(i+1):'')}));
+}
+function renderPassageChoiceGroup(pkg,gid,qs){
+  const root=pkg?.reading_passages?.[pkg.code]||pkg?.reading_passages?.[String(pkg.code)]||{};
+  const text=String(root?.[String(gid)]||'');
+  if(!text)return '';
+  const media=getHsk5PassageMedia(pkg,gid);
+  const mediaHtml=media.length?'<div class="hsk5Part3Media">'+media.map(m=>'<img src="'+esc(m.source)+'" alt="'+esc(m.alt)+'" loading="lazy" decoding="async">').join('')+'</div>':'';
+  const passage='<div class="hsk5Part3Passage"><div class="hsk5Part3Head"><span>TEKS BACAAN</span><strong>'+esc(gid)+'</strong></div><div class="hsk5Part3Text">'+mediaHtml+esc(text)+'</div></div>';
+  const body=qs.map(q=>{
+    const id=String(q[0]);
+    const model=getResolvedQuestionModel(pkg,route.type,route.sectionIndex,q);
+    const labels=model.options.map((o,oi)=>{
+      const selected=Number(answers[id])===oi;
+      const state=checked[id]?(isCorrect(q,answers[id],route.type,route.sectionIndex)?'correct':'wrong'):'';
+      return '<button type="button" class="opt hsk5Part3Opt '+(selected?'selected ':'')+state+'" data-q="'+esc(id)+'" data-i="'+oi+'" onclick="choose(this)"><span class="optText">'+o.label+'. '+esc(o.value)+'</span></button>';
+    }).join('');
+    return '<div class="hsk5Part3Question"><div class="hsk5Part3Qtop"><strong>'+esc(id)+'.</strong></div><div class="hsk5Part3Qtext">'+esc(q[1])+'</div><div class="hsk5Part3Opts">'+labels+'</div><div class="row hsk5Part3Row"><button class="btn soft" onclick="checkOne(\''+esc(id)+'\')">'+svg('check')+' Periksa</button></div><div class="feedback hsk5Part3Feedback" id="f'+esc(id)+'"></div></div>';
+  }).join('');
+  return '<section class="hsk5PassageGroup hsk5Part3Group">'+passage+'<div class="hsk5Part3Questions">'+body+'</div></section>';
+}
 function renderQuestionCards(){
   const pkg=getActivePackageData();
   if(!isHsk5Model(pkg) || route.type!=="reading") return renderStandardQuestionCards();
@@ -2660,14 +2757,16 @@ function renderQuestionCards(){
   for(const q of currentQuestions){
     const model=getResolvedQuestionModel(pkg,route.type,route.sectionIndex,q);
     const gid=model.group?.id;
-    if(model.type!=="fill_blank" || !gid) return renderStandardQuestionCards();
+    if(!gid)return renderStandardQuestionCards();
     const key=String(gid);
-    if(seen.has(key)) continue;
+    if(seen.has(key))continue;
     const groupQuestions=currentQuestions.filter(x=>{
       const m=getResolvedQuestionModel(pkg,route.type,route.sectionIndex,x);
-      return m.type==="fill_blank" && String(m.group?.id||"")===key;
+      return String(m.group?.id||"")==key;
     });
-    groups.push(renderPassageClozeGroup(pkg,key,groupQuestions));
+    if(model.type==='fill_blank')groups.push(renderPassageClozeGroup(pkg,key,groupQuestions));
+    else if(model.type==='choice')groups.push(renderPassageChoiceGroup(pkg,key,groupQuestions));
+    else return renderStandardQuestionCards();
     seen.add(key);
   }
   return groups.join('');
@@ -3081,7 +3180,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     const pkg=getActivePackageData();
     const isHsk5PassageSection=isHsk5Model(pkg)&&route.type==='reading'&&currentQuestions.length>0&&currentQuestions.every(q=>{
       const m=getResolvedQuestionModel(pkg,route.type,route.sectionIndex,q);
-      return m.type==='fill_blank'&&!!m.group?.id;
+      return (m.type==='fill_blank'||m.type==='choice')&&!!m.group?.id;
     });
     if(!isHsk5PassageSection){
       const pages=[];
@@ -5706,6 +5805,28 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       return;
     }
     const p=parentOf(r);
+    /* When leaving a package, restore the package-list material from the
+       package being viewed.  The package list is filtered by the global
+       selectedHSKLevel state, so relying on its previous value can send an
+       HSK 5 package back to the HSK 4 list. */
+    if(p.screen==='packages' && r.packageCode){
+      const code=String(r.packageCode);
+      if(typeof regularLevel==='function'){
+        const level=regularLevel(code);
+        if(level!==null){
+          selectedHSKLevel='hsk:'+level;
+          window.__masterPackagePage=0;
+          window.__wbPackagePage=0;
+        }else if(typeof workbookFamily==='function'){
+          const wb=workbookFamily(code);
+          if(wb){
+            selectedHSKLevel='wb:'+wb.key;
+            window.__masterPackagePage=0;
+            window.__wbPackagePage=0;
+          }
+        }
+      }
+    }
     internalChange=true;
     try{
       window.route=norm(p);
