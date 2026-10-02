@@ -2000,6 +2000,114 @@ body::before,body::after{display:none!important;background:none!important;backgr
 .finishCardRepeat .finishCardBtn{flex:1;}
 @media(max-width:760px){.finishCard.checked .inlineResult{padding:18px;}.finishCardNav{gap:10px!important;}.finishCardRepeat{margin-top:10px!important;}}
 </style>
+
+<style id="hsk5-reading-bagian1-final-ui">
+/* HSK 5 Reading Part 1 — single passage container, flat UI */
+#exercise .hsk5PassageGroup{
+  display:block!important;
+  margin:0 0 18px!important;
+  padding:16px!important;
+  border:1px solid rgba(210,220,235,.14)!important;
+  border-radius:20px!important;
+  background:#151618!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+}
+body:not(.dark) #exercise .hsk5PassageGroup{
+  background:#fff!important;
+  border-color:#d9e3f0!important;
+}
+#exercise .hsk5ClozePassage{padding:0 0 16px!important;}
+#exercise .hsk5ClozeHead{
+  display:flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  margin:0 0 9px!important;
+  color:#ff7658!important;
+  font-size:11px!important;
+  font-weight:800!important;
+  letter-spacing:.08em!important;
+}
+#exercise .hsk5ClozeHead strong{
+  color:var(--muted)!important;
+  font-size:11px!important;
+  font-weight:700!important;
+}
+#exercise .hsk5ClozeText{
+  font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;
+  font-size:19px!important;
+  line-height:1.95!important;
+  color:var(--text)!important;
+  white-space:pre-wrap!important;
+}
+#exercise .hsk5ClozeQuestions{
+  border-top:1px solid rgba(210,220,235,.13)!important;
+  padding-top:5px!important;
+}
+body:not(.dark) #exercise .hsk5ClozeQuestions{border-top-color:#e0e6ee!important;}
+#exercise .hsk5ClozeQuestion{
+  padding:15px 0 17px!important;
+  border-bottom:1px solid rgba(210,220,235,.12)!important;
+}
+body:not(.dark) #exercise .hsk5ClozeQuestion{border-bottom-color:#e3e8ef!important;}
+#exercise .hsk5ClozeQuestion:last-child{padding-bottom:2px!important;border-bottom:0!important;}
+#exercise .hsk5ClozeQtop{
+  display:flex!important;
+  align-items:center!important;
+  margin:0 0 10px!important;
+  color:var(--text)!important;
+}
+#exercise .hsk5ClozeQtop strong{
+  font-size:16px!important;
+  line-height:1.2!important;
+  color:var(--text)!important;
+  font-weight:800!important;
+}
+#exercise .hsk5ClozeOpts{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:8px!important;
+}
+#exercise .hsk5ClozeOpts .opt{
+  min-height:48px!important;
+  padding:11px 12px!important;
+  border-radius:13px!important;
+  font-size:15px!important;
+  line-height:1.35!important;
+  text-align:left!important;
+  box-shadow:none!important;
+}
+#exercise .hsk5ClozeOpts .opt .optText{
+  display:block!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+}
+#exercise .hsk5ClozeQuestion .row{
+  margin-top:9px!important;
+}
+#exercise .hsk5ClozeQuestion .row .btn{
+  min-height:40px!important;
+  padding:8px 13px!important;
+  border-radius:12px!important;
+  font-size:13px!important;
+  box-shadow:none!important;
+}
+#exercise .hsk5ClozeQuestion .feedback{
+  margin-top:8px!important;
+  padding:9px 11px!important;
+  border-radius:11px!important;
+  font-size:12px!important;
+  line-height:1.4!important;
+}
+@media(max-width:760px){
+  #exercise .hsk5PassageGroup{margin-bottom:16px!important;padding:15px!important;border-radius:18px!important;}
+  #exercise .hsk5ClozeText{font-size:18px!important;line-height:1.95!important;}
+  #exercise .hsk5ClozeQuestion{padding:14px 0 16px!important;}
+  #exercise .hsk5ClozeQtop strong{font-size:16px!important;}
+  #exercise .hsk5ClozeOpts{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;}
+  #exercise .hsk5ClozeOpts .opt{min-height:48px!important;padding:10px 11px!important;font-size:15px!important;border-radius:12px!important;}
+}
+</style>
 </head><body><div aria-live="polite" id="appBootLoader" role="status"><div class="bootCard"><div aria-hidden="true" class="bootMark"><svg class="bootLogoSvg bootLogoLight" viewBox="0 0 1536 581" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 581" width="1536" height="581">
   <defs>
@@ -2524,7 +2632,7 @@ function renderPassageClozeGroup(pkg,gid,qs){
       return `<button type="button" class="opt ${selected?'selected':''} ${state}" data-q="${esc(id)}" data-i="${oi}" onclick="choose(this)"><span class="optText">${o.label}. ${esc(o.value)}</span></button>`;
     }).join('');
     const globalIndex=currentQuestions.findIndex(x=>String(x[0])===id)+1;
-    return '<div class="hsk5ClozeQuestion"><div class="hsk5ClozeQtop"><strong>第 '+esc(id)+' 题</strong><span>'+esc(String(globalIndex))+'/'+esc(String(currentQuestions.length))+'</span></div><div class="hsk5ClozeOpts">'+labels+'</div><div class="row"><button class="btn soft" onclick="checkOne(\''+esc(id)+'\')">'+svg('check')+' Periksa</button></div><div class="feedback" id="f'+esc(id)+'"></div></div>';
+    return '<div class="hsk5ClozeQuestion"><div class="hsk5ClozeQtop"><strong>'+esc(id)+'.</strong></div><div class="hsk5ClozeOpts">'+labels+'</div><div class="row"><button class="btn soft" onclick="checkOne(\''+esc(id)+'\')">'+svg('check')+' Periksa</button></div><div class="feedback" id="f'+esc(id)+'"></div></div>';
   }).join('');
   return '<section class="hsk5PassageGroup">'+passage+'<div class="hsk5ClozeQuestions">'+body+'</div></section>';
 }
