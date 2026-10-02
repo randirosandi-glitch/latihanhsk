@@ -54,7 +54,7 @@
             "shape": "choice",
             "group": {
               "type": "passage",
-              "textSource": "reading_passages.H51001",
+              "textSource": "reading_passages.H51004",
               "key": "questionRange"
             }
           },
@@ -75,8 +75,8 @@
             "shape": "choice",
             "group": {
               "type": "passage",
-              "textSource": "reading_passages.H51001",
-              "mediaSource": "reading_passage_media.H51001",
+              "textSource": "reading_passages.H51004",
+              "mediaSource": "reading_passage_media.H51004",
               "key": "questionRange"
             },
             "input": "single_select"
