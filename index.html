@@ -2180,6 +2180,269 @@ body.dark #exercise .hsk5Part3Question{border-bottom-color:#2d3138!important;}
   #exercise .hsk5Part3Opt{min-height:46px!important;border-radius:11px!important;}
 }
 </style>
+
+<style id="hskMotionSafeV3">
+/* HSK Papers — SAFE MOTION V3
+   Stability-first: no DOM observers, no routing hooks, no stagger animations,
+   no transforms on whole screens/grids, and no pointer-event interception. */
+:root{
+  --hsk-motion-fast:140ms;
+  --hsk-motion-ui:190ms;
+  --hsk-motion-ease:cubic-bezier(.22,.8,.25,1);
+}
+
+/* Keep interaction feedback local to the element being touched. */
+.levelCard,
+.packageCardV16,
+.partCard,
+.sectionPartTile,
+.opt,
+.btn,
+.round,
+.pill{
+  transition:
+    background-color var(--hsk-motion-ui) var(--hsk-motion-ease),
+    border-color var(--hsk-motion-ui) var(--hsk-motion-ease),
+    color var(--hsk-motion-ui) var(--hsk-motion-ease),
+    opacity var(--hsk-motion-ui) var(--hsk-motion-ease),
+    transform var(--hsk-motion-fast) ease-out;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* Noticeable but very small press response. No JS required. */
+.levelCard:active,
+.packageCardV16:active,
+.partCard:active,
+.sectionPartTile:active,
+.opt:active,
+.btn:active,
+.round:active,
+.pill:active{
+  transform:scale(.985);
+}
+
+/* Answer feedback: animate only paint properties, never layout. */
+#exercise .opt.selected{
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    transform 120ms ease-out;
+}
+
+#exercise .opt.correct,
+#exercise .opt.wrong{
+  animation:hskAnswerFeedback 220ms cubic-bezier(.22,.8,.25,1) both;
+}
+@keyframes hskAnswerFeedback{
+  0%{opacity:.86}
+  55%{opacity:1}
+  100%{opacity:1}
+}
+
+/* Modals: animate only the modal box itself. */
+.modal.show .modalBox,
+.modal[aria-hidden="false"] .modalBox{
+  animation:hskModalIn 210ms cubic-bezier(.22,.8,.25,1) both;
+}
+@keyframes hskModalIn{
+  from{opacity:0;transform:translateY(7px) scale(.99)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .levelCard,.packageCardV16,.partCard,.sectionPartTile,.opt,.btn,.round,.pill{
+    transition:none!important;
+  }
+  .levelCard:active,.packageCardV16:active,.partCard:active,.sectionPartTile:active,
+  .opt:active,.btn:active,.round:active,.pill:active{transform:none!important}
+  #exercise .opt.correct,#exercise .opt.wrong,
+  .modal.show .modalBox,.modal[aria-hidden="false"] .modalBox{animation:none!important}
+}
+</style>
+
+<style id="packageArrowLoadingV1">
+/* Package loading feedback — visual only, no pointer interception or layout change. */
+#packagesScreen #packagesGrid.packageGridV16 .packageCardV16Arrow{
+  position:relative!important;
+  overflow:visible!important;
+}
+/* Loading ring is hidden at rest and appears only while the package is opening. */
+#packagesScreen #packagesGrid.packageGridV16 .packageCardV16Arrow::before{
+  content:"";
+  position:absolute;
+  inset:-5px;
+  border:2.5px solid color-mix(in srgb,var(--package-accent) 18%,transparent);
+  border-top-color:var(--package-accent);
+  border-right-color:var(--package-accent);
+  border-radius:50%;
+  opacity:0;
+  pointer-events:none;
+}
+#packagesScreen #packagesGrid.packageGridV16 .packageCardV16Arrow.is-loading::before{
+  opacity:1;
+  animation:hskPackageArrowSpin .72s linear infinite;
+}
+#packagesScreen #packagesGrid.packageGridV16 .packageCardV16Arrow.is-loading::after{
+  content:"";
+  position:absolute;
+  inset:-5px;
+  border-radius:50%;
+  border:1px solid transparent;
+  pointer-events:none;
+}
+@keyframes hskPackageArrowSpin{
+  to{transform:rotate(360deg)}
+}
+@media(prefers-reduced-motion:reduce){
+  #packagesScreen #packagesGrid.packageGridV16 .packageCardV16Arrow.is-loading::before{
+    animation:none!important;
+    opacity:1!important;
+    border-top-color:var(--package-accent);
+    border-right-color:color-mix(in srgb,var(--package-accent) 45%,transparent);
+  }
+}
+</style>
+
+<script id="packageArrowLoadingV1Script">
+(function(){
+  'use strict';
+  function findPackageButton(code){
+    const target=String(code||'');
+    return Array.from(document.querySelectorAll('#packagesScreen #packagesGrid.packageGridV16 .packageCardV16Main[data-package-code]'))
+      .find(btn=>String(btn.dataset.packageCode||'')===target) || null;
+  }
+  const install=()=>{
+    if(typeof window.openPackage!=='function' || window.openPackage.__packageArrowLoadingV1)return;
+    const original=window.openPackage;
+    async function wrapped(code,push=true){
+      const btn=findPackageButton(code);
+      const arrow=btn?.querySelector('.packageCardV16Arrow');
+      if(arrow) arrow.classList.add('is-loading');
+      try{
+        return await original.apply(this,arguments);
+      }finally{
+        if(arrow) arrow.classList.remove('is-loading');
+      }
+    }
+    wrapped.__packageArrowLoadingV1=true;
+    wrapped.__originalOpenPackage=original;
+    window.openPackage=wrapped;
+    if(typeof window.openPackageFromTile==='function') window.openPackageFromTile=wrapped;
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
+  else install();
+  window.addEventListener('hsk:data-ready',install);
+  window.addEventListener('hsk:dynamic-catalog-ready',install);
+})();
+</script>
+
+<style id="levelCardArrowLoadingV1">
+/* Level-card loading feedback — visual only, no pointer interception or layout shift. */
+#levelsScreen .levelCardArrow{
+  position:relative!important;
+  overflow:visible!important;
+}
+/* Loading ring is hidden at rest and appears only while the level is opening. */
+#levelsScreen .levelCardArrow::before{
+  content:"";
+  position:absolute;
+  inset:-5px;
+  border:2.5px solid color-mix(in srgb,var(--level-accent,#ff6548) 18%,transparent);
+  border-top-color:var(--level-accent,#ff6548);
+  border-right-color:var(--level-accent,#ff6548);
+  border-radius:50%;
+  opacity:0;
+  pointer-events:none;
+}
+#levelsScreen .levelCardArrow.is-loading::before{
+  opacity:1;
+  animation:hskLevelArrowSpin .72s linear infinite;
+}
+@keyframes hskLevelArrowSpin{to{transform:rotate(360deg)}}
+#levelsScreen .levelCard4 .levelCardArrow{--level-accent:#ff6548}
+#levelsScreen .levelCard5 .levelCardArrow{--level-accent:#8b86df}
+#levelsScreen .levelCardWorkbook .levelCardArrow{--level-accent:#2aa876}
+@media(prefers-reduced-motion:reduce){
+  #levelsScreen .levelCardArrow.is-loading::before{
+    animation:none!important;
+    opacity:1!important;
+    border-top-color:var(--level-accent,#ff6548);
+    border-right-color:color-mix(in srgb,var(--level-accent,#ff6548) 45%,transparent);
+  }
+}
+</style>
+
+<script id="levelCardArrowLoadingV1Script">
+(function(){
+  'use strict';
+  const install=()=>{
+    if(typeof window.openLevelPackages!=='function' || window.openLevelPackages.__levelArrowLoadingV1)return;
+    const original=window.openLevelPackages;
+    function wrapped(key,push=true){
+      const value=String(key??'').trim();
+      const cards=Array.from(document.querySelectorAll('#levelsScreen .levelCard'));
+      let card=null;
+      for(const el of cards){
+        const raw=String(el.getAttribute('data-material-key')||'');
+        const text=el.querySelector('.levelCardBody strong')?.textContent?.trim()||'';
+        if(raw===value || raw===('hsk:'+value) || raw===('wb:'+value) || text===value || text===('HSK '+value)){
+          card=el;break;
+        }
+      }
+      if(!card && /^\d+$/.test(value)) card=document.querySelector('#levelsScreen .levelCard'+value);
+      const arrow=card?.querySelector('.levelCardArrow');
+      if(arrow)arrow.classList.add('is-loading');
+      try{
+        const result=original.apply(this,arguments);
+        window.setTimeout(()=>arrow?.classList.remove('is-loading'),320);
+        return result;
+      }catch(e){
+        arrow?.classList.remove('is-loading');
+        throw e;
+      }
+    }
+    wrapped.__levelArrowLoadingV1=true;
+    wrapped.__originalOpenLevelPackages=original;
+    window.openLevelPackages=wrapped;
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
+  else install();
+  window.addEventListener('hsk:data-ready',install);
+  window.addEventListener('hsk:dynamic-catalog-ready',install);
+})();
+</script>
+
+<style id="hskBackFocusFix">
+/* Back buttons: prevent persistent browser focus/tap highlight on touch devices. */
+button.backTextOnly,
+button.backTextOnly:hover,
+button.backTextOnly:active,
+button.backTextOnly:focus,
+button.backTextOnly:focus-visible,
+button.focusBack,
+button.focusBack:hover,
+button.focusBack:active,
+button.focusBack:focus,
+button.focusBack:focus-visible {
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-focus-ring-color: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+button.backTextOnly:active,
+button.backTextOnly:focus,
+button.backTextOnly:focus-visible,
+button.focusBack:active,
+button.focusBack:focus,
+button.focusBack:focus-visible {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+</style>
 </head><body><div aria-live="polite" id="appBootLoader" role="status"><div class="bootCard"><div aria-hidden="true" class="bootMark"><svg class="bootLogoSvg bootLogoLight" viewBox="0 0 1536 581" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 581" width="1536" height="581">
   <defs>
@@ -3080,9 +3343,9 @@ window.__hskRefreshExercise=function(){try{window.__hskPersistRoute?.();}catch(e
 
 async function initApp(){
   await loadQuestionData();
-  // Wait briefly for the runtime catalog so the first package screen cannot race
-  // the database discovery. A discovery failure never blocks the app forever.
-  try{if(window.__hskDynamicReadyPromise)await Promise.race([window.__hskDynamicReadyPromise,new Promise(r=>setTimeout(r,3000))])}catch(e){console.warn('Database discovery wait:',e)}
+  // Do not block the initial app boot on remote catalog discovery.
+  // The dynamic catalog loads in the background; screens that actually need
+  // package data can wait for it on demand. This keeps the first paint fast.
   try{const savedTheme=localStorage.getItem('hsk-theme');applyTheme(savedTheme==='dark'?'dark':'light')}catch(e){applyTheme('light')}
   route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;
   currentUsername=getUsername();
@@ -3095,11 +3358,19 @@ async function initApp(){
     $('home')?.classList.add('active');
     renderUserPill();renderContext();renderNavState();
     renderHome();renderPackagesScreen();renderScores();
-    await pullCloudState(true);
-    renderHome();renderPackagesScreen();renderScores();
-    /* Restore the last page only after auth/cloud bootstrap has completed.
-       Dynamic package data is loaded on demand so deep refreshes remain safe. */
+    // Cloud sync is non-blocking: show the app immediately and refresh data
+    // in the background when the remote state arrives.
+    pullCloudState(true).then(()=>{
+      try{renderHome();renderPackagesScreen();renderScores();refreshCurrentProgress();}catch(e){}
+    }).catch(()=>{});
+    /* Restore the last page. Only a non-home deep route needs to wait briefly
+       for the package catalog; the normal home boot never waits on the network. */
     if(persistedRoute&&persistedRoute.screen&&persistedRoute.screen!=='home'){
+      try{
+        if(window.__hskDynamicReadyPromise){
+          await Promise.race([window.__hskDynamicReadyPromise,new Promise(r=>setTimeout(r,2500))]);
+        }
+      }catch(e){console.warn('Database discovery wait for deep route:',e)}
       window.__hskRestoringLastRoute=true;
       try{
         const r=persistedRoute;
@@ -5260,7 +5531,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       const status=pct>=100?'Selesai':pct>0?'Sedang berjalan':'Belum dimulai';
       const accent=['#ff6548','#765fc7','#2aa876','#e15b64','#e6a21a'][i%5];
       return `<article class="packageCardV16" style="--package-accent:${accent}">
-        <button class="packageCardV16Main" type="button" onclick="openPackage('${esc(c)}')" aria-label="Buka Paket ${esc(c)}">
+        <button class="packageCardV16Main" type="button" data-package-code="${esc(c)}" onclick="openPackage('${esc(c)}')" aria-label="Buka Paket ${esc(c)}">
           <span class="packageCardV16Accent" aria-hidden="true"></span>
           <span class="packageCardV16Hanzi" aria-hidden="true">卷</span>
           <span class="packageCardV16Info">
@@ -6891,3 +7162,112 @@ body.dark{--answer-selected-bg:#F4F4F2;--answer-selected-text:#17181A;--answer-s
 #exercise .write.answer-correct,#exercise .write.answer-correct:focus{background:var(--answer-correct-bg)!important;color:var(--answer-correct-text)!important;border-color:var(--answer-correct-border)!important;box-shadow:none!important;}
 #exercise .write.answer-wrong,#exercise .write.answer-wrong:focus{background:var(--answer-wrong-bg)!important;color:var(--answer-wrong-text)!important;border-color:var(--answer-wrong-border)!important;box-shadow:none!important;}
 </style>
+
+<script id="hskNavigationConsistencyV1">
+(function(){
+  'use strict';
+
+  /*
+   * Navigation consistency repair.
+   * The current baseline contains several historical package-list renderers.
+   * Back navigation could therefore restore the right route but repaint it
+   * with an older renderer and an older selected-level state. Keep the final
+   * V4 package renderer as the single visible renderer whenever the app is on
+   * the package-list screen.
+   */
+  function materialKeyFromCode(code){
+    code=String(code||'').trim();
+    try{
+      if(typeof regularLevel==='function'){
+        const level=regularLevel(code);
+        if(level!==null) return 'hsk:'+level;
+      }
+      if(typeof workbookFamily==='function'){
+        const wb=workbookFamily(code);
+        if(wb) return 'wb:'+wb.key;
+      }
+    }catch(e){}
+    return null;
+  }
+
+  function syncSelectedMaterial(key){
+    if(!key)return;
+    try{ selectedHSKLevel=key; }catch(e){}
+    try{
+      if(typeof state==='undefined'||!state||!Array.isArray(state.groups))return;
+      const match=state.groups.find(g=>{
+        if(key.startsWith('hsk:'))return g.kind==='hsk'&&Number(g.level)===Number(key.slice(4));
+        if(key.startsWith('wb:'))return g.kind==='workbook'&&String(g.name||'').toLowerCase()===String(key.slice(3)||'').toLowerCase();
+        return false;
+      });
+      if(match)state.selected=match;
+    }catch(e){}
+  }
+
+  function renderCanonicalPackages(){
+    try{
+      if(typeof renderPackagesV4==='function'){
+        renderPackagesV4();
+        return true;
+      }
+      if(typeof renderPackagesScreenMaster==='function'){
+        renderPackagesScreenMaster();
+        return true;
+      }
+    }catch(e){console.warn('HSK canonical package render failed:',e)}
+    return false;
+  }
+
+  /* Any call that asks to repaint the package list must use the final renderer. */
+  const previousPackageRenderer=window.renderPackagesScreen;
+  if(!window.__hskCanonicalPackageRendererV1){
+    window.renderPackagesScreen=function(){
+      if(renderCanonicalPackages())return;
+      if(typeof previousPackageRenderer==='function')return previousPackageRenderer.apply(this,arguments);
+    };
+    window.__hskCanonicalPackageRendererV1=true;
+  }
+
+  /* Keep material state synchronized whenever a package is opened. */
+  const previousOpenPackage=window.openPackage;
+  if(typeof previousOpenPackage==='function'&&!previousOpenPackage.__hskMaterialSyncV1){
+    const wrappedOpenPackage=function(code){
+      syncSelectedMaterial(materialKeyFromCode(code));
+      return previousOpenPackage.apply(this,arguments);
+    };
+    wrappedOpenPackage.__hskMaterialSyncV1=true;
+    wrappedOpenPackage.__hskOriginal=previousOpenPackage;
+    window.openPackage=wrappedOpenPackage;
+  }
+
+  /*
+   * Back from a package carries the package code. Restore the exact material
+   * first, then let the existing router perform its normal back operation.
+   * Finally repaint the package list with the canonical renderer so no legacy
+   * HSK-4 card layout can overwrite the visible screen.
+   */
+  const previousBackRoute=window.backRoute;
+  if(typeof previousBackRoute==='function'&&!previousBackRoute.__hskNavigationConsistencyV1){
+    const wrappedBack=async function(){
+      const before=window.route||{};
+      if(before.screen==='package'&&before.packageCode){
+        syncSelectedMaterial(materialKeyFromCode(before.packageCode));
+      }
+      const out=await previousBackRoute.apply(this,arguments);
+      const after=window.route||{};
+      if(after.screen==='packages'){
+        const key=after.materialKey || selectedHSKLevel;
+        syncSelectedMaterial(String(key||''));
+        renderCanonicalPackages();
+        if(typeof window.__hskPersistRoute==='function')window.__hskPersistRoute();
+      }
+      return out;
+    };
+    wrappedBack.__hskNavigationConsistencyV1=true;
+    wrappedBack.__hskOriginal=previousBackRoute;
+    window.backRoute=wrappedBack;
+    window.handleAppBack=wrappedBack;
+    window.__directLayerBack=wrappedBack;
+  }
+})();
+</script>
