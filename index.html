@@ -7161,6 +7161,14 @@ body.dark{--answer-selected-bg:#F4F4F2;--answer-selected-text:#17181A;--answer-s
 #exercise .opt.wrong,#exercise .opt.wrong:hover{background:var(--answer-wrong-bg)!important;color:var(--answer-wrong-text)!important;border:1px solid var(--answer-wrong-border)!important;box-shadow:none!important;transform:none!important;}
 #exercise .write.answer-correct,#exercise .write.answer-correct:focus{background:var(--answer-correct-bg)!important;color:var(--answer-correct-text)!important;border-color:var(--answer-correct-border)!important;box-shadow:none!important;}
 #exercise .write.answer-wrong,#exercise .write.answer-wrong:focus{background:var(--answer-wrong-bg)!important;color:var(--answer-wrong-text)!important;border-color:var(--answer-wrong-border)!important;box-shadow:none!important;}
+
+/* HSK Papers — reading/passage typography: keep long question text simple, never bold */
+#exercise .qtext,
+#exercise .qtext strong,
+#exercise .qtext b {
+  font-weight:400!important;
+  font-synthesis:none!important;
+}
 </style>
 
 <script id="hskNavigationConsistencyV1">
