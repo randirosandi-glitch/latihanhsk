@@ -94,8 +94,10 @@
               98
             ],
             "type": "sentence_ordering",
-            "shape": "sequence",
             "input": "ordering",
+            "scoring": {
+              "mode": "accepted_answer_match"
+            },
             "instruction": "Susun kata-kata yang diberikan menjadi kalimat yang benar."
           },
           {
@@ -104,8 +106,10 @@
               99
             ],
             "type": "guided_writing",
-            "shape": "writing_prompt",
             "input": "text",
+            "scoring": {
+              "mode": "manual"
+            },
             "instruction": "Gunakan kata yang diberikan untuk membuat kalimat yang benar."
           },
           {
@@ -114,11 +118,13 @@
               100
             ],
             "type": "picture_writing",
-            "shape": "picture_writing",
             "input": "text",
             "media": [
               "image"
             ],
+            "scoring": {
+              "mode": "manual"
+            },
             "instruction": "Buat kalimat berdasarkan gambar.",
             "mediaSource": "question[3]"
           }
@@ -135,6 +141,41 @@
     "media": {
       "questionImageSource": "question[3]",
       "groupImageSource": "reading_passage_media.H51005"
+    },
+    "writing": {
+      "parts": [
+        {
+          "range": "91-98",
+          "type": "sentence_ordering",
+          "input": "ordering",
+          "scoring": {
+            "auto": true
+          },
+          "instruction": "第91-98题：完成句子。"
+        },
+        {
+          "range": "99",
+          "type": "guided_writing",
+          "input": "text",
+          "scoring": {
+            "manual": true
+          },
+          "instruction": "第99题：请结合下列词语（要全部使用），写一篇80字左右的短文。"
+        },
+        {
+          "range": "100",
+          "type": "picture_writing",
+          "input": "text",
+          "media": [
+            "question[3]"
+          ],
+          "scoring": {
+            "manual": true
+          },
+          "instruction": "第100题：请结合这张图片写一篇80字左右的短文。",
+          "mediaSource": "question[3]"
+        }
+      ]
     }
   },
   "instructions": {
@@ -148,9 +189,9 @@
       "Baca teks dengan saksama, lalu pilih jawaban yang paling sesuai dengan isi bacaan."
     ],
     "writing": [
-      "Susun kata-kata yang diberikan menjadi kalimat yang benar.",
-      "Gunakan kata yang diberikan untuk membuat kalimat yang benar.",
-      "Buat kalimat berdasarkan gambar."
+      "第91-98题：完成句子。",
+      "第99题：请结合下列词语（要全部使用），写一篇80字左右的短文。",
+      "第100题：请结合这张图片写一篇80字左右的短文。"
     ]
   },
   "listening": [
@@ -1275,7 +1316,7 @@
       "questions": [
         [
           "99",
-          "请结合下列词语（要全部使用），写一篇80字左右的短文。\n虚心、效率、学期、鼓励、羡慕",
+          "第99题：请结合下列词语（要全部使用），写一篇80字左右的短文。 虚心 效率 学期 鼓励 羡慕",
           ""
         ]
       ]
@@ -1286,7 +1327,7 @@
       "questions": [
         [
           "100",
-          "请结合这张图片写一篇80字左右的短文。",
+          "第100题：请结合这张图片写一篇80字左右的短文。",
           "",
           "data:image/jpeg;base64,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"
         ]
@@ -1382,10 +1423,5 @@
   "writing_manual_grading": [
     99,
     100
-  ],
-  "audit": {
-    "writingStructure": "HSK5_TEMPLATE_FROM_H51006",
-    "writingParts": "91-98 / 99 / 100",
-    "writingSource": "PDF page 16-17"
-  }
+  ]
 }
