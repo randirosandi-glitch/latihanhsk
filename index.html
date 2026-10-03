@@ -6962,6 +6962,135 @@ body.dark #package .flatPartCard .progressBar .fill{background:var(--part-accent
 }
 </style>
 
+
+<style id="skill-cards-level-style-v1">
+/* Skill cards: Listening / Reading / Writing use the same visual language as HSK level cards. */
+#package .flatPartCard{
+  position:relative!important;
+  overflow:hidden!important;
+  border:1px solid rgba(117,127,141,.30)!important;
+  border-radius:28px!important;
+  box-shadow:none!important;
+  transform:none!important;
+  transition:background .18s ease,border-color .18s ease,transform .18s ease!important;
+}
+#package .flatPartCard::before{
+  content:""!important;
+  position:absolute!important;
+  left:0!important;
+  top:50%!important;
+  width:6px!important;
+  height:58px!important;
+  transform:translateY(-50%)!important;
+  border-radius:0 6px 6px 0!important;
+  background:var(--part-accent)!important;
+  opacity:1!important;
+  pointer-events:none!important;
+}
+/* Listening / Reading / Writing: warm / cool / gold, matching the level-card palette. */
+#package .flatPartCard:nth-child(1){
+  background:linear-gradient(112deg,#ffffff 0%,#fffefd 30%,#fff9f6 62%,#fff0eb 100%)!important;
+}
+#package .flatPartCard:nth-child(2){
+  background:linear-gradient(112deg,#ffffff 0%,#fcfdff 30%,#f6f9ff 62%,#edf3ff 100%)!important;
+}
+#package .flatPartCard:nth-child(3){
+  background:linear-gradient(112deg,#ffffff 0%,#fffefa 30%,#fff9ef 62%,#fff2d8 100%)!important;
+}
+#package .flatPartCard:hover{
+  transform:translateY(-1px)!important;
+  border-color:rgba(117,127,141,.42)!important;
+  box-shadow:none!important;
+}
+#package .flatPartCard .partHanzi{
+  background:transparent!important;
+  border-radius:0!important;
+}
+#package .flatPartCard .partArrow{
+  box-shadow:none!important;
+}
+#package .flatPartCard .progressBar{
+  box-shadow:none!important;
+}
+
+/* Dark mode — same geometry, with the same black-to-accent treatment as level cards. */
+body.dark #package .flatPartCard{
+  border-color:rgba(170,181,198,.28)!important;
+  color:#f3f5f8!important;
+  box-shadow:none!important;
+}
+body.dark #package .flatPartCard:nth-child(1){
+  background:linear-gradient(112deg,#000000 0%,#030202 30%,#0d0807 62%,#1a0c09 100%)!important;
+}
+body.dark #package .flatPartCard:nth-child(2){
+  background:linear-gradient(112deg,#000000 0%,#020304 30%,#080d15 62%,#101b2d 100%)!important;
+}
+body.dark #package .flatPartCard:nth-child(3){
+  background:linear-gradient(112deg,#000000 0%,#030302 30%,#121006 62%,#241806 100%)!important;
+}
+body.dark #package .flatPartCard:hover{
+  border-color:rgba(190,201,218,.34)!important;
+  box-shadow:none!important;
+}
+
+@media(max-width:760px){
+  #package .flatPartCard{
+    border-radius:24px!important;
+  }
+  #package .flatPartCard::before{
+    width:6px!important;
+    height:56px!important;
+  }
+}
+</style>
+
+<style id="skill-cards-compact-v1">
+/* Compact skill cards: keep the same visual style, reduce vertical footprint. */
+#package .flatPartCard{
+  min-height:205px!important;
+  padding:18px 18px 15px 21px!important;
+}
+#package .flatPartCard .partHanzi{
+  font-size:50px!important;
+  line-height:.86!important;
+}
+#package .flatPartCard .partMain{
+  padding-top:7px!important;
+}
+#package .flatPartCard strong{
+  font-size:21px!important;
+}
+#package .flatPartCard .partMeta{
+  margin-top:5px!important;
+}
+#package .flatPartCard .partArrow{
+  width:40px!important;
+  height:40px!important;
+}
+#package .flatPartCard .progressWrap{
+  margin-top:13px!important;
+}
+@media(max-width:900px) and (min-width:761px){
+  #package .flatPartCard{min-height:195px!important;padding:17px 16px 14px 19px!important;}
+  #package .flatPartCard .partHanzi{font-size:48px!important;}
+}
+@media(max-width:760px){
+  #package .flatPartCard{
+    min-height:200px!important;
+    padding:17px 16px 14px 20px!important;
+    border-radius:24px!important;
+  }
+  #package .flatPartCard .partHanzi{
+    font-size:50px!important;
+    line-height:.84!important;
+  }
+  #package .flatPartCard .partMain{padding-top:7px!important;}
+  #package .flatPartCard strong{font-size:21px!important;}
+  #package .flatPartCard .partMeta{font-size:12px!important;margin-top:5px!important;}
+  #package .flatPartCard .partArrow{width:40px!important;height:40px!important;}
+  #package .flatPartCard .progressWrap{margin-top:12px!important;}
+}
+</style>
 </html>
 
 <!-- v1.28: Dashboard dark mode follows the existing mobile/light dashboard proportions. No other dashboard logic/layout is changed. -->
@@ -7279,3 +7408,329 @@ body.dark{--answer-selected-bg:#F4F4F2;--answer-selected-text:#17181A;--answer-s
   }
 })();
 </script>
+
+<style id="section-cards-level-style-v1">
+/* Section cards (第一部分 / 第二部分 / 第三部分) now use the same visual language as HSK level cards. */
+#partsScreen #sections .sectionPartTile{
+  position:relative!important;
+  min-height:176px!important;
+  padding:24px 28px 20px!important;
+  border:1px solid rgba(117,127,141,.30)!important;
+  border-radius:28px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+  transform:none!important;
+  overflow:hidden!important;
+  transition:background .18s ease,border-color .18s ease,transform .18s ease!important;
+}
+#partsScreen #sections .sectionPartTile::before{
+  content:""!important;
+  position:absolute!important;
+  left:0!important;
+  top:50%!important;
+  width:6px!important;
+  height:58px!important;
+  transform:translateY(-50%)!important;
+  border-radius:0 6px 6px 0!important;
+  background:var(--section-accent)!important;
+  pointer-events:none!important;
+}
+#partsScreen #sections .sectionPartTile:nth-child(1){
+  --section-accent:#ff6548;
+  background:linear-gradient(112deg,#ffffff 0%,#fffefd 30%,#fff9f6 62%,#fff0eb 100%)!important;
+}
+#partsScreen #sections .sectionPartTile:nth-child(2){
+  --section-accent:#7890d8;
+  background:linear-gradient(112deg,#ffffff 0%,#fcfdff 30%,#f6f9ff 62%,#edf3ff 100%)!important;
+}
+#partsScreen #sections .sectionPartTile:nth-child(3){
+  --section-accent:#e5ad3d;
+  background:linear-gradient(112deg,#ffffff 0%,#fffefa 30%,#fff9ef 62%,#fff2d8 100%)!important;
+}
+#partsScreen #sections .sectionPartTile:nth-child(n+4){
+  --section-accent:#7890d8;
+  background:linear-gradient(112deg,#ffffff 0%,#fcfdff 30%,#f6f9ff 62%,#edf3ff 100%)!important;
+}
+#partsScreen #sections .sectionPartTile:hover{
+  transform:translateY(-1px)!important;
+  border-color:rgba(117,127,141,.42)!important;
+  box-shadow:none!important;
+}
+#partsScreen #sections .sectionPartTitle{
+  color:#1b1c20!important;
+  font-family:"Ma Shan Zheng"!important;
+  font-size:45px!important;
+  line-height:1!important;
+  font-weight:400!important;
+  letter-spacing:0!important;
+}
+#partsScreen #sections .sectionPartTile>small{
+  color:#718093!important;
+}
+#partsScreen #sections .sectionPartTile .progressWrap{
+  width:100%!important;
+}
+#partsScreen #sections .sectionPartTile .progressBar{
+  background:#e6eef6!important;
+  box-shadow:none!important;
+}
+#partsScreen #sections .sectionPartTile .progressBar .fill{
+  background:var(--section-accent)!important;
+  box-shadow:none!important;
+}
+
+/* Dark mode: black-to-accent gradients, matching the dark HSK level cards. */
+body.dark #partsScreen #sections .sectionPartTile{
+  border-color:rgba(170,181,198,.28)!important;
+  color:#f3f5f8!important;
+  box-shadow:none!important;
+}
+body.dark #partsScreen #sections .sectionPartTile:nth-child(1){
+  --section-accent:#ff6548;
+  background:linear-gradient(112deg,#000000 0%,#030202 30%,#0d0807 62%,#1a0c09 100%)!important;
+}
+body.dark #partsScreen #sections .sectionPartTile:nth-child(2){
+  --section-accent:#7890d8;
+  background:linear-gradient(112deg,#000000 0%,#020304 30%,#080d15 62%,#101b2d 100%)!important;
+}
+body.dark #partsScreen #sections .sectionPartTile:nth-child(3){
+  --section-accent:#e5ad3d;
+  background:linear-gradient(112deg,#000000 0%,#030302 30%,#121006 62%,#241806 100%)!important;
+}
+body.dark #partsScreen #sections .sectionPartTile:nth-child(n+4){
+  --section-accent:#7890d8;
+  background:linear-gradient(112deg,#000000 0%,#020304 30%,#080d15 62%,#101b2d 100%)!important;
+}
+body.dark #partsScreen #sections .sectionPartTile:hover{
+  border-color:rgba(190,201,218,.34)!important;
+  box-shadow:none!important;
+}
+body.dark #partsScreen #sections .sectionPartTitle{
+  color:#f3f5f8!important;
+}
+body.dark #partsScreen #sections .sectionPartTile>small{
+  color:#aab3c0!important;
+}
+body.dark #partsScreen #sections .sectionPartTile .progressBar{
+  background:#111214!important;
+}
+body.dark #partsScreen #sections .sectionPartTile .progressBar .fill{
+  background:var(--section-accent)!important;
+}
+
+@media(max-width:760px){
+  #partsScreen #sections .sectionPartTile{
+    min-height:166px!important;
+    padding:22px 24px 18px!important;
+    border-radius:25px!important;
+  }
+  #partsScreen #sections .sectionPartTitle{
+    font-size:39px!important;
+    margin-bottom:16px!important;
+  }
+  #partsScreen #sections .sectionPartTile>small{
+    font-size:13px!important;
+  }
+}
+</style>
+
+<style id="skill-cards-horizontal-compact-v2">
+/* Skill cards: Hanzi stays in a dedicated left column; all text/progress stays to the right. */
+#package .flatPartCard{
+  display:grid!important;
+  grid-template-columns:64px minmax(0,1fr) 40px!important;
+  grid-template-rows:1fr!important;
+  align-items:center!important;
+  column-gap:16px!important;
+  min-height:126px!important;
+  height:126px!important;
+  padding:14px 18px 14px 20px!important;
+}
+#package .flatPartCard .partHanzi{
+  grid-column:1!important;
+  grid-row:1!important;
+  width:64px!important;
+  height:auto!important;
+  min-height:64px!important;
+  padding:0!important;
+  margin:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  font-size:48px!important;
+  line-height:1!important;
+}
+#package .flatPartCard .partMain{
+  grid-column:2!important;
+  grid-row:1!important;
+  min-width:0!important;
+  width:100%!important;
+  padding:0!important;
+  margin:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  justify-content:center!important;
+}
+#package .flatPartCard strong{
+  margin:0!important;
+  font-size:21px!important;
+  line-height:1.1!important;
+}
+#package .flatPartCard .partMeta{
+  margin:5px 0 0!important;
+  font-size:12px!important;
+  line-height:1.2!important;
+}
+#package .flatPartCard .progressWrap{
+  width:100%!important;
+  margin:10px 0 0!important;
+}
+#package .flatPartCard .progressMeta{
+  margin:0 0 5px!important;
+  font-size:10px!important;
+  line-height:1!important;
+}
+#package .flatPartCard .progressBar{
+  height:6px!important;
+}
+#package .flatPartCard .partArrow{
+  grid-column:3!important;
+  grid-row:1!important;
+  width:40px!important;
+  height:40px!important;
+  margin:0!important;
+  align-self:center!important;
+}
+@media(max-width:760px){
+  #package .flatPartCard{
+    grid-template-columns:56px minmax(0,1fr) 38px!important;
+    column-gap:13px!important;
+    min-height:116px!important;
+    height:116px!important;
+    padding:12px 15px 12px 18px!important;
+    border-radius:24px!important;
+  }
+  #package .flatPartCard .partHanzi{
+    width:56px!important;
+    min-height:56px!important;
+    font-size:43px!important;
+  }
+  #package .flatPartCard strong{font-size:20px!important;}
+  #package .flatPartCard .partMeta{font-size:11px!important;margin-top:4px!important;}
+  #package .flatPartCard .progressWrap{margin-top:8px!important;}
+  #package .flatPartCard .progressMeta{font-size:9px!important;margin-bottom:4px!important;}
+  #package .flatPartCard .progressBar{height:6px!important;}
+  #package .flatPartCard .partArrow{width:38px!important;height:38px!important;}
+}
+</style>
+
+<style id="compact-skill-card-no-overlap-v2">
+/* Compact Listening / Reading / Writing cards: Hanzi left, content right, no overlap. */
+#package .flatPartCard{
+  display:grid!important;
+  grid-template-columns:112px minmax(0,1fr) 44px!important;
+  grid-template-rows:auto auto!important;
+  column-gap:14px!important;
+  row-gap:0!important;
+  align-items:center!important;
+  min-height:0!important;
+  height:148px!important;
+  padding:18px 20px 16px 24px!important;
+}
+#package .flatPartCard .partHanzi{
+  grid-column:1!important;
+  grid-row:1 / span 2!important;
+  align-self:center!important;
+  justify-self:start!important;
+  width:112px!important;
+  max-width:112px!important;
+  font-size:54px!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  margin:0!important;
+  padding:0!important;
+}
+#package .flatPartCard .partMain{
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  width:auto!important;
+  min-width:0!important;
+  align-self:center!important;
+  justify-self:stretch!important;
+  padding:0!important;
+  margin:0!important;
+}
+#package .flatPartCard strong{
+  margin:0!important;
+  font-size:22px!important;
+  line-height:1.12!important;
+  white-space:nowrap!important;
+}
+#package .flatPartCard .partMeta{
+  margin-top:5px!important;
+  font-size:13px!important;
+  line-height:1.25!important;
+  white-space:nowrap!important;
+}
+#package .flatPartCard .progressWrap{
+  width:100%!important;
+  margin:11px 0 0!important;
+}
+#package .flatPartCard .progressMeta{
+  margin:0 0 5px!important;
+  font-size:10px!important;
+  line-height:1.2!important;
+}
+#package .flatPartCard .progressMeta strong{
+  font-size:10px!important;
+  line-height:1.2!important;
+}
+#package .flatPartCard .progressBar{
+  height:6px!important;
+}
+#package .flatPartCard .partArrow{
+  grid-column:3!important;
+  grid-row:1!important;
+  justify-self:end!important;
+  align-self:center!important;
+  width:42px!important;
+  height:42px!important;
+  margin:0!important;
+}
+@media(max-width:760px){
+  #package .flatPartCard{
+    grid-template-columns:112px minmax(0,1fr) 42px!important;
+    column-gap:10px!important;
+    height:148px!important;
+    padding:17px 16px 15px 20px!important;
+    border-radius:23px!important;
+  }
+  #package .flatPartCard .partHanzi{
+    width:112px!important;
+    max-width:112px!important;
+    font-size:50px!important;
+  }
+  #package .flatPartCard strong{font-size:21px!important;}
+  #package .flatPartCard .partMeta{font-size:12px!important;}
+  #package .flatPartCard .partArrow{width:42px!important;height:42px!important;}
+}
+@media(max-width:430px){
+  #package .flatPartCard{
+    grid-template-columns:96px minmax(0,1fr) 40px!important;
+    column-gap:8px!important;
+    height:140px!important;
+    padding:16px 14px 14px 18px!important;
+  }
+  #package .flatPartCard .partHanzi{
+    width:96px!important;
+    max-width:96px!important;
+    font-size:45px!important;
+  }
+  #package .flatPartCard strong{font-size:20px!important;}
+  #package .flatPartCard .partMeta{font-size:11px!important;}
+  #package .flatPartCard .progressWrap{margin-top:9px!important;}
+  #package .flatPartCard .partArrow{width:40px!important;height:40px!important;}
+}
+</style>
