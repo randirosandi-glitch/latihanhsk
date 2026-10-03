@@ -1,0 +1,163 @@
+name: Fix HSK5 Reading 01-05
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-hsk5-reading-01-05.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix-reading:
+    if: ${{ !contains(github.event.head_commit.message, 'fix HSK5 Reading 01-05') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Apply universal HSK5 reading structure
+        shell: python
+        run: |
+          import json
+          from pathlib import Path
+
+          root = Path('data/HSK 5')
+          codes = [f'H5100{i}' for i in range(1, 6)]
+
+          for code in codes:
+              path = root / f'{code}.json'
+              data = json.loads(path.read_text(encoding='utf-8'))
+
+              # Preserve all question content, answer keys, passages, media and existing
+              # Listening/Writing data. Only normalize the HSK5 universal engine metadata.
+              data['schemaVersion'] = 2
+              data['engineRules'] = {
+                  'version': 'HSK5_UNIVERSAL_V2',
+                  'sections': {
+                      'listening': {
+                          'parts': [
+                              {
+                                  'range': [1, 20],
+                                  'type': 'choice',
+                                  'input': 'single_select',
+                                  'scoring': {'mode': 'exact_match'},
+                                  'instruction': 'Dengarkan percakapan, lalu pilih jawaban yang paling tepat.'
+                              },
+                              {
+                                  'range': [21, 45],
+                                  'type': 'choice',
+                                  'input': 'single_select',
+                                  'scoring': {'mode': 'exact_match'},
+                                  'instruction': 'Dengarkan percakapan atau bacaan, lalu pilih jawaban yang paling tepat.'
+                              }
+                          ]
+                      },
+                      'reading': {
+                          'parts': [
+                              {
+                                  'range': [46, 60],
+                                  'type': 'fill_blank',
+                                  'shape': 'choice',
+                                  'input': 'single_select',
+                                  'group': {
+                                      'type': 'passage',
+                                      'textSource': f'reading_passages.{code}',
+                                      'key': 'questionRange'
+                                  },
+                                  'scoring': {'mode': 'exact_match'},
+                                  'instruction': 'Pilih kata yang paling tepat untuk melengkapi kalimat.'
+                              },
+                              {
+                                  'range': [61, 70],
+                                  'type': 'choice',
+                                  'shape': 'choice',
+                                  'input': 'single_select',
+                                  'scoring': {'mode': 'exact_match'},
+                                  'instruction': 'Pilih jawaban yang paling sesuai dengan isi kalimat.'
+                              },
+                              {
+                                  'range': [71, 90],
+                                  'type': 'choice',
+                                  'shape': 'choice',
+                                  'group': {
+                                      'type': 'passage',
+                                      'textSource': f'reading_passages.{code}',
+                                      'mediaSource': f'reading_passage_media.{code}',
+                                      'key': 'questionRange'
+                                  },
+                                  'input': 'single_select',
+                                  'scoring': {'mode': 'exact_match'},
+                                  'instruction': 'Baca teks dengan saksama, lalu pilih jawaban yang paling sesuai dengan isi bacaan.'
+                              }
+                          ]
+                      },
+                      'writing': {
+                          'parts': [
+                              {
+                                  'range': [91, 98],
+                                  'type': 'sentence_ordering',
+                                  'input': 'ordering',
+                                  'scoring': {'mode': 'accepted_answer_match'},
+                                  'instruction': 'Susun kata-kata yang diberikan menjadi kalimat yang benar.'
+                              },
+                              {
+                                  'range': [99, 99],
+                                  'type': 'guided_writing',
+                                  'input': 'text',
+                                  'scoring': {'mode': 'manual'},
+                                  'instruction': 'Gunakan kata yang diberikan untuk membuat kalimat yang benar.'
+                              },
+                              {
+                                  'range': [100, 100],
+                                  'type': 'picture_writing',
+                                  'input': 'text',
+                                  'media': ['image'],
+                                  'scoring': {'mode': 'manual'},
+                                  'instruction': 'Buat kalimat berdasarkan gambar.',
+                                  'mediaSource': 'question[3]'
+                              }
+                          ]
+                      }
+                  },
+                  'source': f'{code}.pdf',
+                  'source_authority': 'PDF source supplied by user',
+                  'audio': 'not_embedded_in_source_pdf',
+                  'writing_manual_grading': [99, 100],
+                  'media': {
+                      'questionImageSource': 'question[3]',
+                      'groupImageSource': f'reading_passage_media.{code}'
+                  },
+                  'uiModel': 'hsk5_v1'
+              }
+
+              path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+              print(f'normalized {path}')
+
+      - name: Validate JSON and required HSK5 reading references
+        shell: python
+        run: |
+          import json
+          from pathlib import Path
+          for i in range(1, 6):
+              code = f'H5100{i}'
+              p = Path('data/HSK 5') / f'{code}.json'
+              d = json.loads(p.read_text(encoding='utf-8'))
+              r = d['engineRules']['sections']['reading']['parts']
+              assert [x['range'] for x in r] == [[46,60],[61,70],[71,90]]
+              assert r[0]['group']['textSource'] == f'reading_passages.{code}'
+              assert r[2]['group']['textSource'] == f'reading_passages.{code}'
+              assert r[2]['group']['mediaSource'] == f'reading_passage_media.{code}'
+          print('HSK5 Reading 01-05 validation passed')
+
+      - name: Commit data-only fix and remove temporary workflow
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          rm -f .github/workflows/fix-hsk5-reading-01-05.yml
+          git add data/'HSK 5'/H51001.json data/'HSK 5'/H51002.json data/'HSK 5'/H51003.json data/'HSK 5'/H51004.json data/'HSK 5'/H51005.json .github/workflows/fix-hsk5-reading-01-05.yml
+          git diff --cached --check
+          git commit -m 'fix HSK5 Reading 01-05'
+          git push
