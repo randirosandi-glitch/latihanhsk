@@ -5,7 +5,7 @@
   "totalQuestions": 100,
   "listening": [
     {
-      "title": "听力 · 第一部分",
+      "title": "第一部分",
       "range": "1–20",
       "questions": [
         [
@@ -251,7 +251,7 @@
       ]
     },
     {
-      "title": "听力 · 第二部分",
+      "title": "第二部分",
       "range": "21–45",
       "questions": [
         [
@@ -559,7 +559,7 @@
   ],
   "reading": [
     {
-      "title": "阅读 · 第一部分",
+      "title": "第一部分",
       "range": "46–60",
       "questions": [
         [
@@ -730,7 +730,7 @@
       ]
     },
     {
-      "title": "阅读 · 第二部分",
+      "title": "第二部分",
       "range": "61–70",
       "questions": [
         [
@@ -846,7 +846,7 @@
       ]
     },
     {
-      "title": "阅读 · 第三部分",
+      "title": "第三部分",
       "range": "71–90",
       "questions": [
         [
@@ -1074,7 +1074,7 @@
   ],
   "writing": [
     {
-      "title": "书写第一部分",
+      "title": "第一部分",
       "range": "91-98",
       "questions": [
         [
@@ -1120,7 +1120,7 @@
       ]
     },
     {
-      "title": "书写第二部分",
+      "title": "第二部分",
       "range": "99",
       "questions": [
         [
@@ -1131,7 +1131,7 @@
       ]
     },
     {
-      "title": "书写第三部分",
+      "title": "第三部分",
       "range": "100",
       "questions": [
         [
