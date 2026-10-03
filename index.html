@@ -1571,7 +1571,7 @@ body.dark .authChoice span,body.dark .authChoice.primary span{color:var(--muted)
 }
 
 /* LARGE: 1200–1599 */
-@media (min-width:1200px){
+@media (min-width:1200px) and (orientation:landscape){
   #home{--home-gutter:40px;--home-section-gap:88px;--home-card-radius:24px;}
   #home .homeEditorial{padding-top:64px;}
   #home .homeEditorial h1{font-size:clamp(54px,4vw,62px);letter-spacing:-3.2px;}
@@ -6665,8 +6665,8 @@ body.home-route main{padding-top:18px!important;}
   .scorePackagesGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px!important;}
 }
 
-/* Desktop / very wide canvas: add the third column when there is room. */
-@media (min-width:1200px){
+/* Desktop / very wide landscape canvas: add the third column when there is room. */
+@media (min-width:1200px) and (orientation:landscape){
   :root{--content-gutter:clamp(28px,2.2vw,44px);}
   .grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
   #packagesGrid,#sections,#parts{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
@@ -6845,8 +6845,8 @@ body.dark #appBootLoader .bootText{color:#aab3c0!important;}
 #package .section h2{margin:0!important;font-size:clamp(30px,4vw,40px)!important;line-height:1.08!important;letter-spacing:-1.25px!important;font-weight:800!important;}
 #package .section .sub{margin:8px 0 0!important;font-size:16px!important;line-height:1.5!important;font-weight:500!important;}
 
-/* Desktop / landscape: three cards in one row. */
-#package #parts{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:16px!important;margin-top:20px!important;align-items:stretch!important;}
+/* Wide package layout: two columns by default; three only on wide landscape/desktop. */
+#package #parts{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:16px!important;margin-top:20px!important;align-items:stretch!important;}
 
 #package .flatPartCard{
   --part-accent:#ff6548;
@@ -6972,12 +6972,15 @@ body.dark #package .flatPartCard .partArrow{background:color-mix(in srgb,var(--p
 body.dark #package .flatPartCard .progressBar{background:#202226!important;}
 body.dark #package .flatPartCard .progressBar .fill{background:var(--part-accent)!important;}
 
-@media(max-width:900px) and (min-width:600px){
-  #package #parts{gap:12px!important;}
+@media (min-width:600px) and (max-width:1199px){
+  #package #parts{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px!important;}
   #package .flatPartCard{min-height:235px!important;padding:20px 17px 17px 20px!important;}
   #package .flatPartCard .partHanzi{font-size:48px!important;}
   #package .flatPartCard strong{font-size:21px!important;}
   #package .flatPartCard .partArrow{width:42px!important;height:42px!important;}
+}
+@media (min-width:1200px) and (orientation:landscape){
+  #package #parts{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:16px!important;}
 }
 @media(max-width:599px){
   #package #parts{grid-template-columns:1fr!important;gap:14px!important;}
