@@ -141,7 +141,8 @@
     "media": {
       "questionImageSource": "question[3]",
       "groupImageSource": "reading_passage_media.H51007"
-    }
+    },
+    "uiModel": "hsk5_v1"
   },
   "instructions": {
     "listening": [
