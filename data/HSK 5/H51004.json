@@ -1158,52 +1158,7 @@
   },
   "schemaVersion": 2,
   "engineRules": {
-    "version": 1,
-    "model": "declarative",
-    "resolver": {
-      "strategy": "section_part_range",
-      "questionIdPath": "question[0]"
-    },
-    "questionShapes": {
-      "choice": {
-        "fields": {
-          "id": 0,
-          "prompt": 1,
-          "options": 2,
-          "answer": 3,
-          "transcript": 4
-        },
-        "interaction": "single_choice",
-        "optionsSource": "question[2]",
-        "answerSource": "question[3]"
-      },
-      "sequence": {
-        "fields": {
-          "id": 0,
-          "prompt": 1,
-          "acceptedAnswers": 2
-        },
-        "interaction": "sequence"
-      },
-      "writing_prompt": {
-        "fields": {
-          "id": 0,
-          "prompt": 1,
-          "answer": 2
-        },
-        "interaction": "text"
-      },
-      "picture_writing": {
-        "fields": {
-          "id": 0,
-          "prompt": 1,
-          "answer": 2,
-          "image": 3
-        },
-        "interaction": "text",
-        "mediaSource": "question[3]"
-      }
-    },
+    "version": "HSK5_UNIVERSAL_V2",
     "sections": {
       "listening": {
         "parts": [
@@ -1213,7 +1168,10 @@
               20
             ],
             "type": "choice",
-            "shape": "choice",
+            "input": "single_select",
+            "scoring": {
+              "mode": "exact_match"
+            },
             "instruction": "Dengarkan percakapan, lalu pilih jawaban yang paling tepat."
           },
           {
@@ -1222,7 +1180,10 @@
               45
             ],
             "type": "choice",
-            "shape": "choice",
+            "input": "single_select",
+            "scoring": {
+              "mode": "exact_match"
+            },
             "instruction": "Dengarkan percakapan atau bacaan, lalu pilih jawaban yang paling tepat."
           }
         ]
@@ -1236,12 +1197,16 @@
             ],
             "type": "fill_blank",
             "shape": "choice",
-            "instruction": "Pilih kata yang paling tepat untuk melengkapi kalimat.",
+            "input": "single_select",
             "group": {
               "type": "passage",
               "textSource": "reading_passages.H51004",
               "key": "questionRange"
-            }
+            },
+            "scoring": {
+              "mode": "exact_match"
+            },
+            "instruction": "Pilih kata yang paling tepat untuk melengkapi kalimat."
           },
           {
             "range": [
@@ -1250,6 +1215,10 @@
             ],
             "type": "choice",
             "shape": "choice",
+            "input": "single_select",
+            "scoring": {
+              "mode": "exact_match"
+            },
             "instruction": "Pilih jawaban yang paling sesuai dengan isi kalimat."
           },
           {
@@ -1259,14 +1228,17 @@
             ],
             "type": "choice",
             "shape": "choice",
-            "instruction": "Baca teks dengan saksama, lalu pilih jawaban yang paling sesuai dengan isi bacaan.",
             "group": {
               "type": "passage",
               "textSource": "reading_passages.H51004",
               "mediaSource": "reading_passage_media.H51004",
               "key": "questionRange"
             },
-            "input": "single_select"
+            "input": "single_select",
+            "scoring": {
+              "mode": "exact_match"
+            },
+            "instruction": "Baca teks dengan saksama, lalu pilih jawaban yang paling sesuai dengan isi bacaan."
           }
         ]
       },
@@ -1278,8 +1250,10 @@
               98
             ],
             "type": "sentence_ordering",
-            "shape": "sequence",
             "input": "ordering",
+            "scoring": {
+              "mode": "accepted_answer_match"
+            },
             "instruction": "Susun kata-kata yang diberikan menjadi kalimat yang benar."
           },
           {
@@ -1288,8 +1262,10 @@
               99
             ],
             "type": "guided_writing",
-            "shape": "writing_prompt",
             "input": "text",
+            "scoring": {
+              "mode": "manual"
+            },
             "instruction": "Gunakan kata yang diberikan untuk membuat kalimat yang benar."
           },
           {
@@ -1298,67 +1274,31 @@
               100
             ],
             "type": "picture_writing",
-            "shape": "picture_writing",
             "input": "text",
             "media": [
               "image"
             ],
-            "instruction": "Buat kalimat berdasarkan gambar."
+            "scoring": {
+              "mode": "manual"
+            },
+            "instruction": "Buat kalimat berdasarkan gambar.",
+            "mediaSource": "question[3]"
           }
         ]
       }
     },
-    "options": {
-      "source": "question[2]",
-      "labels": "derive",
-      "count": "dynamic"
-    },
+    "source": "H51004.pdf",
+    "source_authority": "PDF source supplied by user",
+    "audio": "not_embedded_in_source_pdf",
+    "writing_manual_grading": [
+      99,
+      100
+    ],
     "media": {
       "questionImageSource": "question[3]",
       "groupImageSource": "reading_passage_media.H51004"
     },
-    "scoring": {
-      "choice": "exact_match",
-      "fill_blank": "exact_match",
-      "sentence_ordering": "accepted_answer_match",
-      "guided_writing": "manual_or_non_binary",
-      "picture_writing": "manual_or_non_binary"
-    },
-    "writing": {
-      "parts": [
-        {
-          "range": "91-98",
-          "type": "sentence_ordering",
-          "input": "ordering",
-          "scoring": {
-            "auto": true
-          },
-          "instruction": "第91-98题：完成句子。"
-        },
-        {
-          "range": "99",
-          "type": "guided_writing",
-          "input": "text",
-          "scoring": {
-            "manual": true
-          },
-          "instruction": "第99题：请结合下列词语（要全部使用），写一篇80字左右的短文。"
-        },
-        {
-          "range": "100",
-          "type": "picture_writing",
-          "input": "text",
-          "media": [
-            "question[3]"
-          ],
-          "scoring": {
-            "manual": true
-          },
-          "instruction": "第100题：请结合这张图片写一篇80字左右的短文。",
-          "mediaSource": "question[3]"
-        }
-      ]
-    }
+    "uiModel": "hsk5_v1"
   },
   "reading_passage_media": {
     "H51004": {

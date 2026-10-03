@@ -52,10 +52,14 @@
             ],
             "type": "fill_blank",
             "shape": "choice",
+            "input": "single_select",
             "group": {
               "type": "passage",
               "textSource": "reading_passages.H51005",
               "key": "questionRange"
+            },
+            "scoring": {
+              "mode": "exact_match"
             },
             "instruction": "Pilih kata yang paling tepat untuk melengkapi kalimat."
           },
@@ -66,6 +70,10 @@
             ],
             "type": "choice",
             "shape": "choice",
+            "input": "single_select",
+            "scoring": {
+              "mode": "exact_match"
+            },
             "instruction": "Pilih jawaban yang paling sesuai dengan isi kalimat."
           },
           {
@@ -82,6 +90,9 @@
               "key": "questionRange"
             },
             "input": "single_select",
+            "scoring": {
+              "mode": "exact_match"
+            },
             "instruction": "Baca teks dengan saksama, lalu pilih jawaban yang paling sesuai dengan isi bacaan."
           }
         ]
@@ -142,41 +153,7 @@
       "questionImageSource": "question[3]",
       "groupImageSource": "reading_passage_media.H51005"
     },
-    "writing": {
-      "parts": [
-        {
-          "range": "91-98",
-          "type": "sentence_ordering",
-          "input": "ordering",
-          "scoring": {
-            "auto": true
-          },
-          "instruction": "第91-98题：完成句子。"
-        },
-        {
-          "range": "99",
-          "type": "guided_writing",
-          "input": "text",
-          "scoring": {
-            "manual": true
-          },
-          "instruction": "第99题：请结合下列词语（要全部使用），写一篇80字左右的短文。"
-        },
-        {
-          "range": "100",
-          "type": "picture_writing",
-          "input": "text",
-          "media": [
-            "question[3]"
-          ],
-          "scoring": {
-            "manual": true
-          },
-          "instruction": "第100题：请结合这张图片写一篇80字左右的短文。",
-          "mediaSource": "question[3]"
-        }
-      ]
-    }
+    "uiModel": "hsk5_v1"
   },
   "instructions": {
     "listening": [

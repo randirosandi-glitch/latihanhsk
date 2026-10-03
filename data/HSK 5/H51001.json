@@ -27,7 +27,7 @@
             "scoring": {
               "mode": "exact_match"
             },
-            "instruction": "第1-20题：请选出正确答案。"
+            "instruction": "Dengarkan percakapan, lalu pilih jawaban yang paling tepat."
           },
           {
             "range": [
@@ -39,7 +39,7 @@
             "scoring": {
               "mode": "exact_match"
             },
-            "instruction": "第21-45题：请选出正确答案。"
+            "instruction": "Dengarkan percakapan atau bacaan, lalu pilih jawaban yang paling tepat."
           }
         ]
       },
@@ -51,15 +51,17 @@
               60
             ],
             "type": "fill_blank",
+            "shape": "choice",
             "input": "single_select",
             "group": {
-              "type": "passage"
+              "type": "passage",
+              "textSource": "reading_passages.H51001",
+              "key": "questionRange"
             },
             "scoring": {
               "mode": "exact_match"
             },
-            "instruction": "第46-60题：请选出正确答案。",
-            "uiModel": "passage_cloze"
+            "instruction": "Pilih kata yang paling tepat untuk melengkapi kalimat."
           },
           {
             "range": [
@@ -67,27 +69,31 @@
               70
             ],
             "type": "choice",
+            "shape": "choice",
             "input": "single_select",
             "scoring": {
               "mode": "exact_match"
             },
-            "instruction": "第61-70题：请选出与试题内容一致的一项。"
+            "instruction": "Pilih jawaban yang paling sesuai dengan isi kalimat."
           },
           {
             "range": [
               71,
               90
             ],
-            "type": "passage_choice",
-            "input": "single_select",
+            "type": "choice",
+            "shape": "choice",
             "group": {
-              "type": "passage"
+              "type": "passage",
+              "textSource": "reading_passages.H51001",
+              "mediaSource": "reading_passage_media.H51001",
+              "key": "questionRange"
             },
+            "input": "single_select",
             "scoring": {
               "mode": "exact_match"
             },
-            "instruction": "第71-90题：请选出正确答案。",
-            "uiModel": "passage_choice"
+            "instruction": "Baca teks dengan saksama, lalu pilih jawaban yang paling sesuai dengan isi bacaan."
           }
         ]
       },
@@ -103,7 +109,7 @@
             "scoring": {
               "mode": "accepted_answer_match"
             },
-            "instruction": "第91-98题：完成句子。"
+            "instruction": "Susun kata-kata yang diberikan menjadi kalimat yang benar."
           },
           {
             "range": [
@@ -115,7 +121,7 @@
             "scoring": {
               "mode": "manual"
             },
-            "instruction": "第99题：请结合下列词语（要全部使用），写一篇80字左右的短文。"
+            "instruction": "Gunakan kata yang diberikan untuk membuat kalimat yang benar."
           },
           {
             "range": [
@@ -130,7 +136,8 @@
             "scoring": {
               "mode": "manual"
             },
-            "instruction": "第100题：请结合这张图片写一篇80字左右的短文。"
+            "instruction": "Buat kalimat berdasarkan gambar.",
+            "mediaSource": "question[3]"
           }
         ]
       }
@@ -142,42 +149,11 @@
       99,
       100
     ],
-    "uiModel": "hsk5_v1",
-    "writing": {
-      "parts": [
-        {
-          "range": "91-98",
-          "type": "sentence_ordering",
-          "input": "ordering",
-          "scoring": {
-            "auto": true
-          },
-          "instruction": "第91-98题：完成句子。"
-        },
-        {
-          "range": "99",
-          "type": "guided_writing",
-          "input": "text",
-          "scoring": {
-            "manual": true
-          },
-          "instruction": "第99题：请结合下列词语（要全部使用），写一篇80字左右的短文。"
-        },
-        {
-          "range": "100",
-          "type": "picture_writing",
-          "input": "text",
-          "media": [
-            "question[3]"
-          ],
-          "scoring": {
-            "manual": true
-          },
-          "instruction": "第100题：请结合这张图片写一篇80字左右的短文。",
-          "mediaSource": "question[3]"
-        }
-      ]
-    }
+    "media": {
+      "questionImageSource": "question[3]",
+      "groupImageSource": "reading_passage_media.H51001"
+    },
+    "uiModel": "hsk5_v1"
   },
   "instructions": {
     "listening": [
