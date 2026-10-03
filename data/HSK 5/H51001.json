@@ -1074,7 +1074,7 @@
   ],
   "writing": [
     {
-      "title": "书写第一部分",
+      "title": "书写 · 第一部分",
       "range": "91-98",
       "questions": [
         [
@@ -1120,7 +1120,7 @@
       ]
     },
     {
-      "title": "书写第二部分",
+      "title": "书写 · 第二部分",
       "range": "99",
       "questions": [
         [
@@ -1131,7 +1131,7 @@
       ]
     },
     {
-      "title": "书写第三部分",
+      "title": "书写 · 第三部分",
       "range": "100",
       "questions": [
         [
@@ -1213,8 +1213,7 @@
               20
             ],
             "type": "choice",
-            "shape": "choice",
-            "instruction": "Dengarkan percakapan, lalu pilih jawaban yang paling tepat."
+            "shape": "choice"
           },
           {
             "range": [
@@ -1222,8 +1221,7 @@
               45
             ],
             "type": "choice",
-            "shape": "choice",
-            "instruction": "Dengarkan percakapan atau bacaan, lalu pilih jawaban yang paling tepat."
+            "shape": "choice"
           }
         ]
       },
@@ -1240,8 +1238,7 @@
               "type": "passage",
               "textSource": "reading_passages.H51001",
               "key": "questionRange"
-            },
-            "instruction": "Pilih kata yang paling tepat untuk melengkapi kalimat."
+            }
           },
           {
             "range": [
@@ -1249,8 +1246,7 @@
               70
             ],
             "type": "choice",
-            "shape": "choice",
-            "instruction": "Pilih jawaban yang paling sesuai dengan isi kalimat."
+            "shape": "choice"
           },
           {
             "range": [
@@ -1265,8 +1261,7 @@
               "mediaSource": "reading_passage_media.H51001",
               "key": "questionRange"
             },
-            "input": "single_select",
-            "instruction": "Baca teks dengan saksama, lalu pilih jawaban yang paling sesuai dengan isi bacaan."
+            "input": "single_select"
           }
         ]
       },
@@ -1282,7 +1277,7 @@
             "scoring": {
               "mode": "accepted_answer_match"
             },
-            "instruction": "Susun kata-kata yang diberikan menjadi kalimat yang benar."
+            "instruction": "第91-98题：完成句子。"
           },
           {
             "range": [
@@ -1294,7 +1289,7 @@
             "scoring": {
               "mode": "manual"
             },
-            "instruction": "Gunakan kata yang diberikan untuk membuat kalimat yang benar."
+            "instruction": "第99题：请结合下列词语（要全部使用），写一篇80字左右的短文。"
           },
           {
             "range": [
@@ -1303,13 +1298,10 @@
             ],
             "type": "picture_writing",
             "input": "text",
-            "media": [
-              "image"
-            ],
             "scoring": {
               "mode": "manual"
             },
-            "instruction": "Buat kalimat berdasarkan gambar.",
+            "instruction": "第100题：请结合这张图片写一篇80字左右的短文。",
             "mediaSource": "question[3]"
           }
         ]
@@ -1390,16 +1382,5 @@
     "id": "H51001",
     "schema": "HSK5_UNIVERSAL_V2",
     "readyForLive": true
-  },
-  "writing_manual_grading": [
-    99,
-    100
-  ],
-  "instructions": {
-    "writing": [
-      "Susun kata-kata yang diberikan menjadi kalimat yang benar.",
-      "Gunakan kata yang diberikan untuk membuat kalimat yang benar.",
-      "Buat kalimat berdasarkan gambar."
-    ]
   }
 }
