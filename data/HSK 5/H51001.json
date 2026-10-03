@@ -1074,8 +1074,8 @@
   ],
   "writing": [
     {
-      "title": "书写 · 第一部分",
-      "range": "91–98",
+      "title": "书写第一部分",
+      "range": "91-98",
       "questions": [
         [
           "91",
@@ -1120,14 +1120,20 @@
       ]
     },
     {
-      "title": "书写 · 第二部分",
-      "range": "99–100",
+      "title": "书写第二部分",
+      "range": "99",
       "questions": [
         [
           "99",
           "请结合下列词语（要全部使用），写一篇80 字左右的短文。 结账、干脆、感谢、临时、海鲜",
           ""
-        ],
+        ]
+      ]
+    },
+    {
+      "title": "书写第三部分",
+      "range": "100",
+      "questions": [
         [
           "100",
           "请结合这张图片写一篇80 字左右的短文。",
@@ -1272,8 +1278,10 @@
               98
             ],
             "type": "sentence_ordering",
-            "shape": "sequence",
             "input": "ordering",
+            "scoring": {
+              "mode": "accepted_answer_match"
+            },
             "instruction": "Susun kata-kata yang diberikan menjadi kalimat yang benar."
           },
           {
@@ -1282,8 +1290,10 @@
               99
             ],
             "type": "guided_writing",
-            "shape": "writing_prompt",
             "input": "text",
+            "scoring": {
+              "mode": "manual"
+            },
             "instruction": "Gunakan kata yang diberikan untuk membuat kalimat yang benar."
           },
           {
@@ -1292,12 +1302,15 @@
               100
             ],
             "type": "picture_writing",
-            "shape": "picture_writing",
             "input": "text",
             "media": [
               "image"
             ],
-            "instruction": "Buat kalimat berdasarkan gambar."
+            "scoring": {
+              "mode": "manual"
+            },
+            "instruction": "Buat kalimat berdasarkan gambar.",
+            "mediaSource": "question[3]"
           }
         ]
       }
@@ -1381,5 +1394,12 @@
   "writing_manual_grading": [
     99,
     100
-  ]
+  ],
+  "instructions": {
+    "writing": [
+      "Susun kata-kata yang diberikan menjadi kalimat yang benar.",
+      "Gunakan kata yang diberikan untuk membuat kalimat yang benar.",
+      "Buat kalimat berdasarkan gambar."
+    ]
+  }
 }
