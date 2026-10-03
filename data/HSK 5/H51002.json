@@ -3,18 +3,1207 @@
   "title": "HSK 5 · H51002",
   "level": 5,
   "totalQuestions": 100,
-  "schemaVersion": 2,
-  "source": {
-    "file": "H51002.pdf",
-    "pages": "1-25",
-    "answerKeyPages": [
-      24,
-      25
-    ],
-    "authority": "PDF source supplied by user"
+  "listening": [
+    {
+      "title": "听力 · 第一部分",
+      "range": "1–20",
+      "questions": [
+        [
+          "1",
+          "关于小刘，可以知道什么？",
+          [
+            "是律师",
+            "身体很好",
+            "现在在医院",
+            "休息一周了"
+          ],
+          "C",
+          "1．女：小刘，身体恢复得怎么样了？\n男：好多了，大夫说下周就可以出院了。\n问：关于小刘，可以知道什么？"
+        ],
+        [
+          "2",
+          "男的明天要去哪儿？",
+          [
+            "车展会",
+            "图书馆",
+            "博物馆",
+            "动物园"
+          ],
+          "A",
+          "2．男：明天下午有个车展，我们去看，你呢？\n女：我还在犹豫，下午有个讲座，我很想去听听。\n问：男的明天要去哪儿？"
+        ],
+        [
+          "3",
+          "他们在谈什么？",
+          [
+            "健康",
+            "服装",
+            "计算机",
+            "传染病"
+          ],
+          "C",
+          "3．女：我的电脑速度特别慢，是不是中病毒了？\n男：有可能，我检查一下看看。\n问：他们在谈什么？"
+        ],
+        [
+          "4",
+          "男的是做什么工作的？",
+          [
+            "演员",
+            "作家",
+            "班主任",
+            "主持人"
+          ],
+          "D",
+          "4．男：观众朋友们，让我们以热烈的掌声欢迎今天的嘉宾张阳女士。\n女：大家好！很荣幸能够参加《有话好好说》这个节目。\n问：男的是做什么工作的？"
+        ],
+        [
+          "5",
+          "男的怎么了？",
+          [
+            "感冒了",
+            "鼻子过敏",
+            "刚做手术",
+            "嗓子不舒服"
+          ],
+          "B",
+          "5．女：你感冒了吗？怎么一直打喷嚏。\n男：没有，我鼻子有点儿过敏。\n问：男的怎么了？"
+        ],
+        [
+          "6",
+          "他们准备几点见面？",
+          [
+            "6 点",
+            "6 点半",
+            "7 点",
+            "7 点半"
+          ],
+          "A",
+          "6．男：电影是晚上七点的，我开车去接你吧，大概六点到你们公司。\n女：行，我们就在楼下门口见。\n问：他们准备几点见面？"
+        ],
+        [
+          "7",
+          "男的主要是什么意思？",
+          [
+            "要认真准备",
+            "不用太紧张",
+            "以后要多练习",
+            "打算不参加会议了"
+          ],
+          "B",
+          "7．女：明天要在总结会上发言，我还是觉得自己准备得不够。\n男：放松点儿，你又不是第一次发言。\n问：男的主要是什么意思？"
+        ],
+        [
+          "8",
+          "爷爷年轻时喜欢什么？",
+          [
+            "读书",
+            "养花",
+            "体育运动",
+            "文学艺术"
+          ],
+          "C",
+          "8．男：奶奶，爷爷年轻时就喜欢钓鱼吗？\n女：他年轻时喜欢运动，爱打篮球，踢足球，现在年纪大了，才开始喜欢上钓鱼。\n问：爷爷年轻时喜欢什么？"
+        ],
+        [
+          "9",
+          "男的是什么建议？",
+          [
+            "买几盆花",
+            "挂几幅画",
+            "多买些书",
+            "房子该装修了"
+          ],
+          "A",
+          "9．女：你觉得在书房里挂几幅字画儿怎么样？\n男：我觉得买几盆花放这里比较好。\n问：男的是什么建议？"
+        ],
+        [
+          "10",
+          "女的为什么要表示抱歉？",
+          [
+            "迷路了",
+            "迟到了",
+            "交通拥挤",
+            "飞机没按时起飞"
+          ],
+          "D",
+          "10．男：已经一个多小时了，我们还要等多久？\n女：因为有大雾，所有航班目前都不能起飞。耽误了您宝贵的时间，非常抱歉！\n问：女的为什么要表示抱歉？"
+        ],
+        [
+          "11",
+          "男的最可能是做什么的？",
+          [
+            "司机",
+            "记者",
+            "医生",
+            "售票员"
+          ],
+          "B",
+          "11．女：一年中你有五六个月在外地跑，真是太辛苦了。\n男：还行，可以接触、采访各种各样的人，也挺有意思的。\n问：男的最可能是做什么的？"
+        ],
+        [
+          "12",
+          "他们打算联系谁？",
+          [
+            "房东",
+            "公司秘书",
+            "接受采访的人",
+            "要买房子的人"
+          ],
+          "A",
+          "12．男：我觉得今天看的那个房子条件还可以，你说呢？\n女：还行吧。那明天你再联系一下他，咱们租下来吧。\n问：他们打算联系谁？"
+        ],
+        [
+          "13",
+          "体检的事怎么样了？",
+          [
+            "取消了",
+            "推迟了",
+            "换别的地方了",
+            "还没定具体日期"
+          ],
+          "D",
+          "13．女：经理，今年公司什么时候组织集体体检呢？\n男：可能安排在九月了，只是还没确定具体哪天。\n问：体检的事怎么样了？"
+        ],
+        [
+          "14",
+          "现在是哪个季节？",
+          [
+            "春季",
+            "夏季",
+            "秋季",
+            "冬季"
+          ],
+          "A",
+          "14．男：今年的天气不太正常，都春天了，怎么还下雪？\n女：刚看电视上天气预报说，最近还有一股冷空气要来。\n问：现在是哪个季节？"
+        ],
+        [
+          "15",
+          "男的正在做什么？",
+          [
+            "取钱",
+            "买东西",
+            "修理机器",
+            "办信用卡"
+          ],
+          "B",
+          "15．女：这个柜台的机器坏了，请您到旁边柜台结账，实在对不起。\n男：没关系，这边可以用信用卡吗？\n问：男的正在做什么？"
+        ],
+        [
+          "16",
+          "女的是什么态度？",
+          [
+            "赞成",
+            "反对",
+            "无所谓",
+            "再考虑考虑"
+          ],
+          "B",
+          "16．男：我想拿几万块钱投资股市，你知道哪支股票好吗？\n女：我不建议你买股票，股市风险很大。\n问：女的是什么态度？"
+        ],
+        [
+          "17",
+          "为什么还要再等几分钟？",
+          [
+            "文件很大",
+            "光盘有问题",
+            "需要别人帮忙",
+            "现在不能下载"
+          ],
+          "A",
+          "17．女：你把资料都复制到光盘上了吗？\n男：正在复制呢，文件太大了，可能还得再等几分钟。\n问：为什么还要再等几分钟？"
+        ],
+        [
+          "18",
+          "女的是什么意思？",
+          [
+            "后天发货",
+            "还没签字",
+            "刚拿到合同",
+            "货会按时到"
+          ],
+          "D",
+          "18．男：我想确认一下，那批货后天可以送到吧？\n女：是的，我们已经按照合同上要求的日期发货了，您放心，后天肯定能到。\n问：女的是什么意思？"
+        ],
+        [
+          "19",
+          "男的的论文怎么样了？",
+          [
+            "还在修改",
+            "已经交了",
+            "已经发表了",
+            "刚完成一半儿"
+          ],
+          "A",
+          "19．女：我上午把毕业论文交上去了，你呢？\n男：我还没修改完，后天估计差不多。最晚什么时候交？\n问：男的的论文怎么样了？"
+        ],
+        [
+          "20",
+          "男的晚上要做什么？",
+          [
+            "购物",
+            "参加研讨会",
+            "看京剧表演",
+            "送客户去机场"
+          ],
+          "C",
+          "20．男：我听听你的意见，你说我晚上还系领带吗？\n女：你只是陪客户去看京剧表演，穿休闲点儿，不用系。\n问：男的晚上要做什么？"
+        ]
+      ]
+    },
+    {
+      "title": "听力 · 第二部分",
+      "range": "21–45",
+      "questions": [
+        [
+          "21",
+          "女的有什么打算？",
+          [
+            "上大学",
+            "考研究生",
+            "出国留学",
+            "参加工作"
+          ],
+          "C",
+          "21．女：爸，我不想读研究生了。\n男：怎么了？你不是考得很好吗？想参加工作了？\n女：我想出国留学，您会反对吗？\n男：正好相反，我会尊重你的选择。\n问：女的有什么打算？"
+        ],
+        [
+          "22",
+          "照相机怎么了？",
+          [
+            "坏了",
+            "丢了",
+            "掉水里了",
+            "快没电了"
+          ],
+          "D",
+          "22．男：这照相机怎么坏了？打开就自动关机。\n女：不会。是快没电了，一会儿回房间充上电就好了。\n男：充电器带了吗？\n女：当然带了，不然这几天我们怎么拍照？\n问：照相机怎么了？"
+        ],
+        [
+          "23",
+          "那份文件现在在哪儿？",
+          [
+            "公司",
+            "家里",
+            "出租车上",
+            "公共汽车上"
+          ],
+          "B",
+          "23．女：喂？你帮我看一下，我昨天带回家的那份文件是不是在桌子上？\n男：我看一下，在，怎么了？\n女：太好了。刚才吓死我了，我以为把它丢在出租车上了。\n男：你能不能小心点儿啊！要我帮你送过去吗？\n女：不用了，我中午回去取吧。\n问：那份文件现在在哪儿？"
+        ],
+        [
+          "24",
+          "男的要应聘哪个部门？",
+          [
+            "人事",
+            "销售",
+            "研发",
+            "法律"
+          ],
+          "B",
+          "24．男：小姐，你好，我是来应聘的。\n女：请问您叫什么名字，应聘哪个部门？\n男：我叫李明，应聘销售经理。是王小姐让我下午两点半来面试的。\n女：好，我带你过去。请这边走。\n问：男的要应聘哪个部门？"
+        ],
+        [
+          "25",
+          "营业执照什么时候能办下来？",
+          [
+            "10 天后",
+            "这个月中旬",
+            "下个月中旬",
+            "下个月底"
+          ],
+          "C",
+          "25．女：成立公司的事办得怎么样了？\n男：别提了，办理营业执照的手续比我想的复杂。\n女：那估计什么时候能办下来？\n男：本来以为这个月底可以，现在看要等到下月中旬了。\n问：营业执照什么时候能办下来？"
+        ],
+        [
+          "26",
+          "女的觉得炸鸡腿儿怎么样？",
+          [
+            "有营养",
+            "不好闻",
+            "是垃圾食品",
+            "味道非常好"
+          ],
+          "C",
+          "26．男：今天中午我吃炸鸡腿儿了，真好吃。\n女：少吃油炸食品，那是垃圾食品，对健康没什么好处。\n男：我知道，可还是忍不住，中午闻到那个香味儿就要流口水。\n女：以后还是少吃吧。\n问：女的觉得炸鸡腿儿怎么样？"
+        ],
+        [
+          "27",
+          "男的最近在忙什么？",
+          [
+            "结婚",
+            "搬家",
+            "买汽车",
+            "装修房子"
+          ],
+          "D",
+          "27．女：房子装修好了吗？\n男：快好了，这几天准备去买家具。\n女：窗帘选好了吗？我知道有一家店的窗帘做得很不错，你去看看？\n男：谢谢您，一会儿您把地址给我，我周末去看看。\n问：男的最近在忙什么？"
+        ],
+        [
+          "28",
+          "男的为什么要回家？",
+          [
+            "父亲过生日",
+            "要过春节了",
+            "单位放假了",
+            "要去接孩子"
+          ],
+          "A",
+          "28．男：我打算下周五回一趟家，我爸爸过生日。\n女：你买票了吗？马上要到春节了，票可不好买。\n男：我开车回，走高速公路，三个小时就到家了。\n女：要注意安全。\n问：男的为什么要回家？"
+        ],
+        [
+          "29",
+          "关于女的，下列哪项正确？",
+          [
+            "待遇比较低",
+            "最近刚辞职",
+            "新开了一家公司",
+            "需要计算机方面的人才"
+          ],
+          "D",
+          "29．女：你身边有计算机方面的人才吗？\n男：怎么了？你们公司的小刘不是很厉害吗？\n女：他上个星期辞职了，可能是自己也开公司了。\n男：我帮你问问，我有一个朋友是计算机系毕业的，正在找工作。\n问：关于女的，下列哪项正确？"
+        ],
+        [
+          "30",
+          "说话人现在在哪里？",
+          [
+            "医院",
+            "宾馆",
+            "火车站",
+            "游泳馆"
+          ],
+          "B",
+          "30．男：你好，我前天订了一个标准间，我姓王。\n女：您稍等，我查一下。王先生，您是从北京来的？\n男：对。\n女：请出示一下您的身份证，我给您办理入住手续。\n问：说话人现在在哪里？"
+        ],
+        [
+          "31",
+          "兔子是怎么死的？",
+          [
+            "饿死的",
+            "撞死的",
+            "摔死的",
+            "被农民打死的"
+          ],
+          "B",
+          "古时候，有个农民正在田里劳动。突然，他看见一只兔子从旁边的草丛里慌慌张张地跑出来，一头撞在田边的大树上，便倒在那儿一动也不动了。农民走过去一看：兔子死了。因为它奔跑的速度太快，把脖子都撞断了。农民高兴极了，他一点儿力气没花，就白捡了一只又肥又大的兔子。他心想：要是天天都能捡到兔子，那日子就好过了。从此，他再也不肯出力气劳动了。每天他吃完饭就躺在大树底下，等待着第二只、第三只兔子自己撞到树上来。世上哪有那么多便宜的事啊。这个农民当然再也没有捡到撞死的兔子，而他的田里也没有收获任何粮食，农民只好饿着肚子过年了。\n31．兔子是怎么死的？"
+        ],
+        [
+          "32",
+          "农民为什么不去田里劳动了？",
+          [
+            "他受伤了",
+            "冬天来了",
+            "他养了很多兔子",
+            "以为还可以捡到兔子"
+          ],
+          "D",
+          "古时候，有个农民正在田里劳动。突然，他看见一只兔子从旁边的草丛里慌慌张张地跑出来，一头撞在田边的大树上，便倒在那儿一动也不动了。农民走过去一看：兔子死了。因为它奔跑的速度太快，把脖子都撞断了。农民高兴极了，他一点儿力气没花，就白捡了一只又肥又大的兔子。他心想：要是天天都能捡到兔子，那日子就好过了。从此，他再也不肯出力气劳动了。每天他吃完饭就躺在大树底下，等待着第二只、第三只兔子自己撞到树上来。世上哪有那么多便宜的事啊。这个农民当然再也没有捡到撞死的兔子，而他的田里也没有收获任何粮食，农民只好饿着肚子过年了。\n32．农民为什么不去田里劳动了？"
+        ],
+        [
+          "33",
+          "这个故事主要想告诉我们什么？",
+          [
+            "要注意观察",
+            "运气很重要",
+            "坚持才能得胜利",
+            "世上没有免费的午餐"
+          ],
+          "D",
+          "古时候，有个农民正在田里劳动。突然，他看见一只兔子从旁边的草丛里慌慌张张地跑出来，一头撞在田边的大树上，便倒在那儿一动也不动了。农民走过去一看：兔子死了。因为它奔跑的速度太快，把脖子都撞断了。农民高兴极了，他一点儿力气没花，就白捡了一只又肥又大的兔子。他心想：要是天天都能捡到兔子，那日子就好过了。从此，他再也不肯出力气劳动了。每天他吃完饭就躺在大树底下，等待着第二只、第三只兔子自己撞到树上来。世上哪有那么多便宜的事啊。这个农民当然再也没有捡到撞死的兔子，而他的田里也没有收获任何粮食，农民只好饿着肚子过年了。\n33．这个故事主要想告诉我们什么？"
+        ],
+        [
+          "34",
+          "乒乓球在中国有多少年的历史？",
+          [
+            "70 多年",
+            "90 多年",
+            "100 多年",
+            "300 多年"
+          ],
+          "A",
+          "说起乒乓球，很多人都会想到中国。的确，长期以来，中国的乒乓球水平在国际上是属于最好的，而且中国是世界上“乒乓人口”最多的国家。因此，很多人认为乒乓球运动是中国人最早开始的，但事实上乒乓球运动在中国只有七十多年的历史。最初的乒乓球其实是英国人发明的一项饭后运动。十九世纪末，英国上层社会的人们吃完饭之后需要适当的运动来消化一下，于是他们就发明了一种在饭桌上进行的和网球相似的运动，称为“桌上网球”，这就是乒乓球最早的形式。\n34．乒乓球在中国有多少年的历史？"
+        ],
+        [
+          "35",
+          "乒乓球运动是谁发明的？",
+          [
+            "英国人",
+            "法国人",
+            "美国人",
+            "中国人"
+          ],
+          "A",
+          "说起乒乓球，很多人都会想到中国。的确，长期以来，中国的乒乓球水平在国际上是属于最好的，而且中国是世界上“乒乓人口”最多的国家。因此，很多人认为乒乓球运动是中国人最早开始的，但事实上乒乓球运动在中国只有七十多年的历史。最初的乒乓球其实是英国人发明的一项饭后运动。十九世纪末，英国上层社会的人们吃完饭之后需要适当的运动来消化一下，于是他们就发明了一种在饭桌上进行的和网球相似的运动，称为“桌上网球”，这就是乒乓球最早的形式。\n35．乒乓球运动是谁发明的？"
+        ],
+        [
+          "36",
+          "最初人们在哪儿打乒乓球？",
+          [
+            "工厂",
+            "饭桌上",
+            "网球场",
+            "办公室"
+          ],
+          "B",
+          "说起乒乓球，很多人都会想到中国。的确，长期以来，中国的乒乓球水平在国际上是属于最好的，而且中国是世界上“乒乓人口”最多的国家。因此，很多人认为乒乓球运动是中国人最早开始的，但事实上乒乓球运动在中国只有七十多年的历史。最初的乒乓球其实是英国人发明的一项饭后运动。十九世纪末，英国上层社会的人们吃完饭之后需要适当的运动来消化一下，于是他们就发明了一种在饭桌上进行的和网球相似的运动，称为“桌上网球”，这就是乒乓球最早的形式。\n36．最初人们在哪儿打乒乓球？"
+        ],
+        [
+          "37",
+          "关于售货员，可以知道什么？",
+          [
+            "很生气",
+            "很开心",
+            "服务热情",
+            "服务态度不好"
+          ],
+          "D",
+          "一天，一位画家带着朋友去自己家附近的商店买东西，付款的时候，他礼貌地对售货员说了声：“谢谢。”但售货员却一直不开心，没有理画家。他们走出商店时，朋友说：“那个售货员的服务态度真差劲。”画家对朋友说：“他每天都是这样。”朋友说：“既然他都每天这样，那你为什么还对他那么有礼貌呢？”画家回答：“我为什么要让他的态度来决定我的行为呢？”\n37．关于售货员，可以知道什么？"
+        ],
+        [
+          "38",
+          "画家是怎么做的？",
+          [
+            "没有买东西",
+            "批评了售货员",
+            "没有理售货员",
+            "对售货员很礼貌"
+          ],
+          "D",
+          "一天，一位画家带着朋友去自己家附近的商店买东西，付款的时候，他礼貌地对售货员说了声：“谢谢。”但售货员却一直不开心，没有理画家。他们走出商店时，朋友说：“那个售货员的服务态度真差劲。”画家对朋友说：“他每天都是这样。”朋友说：“既然他都每天这样，那你为什么还对他那么有礼貌呢？”画家回答：“我为什么要让他的态度来决定我的行为呢？”\n38．画家是怎么做的？"
+        ],
+        [
+          "39",
+          "画家的主要观点是什么？",
+          [
+            "要乐于助人",
+            "要体谅别人",
+            "细节决定成败",
+            "坚持自己的行为方式"
+          ],
+          "D",
+          "一天，一位画家带着朋友去自己家附近的商店买东西，付款的时候，他礼貌地对售货员说了声：“谢谢。”但售货员却一直不开心，没有理画家。他们走出商店时，朋友说：“那个售货员的服务态度真差劲。”画家对朋友说：“他每天都是这样。”朋友说：“既然他都每天这样，那你为什么还对他那么有礼貌呢？”画家回答：“我为什么要让他的态度来决定我的行为呢？”\n39．画家的主要观点是什么？"
+        ],
+        [
+          "40",
+          "本次大赛的主题是什么？",
+          [
+            "公开、公平",
+            "青春、时尚",
+            "自由、快乐",
+            "精彩、浪漫"
+          ],
+          "B",
+          "本次时装设计大赛的主题是青春、时尚，参加比赛的设计师要求年龄在二十五岁以下，设计师可以充分自由发挥自己的想象力和创造力，体现自己的个性。整个大赛本着公开、公平的原则进行，所有设计师的作品将被放在网上，由网友打分，评选出最佳设计奖，评选结果于四月十五日公布。具体的比赛规则和报名方法见网上的“报名须知”。\n40．本次大赛的主题是什么？"
+        ],
+        [
+          "41",
+          "参赛作品由谁来评分？",
+          [
+            "导演",
+            "网友",
+            "设计师",
+            "大学生"
+          ],
+          "B",
+          "本次时装设计大赛的主题是青春、时尚，参加比赛的设计师要求年龄在二十五岁以下，设计师可以充分自由发挥自己的想象力和创造力，体现自己的个性。整个大赛本着公开、公平的原则进行，所有设计师的作品将被放在网上，由网友打分，评选出最佳设计奖，评选结果于四月十五日公布。具体的比赛规则和报名方法见网上的“报名须知”。\n41．参赛作品由谁来评分？"
+        ],
+        [
+          "42",
+          "关于这次比赛，可以知道什么？",
+          [
+            "刚刚结束",
+            "是体育比赛",
+            "4 月公布结果",
+            "主要面向中老年人"
+          ],
+          "C",
+          "本次时装设计大赛的主题是青春、时尚，参加比赛的设计师要求年龄在二十五岁以下，设计师可以充分自由发挥自己的想象力和创造力，体现自己的个性。整个大赛本着公开、公平的原则进行，所有设计师的作品将被放在网上，由网友打分，评选出最佳设计奖，评选结果于四月十五日公布。具体的比赛规则和报名方法见网上的“报名须知”。\n42．关于这次比赛，可以知道什么？"
+        ],
+        [
+          "43",
+          "根据这段话，制定健身计划时要注意什么？",
+          [
+            "饮食",
+            "运动量",
+            "费用标准",
+            "个人爱好"
+          ],
+          "D",
+          "在制定个人健身计划时，一定要包含自己喜欢的、或者觉得有趣的、或者至少不讨厌的运动。如果你不喜欢慢跑，总觉得慢跑过程很无聊，但为了减肥不得不制定慢跑运动计划，那样的话，我敢打赌你肯定坚持不下去。所以，对于健身新手来说，最好以自己喜欢的运动为中心，再逐步增加其他必要的健身项目，这样的健身计划才更容易实行。\n43．根据这段话，制定健身计划时要注意什么？"
+        ],
+        [
+          "44",
+          "根据这段话，下列哪项正确？",
+          [
+            "减肥有害健康",
+            "饭前不要运动",
+            "做自己喜欢的运动",
+            "很多人不喜欢慢跑"
+          ],
+          "C",
+          "在制定个人健身计划时，一定要包含自己喜欢的、或者觉得有趣的、或者至少不讨厌的运动。如果你不喜欢慢跑，总觉得慢跑过程很无聊，但为了减肥不得不制定慢跑运动计划，那样的话，我敢打赌你肯定坚持不下去。所以，对于健身新手来说，最好以自己喜欢的运动为中心，再逐步增加其他必要的健身项目，这样的健身计划才更容易实行。\n44．根据这段话，下列哪项正确？"
+        ],
+        [
+          "45",
+          "这段话主要谈什么？",
+          [
+            "慢跑的作用",
+            "减肥的方法",
+            "怎样制定健身计划",
+            "如何缓解工作压力"
+          ],
+          "C",
+          "在制定个人健身计划时，一定要包含自己喜欢的、或者觉得有趣的、或者至少不讨厌的运动。如果你不喜欢慢跑，总觉得慢跑过程很无聊，但为了减肥不得不制定慢跑运动计划，那样的话，我敢打赌你肯定坚持不下去。所以，对于健身新手来说，最好以自己喜欢的运动为中心，再逐步增加其他必要的健身项目，这样的健身计划才更容易实行。\n45．这段话主要谈什么？"
+        ]
+      ]
+    }
+  ],
+  "reading": [
+    {
+      "title": "阅读 · 第一部分",
+      "range": "46–60",
+      "questions": [
+        [
+          "46",
+          "请选择最合适的词语填入空格。",
+          [
+            "反复",
+            "分别",
+            "互相",
+            "仍然"
+          ],
+          "B"
+        ],
+        [
+          "47",
+          "请选择最合适的词语填入空格。",
+          [
+            "现象",
+            "规则",
+            "道理",
+            "项目"
+          ],
+          "A"
+        ],
+        [
+          "48",
+          "请选择最合适的词语填入空格。",
+          [
+            "肚子",
+            "抽屉",
+            "物质",
+            "粮食"
+          ],
+          "A"
+        ],
+        [
+          "49",
+          "请选择最合适的词语填入空格。",
+          [
+            "想像",
+            "观察",
+            "思考",
+            "幻想"
+          ],
+          "C"
+        ],
+        [
+          "50",
+          "请选择最合适的词语填入空格。",
+          [
+            "表现",
+            "包含",
+            "保持",
+            "采取"
+          ],
+          "B"
+        ],
+        [
+          "51",
+          "请选择最合适的词语填入空格。",
+          [
+            "当你加班的时候",
+            "一次重要的考试结束后",
+            "有时候我们会梦见参加考试",
+            "如果你梦到和朋友去郊区旅游"
+          ],
+          "C"
+        ],
+        [
+          "52",
+          "请选择最合适的词语填入空格。",
+          [
+            "面临",
+            "逃避",
+            "参考",
+            "承担"
+          ],
+          "A"
+        ],
+        [
+          "53",
+          "请选择最合适的词语填入空格。",
+          [
+            "忍不住",
+            "怪不得",
+            "舍不得",
+            "说不定"
+          ],
+          "A"
+        ],
+        [
+          "54",
+          "请选择最合适的词语填入空格。",
+          [
+            "总共",
+            "全面",
+            "整个",
+            "完整"
+          ],
+          "C"
+        ],
+        [
+          "55",
+          "请选择最合适的词语填入空格。",
+          [
+            "愿望",
+            "运气",
+            "气氛",
+            "原则"
+          ],
+          "B"
+        ],
+        [
+          "56",
+          "请选择最合适的词语填入空格。",
+          [
+            "想让别人爱你",
+            "每个人都需要快乐",
+            "尊重别人就是尊重自己",
+            "不管别人喜欢不喜欢你"
+          ],
+          "A"
+        ],
+        [
+          "57",
+          "请选择最合适的词语填入空格。",
+          [
+            "掌握",
+            "阻止",
+            "迎接",
+            "控制"
+          ],
+          "C"
+        ],
+        [
+          "58",
+          "请选择最合适的词语填入空格。",
+          [
+            "最想感谢谁",
+            "一定十分激动吧",
+            "准备用它来做什么",
+            "是否考虑换一辆车"
+          ],
+          "C"
+        ],
+        [
+          "59",
+          "请选择最合适的词语填入空格。",
+          [
+            "执照",
+            "文件",
+            "支票",
+            "合同"
+          ],
+          "A"
+        ],
+        [
+          "60",
+          "请选择最合适的词语填入空格。",
+          [
+            "抢",
+            "逃",
+            "瞧",
+            "滚"
+          ],
+          "B"
+        ]
+      ]
+    },
+    {
+      "title": "阅读 · 第二部分",
+      "range": "61–70",
+      "questions": [
+        [
+          "61",
+          "很多父母在教育孩子时往往都有自己的许多主张，而且都非常有道理。但是在实际生活中，他们又往往不能按照那些主张去做，他们的理由很简单：工作太忙，实在没有时间。",
+          [
+            "小孩子有很多想法",
+            "教育孩子其实很简单",
+            "许多家长没时间教育孩子",
+            "许多父母不知道该怎么教育孩子"
+          ],
+          "C"
+        ],
+        [
+          "62",
+          "甲骨文大约产生于商周之际，是目前发现的中国最为古老的文字，它记录了大约3000 年前中国人祖先的活动。但由于甲骨文是比较成熟的文字，所以专家们认为，中国文字产生的年代实际应该要更久远一些。",
+          [
+            "中国人创造了甲骨文",
+            "甲骨文产生于商周之前",
+            "甲骨文产生于公元前3000 年",
+            "甲骨文不是真正意义上的文字"
+          ],
+          "A"
+        ],
+        [
+          "63",
+          "按照饮食特点分，中国主要有四大菜系，即川菜、鲁菜、淮菜和粤菜。当然，其中最有名的，还是大家熟悉的川菜。川菜的突出特点是麻和辣，最正宗的川菜是成都和重庆两地的菜肴。如今川菜馆早已遍布世界各地，受到了人们的广泛欢迎。",
+          [
+            "川菜口味清淡",
+            "重庆菜属于川菜",
+            "中国菜的特点是麻和辣",
+            "成都和重庆两地才有川菜"
+          ],
+          "B"
+        ],
+        [
+          "64",
+          "古时候，某人想向一个财主借牛，于是派人给财主送去一封借牛的信。财主正陪着客人聊天儿，他怕客人知道自己不识字，便假装在看信。他一边看，一边不住地点头，然后抬头对来人说：“知道了，过一会儿我自己去好了。”",
+          [
+            "财主家没牛",
+            "财主没看懂信",
+            "信写得很简单",
+            "财主亲自把牛给送去了"
+          ],
+          "B"
+        ],
+        [
+          "65",
+          "赛龙舟是中国民间传统的水上体育娱乐项目，已流传两千多年，多是在喜庆节日举行，是多人集体划桨竞赛。中国各民族的龙舟赛略有不同，龙舟的大小也因地而异。汉族多在每年“端午节”举行比赛，船长一般为20 到30 米，每艘船上约30 名水手。",
+          [
+            "端午节才会赛龙舟",
+            "赛龙舟是双人比赛",
+            "赛龙舟属于集体项目",
+            "赛龙舟是汉族特有的"
+          ],
+          "C"
+        ],
+        [
+          "66",
+          "现在，如果要问人们选择职业时主要考虑的是什么，有相当一部分人会以收入多少作为标准。当然，也有人主要看自己是否喜欢这份工作。也许，最理想的情况是能找到一份既让人喜欢又有较多收入的职业。可惜的是，这种情况在生活中并不能经常遇到。",
+          [
+            "现在人们经常换工作",
+            "人们找工作的标准不同",
+            "喜欢的才是最好的工作",
+            "找一份满意的工作并不难"
+          ],
+          "B"
+        ],
+        [
+          "67",
+          "世界上最早的地图是1973 年12 月在湖南长沙马王堆出土的，那是三幅汉代的彩色帛绘地图，距今2100 多年。图上绘制着今天湖南、广东、广西三省的交界地区。令人惊奇的是，图中绘有大小河流、山脉、城镇30 余处，与今天的地图基本相同。",
+          [
+            "那些地图用于军事",
+            "最早的地图是黑白的",
+            "那三幅地图是汉朝的",
+            "地图的内容已经模糊"
+          ],
+          "C"
+        ],
+        [
+          "68",
+          "早在一个多世纪以前的小说里，人类就开始在火星上散步了，然而直到今天，这还只是个设想。但许多人坚信，问题不是人类能不能登上火星，而是在什么时候、通过什么方式到达那里。就目前的情况看，火星是最有可能成为人类第二家园的地方。因为在所有太阳系的行星中，火星的环境与地球最相像。",
+          [
+            "登上火星的办法很多",
+            "人类对火星的兴趣不大",
+            "人们对登上火星缺乏信心",
+            "人类未来有可能居住在火星上"
+          ],
+          "D"
+        ],
+        [
+          "69",
+          "国画，又称“中国画”，是中国传统绘画。工具和材料有毛笔、墨、国画颜料、绢等，题材可分人物、山水、花鸟等。人物画所表现的是人类社会，人与人的关系；山水画所表现的是人与自然的关系，将人与自然融为一体；花鸟画则是表现大自然的各种生命，与人和谐相处。",
+          [
+            "中国画关注人与自然",
+            "国画的表现手法夸张",
+            "国画是传统与现代的结合",
+            "山水画表现人与人的关系"
+          ],
+          "A"
+        ],
+        [
+          "70",
+          "一位著名的作家在外旅游，来到一座城市，决定去参观这个城市最大的书店。听到这个消息，书店的老板想做点儿让这位作家高兴的事情。于是，他在所有的书架上全摆满了这位作家的著作。作家走进书店，见书架上全是自己的书，很吃惊。“其他人的书呢？”他迷惑不解地问。“其他人的书？”书店老板一时不知所措，信口说道：“全……全都卖完了。”",
+          [
+            "书店老板很幽默",
+            "作家的书被卖光了",
+            "这家书店规模不大",
+            "书店老板闹了个笑话"
+          ],
+          "D"
+        ]
+      ]
+    },
+    {
+      "title": "阅读 · 第三部分",
+      "range": "71–90",
+      "questions": [
+        [
+          "71",
+          "“80 后”指的是哪些人？",
+          [
+            "年轻人",
+            "30 岁以上的人",
+            "80 年代出生的人",
+            "80 年代参加工作的人"
+          ],
+          "C"
+        ],
+        [
+          "72",
+          "“1980”们无房无车的比例为：",
+          [
+            "30%",
+            "31.2%",
+            "47.9%",
+            "50%"
+          ],
+          "C"
+        ],
+        [
+          "73",
+          "“80 后”的压力主要来自哪里？",
+          [
+            "收入",
+            "婚姻",
+            "年龄",
+            "情感"
+          ],
+          "A"
+        ],
+        [
+          "74",
+          "下列哪项最适合做上文的标题？",
+          [
+            "年轻的“80 后”",
+            "“80 后”的无奈",
+            "失去信心的“80 后”",
+            "“80 后”的幸福生活"
+          ],
+          "B"
+        ],
+        [
+          "75",
+          "今年公司怎么样？",
+          [
+            "发展得不错",
+            "挣的钱不多",
+            "要给工人发糖",
+            "要发两个月的奖金"
+          ],
+          "B"
+        ],
+        [
+          "76",
+          "根据经理小时候买糖的情况，可以知道：",
+          [
+            "服务员给的重量不够",
+            "服务员一块儿一块儿地卖",
+            "服务员卖糖的方式都一样",
+            "不同的卖糖方法影响人的心情"
+          ],
+          "D"
+        ],
+        [
+          "77",
+          "今年公司的工人：",
+          [
+            "有人要离开",
+            "得不到奖金",
+            "都参加了会议",
+            "得到一个月的奖金"
+          ],
+          "D"
+        ],
+        [
+          "78",
+          "关于经理的办法，正确的是：",
+          [
+            "让工人都很难过",
+            "增加了公司的收入",
+            "使工人得到了安慰",
+            "使一部分人丢了工作"
+          ],
+          "C"
+        ],
+        [
+          "79",
+          "第 2 段中画线词语“倾诉”的意思最可能是：",
+          [
+            "祝贺",
+            "借钱",
+            "要水喝",
+            "说出心里话"
+          ],
+          "D"
+        ],
+        [
+          "80",
+          "柴不够时，智者建议怎样把水烧开？",
+          [
+            "请人帮忙",
+            "倒掉一些水",
+            "换一个小壶",
+            "分几次来烧"
+          ],
+          "B"
+        ],
+        [
+          "81",
+          "关于那个青年，可以知道什么？",
+          [
+            "缺少目标",
+            "大学刚毕业",
+            "什么事都不会做",
+            "改变了过去的做法"
+          ],
+          "D"
+        ],
+        [
+          "82",
+          "上文主要想告诉我们什么？",
+          [
+            "目标要实际",
+            "应多听意见",
+            "要敢于挑战",
+            "要珍惜时间"
+          ],
+          "A"
+        ],
+        [
+          "83",
+          "为什么看电视会影响家庭感情？",
+          [
+            "交流减少",
+            "睡眠减少",
+            "引起许多争论",
+            "占用了读书时间"
+          ],
+          "A"
+        ],
+        [
+          "84",
+          "根据上文，下列哪项正确？",
+          [
+            "电视广告危害很大",
+            "许多人反对看电视",
+            "看电视可以培养感情",
+            "电视给人们带来了快乐"
+          ],
+          "D"
+        ],
+        [
+          "85",
+          "关于看电视，作者认为：",
+          [
+            "能提高学习成绩",
+            "小孩子不适合看电视",
+            "可以改善人们的情绪",
+            "可以丰富人们的知识"
+          ],
+          "D"
+        ],
+        [
+          "86",
+          "上文主要介绍的是：",
+          [
+            "电视带来的问题",
+            "电视的娱乐价值",
+            "如何充分利用电视",
+            "电视对身体造成的损害"
+          ],
+          "A"
+        ],
+        [
+          "87",
+          "百万富翁为什么对那个穷人感兴趣？",
+          [
+            "穿着很奇怪",
+            "每天睡在长凳上",
+            "每天看着那个酒店",
+            "和一个朋友长得像"
+          ],
+          "C"
+        ],
+        [
+          "88",
+          "富翁为那个穷人做什么了？",
+          [
+            "买了一座房子",
+            "雇了一个司机",
+            "送给他一辆车",
+            "付了一个月房费"
+          ],
+          "D"
+        ],
+        [
+          "89",
+          "穷人觉得住酒店怎么样？",
+          [
+            "晚上太吵了",
+            "比想像的好",
+            "不如睡长凳",
+            "和其他地方差不多"
+          ],
+          "C"
+        ],
+        [
+          "90",
+          "穷人离开了酒店，是因为：",
+          [
+            "太冷",
+            "睡眠不好",
+            "酒店限制太多",
+            "一个月到期了"
+          ],
+          "B"
+        ]
+      ]
+    }
+  ],
+  "writing": [
+    {
+      "title": "书写 · 第一部分",
+      "range": "91–98",
+      "questions": [
+        [
+          "91",
+          "七大奇迹 长城 是 世界 之一",
+          "长城是世界七大奇迹之一。"
+        ],
+        [
+          "92",
+          "一直 班主任家的 占线 电话",
+          "班主任家的电话一直占线。"
+        ],
+        [
+          "93",
+          "中老年消费者 这种产品 针对 主要",
+          "这种产品主要针对中老年消费者。"
+        ],
+        [
+          "94",
+          "要 她 出席此次 学术讨论会 邀请专家",
+          "她要邀请专家出席此次学术讨论会。"
+        ],
+        [
+          "95",
+          "他 食物 分配给了 把 每个士兵",
+          "他把食物分配给了每个士兵。"
+        ],
+        [
+          "96",
+          "他的 佩服 勇气 很让我",
+          "他的勇气很让我佩服。"
+        ],
+        [
+          "97",
+          "预订 3 号桌 已经 了 被 别人",
+          "3 号桌已经被别人预订了。"
+        ],
+        [
+          "98",
+          "请 重新 您的密码 输入",
+          "请重新输入您的密码。"
+        ]
+      ]
+    },
+    {
+      "title": "书写 · 第二部分",
+      "range": "99",
+      "questions": [
+        [
+          "99",
+          "请结合下列词语（要全部使用，顺序不分先后），写一篇80 字左右的短文。 宿舍、理解、开心、坦率、帮助",
+          ""
+        ]
+      ]
+    },
+    {
+      "title": "书写 · 第三部分",
+      "range": "100",
+      "questions": [
+        [
+          "100",
+          "请结合这张图片写一篇80 字左右的短文。",
+          "",
+          "data:image/jpeg;base64,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"
+        ]
+      ]
+    }
+  ],
+  "reading_passages": {
+    "H51002": {
+      "46-48": "医生为了说明饮酒的坏处，把两条一样的小虫46放进装酒和装水的瓶子里。放在酒里的那条小虫很快就死了，而放在水里的那条一点儿事也没有。医生对周围的病人说：“看见了吧，你们从这个47中明白了什么？”这时，一个病人站起来，认真回答说：“喝酒的人的48里绝对不会有这种虫子。”",
+      "49-52": "人为什么会做梦，梦有什么意义，人类49了近千年也还没有找到答案。但是人们相信一些常见的梦50着特别的意义。例如，我们梦见要出门远行，要乘坐飞机、火车或者其他交通工具，但是却晚了一点儿，没有赶上。这种梦代表你错过了人生的一次机会，当人们面对重要的选择而犹豫的时候，常做这种梦。再有，51，可是却发现自己根本读不懂考试的题目。这种梦说明你正52挑战，但是你还没有做好准备。",
+      "53-56": "有一个孩子跑到山上，对着山谷喊了一声：“喂……”声音刚落，从四面八方传来了阵阵“喂……”的回声。大山答应了，孩子很惊讶，又喊了一声：“你是谁？”大山也问：“你是谁？”孩子喊：“为什么不告诉我？”大山也喊：“为什么不告诉我？”孩子53生气了，喊道：“我恨你！”他哪里知道这一喊不得了，54世界传来的声音都是：“我恨你，我恨你……”孩子哭着跑回家，告诉了妈妈。妈妈说：“孩子，你回去对着大山喊‘我爱你’，试试看结果会怎样，好吗？”孩子又跑到山上。果然，这次孩子被包围在“我爱你，我爱你”的回声中。孩子笑了，群山笑了。有时候，我们总是在怪别人的态度太冷漠、自己的55太不好，却不知你是对方一面最好的镜子。如遇到这样的情况，不妨问问自己做了什么。56，你得先去爱别人。",
+      "57-60": "警察站在一个新的路口，准备57第一辆通过的汽车。市政府规定，第一辆汽车的驾驶者，可获得1000元的奖金。一辆汽车飞快地开到这里，警察向驾驶者宣布了这个决定后，顺便问了一句：“先生，您得到了这笔钱，58？”驾驶者不假思索地答道：“首先，我要去领一个驾驶59。”坐在旁边的妻子一听，连忙向警察解释说：“警官先生，我丈夫今天酒喝多了，说话总是语无伦次的。”坐在后座上的、耳朵有问题的妈妈生气地补充道：“你看，我早就知道，你偷了汽车是60不了多远的……”",
+      "71-74": "一直以来，“80 后”这个词儿都含有年轻的味道。随着时间的流逝，我们突然发现，第一批“80 后”——1980 年出生的人，已经步入而立之年了。三十而立的“80 后”月收入情况如何？调查显示，就全国范围来看，“1980”们月收入主要集中在3000-5000 元，比例为31.2%。其次是集中在1500-3000 元，比例也近三成。调查还显示，“1980”们将近五成无房无车，比例为47.9%。房子、车子的压力对于“80 后”的影响越来越明显。前两年，很少有“80 后”会为了公司的薪水、福利等斤斤计较，他们关注工作环境更多。但现在，不少“80 后”在办公室里的话题就是围着“钱”打转转。专家认为，如果30 岁的“80 后”现在在职场上还无法收获满足感，他们会对未来失去信心，并因此害怕承担家庭责任。",
+      "75-78": "这几年公司发展得很不错，每年春节前都会发给工人两个月的奖金，但是今年公司却没挣到多少钱。经理很担心工人们会伤心、失望。这天，他突然想起小时候去买糖：别的服务员都是先抓一大把，拿去称，再一颗一颗减少；只有一个服务员，每次都抓不够重量，然后一颗一颗往上加。虽然拿到的糖是一样的，但人们都喜欢后者。经理想到了办法。过了两天，传来一个消息——今年公司发展不好，有些人可能得离开公司。工人们听了之后都开始担心，以为要离开的是自己。后来经理宣布了一个消息：大家都是一家人，虽然公司有困难，但不能丢掉任何人，只是没有奖金了。这个消息使所有的人都放下了心：奖金不重要，有工作就好。春节快到了，工人们都做了过个穷年的打算。这时经理通知开会，工人们又担心：“会有什么变化吗？”谁知参加会议的人回来兴奋地喊道：“有！有！还是有奖金的！一个月的！”工人们听了，发出一片热烈的欢呼声。",
+      "79-82": "一个青年大学毕业后，曾为自己树立了许多目标，可是几年下来，依然一事无成，他决定去找一位智者。他找到智者时，智者正在屋里读书。他向智者倾诉，智者听后微笑着对他说：“来，你先帮我烧壶开水。”青年看见墙角放着一把很大的水壶，旁边是一个小火灶，可是没发现柴火，于是便出去找。他在外面拾了一些枯枝回来，装满一壶水，放在灶台上，在灶内放了一些柴便烧了起来，可是由于壶太大，那些柴烧尽了，水也没开。于是他跑出去继续找柴，回来的时候那壶水已经凉得差不多了。这回他学聪明了，没有急于点火，而是再次出去找了些柴，由于柴准备充足，水不一会儿就烧开了。智者问他：“如果没有足够的柴，你该怎样把水烧开？”青年想了一会儿，摇了摇头。智者说：“如果那样，就把水壶里的水倒掉一些。”青年若有所思地点了点头。智者接着说：“你一开始树立了太多的目标，就像这个大水壶装了太多水一样，而你又没有足够的柴，所以不能把水烧开，要想把水烧开，你应该或者倒出一些水，或者先去准备柴。”青年恍然大悟。回去后，他把计划中所列的目标去掉了许多，只留下最近的几个，同时利用业余时间学习各种专业知识。几年后，他的目标基本上都实现了。只有删繁就简，从最近的目标开始，才会一步步走向成功。万事挂怀，只会半途而废。另外，我们只有不断地捡拾“柴”，才能使人生不断加温，最终让生命沸腾起来。",
+      "83-86": "电视带给我们许多快乐，使我们学到了很多知识，丰富了我们的文化生活，但电视也给我们带来了很多坏处。第一，电视使我们的家庭缺少了感情。在家里，我们过多地看电视，忽视了家庭成员之间的交流，使家庭缺少了大家在一起聊天儿、欢乐的时间。第二，电视使我们花去了很多可以用来看书、学习的时间。那些特别喜欢看电视的孩子，会对学习失去兴趣，导致学习成绩下降。第三，电视会伤害我们的身体。许多人看电视看到很晚，每天睡眠时间严重不足，不但影响工作，而且影响身体健康，长时间地看电视还会对眼睛产生影响，很多人因为看电视而戴上了眼镜。第四，看电视使我们减少了社会活动。有了电视，我们不再喜欢到朋友那里去，很多人靠呆在家里安安稳稳地看电视来度过时间。总之，电视带给我们知识和娱乐，它带给我们的快乐是主要的，但同时它也带来了一定的危害。重要的是我们怎样来充分利用电视，怎样来看电视。",
+      "87-90": "每天上午11 点，都会有一辆高级小汽车穿过市中心公园。车里除了司机，还有一位主人——无人不知的百万富翁。这位百万富翁发现：每天上午都有一位衣着破烂的人坐在公园的凳子上，一动不动地看着他住的酒店。有一天，百万富翁对这个人产生了兴趣，他让司机停下车，走到那人面前说：“请原谅，我不明白你为什么每天上午都在这儿看我住的酒店。”“先生，”穷人说，“我没钱，没家，没住宅，只得睡在这条长凳上，不过，每天晚上我都梦到住进了这家酒店。”百万富翁觉得很有趣，于是对那人说：“今天晚上我就让你如愿以偿。我为你在酒店订一间最好的房间，并支付一个月房费。”几天后，百万富翁想去问那人是否觉得满意。然而，他发现那人已搬出了酒店，重新回到公园的凳子上了。百万富翁来到公园，问穷人为什么要这样做，穷人回答道：“一旦我睡在凳子上，我就梦见自己睡在那座豪华的酒店里，真是妙不可言；可一旦我睡在酒店里，我就梦见自己又回到了冷冰冰的凳子上，这梦真是可怕极了，以致完全影响了我的睡眠！”"
+    }
   },
+  "schemaVersion": 2,
   "engineRules": {
-    "version": "HSK5_UNIVERSAL_V2",
+    "version": 1,
+    "model": "declarative",
+    "resolver": {
+      "strategy": "section_part_range",
+      "questionIdPath": "question[0]"
+    },
+    "questionShapes": {
+      "choice": {
+        "fields": {
+          "id": 0,
+          "prompt": 1,
+          "options": 2,
+          "answer": 3,
+          "transcript": 4
+        },
+        "interaction": "single_choice",
+        "optionsSource": "question[2]",
+        "answerSource": "question[3]"
+      },
+      "sequence": {
+        "fields": {
+          "id": 0,
+          "prompt": 1,
+          "acceptedAnswers": 2
+        },
+        "interaction": "sequence"
+      },
+      "writing_prompt": {
+        "fields": {
+          "id": 0,
+          "prompt": 1,
+          "answer": 2
+        },
+        "interaction": "text"
+      },
+      "picture_writing": {
+        "fields": {
+          "id": 0,
+          "prompt": 1,
+          "answer": 2,
+          "image": 3
+        },
+        "interaction": "text",
+        "mediaSource": "question[3]"
+      }
+    },
     "sections": {
       "listening": {
         "parts": [
@@ -24,11 +1213,8 @@
               20
             ],
             "type": "choice",
-            "input": "single_select",
-            "scoring": {
-              "mode": "exact_match"
-            },
-            "instruction": "第1-20题：请选出正确答案。"
+            "shape": "choice",
+            "instruction": "Dengarkan percakapan, lalu pilih jawaban yang paling tepat."
           },
           {
             "range": [
@@ -36,11 +1222,8 @@
               45
             ],
             "type": "choice",
-            "input": "single_select",
-            "scoring": {
-              "mode": "exact_match"
-            },
-            "instruction": "第21-45题：请选出正确答案。"
+            "shape": "choice",
+            "instruction": "Dengarkan percakapan atau bacaan, lalu pilih jawaban yang paling tepat."
           }
         ]
       },
@@ -55,9 +1238,10 @@
             "shape": "choice",
             "group": {
               "type": "passage",
-              "textSource": "reading_passages.H51001",
+              "textSource": "reading_passages.H51002",
               "key": "questionRange"
-            }
+            },
+            "instruction": "Pilih kata yang paling tepat untuk melengkapi kalimat."
           },
           {
             "range": [
@@ -65,7 +1249,8 @@
               70
             ],
             "type": "choice",
-            "shape": "choice"
+            "shape": "choice",
+            "instruction": "Pilih jawaban yang paling sesuai dengan isi kalimat."
           },
           {
             "range": [
@@ -76,11 +1261,12 @@
             "shape": "choice",
             "group": {
               "type": "passage",
-              "textSource": "reading_passages.H51001",
-              "mediaSource": "reading_passage_media.H51001",
+              "textSource": "reading_passages.H51002",
+              "mediaSource": "reading_passage_media.H51002",
               "key": "questionRange"
             },
-            "input": "single_select"
+            "input": "single_select",
+            "instruction": "Baca teks dengan saksama, lalu pilih jawaban yang paling sesuai dengan isi bacaan."
           }
         ]
       },
@@ -117,1460 +1303,108 @@
             ],
             "type": "picture_writing",
             "input": "text",
+            "media": [
+              "image"
+            ],
             "scoring": {
               "mode": "manual"
             },
-            "instruction": "第100题：请结合这张图片写一篇80字左右的短文。",
-            "mediaSource": "question[3]"
+            "instruction": "第100题：请结合这张图片写一篇80字左右的短文。"
           }
+        ]
+      }
+    },
+    "options": {
+      "source": "question[2]",
+      "labels": "derive",
+      "count": "dynamic"
+    },
+    "media": {
+      "questionImageSource": "question[3]",
+      "groupImageSource": "reading_passage_media.H51002"
+    },
+    "scoring": {
+      "choice": "exact_match",
+      "fill_blank": "exact_match",
+      "sentence_ordering": "accepted_answer_match",
+      "guided_writing": "manual_or_non_binary",
+      "picture_writing": "manual_or_non_binary"
+    }
+  },
+  "reading_passage_media": {
+    "H51002": {
+      "71-74": {
+        "images": [
+          "data:image/jpeg;base64,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"
+        ]
+      },
+      "75-78": {
+        "images": [
+          "data:image/jpeg;base64,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"
+        ]
+      },
+      "79-82": {
+        "images": [
+          "data:image/jpeg;base64,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"
+        ]
+      },
+      "83-86": {
+        "images": [
+          "data:image/jpeg;base64,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"
+        ]
+      },
+      "87-90": {
+        "images": [
+          "data:image/jpeg;base64,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"
         ]
       }
     }
   },
-  "instructions": {
-    "listening": [
-      "第1-20题：请选出正确答案。",
-      "第21-45题：请选出正确答案。"
+  "meta": {
+    "sourcePdf": "H51002.pdf",
+    "sourceSha256": "ed30788796c50e0a8cb4aa739e38e2e56ff5da03b0efe8e8845c33e4386c026e",
+    "answerPolicy": "Answers copied only from the answer key contained in the source PDF. No model-generated answer keys.",
+    "sourceValidation": {
+      "status": "complete",
+      "questionCount": 100,
+      "listeningQuestions": 45,
+      "readingQuestions": 45,
+      "writingQuestions": 10,
+      "answerKeyChoiceEntries": 90,
+      "writingReferenceEntries": 8,
+      "listeningTranscriptEntries": 45,
+      "readingPassageGroups": 9,
+      "readingImageGroups": 5,
+      "writingImagePresent": true,
+      "allOptionsFourChoice": true,
+      "noSilentAnswerInference": true
+    },
+    "warnings": [],
+    "dataFixes": {},
+    "auditStatus": "audited",
+    "readyForLive": true,
+    "auditNotes": [
+      "Reading 46–60 verified from H51002 PDF as Part 1 fill-blank passages with numbered blanks and choice options.",
+      "Passage groups verified as 46-48, 49-52, 53-56, 57-60.",
+      "Answer keys 46–90 verified against H51002 answer page.",
+      "No package identity changes: code remains H51002."
     ],
-    "reading": [
-      "第46-60题：请选出正确答案。",
-      "第61-70题：请选出与试题内容一致的一项。",
-      "第71-90题：请选出正确答案。"
-    ],
-    "writing": [
-      "第91-98题：完成句子。",
-      "第99题：请结合下列词语（要全部使用，顺序不分先后），写一篇80字左右的短文。",
-      "第100题：请结合这张图片写一篇80字左右的短文。"
-    ]
+    "sourcePdfSha256": "ed30788796c50e0a8cb4aa739e38e2e56ff5da03b0efe8e8845c33e4386c026e"
   },
-  "listening": [
-    {
-      "title": "第一部分",
-      "range": "1-20",
-      "questions": [
-        [
-          1,
-          "关于小刘，可以知道什么？",
-          [
-            "是律师",
-            "身体很好",
-            "现在在医院",
-            "休息一周了"
-          ],
-          "C",
-          "女：小刘，身体恢复得怎么样了？\n男：好多了，大夫说下周就可以出院了。\n问：关于小刘，可以知道什么？"
-        ],
-        [
-          2,
-          "男的明天要去哪儿？",
-          [
-            "车展会",
-            "图书馆",
-            "博物馆",
-            "动物园"
-          ],
-          "A",
-          "男：明天下午有个车展，我们去看，你呢？\n女：我还在犹豫，下午有个讲座，我很想去听听。\n问：男的明天要去哪儿？"
-        ],
-        [
-          3,
-          "他们在谈什么？",
-          [
-            "健康",
-            "服装",
-            "计算机",
-            "传染病"
-          ],
-          "C",
-          "女：我的电脑速度特别慢，是不是中病毒了？\n男：有可能，我检查一下看看。\n问：他们在谈什么？"
-        ],
-        [
-          4,
-          "男的是做什么工作的？",
-          [
-            "演员",
-            "作家",
-            "班主任",
-            "主持人"
-          ],
-          "D",
-          "男：观众朋友们，让我们以热烈的掌声欢迎今天的嘉宾张阳女士。\n女：大家好！很荣幸能够参加《有话好好说》这个节目。\n问：男的是做什么工作的？"
-        ],
-        [
-          5,
-          "男的怎么了？",
-          [
-            "感冒了",
-            "鼻子过敏",
-            "刚做手术",
-            "嗓子不舒服"
-          ],
-          "B",
-          "女：你感冒了吗？怎么一直打喷嚏。\n男：没有，我鼻子有点儿过敏。\n问：男的怎么了？"
-        ],
-        [
-          6,
-          "他们准备几点见面？",
-          [
-            "6点",
-            "6点半",
-            "7点",
-            "7点半"
-          ],
-          "A",
-          "男：电影是晚上七点的，我开车去接你吧，大概六点到你们公司。\n女：行，我们就在楼下门口见。\n问：他们准备几点见面？"
-        ],
-        [
-          7,
-          "男的主要是什么意思？",
-          [
-            "要认真准备",
-            "不用太紧张",
-            "以后要多练习",
-            "打算不参加会议了"
-          ],
-          "B",
-          "女：明天要在总结会上发言，我还是觉得自己准备得不够。\n男：放松点儿，你又不是第一次发言。\n问：男的主要是什么意思？"
-        ],
-        [
-          8,
-          "爷爷年轻时喜欢什么？",
-          [
-            "读书",
-            "养花",
-            "体育运动",
-            "文学艺术"
-          ],
-          "C",
-          "男：奶奶，爷爷年轻时就喜欢钓鱼吗？\n女：他年轻时喜欢运动，爱打篮球，踢足球，现在年纪大了，才开始喜欢上钓鱼。\n问：爷爷年轻时喜欢什么？"
-        ],
-        [
-          9,
-          "男的是什么建议？",
-          [
-            "买几盆花",
-            "挂几幅画",
-            "多买些书",
-            "房子该装修了"
-          ],
-          "A",
-          "女：你觉得在书房里挂几幅字画儿怎么样？\n男：我觉得买几盆花放这里比较好。\n问：男的是什么建议？"
-        ],
-        [
-          10,
-          "女的为什么要表示抱歉？",
-          [
-            "迷路了",
-            "迟到了",
-            "交通拥挤",
-            "飞机没按时起飞"
-          ],
-          "D",
-          "男：已经一个多小时了，我们还要等多久？\n女：因为有大雾，所有航班目前都不能起飞。耽误了您宝贵的时间，非常抱歉！\n问：女的为什么要表示抱歉？"
-        ],
-        [
-          11,
-          "男的最可能是做什么的？",
-          [
-            "司机",
-            "记者",
-            "医生",
-            "售票员"
-          ],
-          "B",
-          "女：一年中你有五六个月在外地跑，真是太辛苦了。\n男：还行，可以接触、采访各种各样的人，也挺有意思的。\n问：男的最可能是做什么的？"
-        ],
-        [
-          12,
-          "他们打算联系谁？",
-          [
-            "房东",
-            "公司秘书",
-            "接受采访的人",
-            "要买房子的人"
-          ],
-          "A",
-          "男：我觉得今天看的那个房子条件还可以，你说呢？\n女：还行吧。那明天你再联系一下他，咱们租下来吧。\n问：他们打算联系谁？"
-        ],
-        [
-          13,
-          "体检的事怎么样了？",
-          [
-            "取消了",
-            "推迟了",
-            "换别的地方了",
-            "还没定具体日期"
-          ],
-          "D",
-          "女：经理，今年公司什么时候组织集体体检呢？\n男：可能安排在九月了，只是还没确定具体哪天。\n问：体检的事怎么样了？"
-        ],
-        [
-          14,
-          "现在是哪个季节？",
-          [
-            "春季",
-            "夏季",
-            "秋季",
-            "冬季"
-          ],
-          "A",
-          "男：今年的天气不太正常，都春天了，怎么还下雪？\n女：刚看电视上天气预报说，最近还有一股冷空气要来。\n问：现在是哪个季节？"
-        ],
-        [
-          15,
-          "男的正在做什么？",
-          [
-            "取钱",
-            "买东西",
-            "修理机器",
-            "办信用卡"
-          ],
-          "B",
-          "女：这个柜台的机器坏了，请您到旁边柜台结账，实在对不起。\n男：没关系，这边可以用信用卡吗？\n问：男的正在做什么？"
-        ],
-        [
-          16,
-          "女的是什么态度？",
-          [
-            "赞成",
-            "反对",
-            "无所谓",
-            "再考虑考虑"
-          ],
-          "B",
-          "男：我想拿几万块钱投资股市，你知道哪支股票好吗？\n女：我不建议你买股票，股市风险很大。\n问：女的是什么态度？"
-        ],
-        [
-          17,
-          "为什么还要再等几分钟？",
-          [
-            "文件很大",
-            "光盘有问题",
-            "需要别人帮忙",
-            "现在不能下载"
-          ],
-          "A",
-          "女：你把资料都复制到光盘上了吗？\n男：正在复制呢，文件太大了，可能还得再等几分钟。\n问：为什么还要再等几分钟？"
-        ],
-        [
-          18,
-          "女的是什么意思？",
-          [
-            "后天发货",
-            "还没签字",
-            "刚拿到合同",
-            "货会按时到"
-          ],
-          "D",
-          "男：我想确认一下，那批货后天可以送到吧？\n女：是的，我们已经按照合同上要求的日期发货了，您放心，后天肯定能到。\n问：女的是什么意思？"
-        ],
-        [
-          19,
-          "男的的论文怎么样了？",
-          [
-            "还在修改",
-            "已经交了",
-            "已经发表了",
-            "刚完成一半儿"
-          ],
-          "A",
-          "女：我上午把毕业论文交上去了，你呢？\n男：我还没修改完，后天估计差不多。最晚什么时候交？\n问：男的的论文怎么样了？"
-        ],
-        [
-          20,
-          "男的晚上要做什么？",
-          [
-            "购物",
-            "参加研讨会",
-            "看京剧表演",
-            "送客户去机场"
-          ],
-          "C",
-          "男：我听听你的意见，你说我晚上还系领带吗？\n女：你只是陪客户去看京剧表演，穿休闲点儿，不用系。\n问：男的晚上要做什么？"
-        ]
-      ]
-    },
-    {
-      "title": "第二部分",
-      "range": "21-45",
-      "questions": [
-        [
-          21,
-          "女的有什么打算？",
-          [
-            "上大学",
-            "考研究生",
-            "出国留学",
-            "参加工作"
-          ],
-          "C",
-          "女：爸，我不想读研究生了。\n男：怎么了？你不是考得很好吗？想参加工作了？\n女：我想出国留学，您会反对吗？\n男：正好相反，我会尊重你的选择。\n问：女的有什么打算？"
-        ],
-        [
-          22,
-          "照相机怎么了？",
-          [
-            "坏了",
-            "丢了",
-            "掉水里了",
-            "快没电了"
-          ],
-          "D",
-          "男：这照相机怎么坏了？打开就自动关机。\n女：不会。是快没电了，一会儿回房间充上电就好了。\n男：充电器带了吗？\n女：当然带了，不然这几天我们怎么拍照？\n问：照相机怎么了？"
-        ],
-        [
-          23,
-          "那份文件现在在哪儿？",
-          [
-            "公司",
-            "家里",
-            "出租车上",
-            "公共汽车上"
-          ],
-          "B",
-          "女：喂？你帮我看一下，我昨天带回家的那份文件是不是在桌子上？\n男：我看一下，在，怎么了？\n女：太好了。刚才吓死我了，我以为把它丢在出租车上了。\n男：你能不能小心点儿啊！要我帮你送过去吗？\n女：不用了，我中午回去取吧。\n问：那份文件现在在哪儿？"
-        ],
-        [
-          24,
-          "男的要应聘哪个部门？",
-          [
-            "人事",
-            "销售",
-            "研发",
-            "法律"
-          ],
-          "B",
-          "男：小姐，你好，我是来应聘的。\n女：请问您叫什么名字，应聘哪个部门？\n男：我叫李明，应聘销售经理。是王小姐让我下午两点半来面试的。\n女：好，我带你过去。请这边走。\n问：男的要应聘哪个部门？"
-        ],
-        [
-          25,
-          "营业执照什么时候能办下来？",
-          [
-            "10天后",
-            "这个月中旬",
-            "下个月中旬",
-            "下个月底"
-          ],
-          "C",
-          "女：成立公司的事办得怎么样了？\n男：别提了，办理营业执照的手续比我想的复杂。\n女：那估计什么时候能办下来？\n男：本来以为这个月底可以，现在看要等到下月中旬了。\n问：营业执照什么时候能办下来？"
-        ],
-        [
-          26,
-          "女的觉得炸鸡腿儿怎么样？",
-          [
-            "有营养",
-            "不好闻",
-            "是垃圾食品",
-            "味道非常好"
-          ],
-          "C",
-          "男：今天中午我吃炸鸡腿儿了，真好吃。\n女：少吃油炸食品，那是垃圾食品，对健康没什么好处。\n男：我知道，可还是忍不住，中午闻到那个香味儿就要流口水。\n女：以后还是少吃吧。\n问：女的觉得炸鸡腿儿怎么样？"
-        ],
-        [
-          27,
-          "男的最近在忙什么？",
-          [
-            "结婚",
-            "搬家",
-            "买汽车",
-            "装修房子"
-          ],
-          "D",
-          "女：房子装修好了吗？\n男：快好了，这几天准备去买家具。\n女：窗帘选好了吗？我知道有一家店的窗帘做得很不错，你去看看？\n男：谢谢您，一会儿您把地址给我，我周末去看看。\n问：男的最近在忙什么？"
-        ],
-        [
-          28,
-          "男的为什么要回家？",
-          [
-            "父亲过生日",
-            "要过春节了",
-            "单位放假了",
-            "要去接孩子"
-          ],
-          "A",
-          "男：我打算下周五回一趟家，我爸爸过生日。\n女：你买票了吗？马上要到春节了，票可不好买。\n男：我开车回，走高速公路，三个小时就到家了。\n女：要注意安全。\n问：男的为什么要回家？"
-        ],
-        [
-          29,
-          "关于女的，下列哪项正确？",
-          [
-            "待遇比较低",
-            "最近刚辞职",
-            "新开了一家公司",
-            "需要计算机方面的人才"
-          ],
-          "D",
-          "女：你身边有计算机方面的人才吗？\n男：怎么了？你们公司的小刘不是很厉害吗？\n女：他上个星期辞职了，可能是自己也开公司了。\n男：我帮你问问，我有一个朋友是计算机系毕业的，正在找工作。\n问：关于女的，下列哪项正确？"
-        ],
-        [
-          30,
-          "说话人现在在哪里？",
-          [
-            "医院",
-            "宾馆",
-            "火车站",
-            "游泳馆"
-          ],
-          "B",
-          "男：你好，我前天订了一个标准间，我姓王。\n女：您稍等，我查一下。王先生，您是从北京来的？\n男：对。\n女：请出示一下您的身份证，我给您办理入住手续。\n问：说话人现在在哪里？"
-        ],
-        [
-          31,
-          "兔子是怎么死的？",
-          [
-            "饿死的",
-            "撞死的",
-            "摔死的",
-            "被农民打死的"
-          ],
-          "B",
-          "第31到33题是根据下面一段话：\n古时候，有个农民正在田里劳动。突然，他看见一只兔子从旁边的草丛里慌慌张张地跑出来，一头撞在田边的大树上，便倒在那儿一动也不动了。农民走过去一看：兔子死了。因为它奔跑的速度太快，把脖子都撞断了。"
-        ],
-        [
-          32,
-          "农民为什么不去田里劳动了？",
-          [
-            "他受伤了",
-            "冬天来了",
-            "他养了很多兔子",
-            "以为还可以捡到兔子"
-          ],
-          "D"
-        ],
-        [
-          33,
-          "这个故事主要想告诉我们什么？",
-          [
-            "要注意观察",
-            "运气很重要",
-            "坚持才能得胜利",
-            "世上没有免费的午餐"
-          ],
-          "D"
-        ],
-        [
-          34,
-          "乒乓球在中国有多少年的历史？",
-          [
-            "70多年",
-            "90多年",
-            "100多年",
-            "300多年"
-          ],
-          "A",
-          "第34到36题是根据下面一段话：\n说起乒乓球，很多人都会想到中国。的确，长期以来，中国的乒乓球水平在国际上是属于最好的，而且中国是世界上“乒乓人口”最多的国家。因此，很多人认为乒乓球运动是中国人最早开始的，但事实上乒乓球运动在中国只有七十多年的历史。"
-        ],
-        [
-          35,
-          "乒乓球运动是谁发明的？",
-          [
-            "英国人",
-            "法国人",
-            "美国人",
-            "中国人"
-          ],
-          "A"
-        ],
-        [
-          36,
-          "最初人们在哪儿打乒乓球？",
-          [
-            "工厂",
-            "饭桌上",
-            "网球场",
-            "办公室"
-          ],
-          "B"
-        ],
-        [
-          37,
-          "关于售货员，可以知道什么？",
-          [
-            "很生气",
-            "很开心",
-            "服务热情",
-            "服务态度不好"
-          ],
-          "D",
-          "第37到39题是根据下面一段话：\n一天，一位画家带着朋友去自己家附近的商店买东西，付款的时候，他礼貌地对售货员说了声：“谢谢。”但售货员却一直不开心，没有理画家。"
-        ],
-        [
-          38,
-          "画家是怎么做的？",
-          [
-            "没有买东西",
-            "批评了售货员",
-            "没有理售货员",
-            "对售货员很礼貌"
-          ],
-          "D"
-        ],
-        [
-          39,
-          "画家的主要观点是什么？",
-          [
-            "要乐于助人",
-            "要体谅别人",
-            "细节决定成败",
-            "坚持自己的行为方式"
-          ],
-          "D"
-        ],
-        [
-          40,
-          "本次大赛的主题是什么？",
-          [
-            "公开、公平",
-            "青春、时尚",
-            "自由、快乐",
-            "精彩、浪漫"
-          ],
-          "B",
-          "第40到42题是根据下面一段话：\n本次时装设计大赛的主题是青春、时尚，参加比赛的设计师要求年龄在二十五岁以下，设计师可以充分自由发挥自己的想象力和创造力，体现自己的个性。整个大赛本着公开、公平的原则进行，所有设计师的作品将被放在网上，由网友打分，评选出最佳设计奖，评选结果于四月十五日公布。"
-        ],
-        [
-          41,
-          "参赛作品由谁来评分？",
-          [
-            "导演",
-            "网友",
-            "设计师",
-            "大学生"
-          ],
-          "B"
-        ],
-        [
-          42,
-          "关于这次比赛，可以知道什么？",
-          [
-            "刚刚结束",
-            "是体育比赛",
-            "4月公布结果",
-            "主要面向中老年人"
-          ],
-          "C"
-        ],
-        [
-          43,
-          "根据这段话，制定健身计划时要注意什么？",
-          [
-            "饮食",
-            "运动量",
-            "费用标准",
-            "个人爱好"
-          ],
-          "D",
-          "第43到45题是根据下面一段话：\n在制定个人健身计划时，一定要包含自己喜欢的、或者觉得有趣的、或者至少不讨厌的运动。如果你不喜欢慢跑，总觉得慢跑过程很无聊，但为了减肥不得不制定慢跑运动计划，那样的话，我敢打赌你肯定坚持不下去。所以，对于健身新手来说，最好以自己喜欢的运动为中心，再逐步增加其他必要的健身项目，这样的健身计划才更容易实行。"
-        ],
-        [
-          44,
-          "根据这段话，下列哪项正确？",
-          [
-            "减肥有害健康",
-            "饭前不要运动",
-            "做自己喜欢的运动",
-            "很多人不喜欢慢跑"
-          ],
-          "C"
-        ],
-        [
-          45,
-          "这段话主要谈什么？",
-          [
-            "慢跑的作用",
-            "减肥的方法",
-            "怎样制定健身计划",
-            "如何缓解工作压力"
-          ],
-          "C"
-        ]
-      ]
-    }
-  ],
-  "reading": [
-    {
-      "title": "第一部分",
-      "range": "46-60",
-      "questions": [
-        [
-          46,
-          "医生把两条一样的小虫__46__放进装酒和装水的瓶子里。",
-          [
-            "反复",
-            "分别",
-            "互相",
-            "仍然"
-          ],
-          "B",
-          {
-            "group": "46-48"
-          }
-        ],
-        [
-          47,
-          "你们从这个__47__中明白了什么？",
-          [
-            "现象",
-            "规则",
-            "道理",
-            "项目"
-          ],
-          "A",
-          {
-            "group": "46-48"
-          }
-        ],
-        [
-          48,
-          "喝酒的人的__48__里绝对不会有这种虫子。",
-          [
-            "肚子",
-            "抽屉",
-            "物质",
-            "粮食"
-          ],
-          "A",
-          {
-            "group": "46-48"
-          }
-        ],
-        [
-          49,
-          "人类__49__了近千年也还没有找到答案。",
-          [
-            "想像",
-            "观察",
-            "思考",
-            "幻想"
-          ],
-          "C",
-          {
-            "group": "49-52"
-          }
-        ],
-        [
-          50,
-          "人们相信一些常见的梦__50__着特别的意义。",
-          [
-            "表现",
-            "包含",
-            "保持",
-            "采取"
-          ],
-          "B",
-          {
-            "group": "49-52"
-          }
-        ],
-        [
-          51,
-          "再有，__51__，可是却发现自己根本读不懂考试的题目。",
-          [
-            "当你加班的时候",
-            "一次重要的考试结束后",
-            "有时候我们会梦见参加考试",
-            "如果你梦到和朋友去郊区旅游"
-          ],
-          "C",
-          {
-            "group": "49-52"
-          }
-        ],
-        [
-          52,
-          "这种梦说明你正__52__挑战，但是你还没有做好准备。",
-          [
-            "面临",
-            "逃避",
-            "参考",
-            "承担"
-          ],
-          "A",
-          {
-            "group": "49-52"
-          }
-        ],
-        [
-          53,
-          "孩子__53__生气了，喊道：“我恨你！”",
-          [
-            "忍不住",
-            "怪不得",
-            "舍不得",
-            "说不定"
-          ],
-          "A",
-          {
-            "group": "53-56"
-          }
-        ],
-        [
-          54,
-          "__54__世界传来的声音都是：“我恨你，我恨你……”",
-          [
-            "总共",
-            "全面",
-            "整个",
-            "完整"
-          ],
-          "C",
-          {
-            "group": "53-56"
-          }
-        ],
-        [
-          55,
-          "自己的__55__太不好，却不知你是对方一面最好的镜子。",
-          [
-            "愿望",
-            "运气",
-            "气氛",
-            "原则"
-          ],
-          "B",
-          {
-            "group": "53-56"
-          }
-        ],
-        [
-          56,
-          "__56__，你得先去爱别人。",
-          [
-            "想让别人爱你",
-            "每个人都需要快乐",
-            "尊重别人就是尊重自己",
-            "不管别人喜欢不喜欢你"
-          ],
-          "A",
-          {
-            "group": "53-56"
-          }
-        ],
-        [
-          57,
-          "警察站在一个新的路口，准备__57__第一辆通过的汽车。",
-          [
-            "掌握",
-            "阻止",
-            "迎接",
-            "控制"
-          ],
-          "C",
-          {
-            "group": "57-60"
-          }
-        ],
-        [
-          58,
-          "先生，您得到了这笔钱，__58__？",
-          [
-            "最想感谢谁",
-            "一定十分激动吧",
-            "准备用它来做什么",
-            "是否考虑换一辆车"
-          ],
-          "C",
-          {
-            "group": "57-60"
-          }
-        ],
-        [
-          59,
-          "首先，我要去领一个驾驶__59__。",
-          [
-            "执照",
-            "文件",
-            "支票",
-            "合同"
-          ],
-          "A",
-          {
-            "group": "57-60"
-          }
-        ],
-        [
-          60,
-          "你偷了汽车是__60__不了多远的……",
-          [
-            "抢",
-            "逃",
-            "瞧",
-            "滚"
-          ],
-          "B",
-          {
-            "group": "57-60"
-          }
-        ]
-      ]
-    },
-    {
-      "title": "第二部分",
-      "range": "61-70",
-      "questions": [
-        [
-          61,
-          "根据短文，哪项说法正确？",
-          [
-            "小孩子有很多想法",
-            "教育孩子其实很简单",
-            "许多家长没时间教育孩子",
-            "许多父母不知道该怎么教育孩子"
-          ],
-          "C",
-          "很多父母在教育孩子时往往都有自己的许多主张，而且都非常有道理。但是在实际生活中，他们又往往不能按照那些主张去做，他们的理由很简单：工作太忙，实在没有时间。"
-        ],
-        [
-          62,
-          "根据短文，哪项说法正确？",
-          [
-            "中国人创造了甲骨文",
-            "甲骨文产生于商周之前",
-            "甲骨文产生于公元前3000年",
-            "甲骨文不是真正意义上的文字"
-          ],
-          "A",
-          "甲骨文大约产生于商周之际，是目前发现的中国最为古老的文字，它记录了大约3000年前中国人祖先的活动。但由于甲骨文是比较成熟的文字，所以专家们认为，中国文字产生的年代实际应该要更久远一些。"
-        ],
-        [
-          63,
-          "根据短文，哪项说法正确？",
-          [
-            "川菜口味清淡",
-            "重庆菜属于川菜",
-            "中国菜的特点是麻和辣",
-            "成都和重庆两地才有川菜"
-          ],
-          "B",
-          "按照饮食特点分，中国主要有四大菜系，即川菜、鲁菜、淮菜和粤菜。当然，其中最有名的，还是大家熟悉的川菜。川菜的突出特点是麻和辣，最正宗的川菜是成都和重庆两地的菜肴。如今川菜馆早已遍布世界各地，受到了人们的广泛欢迎。"
-        ],
-        [
-          64,
-          "根据短文，哪项说法正确？",
-          [
-            "财主家没牛",
-            "财主没看懂信",
-            "信写得很简单",
-            "财主亲自把牛给送去了"
-          ],
-          "B",
-          "古时候，某人想向一个财主借牛，于是派人给财主送去一封借牛的信。财主正陪着客人聊天儿，他怕客人知道自己不识字，便假装在看信。他一边看，一边不住地点头，然后抬头对来人说：“知道了，过一会儿我自己去好了。”"
-        ],
-        [
-          65,
-          "根据短文，哪项说法正确？",
-          [
-            "端午节才会赛龙舟",
-            "赛龙舟是双人比赛",
-            "赛龙舟属于集体项目",
-            "赛龙舟是汉族特有的"
-          ],
-          "C",
-          "赛龙舟是中国民间传统的水上体育娱乐项目，已流传两千多年，多是在喜庆节日举行，是多人集体划桨竞赛。中国各民族的龙舟赛略有不同，龙舟的大小也因地而异。汉族多在每年“端午节”举行比赛，船长一般为20到30米，每艘船上约30名水手。"
-        ],
-        [
-          66,
-          "根据短文，哪项说法正确？",
-          [
-            "现在人们经常换工作",
-            "人们找工作的标准不同",
-            "喜欢的才是最好的工作",
-            "找一份满意的工作并不难"
-          ],
-          "B",
-          "现在，如果要问人们选择职业时主要考虑的是什么，有相当一部分人会以收入多少作为标准。当然，也有人主要看自己是否喜欢这份工作。也许，最理想的情况是能找到一份既让人喜欢又有较多收入的职业。可惜的是，这种情况在生活中并不能经常遇到。"
-        ],
-        [
-          67,
-          "根据短文，哪项说法正确？",
-          [
-            "那些地图用于军事",
-            "最早的地图是黑白的",
-            "那三幅地图是汉朝的",
-            "地图的内容已经模糊"
-          ],
-          "C",
-          "世界上最早的地图是1973年12月在湖南长沙马王堆出土的，那是三幅汉代的彩色帛绘地图，距今2100多年。图上绘制着今天湖南、广东、广西三省的交界地区。令人惊奇的是，图中绘有大小河流、山脉、城镇30余处，与今天的地图基本相同。"
-        ],
-        [
-          68,
-          "根据短文，哪项说法正确？",
-          [
-            "登上火星的办法很多",
-            "人类对火星的兴趣不大",
-            "人们对登上火星缺乏信心",
-            "人类未来有可能居住在火星上"
-          ],
-          "D",
-          "早在一个多世纪以前的小说里，人类就开始在火星上散步了，然而直到今天，这还只是个设想。但许多人坚信，问题不是人类能不能登上火星，而是在什么时候、通过什么方式到达那里。就目前的情况看，火星是最有可能成为人类第二家园的地方。因为在所有太阳系的行星中，火星的环境与地球最相像。"
-        ],
-        [
-          69,
-          "根据短文，哪项说法正确？",
-          [
-            "中国画关注人与自然",
-            "国画的表现手法夸张",
-            "国画是传统与现代的结合",
-            "山水画表现人与人的关系"
-          ],
-          "A",
-          "国画，又称“中国画”，是中国传统绘画。工具和材料有毛笔、墨、国画颜料、绢等，题材可分人物、山水、花鸟等。人物画所表现的是人类社会，人与人的关系；山水画所表现的是人与自然的关系，将人与自然融为一体；花鸟画则是表现大自然的各种生命，与人和谐相处。"
-        ],
-        [
-          70,
-          "根据短文，哪项说法正确？",
-          [
-            "书店老板很幽默",
-            "作家的书被卖光了",
-            "这家书店规模不大",
-            "书店老板闹了个笑话"
-          ],
-          "D",
-          "一位著名的作家在外旅游，来到一座城市，决定去参观这个城市最大的书店。听到这个消息，书店的老板想做点儿让这位作家高兴的事情。于是，他在所有的书架上全摆满了这位作家的著作。作家走进书店，见书架上全是自己的书，很吃惊。“其他人的书呢？”他迷惑不解地问。“其他人的书？”书店老板一时不知所措，信口说道：“全……全都卖完了。”"
-        ]
-      ]
-    },
-    {
-      "title": "第三部分",
-      "range": "71-90",
-      "questions": [
-        [
-          71,
-          "“80后”指的是哪些人？",
-          [
-            "年轻人",
-            "30岁以上的人",
-            "80年代出生的人",
-            "80年代参加工作的人"
-          ],
-          "C",
-          {
-            "group": "71-74"
-          }
-        ],
-        [
-          72,
-          "“1980”们无房无车的比例为：",
-          [
-            "30%",
-            "31.2%",
-            "47.9%",
-            "50%"
-          ],
-          "C",
-          {
-            "group": "71-74"
-          }
-        ],
-        [
-          73,
-          "“80后”的压力主要来自哪里？",
-          [
-            "收入",
-            "婚姻",
-            "年龄",
-            "情感"
-          ],
-          "A",
-          {
-            "group": "71-74"
-          }
-        ],
-        [
-          74,
-          "下列哪项最适合做上文的标题？",
-          [
-            "年轻的“80后”",
-            "“80后”的无奈",
-            "失去信心的“80后”",
-            "“80后”的幸福生活"
-          ],
-          "B",
-          {
-            "group": "71-74"
-          }
-        ],
-        [
-          75,
-          "今年公司怎么样？",
-          [
-            "发展得不错",
-            "挣的钱不多",
-            "要给工人发糖",
-            "要发两个月的奖金"
-          ],
-          "B",
-          {
-            "group": "75-78"
-          }
-        ],
-        [
-          76,
-          "根据经理小时候买糖的情况，可以知道：",
-          [
-            "服务员给的重量不够",
-            "服务员一块儿一块儿地卖",
-            "服务员卖糖的方式都一样",
-            "不同的卖糖方法影响人的心情"
-          ],
-          "D",
-          {
-            "group": "75-78"
-          }
-        ],
-        [
-          77,
-          "今年公司的工人：",
-          [
-            "有人要离开",
-            "得不到奖金",
-            "都参加了会议",
-            "得到了一个月的奖金"
-          ],
-          "D",
-          {
-            "group": "75-78"
-          }
-        ],
-        [
-          78,
-          "关于经理的办法，正确的是：",
-          [
-            "让工人都很难过",
-            "增加了公司的收入",
-            "使工人得到了安慰",
-            "使一部分人丢了工作"
-          ],
-          "C",
-          {
-            "group": "75-78"
-          }
-        ],
-        [
-          79,
-          "第2段中画线词语“倾诉”的意思最可能是：",
-          [
-            "祝贺",
-            "借钱",
-            "要水喝",
-            "说出心里话"
-          ],
-          "D",
-          {
-            "group": "79-82"
-          }
-        ],
-        [
-          80,
-          "柴不够时，智者建议怎样把水烧开？",
-          [
-            "请人帮忙",
-            "倒掉一些水",
-            "换一个小壶",
-            "分几次来烧"
-          ],
-          "B",
-          {
-            "group": "79-82"
-          }
-        ],
-        [
-          81,
-          "关于那个青年，可以知道什么？",
-          [
-            "缺少目标",
-            "大学刚毕业",
-            "什么事都不会做",
-            "改变了过去的做法"
-          ],
-          "D",
-          {
-            "group": "79-82"
-          }
-        ],
-        [
-          82,
-          "上文主要想告诉我们什么？",
-          [
-            "目标要实际",
-            "应多听意见",
-            "要敢于挑战",
-            "要珍惜时间"
-          ],
-          "A",
-          {
-            "group": "79-82"
-          }
-        ],
-        [
-          83,
-          "为什么看电视会影响家庭感情？",
-          [
-            "交流减少",
-            "睡眠减少",
-            "引起许多争论",
-            "占用了读书时间"
-          ],
-          "A",
-          {
-            "group": "83-86"
-          }
-        ],
-        [
-          84,
-          "根据上文，下列哪项正确？",
-          [
-            "电视广告危害很大",
-            "许多人反对看电视",
-            "看电视可以培养感情",
-            "电视给人们带来了快乐"
-          ],
-          "D",
-          {
-            "group": "83-86"
-          }
-        ],
-        [
-          85,
-          "关于看电视，作者认为：",
-          [
-            "能提高学习成绩",
-            "小孩子不适合看电视",
-            "可以改善人们的情绪",
-            "可以丰富人们的知识"
-          ],
-          "D",
-          {
-            "group": "83-86"
-          }
-        ],
-        [
-          86,
-          "上文主要介绍的是：",
-          [
-            "电视带来的问题",
-            "电视的娱乐价值",
-            "如何充分利用电视",
-            "电视对身体造成的损害"
-          ],
-          "A",
-          {
-            "group": "83-86"
-          }
-        ],
-        [
-          87,
-          "百万富翁为什么对那个穷人感兴趣？",
-          [
-            "穿着很奇怪",
-            "每天睡在长凳上",
-            "每天看着那个酒店",
-            "和一个朋友长得像"
-          ],
-          "C",
-          {
-            "group": "87-90"
-          }
-        ],
-        [
-          88,
-          "富翁为那个穷人做什么了？",
-          [
-            "买了一座房子",
-            "雇了一个司机",
-            "送给他一辆车",
-            "付了一个月房费"
-          ],
-          "D",
-          {
-            "group": "87-90"
-          }
-        ],
-        [
-          89,
-          "穷人觉得住酒店怎么样？",
-          [
-            "晚上太吵了",
-            "比想像的好",
-            "不如睡长凳",
-            "和其他地方差不多"
-          ],
-          "C",
-          {
-            "group": "87-90"
-          }
-        ],
-        [
-          90,
-          "穷人离开了酒店，是因为：",
-          [
-            "太冷",
-            "睡眠不好",
-            "酒店限制太多",
-            "一个月到期了"
-          ],
-          "B",
-          {
-            "group": "87-90"
-          }
-        ]
-      ]
-    }
-  ],
-  "writing": [
-    {
-      "title": "书写 · 第一部分",
-      "range": "91-98",
-      "questions": [
-        [
-          91,
-          [
-            "七大奇迹",
-            "长城",
-            "是",
-            "世界",
-            "之一"
-          ],
-          "长城是世界七大奇迹之一。",
-          [
-            "长城是世界七大奇迹之一。"
-          ]
-        ],
-        [
-          92,
-          [
-            "一直",
-            "班主任家的",
-            "占线",
-            "电话"
-          ],
-          "班主任家的电话一直占线。",
-          [
-            "班主任家的电话一直占线。"
-          ]
-        ],
-        [
-          93,
-          [
-            "中老年消费者",
-            "这种产品",
-            "针对",
-            "主要"
-          ],
-          "这种产品主要针对中老年消费者。",
-          [
-            "这种产品主要针对中老年消费者。"
-          ]
-        ],
-        [
-          94,
-          [
-            "要",
-            "她",
-            "出席此次",
-            "学术讨论会",
-            "邀请专家"
-          ],
-          "她要邀请专家出席此次学术讨论会。",
-          [
-            "她要邀请专家出席此次学术讨论会。"
-          ]
-        ],
-        [
-          95,
-          [
-            "他",
-            "食物",
-            "分配给了",
-            "把",
-            "每个士兵"
-          ],
-          "他把食物分配给了每个士兵。",
-          [
-            "他把食物分配给了每个士兵。"
-          ]
-        ],
-        [
-          96,
-          [
-            "他的",
-            "佩服",
-            "勇气",
-            "很让我"
-          ],
-          "他的勇气很让我佩服。",
-          [
-            "他的勇气很让我佩服。"
-          ]
-        ],
-        [
-          97,
-          [
-            "预订",
-            "3号桌",
-            "已经",
-            "了",
-            "被",
-            "别人"
-          ],
-          "3号桌已经被别人预订了。",
-          [
-            "3号桌已经被别人预订了。"
-          ]
-        ],
-        [
-          98,
-          [
-            "请",
-            "重新",
-            "您的密码",
-            "输入"
-          ],
-          "请重新输入您的密码。",
-          [
-            "请重新输入您的密码。"
-          ]
-        ]
-      ]
-    },
-    {
-      "title": "书写 · 第二部分",
-      "range": "99",
-      "questions": [
-        [
-          99,
-          "请结合下列词语（要全部使用，顺序不分先后），写一篇80字左右的短文。宿舍、理解、开心、坦率、帮助",
-          "请结合下列词语（要全部使用，顺序不分先后），写一篇80字左右的短文。",
-          ""
-        ]
-      ]
-    },
-    {
-      "title": "书写 · 第三部分",
-      "range": "100",
-      "questions": [
-        [
-          100,
-          "请结合这张图片写一篇80字左右的短文。",
-          "",
-          "",
-          "data:image/jpeg;base64,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/wD6Ljri4Pgn4uQDfqOkZ9Flkx/6Lr0f4feGdQ8KaNNp2pTW8ksl00wMDMV2lEHcDnKmrw9KcZ3aHUknGyOnooorvOcKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP//Z"
-        ]
-      ]
-    }
-  ],
-  "reading_passages": {
-    "H51002": {
-      "46-48": "医生为了说明饮酒的坏处，把两条一样的小虫分别放进装酒和装水的瓶子里。放在酒里的那条小虫很快就死了，而放在水里的那条一点儿事也没有。医生对周围的病人说：“看见了吧，你们从这个47中明白了什么？”这时，一个病人站起来，认真回答说：“喝酒的人的48里绝对不会有这种虫子。”",
-      "49-52": "人为什么会做梦，梦有什么意义，人类思考了近千年也还没有找到答案。但是人们相信一些常见的梦包含着特别的意义。例如，我们梦见要出门远行，要乘坐飞机、火车或者其他交通工具，但是却晚了一点儿，没有赶上。这种梦代表你错过了人生的一次机会，当人们面对重要的选择而犹豫的时候，常做这种梦。再有，有时候我们会梦见参加考试，可是却发现自己根本读不懂考试的题目。这种梦说明你正面临挑战，但是你还没有做好准备。",
-      "53-56": "有一个孩子跑到山上，对着山谷喊了一声：“喂……”声音刚落，从四面八方传来了阵阵“喂……”的回声。大山答应了，孩子很惊讶，又喊了一声：“你是谁？”大山也问：“你是谁？”孩子喊：“为什么不告诉我？”大山也喊：“为什么不告诉我？”孩子忍不住生气了，喊道：“我恨你！”他哪里知道这一喊不得了，整个世界传来的声音都是：“我恨你，我恨你……”孩子哭着跑回家，告诉了妈妈。妈妈说：“孩子，你回去对着大山喊‘我爱你’，试试看结果会怎样，好吗？”孩子又跑到山上。果然，这次孩子被包围在“我爱你，我爱你”的回声中。孩子笑了，群山笑了。有时候，我们总是在怪别人的态度太冷漠、自己的运气太不好，却不知你是对方一面最好的镜子。如遇到这样的情况，不妨问问自己做了什么。想让别人爱你，你得先去爱别人。",
-      "57-60": "警察站在一个新的路口，准备迎接第一辆通过的汽车。市政府规定，第一辆汽车的驾驶者，可获得1000元的奖金。一辆汽车飞快地开到这里，警察向驾驶者宣布了这个决定后，顺便问了一句：“先生，您得到了这笔钱，准备拿它来做什么？”驾驶者不假思索地答道：“首先，我要去领一个驾驶执照。”坐在旁边的妻子一听，连忙向警察解释说：“警官先生，我丈夫今天酒喝多了，说话总是语无伦次的。”坐在后座上的、耳朵有问题的妈妈生气地补充道：“你看，我早就知道，你偷了汽车是逃不了多远的……”",
-      "71-74": "一直以来，“80后”这个词儿都含有年轻的味道。随着时间的流逝，我们突然发现，第一批“80后”——1980年出生的人，已经步入而立之年了。\n三十而立的“80后”月收入情况如何？调查显示，就全国范围来看，“1980”们月收入主要集中在3000-5000元，比例为31.2%。其次是集中在1500-3000元，比例也近三成。调查还显示，“1980”们将近五成无房无车，比例为47.9%。\n房子、车子的压力对于“80后”的影响越来越明显。前两年，很少有“80后”会为了公司的薪水、福利等斤斤计较，他们关注工作环境更多。但现在，不少“80后”在办公室里的话题就是围着“钱”打转转。\n专家认为，如果30岁的“80后”现在在职场上还无法收获满足感，他们会对未来失去信心，并因此害怕承担家庭责任。",
-      "75-78": "这几年公司发展得很不错，每年春节前都会发给工人两个月的奖金，但是今年公司却没挣到多少钱。经理很担心工人们会伤心、失望。\n这天，他突然想起小时候去买糖：别的服务员都是先抓一大把，拿去称，再一颗一颗减少；只有一个服务员，每次都抓不够重量，然后一颗一颗往上加。虽然拿到的糖是一样的，但人们都喜欢后者。经理想到了办法。\n过了两天，传来一个消息——今年公司发展不好，有些人可能得离开公司。工人们听了之后都开始担心，以为要离开的是自己。\n后来经理宣布了一个消息：大家都是一家人，虽然公司有困难，但不能丢掉任何人，只是没有奖金了。\n这个消息使所有的人都放下了心：奖金不重要，有工作就好。\n春节快到了，工人们都做了过个穷年的打算。这时经理通知开会，工人们又担心：“会有什么变化吗？”谁知参加会议的人回来兴奋地喊道：“有！有！还是有奖金的！一个月的！”工人们听了，发出一片热烈的欢呼声。",
-      "79-82": "一个青年大学毕业后，曾为自己树立了许多目标，可是几年下来，依然一事无成，他决定去找一位智者。\n他找到智者时，智者正在屋里读书。他向智者倾诉，智者听后微笑着对他说：“来，你先帮我烧壶开水。”\n青年看见墙角放着一把很大的水壶，旁边是一个小火灶，可是没发现柴火，于是便出去找。他在外面拾了一些枯枝回来，装满一壶水，放在灶台上，在灶内放了一些柴便烧了起来，可是由于壶太大，那些柴烧尽了，水也没开。于是他跑出去继续找柴，回来的时候那壶水已经凉得差不多了。这回他学聪明了，没有急于点火，而是再次出去找了些柴，由于柴准备充足，水不一会儿就烧开了。\n智者问他：“如果没有足够的柴，你该怎样把水烧开？”青年想了一会儿，摇了摇头。\n智者说：“如果那样，就把水壶里的水倒掉一些。”青年若有所思地点了点头。\n智者接着说：“你一开始树立了太多的目标，就像这个大水壶装了太多水一样，而你又没有足够的柴，所以不能把水烧开，要想把水烧开，你应该或者倒出一些水，或者先去准备柴。”\n青年恍然大悟。回去后，他把计划中所列的目标去掉了许多，只留下最近的几个，同时利用业余时间学习各种专业知识。几年后，他的目标基本上都实现了。\n只有删繁就简，从最近的目标开始，才会一步步走向成功。万事挂怀，只会半途而废。另外，我们只有不断地捡拾“柴”，才能使人生不断加温，最终让生命沸腾起来。",
-      "83-86": "电视带给我们许多快乐，使我们学到了很多知识，丰富了我们的文化生活，但电视也给我们带来了很多坏处。\n第一，电视使我们的家庭缺少了感情。在家里，我们过多地看电视，忽视了家庭成员之间的交流，使家庭缺少了大家在一起聊天儿、欢乐的时间。第二，电视使我们花去了很多可以用来看书、学习的时间。那些特别喜欢看电视的孩子，会对学习失去兴趣，导致学习成绩下降。第三，电视会伤害我们的身体。许多人看电视看到很晚，每天睡眠时间严重不足，不但影响工作，而且影响身体健康，长时间地看电视还会对眼睛产生影响，很多人因为看电视而戴上了眼镜。第四，看电视使我们减少了社会活动。有了电视，我们不再喜欢到朋友那里去，很多人靠呆在家里安安稳稳地看电视来度过时间。\n总之，电视带给我们知识和娱乐，它带给我们的快乐是主要的，但同时它也带来了一定的危害。重要的是我们怎样来充分利用电视，怎样来看电视。",
-      "87-90": "每天上午11点，都会有一辆高级小汽车穿过市中心公园。车里除了司机，还有一位主人——无人不知的百万富翁。\n这位百万富翁发现：每天上午都有一位衣着破烂的人坐在公园的凳子上，一动不动地看着他住的酒店。有一天，百万富翁对这个人产生了兴趣，他让司机停下车，走到那人面前说：“请原谅，我不明白你为什么每天上午都在这儿看我住的酒店。”\n“先生，”穷人说，“我没钱，没家，没住宅，只得睡在这条长凳上，不过，每天晚上我都梦到住进了这家酒店。”\n百万富翁觉得很有趣，于是对那人说：“今天晚上我就让你如愿以偿。我为你在酒店订一间最好的房间，并支付一个月房费。”\n几天后，百万富翁想去问那人是否觉得满意。然而，他发现那人已搬出了酒店，重新回到公园的凳子上了。\n百万富翁来到公园，问穷人为什么要这样做，穷人回答道：“一旦我睡在凳子上，我就梦见自己睡在那座豪华的酒店里，真是妙不可言；可一旦我睡在酒店里，我就梦见自己又回到了冷冰冰的凳子上，这梦真是可怕极了，以致完全影响了我的睡眠！”"
-    }
+  "package": {
+    "id": "H51002",
+    "schema": "HSK5_UNIVERSAL_V2",
+    "readyForLive": true
   },
   "writing_manual_grading": [
     99,
     100
   ],
-  "audio": "not_embedded_in_source_pdf",
-  "answerKey": {
-    "listening": [
-      "C",
-      "A",
-      "C",
-      "D",
-      "B",
-      "A",
-      "B",
-      "C",
-      "A",
-      "D",
-      "B",
-      "A",
-      "D",
-      "A",
-      "B",
-      "B",
-      "A",
-      "D",
-      "A",
-      "C",
-      "C",
-      "D",
-      "B",
-      "B",
-      "C",
-      "C",
-      "D",
-      "A",
-      "D",
-      "B",
-      "B",
-      "D",
-      "D",
-      "A",
-      "A",
-      "B",
-      "D",
-      "D",
-      "D",
-      "B",
-      "B",
-      "C",
-      "D",
-      "C",
-      "C"
-    ],
-    "reading": [
-      "B",
-      "A",
-      "A",
-      "C",
-      "B",
-      "C",
-      "A",
-      "A",
-      "C",
-      "B",
-      "A",
-      "C",
-      "C",
-      "A",
-      "B",
-      "C",
-      "A",
-      "B",
-      "B",
-      "C",
-      "B",
-      "C",
-      "D",
-      "A",
-      "D",
-      "C",
-      "C",
-      "A",
-      "B",
-      "B",
-      "D",
-      "D",
-      "C",
-      "D",
-      "B",
-      "D",
-      "A",
-      "A",
-      "D",
-      "D",
-      "A",
-      "C",
-      "D",
-      "C",
-      "B"
+  "instructions": {
+    "writing": [
+      "第91-98题：完成句子。",
+      "第99题：请结合下列词语（要全部使用），写一篇80字左右的短文。",
+      "第100题：请结合这张图片写一篇80字左右的短文。"
     ]
   }
 }

@@ -1075,7 +1075,7 @@
   "writing": [
     {
       "title": "书写 · 第一部分",
-      "range": "91-98",
+      "range": "91–98",
       "questions": [
         [
           "91",
@@ -1213,7 +1213,8 @@
               20
             ],
             "type": "choice",
-            "shape": "choice"
+            "shape": "choice",
+            "instruction": "Dengarkan percakapan, lalu pilih jawaban yang paling tepat."
           },
           {
             "range": [
@@ -1221,7 +1222,8 @@
               45
             ],
             "type": "choice",
-            "shape": "choice"
+            "shape": "choice",
+            "instruction": "Dengarkan percakapan atau bacaan, lalu pilih jawaban yang paling tepat."
           }
         ]
       },
@@ -1238,7 +1240,8 @@
               "type": "passage",
               "textSource": "reading_passages.H51001",
               "key": "questionRange"
-            }
+            },
+            "instruction": "Pilih kata yang paling tepat untuk melengkapi kalimat."
           },
           {
             "range": [
@@ -1246,7 +1249,8 @@
               70
             ],
             "type": "choice",
-            "shape": "choice"
+            "shape": "choice",
+            "instruction": "Pilih jawaban yang paling sesuai dengan isi kalimat."
           },
           {
             "range": [
@@ -1261,7 +1265,8 @@
               "mediaSource": "reading_passage_media.H51001",
               "key": "questionRange"
             },
-            "input": "single_select"
+            "input": "single_select",
+            "instruction": "Baca teks dengan saksama, lalu pilih jawaban yang paling sesuai dengan isi bacaan."
           }
         ]
       },
@@ -1298,11 +1303,13 @@
             ],
             "type": "picture_writing",
             "input": "text",
+            "media": [
+              "image"
+            ],
             "scoring": {
               "mode": "manual"
             },
-            "instruction": "第100题：请结合这张图片写一篇80字左右的短文。",
-            "mediaSource": "question[3]"
+            "instruction": "第100题：请结合这张图片写一篇80字左右的短文。"
           }
         ]
       }
@@ -1382,5 +1389,16 @@
     "id": "H51001",
     "schema": "HSK5_UNIVERSAL_V2",
     "readyForLive": true
+  },
+  "writing_manual_grading": [
+    99,
+    100
+  ],
+  "instructions": {
+    "writing": [
+      "第91-98题：完成句子。",
+      "第99题：请结合下列词语（要全部使用），写一篇80字左右的短文。",
+      "第100题：请结合这张图片写一篇80字左右的短文。"
+    ]
   }
 }

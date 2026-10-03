@@ -122,11 +122,13 @@
             ],
             "type": "picture_writing",
             "input": "text",
+            "media": [
+              "image"
+            ],
             "scoring": {
               "mode": "manual"
             },
-            "instruction": "第100题：请结合这张图片写一篇80字左右的短文。",
-            "mediaSource": "question[3]"
+            "instruction": "第100题：请结合这张图片写一篇80字左右的短文。"
           }
         ]
       }
@@ -1227,7 +1229,7 @@
   "writing": [
     {
       "title": "书写 · 第一部分",
-      "range": "91-98",
+      "range": "91–98",
       "questions": [
         [
           91,
