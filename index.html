@@ -3486,6 +3486,51 @@ body.dark .mainNav,body.dark .levelCard,body.dark .levelCardIcon,body.dark .pack
   }
 }
 </style>
+
+<!-- HSK Papers v34 — definitive landscape active-nav override -->
+<style id="hsk-v34-landscape-nav-final">
+@media (min-width:600px) and (orientation:landscape){
+  .mainNav{
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    backdrop-filter:none!important;
+    -webkit-backdrop-filter:none!important;
+    justify-content:center!important;
+    align-items:center!important;
+    padding:12px 8px!important;
+  }
+  .mainNav .navItem,
+  .mainNav .navItem.active,
+  .mainNav .navItem[aria-current="page"]{
+    background:transparent!important;
+    background-color:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    color:var(--muted,#9aa3b5)!important;
+    border-radius:0!important;
+  }
+  .mainNav .navItem.active .ico,
+  .mainNav .navItem[aria-current="page"] .ico{
+    color:#ff6548!important;
+  }
+  .mainNav .navItem.active .navLabel,
+  .mainNav .navItem[aria-current="page"] .navLabel{
+    color:var(--muted,#9aa3b5)!important;
+  }
+  .mainNav .navItem.active::before,
+  .mainNav .navItem[aria-current="page"]::before,
+  .mainNav .navItem.active::after,
+  .mainNav .navItem[aria-current="page"]::after{
+    content:none!important;
+    display:none!important;
+  }
+  .mainNav .navItem:hover{
+    background:transparent!important;
+    background-color:transparent!important;
+  }
+}
+</style>
 </head><body><div aria-live="polite" id="appBootLoader" role="status"><div class="bootCard"><div aria-hidden="true" class="bootMark"><svg aria-hidden="true" class="bootLogoSvg bootLogoLight" preserveaspectratio="xMidYMid meet" viewbox="0 0 1536 581">
 <svg height="581" viewbox="0 0 1536 581" width="1536" xmlns="http://www.w3.org/2000/svg">
 <defs>
