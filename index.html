@@ -3531,6 +3531,52 @@ body.dark .mainNav,body.dark .levelCard,body.dark .levelCardIcon,body.dark .pack
   }
 }
 </style>
+
+<!-- HSK Papers v35 — landscape nav icon-only + robust database folder discovery -->
+<style id="hsk-v35-landscape-nav-and-db-fix">
+@media (min-width:600px) and (orientation:landscape){
+  .mainNav .navItem.active,
+  .mainNav .navItem[aria-current="page"],
+  .mainNav .navItem.active:hover,
+  .mainNav .navItem[aria-current="page"]:hover,
+  .mainNav .navItem.active:focus,
+  .mainNav .navItem[aria-current="page"]:focus,
+  .mainNav .navItem.active:focus-visible,
+  .mainNav .navItem[aria-current="page"]:focus-visible{
+    background:transparent!important;
+    background-color:transparent!important;
+    background-image:none!important;
+    border:0!important;
+    border-color:transparent!important;
+    box-shadow:none!important;
+    outline:0!important;
+    border-radius:0!important;
+  }
+  .mainNav .navItem.active::before,
+  .mainNav .navItem.active::after,
+  .mainNav .navItem[aria-current="page"]::before,
+  .mainNav .navItem[aria-current="page"]::after{
+    content:none!important;
+    display:none!important;
+    width:0!important;
+    height:0!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+  }
+  .mainNav .navItem.active .ico,
+  .mainNav .navItem[aria-current="page"] .ico{
+    background:transparent!important;
+    background-color:transparent!important;
+    background-image:none!important;
+    border:0!important;
+    box-shadow:none!important;
+    border-radius:0!important;
+    padding:0!important;
+    color:#ff6548!important;
+  }
+}
+</style>
 </head><body><div aria-live="polite" id="appBootLoader" role="status"><div class="bootCard"><div aria-hidden="true" class="bootMark"><svg aria-hidden="true" class="bootLogoSvg bootLogoLight" preserveaspectratio="xMidYMid meet" viewbox="0 0 1536 581">
 <svg height="581" viewbox="0 0 1536 581" width="1536" xmlns="http://www.w3.org/2000/svg">
 <defs>
@@ -6095,24 +6141,32 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       manifestLoaded=true;
     }catch(err){console.warn('Raw manifest discovery failed.',err)}
 
-    // GitHub tree path. This is what discovers folders/files added after the
-    // manifest was generated (for example data/HSK 5/H51001.json).
+    // GitHub Contents API path. Do not depend on the recursive Git tree:
+    // large HSK databases can make that endpoint return a truncated tree,
+    // which would hide folders such as data/HSK 5. Discover the data folders
+    // directly, then enumerate JSON files inside each folder.
     try{
-      const tree=await fetchJSON(TREE_API);
-      if(tree?.truncated)throw new Error('GitHub database tree terlalu besar.');
-      const gm=new Map();
-      for(const item of tree?.tree||[]){
-        const m=String(item.path||'').match(/^data\/([^/]+)\/([^/]+\.json)$/i);
-        if(!m||item.type!=='blob')continue;
-        const folder=m[1],file=m[2];
-        if(/^(manifest|reading-passages)$/i.test(file.replace(/\.json$/i,'')))continue;
-        let g=gm.get(folder);
-        if(!g){g={name:folder,path:'data/'+folder,kind:kind(folder),level:level(folder),files:[],codes:[]};gm.set(folder,g)}
-        addFile(g,file.replace(/\.json$/i,''),item.path);
+      const root=await fetchJSON('https://api.github.com/repos/'+REPO+'/contents/data?ref='+encodeURIComponent(REF),7000);
+      const dirs=(root?.filter(x=>x?.type==='dir')||[]).map(x=>String(x.name||'')).filter(Boolean);
+      const wanted=['HSK 4','HSK 5','Workbook HSK4a','Workbook HSK4b'];
+      const folderNames=[...new Set([...wanted,...dirs])];
+      for(const folder of folderNames){
+        try{
+          const url='https://api.github.com/repos/'+REPO+'/contents/data/'+folder.split('/').map(encodeURIComponent).join('/')+'?ref='+encodeURIComponent(REF);
+          const items=await fetchJSON(url,7000);
+          if(!Array.isArray(items))continue;
+          const g={name:folder,path:'data/'+folder,kind:kind(folder),level:level(folder),files:[],codes:[]};
+          for(const item of items){
+            const file=String(item?.name||'');
+            if(item?.type!=='file'||!/\.json$/i.test(file))continue;
+            if(/^(manifest|reading-passages)$/i.test(file.replace(/\.json$/i,'')))continue;
+            addFile(g,file.replace(/\.json$/i,''),String(item.path||('data/'+folder+'/'+file)));
+          }
+          if(g.files.length)mergeGroups([g]);
+        }catch(err){console.warn('Folder discovery failed for',folder,err)}
       }
-      mergeGroups([...gm.values()].filter(g=>g.files.length));
       treeLoaded=true;
-    }catch(err){console.warn('Dynamic database tree discovery failed.',err)}
+    }catch(err){console.warn('Dynamic database folder discovery failed.',err)}
 
     const groups=[...merged.values()].filter(g=>g.files.length);
     if(groups.length){
