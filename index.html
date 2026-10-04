@@ -3452,129 +3452,17 @@ body.dark .mainNav,body.dark .levelCard,body.dark .levelCardIcon,body.dark .pack
 </style>
 </link></link></link>
 
-<!-- HSK Papers v33 — landscape navigation visual integration -->
-<style id="hsk-v33-landscape-nav-integration">
+<!-- HSK Papers v36 — consolidated landscape navigation contract -->
+<style id="hsk-v36-landscape-nav-contract">
 @media (min-width:600px) and (orientation:landscape){
-  /* Landscape rail is part of the canvas, not a card/panel. */
-  .mainNav{
-    background:transparent!important;
-    border:0!important;
-    border-radius:0!important;
-    box-shadow:none!important;
-    backdrop-filter:none!important;
-    -webkit-backdrop-filter:none!important;
-    justify-content:center!important;
-    align-items:stretch!important;
-  }
-
-  /* Active state: color the icon only; no active background tile. */
-  .mainNav .navItem,
-  .mainNav .navItem.active,
-  .mainNav .navItem[aria-current="page"]{
-    background:transparent!important;
-    box-shadow:none!important;
-    border:0!important;
-    color:var(--muted)!important;
-  }
-  .mainNav .navItem.active .ico,
-  .mainNav .navItem[aria-current="page"] .ico{
-    color:#ff7658!important;
-  }
-  .mainNav .navItem.active .navLabel,
-  .mainNav .navItem[aria-current="page"] .navLabel{
-    color:var(--muted)!important;
-  }
-}
-</style>
-
-<!-- HSK Papers v34 — definitive landscape active-nav override -->
-<style id="hsk-v34-landscape-nav-final">
-@media (min-width:600px) and (orientation:landscape){
-  .mainNav{
-    background:transparent!important;
-    border:0!important;
-    box-shadow:none!important;
-    backdrop-filter:none!important;
-    -webkit-backdrop-filter:none!important;
-    justify-content:center!important;
-    align-items:center!important;
-    padding:12px 8px!important;
-  }
-  .mainNav .navItem,
-  .mainNav .navItem.active,
-  .mainNav .navItem[aria-current="page"]{
-    background:transparent!important;
-    background-color:transparent!important;
-    border:0!important;
-    box-shadow:none!important;
-    color:var(--muted,#9aa3b5)!important;
-    border-radius:0!important;
-  }
-  .mainNav .navItem.active .ico,
-  .mainNav .navItem[aria-current="page"] .ico{
-    color:#ff6548!important;
-  }
-  .mainNav .navItem.active .navLabel,
-  .mainNav .navItem[aria-current="page"] .navLabel{
-    color:var(--muted,#9aa3b5)!important;
-  }
-  .mainNav .navItem.active::before,
-  .mainNav .navItem[aria-current="page"]::before,
-  .mainNav .navItem.active::after,
-  .mainNav .navItem[aria-current="page"]::after{
-    content:none!important;
-    display:none!important;
-  }
-  .mainNav .navItem:hover{
-    background:transparent!important;
-    background-color:transparent!important;
-  }
-}
-</style>
-
-<!-- HSK Papers v35 — landscape nav icon-only + robust database folder discovery -->
-<style id="hsk-v35-landscape-nav-and-db-fix">
-@media (min-width:600px) and (orientation:landscape){
-  .mainNav .navItem.active,
-  .mainNav .navItem[aria-current="page"],
-  .mainNav .navItem.active:hover,
-  .mainNav .navItem[aria-current="page"]:hover,
-  .mainNav .navItem.active:focus,
-  .mainNav .navItem[aria-current="page"]:focus,
-  .mainNav .navItem.active:focus-visible,
-  .mainNav .navItem[aria-current="page"]:focus-visible{
-    background:transparent!important;
-    background-color:transparent!important;
-    background-image:none!important;
-    border:0!important;
-    border-color:transparent!important;
-    box-shadow:none!important;
-    outline:0!important;
-    border-radius:0!important;
-  }
-  .mainNav .navItem.active::before,
-  .mainNav .navItem.active::after,
-  .mainNav .navItem[aria-current="page"]::before,
-  .mainNav .navItem[aria-current="page"]::after{
-    content:none!important;
-    display:none!important;
-    width:0!important;
-    height:0!important;
-    background:transparent!important;
-    border:0!important;
-    box-shadow:none!important;
-  }
-  .mainNav .navItem.active .ico,
-  .mainNav .navItem[aria-current="page"] .ico{
-    background:transparent!important;
-    background-color:transparent!important;
-    background-image:none!important;
-    border:0!important;
-    box-shadow:none!important;
-    border-radius:0!important;
-    padding:0!important;
-    color:#ff6548!important;
-  }
+  .mainNav{position:fixed!important;left:0!important;right:auto!important;top:0!important;bottom:0!important;width:84px!important;min-width:84px!important;max-width:84px!important;height:100dvh!important;margin:0!important;padding:12px 8px!important;box-sizing:border-box!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:8px!important;background:transparent!important;background-color:transparent!important;background-image:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;overflow:hidden!important;}
+  .mainNav::before,.mainNav::after{content:none!important;display:none!important;background:none!important;border:0!important;box-shadow:none!important;}
+  .mainNav .navItem,.mainNav .navItem:hover,.mainNav .navItem:active,.mainNav .navItem:focus,.mainNav .navItem:focus-visible,.mainNav .navItem.active,.mainNav .navItem[aria-current="page"]{position:relative!important;width:100%!important;min-width:0!important;min-height:58px!important;padding:9px 4px!important;margin:0!important;flex:0 0 auto!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:5px!important;border:0!important;border-color:transparent!important;border-radius:0!important;outline:0!important;background:transparent!important;background-color:transparent!important;background-image:none!important;box-shadow:none!important;color:var(--muted)!important;transform:none!important;}
+  .mainNav .navItem::before,.mainNav .navItem::after,.mainNav .navItem.active::before,.mainNav .navItem.active::after,.mainNav .navItem[aria-current="page"]::before,.mainNav .navItem[aria-current="page"]::after{content:none!important;display:none!important;width:0!important;height:0!important;background:none!important;border:0!important;box-shadow:none!important;}
+  .mainNav .navItem .ico,.mainNav .navItem.active .ico,.mainNav .navItem[aria-current="page"] .ico{width:24px!important;height:24px!important;min-width:24px!important;min-height:24px!important;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;background:transparent!important;background-color:transparent!important;background-image:none!important;box-shadow:none!important;color:var(--muted)!important;filter:none!important;}
+  .mainNav .navItem.active .ico,.mainNav .navItem[aria-current="page"] .ico{color:#ff6548!important;}
+  .mainNav .navItem .navLabel{color:var(--muted)!important;background:transparent!important;}
+  main,.topin,.appFooter{box-sizing:border-box!important;width:calc(100% - 84px)!important;margin-left:84px!important;margin-right:0!important;}
 }
 </style>
 </head><body><div aria-live="polite" id="appBootLoader" role="status"><div class="bootCard"><div aria-hidden="true" class="bootMark"><svg aria-hidden="true" class="bootLogoSvg bootLogoLight" preserveaspectratio="xMidYMid meet" viewbox="0 0 1536 581">
