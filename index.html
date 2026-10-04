@@ -691,35 +691,7 @@ body.dark .authCard h1,body.dark .authCard .authFormTitle{color:var(--text)!impo
 })();
 </script>
 <script id="midrange-performance-final-js">(function(){try{var mobile=window.matchMedia&&window.matchMedia('(max-width:900px) and (pointer:coarse)').matches;var lowMemory=(navigator.deviceMemory&&navigator.deviceMemory<=6)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=6);if(mobile||lowMemory)document.documentElement.classList.add('perfMidrange')}catch(e){}})();</script>
-<script id="adaptiveFloatingNavMotion2026">
-(function(){
-  const nav=()=>document.querySelector('.mainNav');
-  let lastActive=null;
-  function syncNavMotion(){
-    const n=nav(); if(!n)return;
-    const active=n.querySelector('.navItem.active');
-    if(!active)return;
-    if(active!==lastActive){
-      active.classList.remove('navJustActivated');
-      void active.offsetWidth;
-      active.classList.add('navJustActivated');
-      lastActive=active;
-    }
-  }
-  const original=window.renderNavState;
-  if(typeof original==='function'){
-    window.renderNavState=function(){
-      const r=original.apply(this,arguments);
-      requestAnimationFrame(syncNavMotion);
-      return r;
-    };
-  }
-  window.addEventListener('resize',()=>requestAnimationFrame(syncNavMotion),{passive:true});
-  window.addEventListener('orientationchange',()=>setTimeout(syncNavMotion,80),{passive:true});
-  document.addEventListener('DOMContentLoaded',()=>requestAnimationFrame(syncNavMotion));
-  setTimeout(syncNavMotion,120);
-})();
-</script>
+
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&amp;display=swap" rel="stylesheet"/>
 <style id="studyPlanPackageActionsCanonicalV45">
 #studyPlanPackages .studyPlanPackage{position:relative!important;padding:18px 18px 58px!important;min-height:150px!important;overflow:hidden!important;}
@@ -2288,38 +2260,7 @@ body.dark #exercise .hsk5Part3Question{border-bottom-color:#2d3138!important;}
 }
 </style>
 
-<script id="packageArrowLoadingV1Script">
-(function(){
-  'use strict';
-  function findPackageButton(code){
-    const target=String(code||'');
-    return Array.from(document.querySelectorAll('#packagesScreen #packagesGrid.packageGridV16 .packageCardV16Main[data-package-code]'))
-      .find(btn=>String(btn.dataset.packageCode||'')===target) || null;
-  }
-  const install=()=>{
-    if(typeof window.openPackage!=='function' || window.openPackage.__packageArrowLoadingV1)return;
-    const original=window.openPackage;
-    async function wrapped(code,push=true){
-      const btn=findPackageButton(code);
-      const arrow=btn?.querySelector('.packageCardV16Arrow');
-      if(arrow) arrow.classList.add('is-loading');
-      try{
-        return await original.apply(this,arguments);
-      }finally{
-        if(arrow) arrow.classList.remove('is-loading');
-      }
-    }
-    wrapped.__packageArrowLoadingV1=true;
-    wrapped.__originalOpenPackage=original;
-    window.openPackage=wrapped;
-    if(typeof window.openPackageFromTile==='function') window.openPackageFromTile=wrapped;
-  };
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
-  else install();
-  window.addEventListener('hsk:data-ready',install);
-  window.addEventListener('hsk:dynamic-catalog-ready',install);
-})();
-</script>
+
 
 <style id="levelCardArrowLoadingV1">
 /* Level-card loading feedback — visual only, no pointer interception or layout shift. */
@@ -2357,45 +2298,7 @@ body.dark #exercise .hsk5Part3Question{border-bottom-color:#2d3138!important;}
 }
 </style>
 
-<script id="levelCardArrowLoadingV1Script">
-(function(){
-  'use strict';
-  const install=()=>{
-    if(typeof window.openLevelPackages!=='function' || window.openLevelPackages.__levelArrowLoadingV1)return;
-    const original=window.openLevelPackages;
-    function wrapped(key,push=true){
-      const value=String(key??'').trim();
-      const cards=Array.from(document.querySelectorAll('#levelsScreen .levelCard'));
-      let card=null;
-      for(const el of cards){
-        const raw=String(el.getAttribute('data-material-key')||'');
-        const text=el.querySelector('.levelCardBody strong')?.textContent?.trim()||'';
-        if(raw===value || raw===('hsk:'+value) || raw===('wb:'+value) || text===value || text===('HSK '+value)){
-          card=el;break;
-        }
-      }
-      if(!card && /^\d+$/.test(value)) card=document.querySelector('#levelsScreen .levelCard'+value);
-      const arrow=card?.querySelector('.levelCardArrow');
-      if(arrow)arrow.classList.add('is-loading');
-      try{
-        const result=original.apply(this,arguments);
-        window.setTimeout(()=>arrow?.classList.remove('is-loading'),320);
-        return result;
-      }catch(e){
-        arrow?.classList.remove('is-loading');
-        throw e;
-      }
-    }
-    wrapped.__levelArrowLoadingV1=true;
-    wrapped.__originalOpenLevelPackages=original;
-    window.openLevelPackages=wrapped;
-  };
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
-  else install();
-  window.addEventListener('hsk:data-ready',install);
-  window.addEventListener('hsk:dynamic-catalog-ready',install);
-})();
-</script>
+
 
 <style id="hskBackFocusFix">
 /* Back buttons: prevent persistent browser focus/tap highlight on touch devices. */
@@ -2859,7 +2762,6 @@ function performLogout(){
   renderUserPill();
   resetAuthChoices();
 }
-function renderNavState(){document.querySelectorAll('.mainNav .navItem').forEach(b=>b.classList.toggle('active',b.dataset.nav===route.screen||((route.screen==='studyPlans'||route.screen==='studyPlanDetail')&&b.dataset.nav==='studyPlans')||((route.screen==='levels'||route.screen==='packages'||route.screen==='package'||route.screen==='parts'||route.screen==='exercise'||route.screen==='result')&&b.dataset.nav==='packages')))}
 function setScreen(name,push=true){if(!currentUsername){showAuthScreen();return}document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));const target=$(name);if(!target)return;target.classList.add('active');document.body.classList.toggle('exercise-focus',name==='exercise');document.body.classList.toggle('result-focus',name==='result');renderContext();renderNavState();requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));/* canonical navigation guard owns browser history */if(!window.__hskRestoringLastRoute&&typeof window.__hskPersistRoute==='function')window.__hskPersistRoute();}
 function saveState(){return route}
 /* Persist only the current app route so a browser refresh returns to the same page.
@@ -2940,13 +2842,10 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 window.addEventListener('pagehide',()=>flushCloudSync());
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&currentUsername){pullCloudState(true)}});
 window.addEventListener('focus',()=>{if(currentUsername)pullCloudState(true)});
-function restore(s){route={screen:s.screen||'home',packageCode:s.packageCode||null,type:s.type||null,sectionIndex:s.sectionIndex??null};if(route.screen==='home'){renderHome();setScreen('home',false);armHome();return}if(route.screen==='levels'){renderLevelsScreen();setScreen('levelsScreen',false)}else if(route.screen==='packages'){renderPackagesScreen();setScreen('packagesScreen',false)}else if(route.screen==='scores'){renderScores();setScreen('scores',false)}else if(route.screen==='package'){renderPackage();setScreen('package',false)}else if(route.screen==='parts'){renderSections();setScreen('partsScreen',false)}else if(route.screen==='exercise'){loadCurrentSectionState();renderExercise();setScreen('exercise',false)}else if(route.screen==='result'){route.screen='exercise';loadCurrentSectionState();renderExercise();setScreen('exercise',false)}}
-function openPackage(code,push=true){if(!DB[code]){goHome(false);return}route={screen:'package',packageCode:code,type:null,sectionIndex:null};renderPackage();setScreen('package',push)}
+
 function renderPackage(){let code=route.packageCode;let d=DB[code]||{};$('pkgCrumb').textContent=code;$('pkgTitle').textContent='Paket '+code;const palettes={listening:{accent:'#ff6548',soft:'#fff0eb'},reading:{accent:'#7890d8',soft:'#eef2ff'},writing:{accent:'#e5ad3d',soft:'#fff5df'}};$('parts').innerHTML=Object.entries(META).map(([t,m])=>{const arr=d[t]||[],total=arr.reduce((a,x)=>a+x.questions.length,0),ps=arr.reduce((a,x,i)=>{const st=sectionStats(code,t,i);return {answered:a.answered+st.answered,total:a.total+st.total}},{answered:0,total:0});ps.pct=ps.total?Math.round(ps.answered/ps.total*100):0;const pal=palettes[t]||palettes.listening;return total?`<button class="partCard flatPartCard" style="--part-accent:${pal.accent};--part-soft:${pal.soft}" type="button" onclick="openSections('${esc(code)}','${t}')"><span class="partHanzi" aria-hidden="true">${esc(m.zh)}</span><span class="partMain"><strong>${esc(m.label)}</strong><span class="partMeta">${total} soal tersedia</span>${progressHTML(ps,'Progres bagian')}</span><span class="partArrow" aria-hidden="true"><span class="material-symbols-rounded ico">arrow_forward</span></span></button>`:`<div class="partCard flatPartCard partDisabled" style="--part-accent:${pal.accent};--part-soft:${pal.soft}" aria-disabled="true"><span class="partHanzi" aria-hidden="true">${esc(m.zh)}</span><span class="partMain"><strong>${esc(m.label)}</strong><span class="partMeta">Belum tersedia dari sumber paket</span></span></div>`}).join('')+`<div style="grid-column:1/-1">${renderPackageProgress(code)}</div>`}
-function openSections(code,type,push=true){if(!DB[code]||!META[type]){goHome(false);return}route={screen:'parts',packageCode:code,type,sectionIndex:null};renderSections();setScreen('partsScreen',push)}
 function renderSections(){const d=DB[route.packageCode]?.[route.type]||[];const m=META[route.type];if(!m){goHome(false);return}$('partsPkg').textContent=route.packageCode;$('partsCrumb').textContent=m.label;$('partsTitle').innerHTML='<span class="kaiti-ui-hanzi">'+escV17(m.zh)+'</span><span aria-hidden="true"> · </span>'+escV17(m.label);const available=d.map((s,i)=>({s,i})).filter(x=>Array.isArray(x.s.questions)&&x.s.questions.length>0);let arr=available.map(({s,i})=>{let st=sectionStats(route.packageCode,route.type,i);const sectionName=s.title.replace(/^.*?·\s*/,'');return `<button class="tile sectionPartTile" onclick="startSection(${i})"><div class="sectionPartTitle kaiti-ui-hanzi">${esc(sectionName)}</div><small>Soal ${esc(s.range)} · ${s.questions.length} soal</small>${progressHTML(st,'Progres bagian')}</button>`});$('sections').innerHTML=arr.length?arr.join(''):`<div class="notice"><strong>${route.packageCode} · ${m.label}</strong><br>Bagian ini belum tersedia sebagai teks soal pada paket ini.</div>`}
 function loadCurrentSectionState(){const st=getSectionState(route.packageCode,route.type,route.sectionIndex);answers={...st.answers};checked={...st.checked};answerEvents={...st.answerEvents};resultState=null}
-function startSection(i,push=true){const arr=DB[route.packageCode]?.[route.type]||[];if(!arr[i])return;route={screen:'exercise',packageCode:route.packageCode,type:route.type,sectionIndex:i};resumeQuestionId=null;window.__hskResumePage=0;loadCurrentSectionState();renderExercise();setScreen('exercise',push)}
 function instructionFor(type,idx){const code=String(route?.packageCode||'');const pkg=getActivePackageData();const id=Number(currentQuestions?.[0]?.[0]?.[0]||currentQuestions?.[0]?.[0]||0);const parts=pkg?.engineRules?.sections?.[type]?.parts||[];const part=parts.find(p=>ruleRangeContains(p.range,id));if(part?.instruction)return part.instruction;if(code==='HSK4-SUSUN-KATA')return 'Susun kata-kata berikut menjadi kalimat Mandarin yang benar. Jawaban dinilai berdasarkan kunci jawaban.';if(code==='HSK4-SUSUN-KALIMAT')return 'Susun kalimat-kalimat berikut menjadi paragraf yang benar dengan memilih urutan yang tepat.';if(type==='listening')return idx===0?'Dengarkan pernyataan lalu pilih apakah kalimat tersebut benar atau salah.':idx===1?'Dengarkan percakapan dengan saksama lalu pilih jawaban yang paling sesuai.':'Dengarkan percakapan lalu tentukan jawaban yang paling tepat berdasarkan informasi yang kamu dengar.';if(type==='reading')return idx===0?'Baca kalimat dan pilihan jawaban, lalu pilih kata atau ungkapan yang paling tepat.':idx===1?'Baca setiap kalimat dan pilih jawaban yang paling sesuai dengan maknanya.':idx===2?'Susun bagian-bagian kalimat menjadi urutan yang benar dengan memilih kombinasi yang tepat.':'Baca teks dengan saksama lalu pilih jawaban yang paling sesuai dengan informasi dalam bacaan.';return idx===0?'Susun kata-kata menjadi kalimat Mandarin yang benar. Kamu bisa klik kata untuk memasukkannya otomatis, atau mengetik langsung di kolom jawaban. Jawaban dinilai berdasarkan kunci jawaban.':'Gunakan kata yang diberikan untuk membuat kalimat Mandarin yang benar, lalu ketik jawabanmu. Jawaban ini tidak dinilai benar atau salah secara otomatis.'}
 function renderExercise(){const sec=DB[route.packageCode]?.[route.type]?.[route.sectionIndex];if(!sec){openSections(route.packageCode,route.type,false);return}currentQuestions=Array.isArray(sec.questions)?sec.questions:[];page=Math.max(0,Math.min(pageCount()-1,Number(window.__hskResumePage||0)));window.__hskResumePage=page;currentMode=route.type==='writing'?'writing':'choice';$('exPkg').textContent=route.packageCode;$('exType').textContent=META[route.type]?.label||route.type;$('exPart').textContent=sec.title.replace(/^.*?·\s*/,'');$('exTitle').textContent=sec.title;let st=sectionStats(route.packageCode,route.type,route.sectionIndex);let instruction=instructionFor(route.type,route.sectionIndex);$('questions').innerHTML=`<div class="instruction"><h2>Petunjuk</h2><p>${esc(instruction)}</p></div><div class="sectionProgress"><div class="progressMeta"><strong>Progres bagian</strong><span>${st.answered}/${st.total} terjawab · ${st.pct}%</span></div><div class="progressBar"><div class="fill" style="width:${st.pct}%"></div></div></div>`+renderQuestionCards();restoreQuestionUI()}
 if(currentMode==='writing'&&isSequenceWriting(route.type,route.sectionIndex)){currentQuestions.forEach(q=>refreshWordBank(String(q[0])))}
@@ -3133,16 +3032,10 @@ function toggleTheme(){applyTheme(document.body.classList.contains('dark')?'ligh
 function applyTheme(t){document.body.classList.toggle('dark',t==='dark');document.documentElement.classList.toggle('dark',t==='dark');const homeLogo=document.querySelector('#home .homeCornerLogo');const themeLogo=document.querySelector('.topBrandMark .hskThemeLogo'+(t==='dark'?'Dark':'Light'));if(homeLogo&&themeLogo&&themeLogo.src)homeLogo.src=themeLogo.src;const b=document.querySelector('.mainNav [data-nav="theme"]');if(b)b.innerHTML=(t==='dark'?svg('sun'):svg('moon'))+'<span class="navLabel">Tema</span>';document.querySelectorAll('.exerciseThemeToggle').forEach(b=>{b.innerHTML=svg(t==='dark'?'sun':'moon');b.setAttribute('aria-label',t==='dark'?'Beralih ke tema terang':'Beralih ke tema gelap');b.title=t==='dark'?'Tema terang':'Tema gelap'});const at=document.getElementById('authThemeToggle');if(at){at.innerHTML='<span aria-hidden="true" class="material-symbols-rounded">'+(t==='dark'?'light_mode':'dark_mode')+'</span>';at.setAttribute('aria-label',t==='dark'?'Beralih ke tema terang':'Beralih ke tema gelap');at.title=t==='dark'?'Tema terang':'Tema gelap';}document.querySelector('meta[name="theme-color"]').content=t==='dark'?'#000000':'#f4f5fb';localStorage.setItem('hsk-theme',t);if(typeof route!=='undefined'&&route)renderNavState()}
 function showExit(fromBack=false){if(!currentUsername)return;exitFromBack=fromBack;$('exitModal').classList.add('show')}function cancelExit(){$('exitModal').classList.remove('show');if(exitFromBack){exitFromBack=false;if(typeof window.__hskArmBackGuard==='function')window.__hskArmBackGuard()}}function confirmExit(){$('exitModal').classList.remove('show');exitFromBack=false;performLogout()}
 let selectedHSKLevel=4;
-function openPackages(push=true){route={screen:'levels',packageCode:null,type:null,sectionIndex:null};selectedHSKLevel=4;renderLevelsScreen();setScreen('levelsScreen',push)}
 function renderLevelsScreen(){const el=document.querySelector('#levelsScreen .levelGrid');if(!el)return;el.innerHTML=`<button class="levelCard levelCard4" type="button" onclick="openLevelPackages(4)"><div class="levelCardIcon">4</div><div class="levelCardBody"><span class="levelEyebrow">HSK LEVEL</span><strong>HSK 4</strong><p>25 paket latihan tersedia</p></div><span class="levelCardArrow"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span></span></button><button class="levelCard levelCard5" type="button" onclick="openLevelPackages(5)"><div class="levelCardIcon">5</div><div class="levelCardBody"><span class="levelEyebrow">HSK LEVEL</span><strong>HSK 5</strong><p>Paket tersedia dari database</p></div><span class="levelCardArrow"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span></span></button>`;}
-function openLevelPackages(level,push=true){selectedHSKLevel=Number(level)===5?5:4;route={screen:'packages',packageCode:null,type:null,sectionIndex:null};renderPackagesScreen();setScreen('packagesScreen',push)}
 function selectHSKLevel(level){openLevelPackages(level)}
 function togglePackageSearch(){const wrap=$('packageSearchWrap'),btn=$('packageSearchToggle');if(!wrap||!btn)return;const show=wrap.hidden;wrap.hidden=!show;btn.setAttribute('aria-expanded',String(show));if(show){setTimeout(()=>$('packageSearchInput')?.focus(),40)}}
-function clearPackageSearch(){const i=$('packageSearchInput');if(i)i.value='';filterPackages('');i?.focus()}
-function filterPackages(value){if(selectedHSKLevel!==4)return;const el=$('packageSearchInput');if(el&&String(el.value)!==String(value??''))el.value=String(value??'');renderCleanPackages()}
 function openScores(push=true){route={screen:'scores',packageCode:null,type:null,sectionIndex:null};renderScores();setScreen('scores',push);window.scrollTo({top:0,left:0,behavior:'auto'})}
-function renderPackagesScreen(){const el=$('packagesGrid');if(!el)return;const panel=$('hsk5Panel'),head=$('packageLevelKicker'),title=$('packagePageTitle'),sub=$('packagePageSub');const is5=selectedHSKLevel===5;el.hidden=is5;if(panel)panel.hidden=!is5;if(head)head.textContent=is5?'HSK 5':'HSK 4';if(title)title.textContent=is5?'HSK 5':'Pilih paket';if(sub)sub.textContent=is5?'Paket HSK 5 sedang dipersiapkan.':'25 paket latihan tersedia.';if(is5){el.innerHTML='';return}const input=$('packageSearchInput');const q=input?input.value:'';const codes=Object.keys(DB).filter(code=>!q||code.includes(String(q).trim().toUpperCase()));el.innerHTML=codes.map((code)=>renderPackageTile(code,Object.keys(DB).indexOf(code))).join('');if(!codes.length)el.innerHTML='<div class="emptySearch"><strong>Paket tidak ditemukan</strong><span>Coba cari dengan kode seperti H41001.</span></div>'}
-function renderPackageTile(code,idx){const st=packageStats(code),total=st.total||0,metaParts=Object.entries(META).filter(([t])=>(DB[code]?.[t]||[]).length>0).map(([t,m])=>m.label),desc=metaParts.length?`${total} soal · ${metaParts.join(' · ')}`:'Belum ada soal interaktif',palette=['blue','purple','orange','pink','green'][idx%5],pct=st.pct||0,status=pct>=100?'Selesai':pct>0?'Sedang berjalan':'Belum dimulai';return `<button class="tile packageTile packageTile-${palette}" type="button" onclick="openPackage('${esc(code)}')"><div class="pkgTop"><div class="tileIcon" aria-hidden="true">${svg('box')}</div><span class="statusPill">${status}</span></div><div class="pkgTitleRow"><div><b>Paket ${esc(code)}</b><small>${esc(desc)}</small></div></div>${total?progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket'):''}<div class="pkgFooter"><span>Listening · Reading · Writing</span><span>${pct}%</span></div></button>`}
 let selectedScoreLevel=4;
 function renderScores(){
   const el=$('scoresGrid');if(!el)return;
@@ -3591,8 +3484,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     return '<div class="inlineResult"><div class="inlineResultHead"><div><div class="inlineResultLabel">Nilai bagian</div><div class="inlineResultScore">'+pct+'%</div><div class="inlineResultMeta"><b>'+r.score+'/'+r.total+'</b> benar · '+r.answered+' dijawab · '+(r.total-r.answered)+' belum dijawab</div></div><span class="inlineResultBadge">✓ Sudah diperiksa</span></div><div class="inlineResultBar"><i style="width:'+pct+'%"></i></div></div>';
   }
   window.renderExercise=function(){const sec=DB[route.packageCode]?.[route.type]?.[route.sectionIndex];if(!sec){openSections(route.packageCode,route.type,false);return;}currentQuestions=Array.isArray(sec.questions)?sec.questions:[];currentMode=route.type==='writing'?'writing':'choice';$('exPkg').textContent=(DB[route.packageCode]?.title||route.packageCode);$('exType').textContent=META[route.type]?.label||route.type;$('exPart').textContent=sec.title.replace(/^.*?·\s*/,'');$('exTitle').textContent=sec.title;const st=sectionStats(route.packageCode,route.type,route.sectionIndex);const instruction=instructionFor(route.type,route.sectionIndex);$('questions').innerHTML='<div class="instruction"><h2>Petunjuk</h2><p>'+esc(instruction)+'</p></div><div class="sectionProgress"><div class="progressMeta"><strong>Progres bagian</strong><span>'+st.answered+'/'+st.total+' terjawab · '+st.pct+'%</span></div><div class="progressBar"><div class="fill" style="width:'+st.pct+'%"></div></div></div>'+cardsForVisible()+pager()+finishCard();restoreVisible();};
-  window.startSection=(function(fn){return function(i,push=true){page=0;window.__hskResumePage=0;return fn(i,push)}})(startSection);
-  window.repeat=(function(fn){return function(){page=0;return fn()}})(repeat);
+    window.repeat=(function(fn){return function(){page=0;return fn()}})(repeat);
   function userText(q){const id=String(q[0]),u=answers[id];if(u===undefined||String(u).trim()==='')return 'Belum dijawab';const model=getResolvedQuestionModel(getActivePackageData(),route.type,route.sectionIndex,q);if(model.type==='sentence_ordering'||model.type==='guided_writing'||model.type==='picture_writing')return String(u);const opt=model.options[Number(u)];return opt?`${opt.label}. ${opt.value}`:String(u)}
 function correctText(q){const model=getResolvedQuestionModel(getActivePackageData(),route.type,route.sectionIndex,q);if(model.type==='sentence_ordering'||model.type==='sequence'){const k=sequenceKeys(q);return k.length?k.join(' / '):'Tidak tersedia'}if(model.type==='guided_writing'||model.type==='picture_writing')return String(q[2]||'Tidak tersedia');const ci=correctIndex(q,route.type);const opt=model.options[ci];return opt?`${opt.label}. ${opt.value}`:String(q[3]??'Tidak tersedia')}
 window.renderResult=function(){const rp=$('resultPkg'),rt=$('resultType'),rpart=$('resultPart');if(rp)rp.textContent=route.packageCode;if(rt)rt.textContent=META[route.type]?.label||route.type;const _resTitle=DB[route.packageCode]?.[route.type]?.[route.sectionIndex]?.title||'';if(rpart)rpart.textContent='Hasil · '+_resTitle.replace(/^.*?·\s*/, '');const r=resultState||{score:0,total:currentQuestions.length,answered:0},seq=isSequenceWriting(route.type,route.sectionIndex),pct=r.total?Math.round(r.score/r.total*100):0;const list=currentQuestions.map((q,i)=>{const id=String(q[0]),u=answers[id],has=u!==undefined&&String(u).trim()!=='';if(route.type==='writing'&&!seq)return '<article class="resultQuestion"><div class="resultQuestionHead"><span>Soal '+(i+1)+' · 第 '+esc(id)+' 题</span><span class="resultStatus empty">Tidak dinilai</span></div><div class="resultQuestionText">'+esc(q[1]||'')+'</div><div class="resultAnswer"><b>Jawabanmu:</b> '+esc(userText(q))+'<br><b>Contoh jawaban:</b> '+esc(correctText(q))+'</div></article>';const ok=has&&isCorrect(q,u,route.type,route.sectionIndex);return '<article class="resultQuestion"><div class="resultQuestionHead"><span>Soal '+(i+1)+' · 第 '+esc(id)+' 题</span><span class="resultStatus '+(ok?'good':has?'bad':'empty')+'">'+(ok?'✓ Benar':has?'✗ Salah':'Belum dijawab')+'</span></div><div class="resultQuestionText">'+esc(q[1]||'')+'</div><div class="resultAnswer"><b>Jawabanmu:</b> '+esc(userText(q))+(has&&!ok?'<br><b>Jawaban benar:</b> '+esc(correctText(q)):'')+'</div></article>';}).join('');const title=DB[route.packageCode][route.type][route.sectionIndex]?.title||'Hasil';const summary=(route.type==='writing'&&!seq)?'<p><b>'+r.answered+'/'+r.total+'</b> jawaban tersimpan.</p>':'<div class="score">'+pct+'%</div><div class="bar"><div class="fill" style="width:'+pct+'%"></div></div><p><b>'+r.score+'/'+r.total+'</b> benar · '+r.answered+' dijawab · '+(r.total-r.answered)+' belum dijawab</p>';$('resultBody').innerHTML='<div class="result"><div class="sub">'+esc(title)+'</div>'+summary+'<div class="resultList">'+list+'</div><div class="resultActions"><button class="btn soft" onclick="returnToQuestions()">← Kembali ke Soal</button><button class="btn" onclick="returnToParts()">← Kembali ke List Bagian</button><button class="btn" onclick="repeat()">↻ Ulangi</button></div></div>';};
@@ -3627,42 +3519,7 @@ const wbCodes=()=>Object.keys(DB).filter(c=>c.startsWith('WB4A'));
 const hsk4Codes=()=>Object.keys(DB).filter(c=>!c.startsWith('WB4A'));
 const levelCodes=()=>selectedHSKLevel==='wb4a'?wbCodes():hsk4Codes();
 function ensureWorkbookLevelCard(){const grid=document.querySelector('#levelsScreen .levelGrid');if(!grid||grid.querySelector('.levelCardWorkbook'))return;const b=document.createElement('button');b.className='levelCard levelCardWorkbook';b.type='button';b.onclick=()=>openLevelPackages('wb4a');b.innerHTML='<div class="levelCardIcon">WB</div><div class="levelCardBody"><span class="levelEyebrow">WORKBOOK</span><strong>Workbook HSK4a</strong><p>9 lesson · 450 soal</p></div><span class="levelCardArrow"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span></span>';grid.appendChild(b)}
-window.openPackages=function(push=true){route={screen:'levels',packageCode:null,type:null,sectionIndex:null};selectedHSKLevel=4;renderLevelsScreen();setScreen('levelsScreen',push);ensureWorkbookLevelCard()};
-window.openLevelPackages=function(level,push=true){const v=String(level).toLowerCase();selectedHSKLevel=v==='wb4a'?'wb4a':(Number(level)===5?5:4);route={screen:'packages',packageCode:null,type:null,sectionIndex:null};renderPackagesScreen();setScreen('packagesScreen',push);window.scrollTo({top:0,left:0,behavior:'auto'})};
-window.filterPackages=function(value){const i=$('packageSearchInput');if(i)i.value=String(value??'');window.__wbPackagePage=0;renderPackagesScreen()};
-window.clearPackageSearch=function(){const i=$('packageSearchInput');if(i)i.value='';window.__wbPackagePage=0;renderPackagesScreen();i?.focus()};
-window.renderPackagesScreen=function(){const el=$('packagesGrid');if(!el)return;const panel=$('hsk5Panel'),head=$('packageLevelKicker'),title=$('packagePageTitle'),sub=$('packagePageSub'),is5=selectedHSKLevel===5,isWB=selectedHSKLevel==='wb4a';el.hidden=is5;if(panel)panel.hidden=!is5;if(head)head.textContent=is5?'HSK 5':isWB?'Workbook HSK4a':'HSK 4';if(title)title.textContent=is5?'HSK 5':isWB?'Pilih lesson Workbook':'Pilih paket';if(sub)sub.textContent=is5?'Paket HSK 5 sedang dipersiapkan.':isWB?'9 lesson · 450 soal tersedia.':'25 paket latihan tersedia.';document.querySelector('.packagePager')?.remove();if(is5){el.innerHTML='';return}const q=String($('packageSearchInput')?.value||'').trim().toUpperCase(),codes=levelCodes().filter(c=>!q||c.includes(q));if(!codes.length){el.innerHTML='<div class="emptySearch"><strong>Paket tidak ditemukan</strong><span>Coba cari nama atau kode lesson.</span></div>';return}const size=10,page=Math.max(0,Math.min(Number(window.__wbPackagePage||0),Math.ceil(codes.length/size)-1));window.__wbPackagePage=page;el.innerHTML=codes.slice(page*size,(page+1)*size).map(c=>renderPackageTile(c,Object.keys(DB).indexOf(c))).join('');if(codes.length>size){const pager=document.createElement('div');pager.className='packagePager';pager.innerHTML=(page>0?'<button class="btn" type="button" data-d="-1">‹ Sebelumnya</button>':'')+'<span class="packagePageIndicator">Halaman '+(page+1)+' / '+Math.ceil(codes.length/size)+'</span>'+(page<Math.ceil(codes.length/size)-1?'<button class="btn" type="button" data-d="1">Berikutnya ›</button>':'');pager.querySelectorAll('button').forEach(x=>x.onclick=()=>{window.__wbPackagePage=page+Number(x.dataset.d);renderPackagesScreen()});el.after(pager)}};
-window.renderPackageTile=function(code,idx){const st=packageStats(code),total=st.total||0,parts=Object.entries(META).filter(([t])=>(DB[code]?.[t]||[]).length>0).map(([t,m])=>m.label),desc=parts.length?`${total} soal · ${parts.join(' · ')}`:'Belum ada soal interaktif',palette=['blue','purple','orange','pink','green'][idx%5],pct=st.pct||0,status=pct>=100?'Selesai':pct>0?'Sedang berjalan':'Belum dimulai',title=DB[code]?.title||('Paket '+code);return `<button class="tile packageTile packageTile-${palette}" type="button" onclick="openPackage('${esc(code)}')"><div class="pkgTop"><div class="tileIcon" aria-hidden="true">${svg('box')}</div><span class="statusPill">${status}</span></div><div class="pkgTitleRow"><div><b>${esc(title)}</b><small>${esc(desc)}</small></div></div>${total?progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket'):''}<div class="pkgFooter"><span>Listening · Reading · Writing</span><span>${pct}%</span></div></button>`};
 window.renderPackage=function(){const code=route.packageCode,d=DB[code]||{};$('pkgCrumb').textContent=code;$('pkgTitle').textContent=d.title||('Paket '+code);const palettes={listening:{accent:'#ff6548',soft:'#fff0eb'},reading:{accent:'#7890d8',soft:'#eef2ff'},writing:{accent:'#e5ad3d',soft:'#fff5df'}};$('parts').innerHTML=Object.entries(META).map(([t,m])=>{const arr=d[t]||[],total=arr.reduce((a,x)=>a+x.questions.length,0),ps=arr.reduce((a,x,i)=>{const st=sectionStats(code,t,i);return {answered:a.answered+st.answered,total:a.total+st.total}},{answered:0,total:0});ps.pct=ps.total?Math.round(ps.answered/ps.total*100):0;const pal=palettes[t]||palettes.listening;return total?`<button class="partCard flatPartCard" style="--part-accent:${pal.accent};--part-soft:${pal.soft}" type="button" onclick="openSections('${esc(code)}','${t}')"><span class="partHanzi" aria-hidden="true">${esc(m.zh)}</span><span class="partMain"><strong>${esc(m.label)}</strong><span class="partMeta">${total} soal tersedia</span>${progressHTML(ps,'Progres bagian')}</span><span class="partArrow" aria-hidden="true"><span class="material-symbols-rounded ico">arrow_forward</span></span></button>`:`<div class="partCard flatPartCard partDisabled" style="--part-accent:${pal.accent};--part-soft:${pal.soft}" aria-disabled="true"><span class="partHanzi" aria-hidden="true">${esc(m.zh)}</span><span class="partMain"><strong>${esc(m.label)}</strong><span class="partMeta">Belum tersedia dari sumber paket</span></span></div>`}).join('')+`<div style="grid-column:1/-1">${renderPackageProgress(code)}</div>`};
-const oldOpenLevelPackages=window.openLevelPackages;
-window.openLevelPackages=function(level,push=true){
- const v=String(level).toLowerCase();
- selectedHSKLevel=v==='wb4a'?'wb4a':v==='wb4b'?'wb4b':(Number(level)===5?5:4);
- route={screen:'packages',packageCode:null,type:null,sectionIndex:null};
- renderPackagesScreen();setScreen('packagesScreen',push);window.scrollTo({top:0,left:0,behavior:'auto'});
-};
-
-window.renderPackagesScreen=function(){
- const el=$('packagesGrid');if(!el)return;
- const panel=$('hsk5Panel'),head=$('packageLevelKicker'),title=$('packagePageTitle'),sub=$('packagePageSub');
- const is5=selectedHSKLevel===5,isA=selectedHSKLevel==='wb4a',isB=selectedHSKLevel==='wb4b';
- el.hidden=is5;if(panel)panel.hidden=!is5;
- if(head)head.textContent=is5?'HSK 5':isA?'Workbook HSK4a':isB?'Workbook HSK4b':'HSK 4';
- if(title)title.textContent=is5?'HSK 5':(isA||isB)?'Pilih lesson Workbook':'Pilih paket';
- if(sub)sub.textContent=is5?'Paket HSK 5 sedang dipersiapkan.':isA?'9 lesson · 450 soal tersedia.':isB?'10 lesson · 500 soal tersedia.':'25 paket latihan tersedia.';
- document.querySelector('.packagePager')?.remove();
- if(is5){el.innerHTML='';return;}
- const q=String($('packageSearchInput')?.value||'').trim().toUpperCase();
- let codes=isA?wb4aCodes():isB?wb4bCodes():Object.keys(DB).filter(c=>!isWB(c));
- codes=codes.filter(c=>{const d=DB[c]||{};return !q||c.includes(q)||String(d.title||'').toUpperCase().includes(q)||String(d.meta?.lessonTitle||'').toUpperCase().includes(q)});
- if(!codes.length){el.innerHTML='<div class="emptySearch"><strong>Paket tidak ditemukan</strong><span>Coba cari nama atau kode lesson.</span></div>';return;}
- const size=10,page=Math.max(0,Math.min(Number(window.__wbPackagePage||0),Math.ceil(codes.length/size)-1));window.__wbPackagePage=page;
- el.innerHTML=codes.slice(page*size,(page+1)*size).map(c=>renderPackageTile(c,Object.keys(DB).indexOf(c))).join('');
- if(codes.length>size){const pager=document.createElement('div');pager.className='packagePager';const pages=Math.ceil(codes.length/size);pager.innerHTML=(page>0?'<button class="btn" type="button" data-d="-1">‹ Sebelumnya</button>':'')+'<span class="packagePageIndicator">Halaman '+(page+1)+' / '+pages+'</span>'+(page<pages-1?'<button class="btn" type="button" data-d="1">Berikutnya ›</button>':'');pager.querySelectorAll('button').forEach(x=>x.onclick=()=>{window.__wbPackagePage=page+Number(x.dataset.d);renderPackagesScreen()});el.after(pager);}
-};
-window.filterPackages=function(value){const i=$('packageSearchInput');if(i)i.value=String(value??'');window.__wbPackagePage=0;renderPackagesScreen()};
-window.clearPackageSearch=function(){const i=$('packageSearchInput');if(i)i.value='';window.__wbPackagePage=0;renderPackagesScreen();i?.focus()};
-
 // Workbook-specific grading: first Listening section is true/false; Reading section 3 is ordering.
 const oldCorrectIndex=window.correctIndex;
 window.correctIndex=function(q,type){
@@ -3870,13 +3727,6 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   function removePackageFromStudyPlan(id,code){const plans=plansStore(),p=plans.find(x=>x.id===id);if(!p)return;p.packageCodes=p.packageCodes.filter(x=>x!==code);p.updatedAt=Date.now();savePlans(plans);renderStudyPlanDetail();renderStudyPlans()}
   function toggleStudyPlanMenu(id){const target=$('planMenu_'+id);if(!target)return;const wasOpen=target.classList.contains('show');document.querySelectorAll('.studyPlanCardMenu.show').forEach(x=>x.classList.remove('show'));if(!wasOpen)target.classList.add('show')}
   document.addEventListener('pointerdown',function(ev){const openMenu=document.querySelector('.studyPlanCardMenu.show');if(!openMenu)return;const card=openMenu.closest('.studyPlanCard');if(card&&!card.contains(ev.target))openMenu.classList.remove('show')});
-  const oldRenderPackageTile=window.renderPackageTile;
-  window.renderPackageTile=function(code,idx){const st=packageStats(code),total=st.total||0,metaParts=Object.entries(META).filter(([t])=>(DB[code]?.[t]||[]).length>0).map(([t,m])=>m.label),desc=metaParts.length?`${total} soal · ${metaParts.join(' · ')}`:'Belum ada soal interaktif',palette=['blue','purple','orange','pink','green'][idx%5],pct=st.pct||0,status=pct>=100?'Selesai':pct>0?'Sedang berjalan':'Belum dimulai';return `<button class="tile packageTile packageTile-${palette}" type="button" data-package-code="${escPlan(code)}" onclick="openPackageFromTile('${escPlan(code)}')"><div class="pkgTop"><div class="tileIcon" aria-hidden="true">${svg('box')}</div><span class="statusPill">${status}</span></div><div class="pkgTitleRow"><div><b>Paket ${escPlan(code)}</b><small>${escPlan(desc)}</small></div></div>${total?progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket'):''}<div class="pkgFooter"><span>Listening · Reading · Writing</span><span>${pct}%</span></div></button>`}
-
-  const oldRenderNavState=window.renderNavState;
-  window.renderNavState=function(){document.querySelectorAll('.mainNav .navItem').forEach(b=>b.classList.toggle('active',b.dataset.nav===route.screen||((route.screen==='levels'||route.screen==='packages'||route.screen==='package'||route.screen==='parts'||route.screen==='exercise'||route.screen==='result')&&b.dataset.nav==='packages')))}
-  const oldRestore=window.restore;window.restore=function(s){route={screen:s.screen||'home',packageCode:s.packageCode||null,type:s.type||null,sectionIndex:s.sectionIndex??null,studyPlanId:s.studyPlanId||null};if(route.screen==='studyPlans'){renderStudyPlans();setScreen('studyPlans',false)}else if(route.screen==='studyPlanDetail'){studyPlanDetailId=s.studyPlanId||null;renderStudyPlanDetail();setScreen('studyPlanDetail',false)}else oldRestore(s)};
-  const oldSetScreen=window.setScreen; // keep existing behavior; route state is enough for navigation
   document.addEventListener('click',function(e){
     const btn=e.target.closest('#studyPlanPickerModal .studyPlanPickerActions button');
     if(!btn)return;
@@ -3884,10 +3734,6 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     e.stopImmediatePropagation();
     closeStudyPlanPicker();
   },true);
-  window.openStudyPlans=openStudyPlans;window.renderStudyPlans=renderStudyPlans;window.openStudyPlan=openStudyPlan;window.renderStudyPlanDetail=renderStudyPlanDetail;window.continueStudyPlan=continueStudyPlan;window.openStudyPlanPicker=openStudyPlanPicker;window.openStudyPlanAddPicker=openStudyPlanAddPicker;window.renderStudyPlanAddPicker=renderStudyPlanAddPicker;window.addPackageDirectlyToStudyPlan=addPackageDirectlyToStudyPlan;window.renderStudyPlanPicker=renderStudyPlanPicker;window.togglePackageInStudyPlan=togglePackageInStudyPlan;window.closeStudyPlanPicker=closeStudyPlanPicker;window.openStudyPlanCreator=openStudyPlanCreator;window.closeStudyPlanCreator=closeStudyPlanCreator;window.createStudyPlan=createStudyPlan;window.openStudyPlanEdit=openStudyPlanEdit;window.closeStudyPlanEdit=closeStudyPlanEdit;window.saveStudyPlanEdit=saveStudyPlanEdit;window.deleteStudyPlan=deleteStudyPlan;window.removePackageFromStudyPlan=removePackageFromStudyPlan;window.toggleStudyPlanMenu=toggleStudyPlanMenu;window.filterStudyPlanPicker=filterStudyPlanPicker;window.openPackageFromTile=openPackageFromTile;
-  // Preserve the custom plan id in browser history when opening a plan detail.
-  const originalOpenStudyPlan=openStudyPlan;
-  window.openStudyPlan=function(id,push=true){studyPlanDetailId=id;route={screen:'studyPlanDetail',packageCode:null,type:null,sectionIndex:null,studyPlanId:id};renderStudyPlanDetail();setScreen('studyPlanDetail',push);window.scrollTo({top:0,left:0,behavior:'auto'})};
 })();
 </script>
 <script id="masterReliabilityFix2026">
@@ -3998,170 +3844,6 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   }
 
   /* ---------- Package / level navigation ---------- */
-
-  function renderLevelsScreenMaster(){
-    const grid=document.querySelector('#levelsScreen .levelGrid');
-    if(!grid) return;
-
-    const all=allMaterials();
-    if(!all.length){
-      grid.innerHTML='<div class="notice"><strong>Belum ada materi.</strong><br>Belum ada paket latihan yang tersedia.</div>';
-      return;
-    }
-
-    grid.innerHTML=all.map((m,idx)=>{
-      const isHsk=m.kind==='hsk';
-      const label=isHsk?m.label:m.label;
-      const count=m.codes.length;
-      const icon=isHsk?String(m.level):'WB';
-      const desc=isHsk
-        ? `${count} paket latihan tersedia`
-        : `${count} lesson tersedia`;
-      const cls=isHsk?('levelCard'+m.level):'levelCardWorkbook';
-      return `<button class="levelCard ${cls}" type="button"
-        data-material-key="${escHtml(m.key)}"
-        onclick="openLevelPackages('${escHtml(m.key)}')">
-        <div class="levelCardIcon">${icon}</div>
-        <div class="levelCardBody">
-          <span class="levelEyebrow">${isHsk?'HSK LEVEL':'WORKBOOK'}</span>
-          <strong>${escHtml(label)}</strong>
-          <p>${escHtml(desc)}</p>
-        </div>
-        <span class="levelCardArrow"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span></span>
-      </button>`;
-    }).join('');
-  }
-
-  window.openPackages=function(push=true){
-    const key=defaultMaterialKey();
-    selectedHSKLevel=key;
-    route={screen:'levels',packageCode:null,type:null,sectionIndex:null};
-    renderLevelsScreenMaster();
-    setScreen('levelsScreen',push);
-    window.scrollTo({top:0,left:0,behavior:'auto'});
-  };
-
-  window.openLevelPackages=function(level,push=true){
-    let key=String(level??'').trim();
-    if(!/^hsk:/i.test(key) && !/^wb:/i.test(key)){
-      if(/^wb4a$/i.test(key)) key='wb:WB4A';
-      else if(/^wb4b$/i.test(key)) key='wb:WB4B';
-      else if(/^\d+$/.test(key)) key='hsk:'+Number(key);
-    }
-    if(!materialForKey(key)) key=defaultMaterialKey();
-    selectedHSKLevel=key;
-    route={screen:'packages',packageCode:null,type:null,sectionIndex:null};
-    const input=has('packageSearchInput');
-    if(input) input.value='';
-    window.__masterPackagePage=0;
-    renderPackagesScreenMaster();
-    setScreen('packagesScreen',push);
-    window.scrollTo({top:0,left:0,behavior:'auto'});
-  };
-
-  window.renderLevelsScreen=renderLevelsScreenMaster;
-
-  function renderPackageTileMaster(code,idx){
-    const st=packageStats(code);
-    const total=st.total||0;
-    const answered=st.answered||0;
-    const pct=st.pct||0;
-    const d=DB[code]||{};
-    const title=d.title || ('Paket '+code);
-    const level=regularLevel(code);
-    const wb=workbookFamily(code);
-    const label=level!==null ? ('HSK '+level) : (wb?wb.label:'MATERI');
-    const accent=['#ff6548','#765fc7','#2aa876','#e15b64','#e6a21a'][Math.max(0,idx)%5];
-    const progressWidth=total?Math.max(0,Math.min(100,pct)):0;
-    return `<button class="tile packageTile packageTileSimple" type="button"
-      data-package-code="${escHtml(code)}"
-      onclick="openPackageFromTile('${escHtml(code)}')"
-      aria-label="Buka ${escHtml(title)}"
-      style="--package-accent:${accent}">
-      <span class="packageAccent" aria-hidden="true"></span>
-      <div class="packageHanzi" aria-hidden="true">汉</div>
-      <div class="packageBody">
-        <span class="packageEyebrow">${escHtml(label)}</span>
-        <strong class="packageTitle">${escHtml(title)}</strong>
-        <span class="packageSub">${total?`${answered}/${total} soal · ${pct}%`:'Belum ada soal interaktif'}</span>
-        <span class="packageProgress" aria-hidden="true"><i style="width:${progressWidth}%"></i></span>
-      </div>
-      <span class="packageArrow" aria-hidden="true"><span class="material-symbols-rounded ico">arrow_forward</span></span>
-    </button>`;
-  }
-
-  function materialForCodeLabel(code){
-    const level=regularLevel(code);
-    if(level!==null) return 'HSK '+level;
-    const wb=workbookFamily(code);
-    return wb?wb.label:'Materi';
-  }
-
-  window.renderPackageTile=renderPackageTileMaster;
-
-  window.filterPackages=function(value){
-    const input=has('packageSearchInput');
-    if(input && input.value!==String(value??'')) input.value=String(value??'');
-    window.__masterPackagePage=0;
-    renderPackagesScreenMaster();
-  };
-
-  window.clearPackageSearch=function(){
-    const input=has('packageSearchInput');
-    if(input) input.value='';
-    window.__masterPackagePage=0;
-    renderPackagesScreenMaster();
-    input?.focus();
-  };
-
-  function renderPackagesScreenMaster(){
-    const el=has('packagesGrid');
-    if(!el) return;
-
-    const key=String(selectedHSKLevel||defaultMaterialKey());
-    const material=materialForKey(key) || materialForKey(defaultMaterialKey());
-    if(!material) {
-      el.innerHTML='<div class="notice"><strong>Belum ada paket.</strong></div>';
-      return;
-    }
-
-    selectedHSKLevel=material.key;
-
-    const head=has('packageLevelKicker');
-    const title=has('packagePageTitle');
-    const sub=has('packagePageSub');
-    const panel=has('hsk5Panel');
-    if(panel) panel.hidden=true;
-
-    const isHsk=material.kind==='hsk';
-    if(head) head.textContent=material.label;
-    if(title) title.textContent=isHsk?'Pilih paket':'Pilih lesson';
-    if(sub) sub.textContent=isHsk
-      ? `${material.codes.length} paket latihan tersedia.`
-      : `${material.codes.length} lesson tersedia.`;
-
-    const input=has('packageSearchInput');
-    const q=String(input?.value||'').trim().toLowerCase();
-    const codes=material.codes.filter(code=>{
-      if(!q) return true;
-      const d=DB[code]||{};
-      return code.toLowerCase().includes(q)
-        || String(d.title||'').toLowerCase().includes(q)
-        || String(d.meta?.lessonTitle||'').toLowerCase().includes(q);
-    });
-
-    document.querySelectorAll('.packagePager').forEach(x=>x.remove());
-
-    if(!codes.length){
-      el.innerHTML=`<div class="emptySearch"><strong>Paket tidak ditemukan</strong><span>Coba cari nama atau kode paket.</span></div>`;
-      return;
-    }
-
-    /* Deliberately render every available package. No hidden pages. */
-    el.innerHTML=codes.map((code,i)=>renderPackageTileMaster(code,i)).join('');
-  }
-
-  window.renderPackagesScreen=renderPackagesScreenMaster;
 
   /* ---------- Scores: only available materials ---------- */
 
@@ -4665,31 +4347,6 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     if(!was)target.classList.add('show');
   };
 
-  /* ---------- History restore ---------- */
-
-  window.restore=function(s){
-    const st=s||{};
-    route={
-      screen:st.screen||'home',
-      packageCode:st.packageCode||null,
-      type:st.type||null,
-      sectionIndex:st.sectionIndex??null,
-      studyPlanId:st.studyPlanId||null
-    };
-    if(route.screen==='home'){renderHome();setScreen('home',false);return}
-    if(route.screen==='levels'){renderLevelsScreenMaster();setScreen('levelsScreen',false);return}
-    if(route.screen==='packages'){renderPackagesScreenMaster();setScreen('packagesScreen',false);return}
-    if(route.screen==='scores'){renderScoresMaster();setScreen('scores',false);return}
-    if(route.screen==='package'){renderPackage();setScreen('package',false);return}
-    if(route.screen==='parts'){renderSections();setScreen('partsScreen',false);return}
-    if(route.screen==='exercise'){loadCurrentSectionState();renderExercise();setScreen('exercise',false);return}
-    if(route.screen==='result'){route.screen='exercise';loadCurrentSectionState();renderExercise();setScreen('exercise',false);return}
-    if(route.screen==='studyPlans'){renderStudyPlans();setScreen('studyPlans',false);return}
-    if(route.screen==='studyPlanDetail'){renderStudyPlanDetail();setScreen('studyPlanDetail',false);return}
-    window.goHome(false);
-  };
-
-
   /* ---------- Make picker selection / close behavior deterministic ---------- */
 
   document.addEventListener('click',e=>{
@@ -4707,7 +4364,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     window.pullCloudState=async function(force=false){
       const result=await oldPullForMaster(force);
       try{
-        if(route.screen==='packages')renderPackagesScreenMaster();
+        if(route.screen==='packages' && typeof window.renderPackagesScreen==='function')window.renderPackagesScreen();
         if(route.screen==='studyPlans')window.renderStudyPlans();
         if(route.screen==='studyPlanDetail')window.renderStudyPlanDetail();
         if(route.screen==='home')renderHome();
@@ -4718,8 +4375,8 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 
   /* Initial normalization after all previous patches/data integrations. */
   try{
-    renderLevelsScreenMaster();
-    if(route.screen==='packages')renderPackagesScreenMaster();
+    if(typeof window.renderLevelsScreen==='function')window.renderLevelsScreen();
+    if(route.screen==='packages' && typeof window.renderPackagesScreen==='function')window.renderPackagesScreen();
     else if(route.screen==='studyPlans')window.renderStudyPlans();
     else if(route.screen==='studyPlanDetail')window.renderStudyPlanDetail();
     renderScoresMaster();
@@ -4784,83 +4441,6 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     let done=0;
     codes.forEach(c=>{const x=packageStats(c);if(x.total&&x.answered>=x.total)done++});
     return {total:codes.length,done,pct:codes.length?Math.round(done/codes.length*100):0};
-  }
-
-  /* ------------------------------------------------------------
-     LEVEL LIST — deterministic, explicitly includes WB4a + WB4b
-     ------------------------------------------------------------ */
-  function renderLevelsV4(){
-    const grid=document.querySelector('#levelsScreen .levelGrid');
-    if(!grid)return;
-    const mats=materialList();
-    const h4=mats.find(x=>x.key==='hsk:4');
-    const h5=mats.find(x=>x.key==='hsk:5');
-    const wb4a=mats.find(x=>x.key==='wb:WB4A');
-    const wb4b=mats.find(x=>x.key==='wb:WB4B');
-    const ordered=[h4,h5,wb4a,wb4b].filter(Boolean);
-    if(!ordered.length){
-      grid.innerHTML='<div class="notice"><strong>Belum ada materi.</strong><br>Belum ada paket latihan yang tersedia.</div>';
-      return;
-    }
-    grid.innerHTML=ordered.map(m=>{
-      const isH=m.kind==='hsk';
-      const is4a=m.key==='wb:WB4A',is4b=m.key==='wb:WB4B';
-      const icon=isH?String(m.level):'WB';
-      const desc=isH
-        ? (m.level===5?'Coming soon · sedang dipersiapkan':`${m.codes.length} paket latihan tersedia`)
-        : `${m.codes.length} lesson tersedia`;
-      const cls=isH
-        ? (m.level===4?'levelCard4':'levelCard5')
-        : `levelCardWorkbook ${is4a?'levelCardWorkbook4a':''} ${is4b?'levelCardWorkbook4b':''}`;
-      return `<button class="levelCard ${cls}" type="button"
-        data-material-key="${escV4(m.key)}"
-        onclick="openLevelPackages('${escV4(m.key)}')">
-        <div class="levelCardIcon">${icon}</div>
-        <div class="levelCardBody">
-          <span class="levelEyebrow">${isH?'HSK LEVEL':'WORKBOOK'}</span>
-          <strong>${escV4(m.label)}</strong>
-          <p>${escV4(desc)}</p>
-        </div>
-        <span class="levelCardArrow"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span></span>
-      </button>`;
-    }).join('');
-  }
-
-  /* ------------------------------------------------------------
-     PACKAGE LIST — correct source for HSK / Workbook
-     ------------------------------------------------------------ */
-  function renderPackagesV4(){
-    const grid=$id('packagesGrid');if(!grid)return;
-    const key=String((typeof selectedHSKLevel!=='undefined'&&selectedHSKLevel)||'hsk:4');
-    const m=mat(key)||mat('hsk:4');
-    if(!m){grid.innerHTML='';return}
-    selectedHSKLevel=m.key;
-    const head=$id('packageLevelKicker'),title=$id('packagePageTitle'),sub=$id('packagePageSub');
-    if(head)head.textContent=m.label;
-    if(title)title.textContent=m.kind==='workbook'?'Pilih lesson':'Pilih paket';
-    if(sub)sub.textContent=`${m.codes.length} ${m.kind==='workbook'?'lesson':'paket latihan'} tersedia.`;
-    const q=String($id('packageSearchInput')?.value||'').trim().toLowerCase();
-    const codes=m.codes.filter(c=>{
-      const d=db()[c]||{};
-      return !q||c.toLowerCase().includes(q)||String(d.title||'').toLowerCase().includes(q)||String(d.meta?.lessonTitle||'').toLowerCase().includes(q);
-    });
-    document.querySelectorAll('.packagePager').forEach(x=>x.remove());
-    if(!codes.length){
-      grid.innerHTML='<div class="emptySearch"><strong>Paket tidak ditemukan</strong><span>Coba kata kunci lain.</span></div>';
-      return;
-    }
-    grid.innerHTML=codes.map((c,i)=>{
-      const st=packageStats(c),d=db()[c]||{},titleText=d.title||('Paket '+c);
-      const pct=st.pct||0,status=pct>=100?'Selesai':pct>0?'Sedang berjalan':'Belum dimulai';
-      return `<button class="tile packageTile packageTile-${['blue','purple','orange','pink','green'][i%5]}"
-        type="button" data-package-code="${escV4(c)}" aria-label="Buka ${escV4(titleText)}">
-        <div class="pkgTop"><div class="tileIcon" aria-hidden="true">${typeof svg==='function'?svg('box'):''}</div><span class="statusPill">${status}</span></div>
-        <div class="pkgTitleRow"><div><b>${escV4(titleText)}</b><small>${escV4((typeof packageDescription==='function'?packageDescription(c):''))}</small></div>
-        </div>
-        ${st.total?progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket'):''}
-        <div class="pkgFooter"><span>${escV4(m.label)}</span><span>${pct}%</span></div>
-      </button>`;
-    }).join('');
   }
 
   /* ------------------------------------------------------------
@@ -5044,76 +4624,6 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   };
 
   /* ------------------------------------------------------------
-     PACKAGE / SECTION / EXERCISE NAVIGATION — preserve studyPlanId
-     ------------------------------------------------------------ */
-  const baseOpenPackage=window.openPackage;
-  window.openPackage=function(code,push=true){
-    if(!db()[code]){window.goHome(false);return}
-    const ret=R.returnPlanId || route.studyPlanId || null;
-    R.returnPlanId=null;
-    route={screen:'package',packageCode:code,type:null,sectionIndex:null,studyPlanId:ret};
-    renderPackage();setScreen('package',push);
-  };
-
-  window.openSections=function(code,type,push=true){
-    if(!db()[code]||!META[type]){window.goHome(false);return}
-    const ret=route.studyPlanId||null;
-    route={screen:'parts',packageCode:code,type,sectionIndex:null,studyPlanId:ret};
-    renderSections();setScreen('partsScreen',push);
-  };
-
-  window.startSection=function(i,push=true){
-    const code=route.packageCode,type=route.type,ret=route.studyPlanId||null;
-    const arr=db()[code]?.[type]||[];
-    if(!arr[i])return;
-    route={screen:'exercise',packageCode:code,type,sectionIndex:i,studyPlanId:ret};
-    resumeQuestionId=null;window.__hskResumePage=0;loadCurrentSectionState();renderExercise();setScreen('exercise',push);
-  };
-
-  window.returnToParts=async function(){
-    const code=String(route.packageCode||'');
-    const type=String(route.type||'');
-    if(!code||!type)return;
-    try{
-      if(typeof window.__hskLoadPackage==='function')await window.__hskLoadPackage(code);
-      route={
-        screen:'parts',
-        packageCode:code,
-        type:type,
-        sectionIndex:null,
-        studyPlanId:route.studyPlanId||null
-      };
-      if(typeof renderSections==='function')renderSections();
-      setScreen('partsScreen',true);
-      requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));
-    }catch(e){
-      console.error('returnToParts failed',e);
-      appNotice('Tidak dapat kembali ke bagian',e.message||'Silakan coba lagi.');
-    }
-  };
-
-  window.restore=function(s){
-    const st=s||{};
-    route={
-      screen:st.screen||'home',
-      packageCode:st.packageCode||null,
-      type:st.type||null,
-      sectionIndex:st.sectionIndex??null,
-      studyPlanId:st.studyPlanId||null
-    };
-    if(route.screen==='home'){renderHome();setScreen('home',false);return}
-    if(route.screen==='levels'){renderLevelsV4();setScreen('levelsScreen',false);return}
-    if(route.screen==='packages'){renderPackagesV4();setScreen('packagesScreen',false);return}
-    if(route.screen==='package'){renderPackage();setScreen('package',false);return}
-    if(route.screen==='parts'){renderSections();setScreen('partsScreen',false);return}
-    if(route.screen==='exercise'){loadCurrentSectionState();renderExercise();setScreen('exercise',false);return}
-    if(route.screen==='result'){route.screen='exercise';loadCurrentSectionState();renderExercise();setScreen('exercise',false);return}
-    if(route.screen==='studyPlans'){window.renderStudyPlans();setScreen('studyPlans',false);return}
-    if(route.screen==='studyPlanDetail'){renderPlanDetailV4();setScreen('studyPlanDetail',false);return}
-    window.goHome(false);
-  };
-
-  /* ------------------------------------------------------------
      TOUCH INTERACTIONS
      - long press plan-detail package => remove from plan
      ------------------------------------------------------------ */
@@ -5179,17 +4689,8 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       return;
     }
 
-    /* Normal click on package tile. */
-    const tile=e.target.closest?.('#packagesScreen .packageTile[data-package-code]');
-    if(tile){
-      e.preventDefault();e.stopImmediatePropagation();
-      const code=tile.dataset.packageCode;
-      window.openPackage(code,true);
-    }
   },true);
 
-  /* Ensure the visible level list is painted when this layer loads. */
-  try{renderLevelsV4()}catch(e){}
 })();
 </script>
 <script id="studyPlanFeatureRestoreV1">
@@ -5541,20 +5042,99 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   }
 
   window.__hskLoadPackage=loadPackage;
-  window.__hskLoadPackages=cs=>Promise.all([...new Set((cs||[]).map(String).filter(Boolean))].map(loadPackage));
-  window.openDynamicFolder=function(i,push=true){const g=state.groups[Number(i)];if(!g)return;state.selected=g;window.__dbPackagePage=0;window.__cleanMaterialKey='folder:'+g.name;selectedHSKLevel=g.level||0;route={screen:'packages',packageCode:null,type:null,sectionIndex:null,studyPlanId:null,materialKey:'folder:'+g.name};renderPackages();setScreen('packagesScreen',push);window.scrollTo({top:0,left:0,behavior:'auto'})};
+  window.openDynamicFolder=function(i,push=true){
+    const g=state.groups[Number(i)];
+    if(!g)return;
+    state.selected=g;
+    window.__dbPackagePage=0;
+    const materialKey=g.kind==='hsk'?'hsk:'+g.level:(g.kind==='workbook'?'wb:'+g.name:'custom:'+g.name);
+    selectedHSKLevel=materialKey;
+    route={screen:'packages',packageCode:null,type:null,sectionIndex:null,studyPlanId:null,materialKey};
+    renderPackages();
+    setScreen('packagesScreen',push);
+    window.scrollTo({top:0,left:0,behavior:'auto'});
+  };
   window.openPackages=function(push=true){route={screen:'levels',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};renderLevels();setScreen('levelsScreen',push);window.scrollTo({top:0,left:0,behavior:'auto'})};
-  window.openLevelPackages=function(key,push=true){let g;if(/^\d+$/.test(String(key)))g=state.groups.find(x=>x.kind==='hsk'&&x.level===Number(key));else g=state.groups.find(x=>x.name===String(key))||state.groups.find(x=>x.name.toLowerCase()===String(key).toLowerCase());if(!g)return window.openPackages(push);window.openDynamicFolder(state.groups.indexOf(g),push)};
+  window.openLevelPackages=async function(key,push=true){
+    const raw=String(key??'').trim();
+    const value=/^hsk:\d+$/i.test(raw)?raw.toLowerCase():(/^wb:/i.test(raw)?raw:('hsk:'+raw));
+    const cards=Array.from(document.querySelectorAll('#levelsScreen .levelCard'));
+    const card=cards.find(el=>{
+      const mk=String(el.getAttribute('data-material-key')||'').toLowerCase();
+      const text=el.querySelector('.levelCardBody strong')?.textContent?.trim()||'';
+      return mk===value || mk===('hsk:'+raw).toLowerCase() || text.toLowerCase()===raw.toLowerCase() || text.toLowerCase()===('hsk '+raw).toLowerCase();
+    });
+    const arrow=card?.querySelector('.levelCardArrow');
+    if(arrow)arrow.classList.add('is-loading');
+    try{
+      if(!state.loaded)await window.__hskDynamicReadyPromise;
+      if(state.error)throw state.error;
+      let g=state.groups.find(x=>x.kind==='hsk'&&('hsk:'+x.level).toLowerCase()===value);
+      if(!g && /^wb:/i.test(value))g=state.groups.find(x=>x.kind==='workbook'&&('wb:'+x.name).toLowerCase()===value.toLowerCase());
+      if(!g)throw new Error('Materi tidak tersedia di katalog.');
+      window.openDynamicFolder(state.groups.indexOf(g),push);
+    }catch(e){
+      console.error('openLevelPackages failed',e);
+      if(typeof window.appNotice==='function')window.appNotice('Katalog gagal dimuat',e.message||'Silakan coba lagi.',{icon:'!'});
+    }finally{
+      arrow?.classList.remove('is-loading');
+    }
+  };
   window.renderLevelsScreen=renderLevels;window.renderPackagesScreen=renderPackages;window.filterPackages=v=>{const i=$('packageSearchInput');if(i)i.value=String(v??'');window.__dbPackagePage=0;renderPackages()};window.clearPackageSearch=()=>{const i=$('packageSearchInput');if(i)i.value='';window.__dbPackagePage=0;renderPackages();i?.focus()};
-  window.openPackage=async function(code,push=true){try{const keep=window.__functionalRepairV4?.returnPlanId||route?.studyPlanId||null;window.__functionalRepairV4&&(window.__functionalRepairV4.returnPlanId=null);await loadPackage(code);route={screen:'package',packageCode:String(code),type:null,sectionIndex:null,studyPlanId:keep};if(typeof renderPackage==='function')renderPackage();setScreen('package',push);window.scrollTo({top:0,left:0,behavior:'auto'})}catch(e){console.error(e);if(typeof window.appNotice==='function')window.appNotice('Paket gagal dimuat',e.message||'Silakan coba lagi.',{icon:'!'});else alert('Paket gagal dimuat. '+(e.message||''))}};
+  window.openPackage=async function(code,push=true){
+    const target=String(code||'');
+    const btn=document.querySelector(`#packagesScreen #packagesGrid [data-package-code=\"${CSS.escape(target)}\"]`);
+    const arrow=btn?.querySelector('.packageCardV16Arrow');
+    if(arrow)arrow.classList.add('is-loading');
+    try{
+      const keep=window.__functionalRepairV4?.returnPlanId||route?.studyPlanId||null;
+      window.__functionalRepairV4&&(window.__functionalRepairV4.returnPlanId=null);
+      await loadPackage(target);
+      route={screen:'package',packageCode:target,type:null,sectionIndex:null,studyPlanId:keep};
+      if(typeof renderPackage==='function')renderPackage();
+      setScreen('package',push);
+      window.scrollTo({top:0,left:0,behavior:'auto'});
+    }catch(e){
+      console.error('openPackage failed',e);
+      if(typeof window.appNotice==='function')window.appNotice('Paket gagal dimuat',e.message||'Silakan coba lagi.',{icon:'!'});
+    }finally{
+      arrow?.classList.remove('is-loading');
+    }
+  };
   window.openPackageFromTile=window.openPackage;
-  window.openSections=async function(code,type,push=true){try{await loadPackage(code);if(!META[type])return;route={screen:'parts',packageCode:String(code),type,sectionIndex:null,studyPlanId:route?.studyPlanId||null};if(typeof renderSections==='function')renderSections();setScreen('partsScreen',push)}catch(e){console.error(e);if(typeof window.appNotice==='function')window.appNotice('Bagian gagal dimuat',e.message||'Silakan coba lagi.',{icon:'!'})}};
-  window.startSection=async function(i,push=true){const code=String(route?.packageCode||''),type=route?.type;if(!code||!META[type])return;try{await loadPackage(code);const arr=DB[code]?.[type]||[];if(!arr[i])return;route={screen:'exercise',packageCode:code,type,sectionIndex:Number(i),studyPlanId:route?.studyPlanId||null};resumeQuestionId=null;window.__hskResumePage=0;loadCurrentSectionState();renderExercise();setScreen('exercise',push)}catch(e){console.error(e)}};
+  window.openSections=async function(code,type,push=true){
+    try{
+      if(type==='reading'&&typeof window.__hskEnsureReadingPassages==='function')await window.__hskEnsureReadingPassages();
+      await loadPackage(code);
+      if(!META[type])return;
+      route={screen:'parts',packageCode:String(code),type,sectionIndex:null,studyPlanId:route?.studyPlanId||null};
+      if(typeof renderSections==='function')renderSections();
+      setScreen('partsScreen',push);
+    }catch(e){
+      console.error('openSections failed',e);
+      if(typeof window.appNotice==='function')window.appNotice('Bagian gagal dimuat',e.message||'Silakan coba lagi.',{icon:'!'});
+    }
+  };
+  window.startSection=async function(i,push=true){
+    const code=String(route?.packageCode||''),type=route?.type;
+    if(!code||!META[type])return;
+    try{
+      if(type==='reading'&&typeof window.__hskEnsureReadingPassages==='function')await window.__hskEnsureReadingPassages();
+      await loadPackage(code);
+      const arr=DB[code]?.[type]||[];
+      if(!arr[i])return;
+      route={screen:'exercise',packageCode:code,type,sectionIndex:Number(i),studyPlanId:route?.studyPlanId||null};
+      resumeQuestionId=null;window.__hskResumePage=0;loadCurrentSectionState();renderExercise();setScreen('exercise',push);
+    }catch(e){
+      console.error('startSection failed',e);
+      if(typeof window.appNotice==='function')window.appNotice('Soal gagal dimuat',e.message||'Silakan coba lagi.',{icon:'!'});
+    }
+  };
   window.restore=async function(st){if(st?.packageCode&&state.byCode.has(String(st.packageCode))){try{await loadPackage(String(st.packageCode))}catch(e){console.error(e);return}}};
 
   async function boot(){
     try{
-      const r=await discover();state.groups=sortGroups(r.groups);state.source=r.source;state.loaded=true;state.selected=state.groups.find(g=>g.name==='HSK 4')||state.groups[0]||null;installStubs();resolveReady(state);renderLevels();if(state.selected)renderPackages();document.dispatchEvent(new Event('hsk:data-ready'));document.dispatchEvent(new Event('hsk:dynamic-catalog-ready'));console.info('HSK database ready:',state.source,state.groups.map(g=>g.name+':'+g.codes.length).join(', '));
+      const r=await discover();state.groups=sortGroups(r.groups);state.source=r.source;state.loaded=true;state.selected=null;installStubs();resolveReady(state);renderLevels();document.dispatchEvent(new Event('hsk:data-ready'));document.dispatchEvent(new Event('hsk:dynamic-catalog-ready'));console.info('HSK database ready:',state.source,state.groups.map(g=>g.name+':'+g.codes.length).join(', '));
     }catch(e){state.loaded=true;state.error=e;resolveReady(state);console.error('HSK database unavailable:',e);const grid=document.querySelector('#levelsScreen .levelGrid');if(grid)grid.innerHTML='<div class="notice"><strong>Database tidak dapat dimuat.</strong><br>'+esc(e.message||'Periksa koneksi internet.')+'</div>'}
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
@@ -5859,28 +5439,11 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   'use strict';
   if(window.__hskAccuracyCleanInstalled)return;
   window.__hskAccuracyCleanInstalled=true;
-  let warmStarted=false;
-  async function warmLazyStats(){
-    if(warmStarted)return;
-    warmStarted=true;
-    try{
-      const codes=Object.keys(DB||{}).filter(c=>DB[c]?.__lazy);
-      if(!codes.length||typeof window.__hskLoadPackages!=='function')return;
-      await window.__hskLoadPackages(codes);
-      try{renderHome()}catch(_){ }
-      try{renderPackagesScreen()}catch(_){ }
-      try{if(typeof renderCleanPackages==='function')renderCleanPackages()}catch(_){ }
-      try{if(typeof renderStudyPlans==='function')renderStudyPlans()}catch(_){ }
-      try{if(typeof renderStudyPlanDetail==='function'&&route?.screen==='studyPlanDetail')renderStudyPlanDetail()}catch(_){ }
-      try{if(typeof refreshHomeStatsWithoutWorkbooks==='function')refreshHomeStatsWithoutWorkbooks()}catch(_){ }
-    }catch(e){console.warn('HSK lazy accuracy warmup:',e)}
-  }
   if(typeof packageStats==='function'&&!packageStats.__hskAccuracyCleanWrapped){
     const originalStats=packageStats;
     function fixedPackageStats(code){
       const pkg=DB?.[code];
       if(pkg?.__lazy){
-        warmLazyStats();
         const meta=typeof lazyPackageMeta==='function'?lazyPackageMeta(code):null;
         const expected=Number(meta?.total)||0;
         const answeredRaw=typeof lazyStoredProgress==='function'?Number(lazyStoredProgress(code))||0:0;
@@ -5894,8 +5457,6 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     packageStats=fixedPackageStats;
     window.packageStats=fixedPackageStats;
   }
-  setTimeout(warmLazyStats,800);
-  window.__hskWarmLazyStats=warmLazyStats;
 })();
 </script>
 
@@ -6330,38 +5891,6 @@ body:not(.dark) .top{
   }
 
   window.__hskEnsureReadingPassages=ensureReadingPassages;
-
-  /*
-   * Gate only Reading navigation. Listening/Writing and all other routes keep
-   * their existing execution path unchanged.
-   */
-  var originalOpenSections=window.openSections;
-  if(typeof originalOpenSections==='function'){
-    window.openSections=async function(code,type,push){
-      if(type==='reading')await ensureReadingPassages();
-      return originalOpenSections.apply(this,arguments);
-    };
-  }
-
-  var originalStartSection=window.startSection;
-  if(typeof originalStartSection==='function'){
-    window.startSection=async function(i,push){
-      if(route && route.type==='reading')await ensureReadingPassages();
-      return originalStartSection.apply(this,arguments);
-    };
-  }
-
-  /*
-   * If a reading exercise is restored/re-entered through another route,
-   * make the same guarantee before rendering. This is deliberately isolated
-   * from the question renderer itself.
-   */
-  var originalOpenPackage=window.openPackage;
-  if(typeof originalOpenPackage==='function'){
-    window.openPackage=async function(code,push){
-      return originalOpenPackage.apply(this,arguments);
-    };
-  }
 
   /* Warm the cache in the background; failure is non-blocking. */
   ensureReadingPassages();
@@ -7332,114 +6861,7 @@ body.dark{--answer-selected-bg:#F4F4F2;--answer-selected-text:#17181A;--answer-s
 }
 </style>
 
-<script id="hskNavigationConsistencyV1">
-(function(){
-  'use strict';
 
-  /*
-   * Navigation consistency repair.
-   * The current baseline contains several historical package-list renderers.
-   * Back navigation could therefore restore the right route but repaint it
-   * with an older renderer and an older selected-level state. Keep the final
-   * V4 package renderer as the single visible renderer whenever the app is on
-   * the package-list screen.
-   */
-  function materialKeyFromCode(code){
-    code=String(code||'').trim();
-    try{
-      if(typeof regularLevel==='function'){
-        const level=regularLevel(code);
-        if(level!==null) return 'hsk:'+level;
-      }
-      if(typeof workbookFamily==='function'){
-        const wb=workbookFamily(code);
-        if(wb) return 'wb:'+wb.key;
-      }
-    }catch(e){}
-    return null;
-  }
-
-  function syncSelectedMaterial(key){
-    if(!key)return;
-    try{ selectedHSKLevel=key; }catch(e){}
-    try{
-      if(typeof state==='undefined'||!state||!Array.isArray(state.groups))return;
-      const match=state.groups.find(g=>{
-        if(key.startsWith('hsk:'))return g.kind==='hsk'&&Number(g.level)===Number(key.slice(4));
-        if(key.startsWith('wb:'))return g.kind==='workbook'&&String(g.name||'').toLowerCase()===String(key.slice(3)||'').toLowerCase();
-        return false;
-      });
-      if(match)state.selected=match;
-    }catch(e){}
-  }
-
-  function renderCanonicalPackages(){
-    try{
-      if(typeof renderPackagesV4==='function'){
-        renderPackagesV4();
-        return true;
-      }
-      if(typeof renderPackagesScreenMaster==='function'){
-        renderPackagesScreenMaster();
-        return true;
-      }
-    }catch(e){console.warn('HSK canonical package render failed:',e)}
-    return false;
-  }
-
-  /* Any call that asks to repaint the package list must use the final renderer. */
-  const previousPackageRenderer=window.renderPackagesScreen;
-  if(!window.__hskCanonicalPackageRendererV1){
-    window.renderPackagesScreen=function(){
-      if(renderCanonicalPackages())return;
-      if(typeof previousPackageRenderer==='function')return previousPackageRenderer.apply(this,arguments);
-    };
-    window.__hskCanonicalPackageRendererV1=true;
-  }
-
-  /* Keep material state synchronized whenever a package is opened. */
-  const previousOpenPackage=window.openPackage;
-  if(typeof previousOpenPackage==='function'&&!previousOpenPackage.__hskMaterialSyncV1){
-    const wrappedOpenPackage=function(code){
-      syncSelectedMaterial(materialKeyFromCode(code));
-      return previousOpenPackage.apply(this,arguments);
-    };
-    wrappedOpenPackage.__hskMaterialSyncV1=true;
-    wrappedOpenPackage.__hskOriginal=previousOpenPackage;
-    window.openPackage=wrappedOpenPackage;
-  }
-
-  /*
-   * Back from a package carries the package code. Restore the exact material
-   * first, then let the existing router perform its normal back operation.
-   * Finally repaint the package list with the canonical renderer so no legacy
-   * HSK-4 card layout can overwrite the visible screen.
-   */
-  const previousBackRoute=window.backRoute;
-  if(typeof previousBackRoute==='function'&&!previousBackRoute.__hskNavigationConsistencyV1){
-    const wrappedBack=async function(){
-      const before=window.route||{};
-      if(before.screen==='package'&&before.packageCode){
-        syncSelectedMaterial(materialKeyFromCode(before.packageCode));
-      }
-      const out=await previousBackRoute.apply(this,arguments);
-      const after=window.route||{};
-      if(after.screen==='packages'){
-        const key=after.materialKey || selectedHSKLevel;
-        syncSelectedMaterial(String(key||''));
-        renderCanonicalPackages();
-        if(typeof window.__hskPersistRoute==='function')window.__hskPersistRoute();
-      }
-      return out;
-    };
-    wrappedBack.__hskNavigationConsistencyV1=true;
-    wrappedBack.__hskOriginal=previousBackRoute;
-    window.backRoute=wrappedBack;
-    window.handleAppBack=wrappedBack;
-    window.__directLayerBack=wrappedBack;
-  }
-})();
-</script>
 
 <style id="section-cards-level-style-v1">
 /* Section cards (第一部分 / 第二部分 / 第三部分) now use the same visual language as HSK level cards. */
