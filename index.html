@@ -3378,6 +3378,45 @@ body.dark .mainNav,body.dark .levelCard,body.dark .levelCardIcon,body.dark .pack
 @media (min-width:600px) and (orientation:landscape){
   .mainNav{left:0!important;right:auto!important;top:0!important;bottom:0!important;transform:none!important;width:84px!important;min-width:84px!important;max-width:84px!important;height:100dvh!important;margin:0!important;}
 }
+@media (min-width:600px) and (orientation:landscape){
+  /* v31: landscape navigation rail must be a true vertical navigation,
+     not the portrait horizontal bar squeezed into a narrow column. */
+  .mainNav{
+    flex-direction:column!important;
+    align-items:stretch!important;
+    justify-content:flex-start!important;
+    gap:8px!important;
+    padding:12px 8px!important;
+    border-radius:0 20px 20px 0!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+  }
+  .mainNav .navItem{
+    width:100%!important;
+    min-width:0!important;
+    min-height:58px!important;
+    padding:9px 4px!important;
+    flex:0 0 auto!important;
+    flex-direction:column!important;
+    gap:5px!important;
+    border-radius:14px!important;
+    font-size:10px!important;
+    line-height:1.1!important;
+  }
+  .mainNav .navItem .ico{
+    width:23px!important;
+    height:23px!important;
+    min-width:23px!important;
+    min-height:23px!important;
+  }
+  .mainNav .navItem .navLabel{
+    display:block!important;
+    max-width:100%!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+  }
+}
 
 
 </style>
