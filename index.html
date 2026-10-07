@@ -4,10 +4,7 @@
 <html lang="id">
 <!-- HSK Papers production build v30: offline audit fixtures removed after online validation. -->
 <head>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&amp;family=Ma+Shan+Zheng&amp;family=Roboto:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
-<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/><meta content="#f4f5fb" name="theme-color"/><meta content="HSK Papers" name="application-name"/><meta content="HSK Papers" name="apple-mobile-web-app-title"/><link rel="icon" href="icons/favicon.ico" sizes="any"/><link rel="shortcut icon" href="icons/favicon.ico"/><link rel="apple-touch-icon" href="icons/favicon.ico"/><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&amp;family=Roboto:wdth,wght@75..100,100..900&amp;display=swap" rel="stylesheet"><title>HSK Papers</title><script>document.documentElement.classList.add('app-booting');</script>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/><meta content="#f4f5fb" name="theme-color"/><meta content="HSK Papers" name="application-name"/><meta content="HSK Papers" name="apple-mobile-web-app-title"/><link rel="icon" href="icons/favicon.ico" sizes="any"/><link rel="shortcut icon" href="icons/favicon.ico"/><link rel="apple-touch-icon" href="icons/favicon.ico"/><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&amp;family=Roboto:wdth,wght@75..100,100..900&amp;display=swap" rel="stylesheet"><title>HSK Papers</title><script>document.documentElement.classList.add('app-booting');</script>
 <script>
 (function(){
   function syncAuthLayout(){
@@ -709,32 +706,7 @@ body.dark .authCard h1,body.dark .authCard .authFormTitle{color:var(--text)!impo
 
 /* === end: studyPlanPackageActionsCanonicalV45 === */
 
-/* === consolidated CSS: balloonLogoFinal === */
 
-/* Final balloon + 文 logo: transparent, larger, no surrounding box */
-.hskBalloonLogo{display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;object-position:center!important;pointer-events:none!important}
-.bootMark,.authMark,.topBrandMark{background:transparent!important;border:0!important;box-shadow:none!important;color:transparent!important;font-size:0!important;overflow:visible!important;padding:0!important}
-.topBrandMark{width:48px!important;height:48px!important;min-width:48px!important;min-height:48px!important;display:grid!important;place-items:center!important}
-.topBrandMark .hskBalloonLogo{width:48px!important;height:48px!important}
-.bootMark{width:82px!important;height:82px!important}
-.bootMark .hskBalloonLogo{width:82px!important;height:82px!important}
-.authMark{width:86px!important;height:86px!important}
-.authMark .hskBalloonLogo{width:86px!important;height:86px!important}
-body.dark .bootMark,body.dark .authMark,body.dark .topBrandMark{background:transparent!important;box-shadow:none!important}
-@media(max-width:599px){
- .topBrandMark{width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important}
- .topBrandMark .hskBalloonLogo{width:42px!important;height:42px!important}
-}
-
-/* === end: balloonLogoFinal === */
-
-/* === consolidated CSS: inline-style-4 === */
-/* DIRECT LAYER BACK BUTTON — clean, non-history navigation */
-.backTextOnly:not(.logoutTop){border:0!important;background:transparent!important;box-shadow:none!important;border-radius:0!important;padding:4px 2px!important;min-height:38px!important;color:var(--muted)!important;font-weight:750!important;}
-.backTextOnly:not(.logoutTop):hover{transform:none!important;border-color:transparent!important;background:transparent!important;color:var(--blue)!important;}
-.backTextOnly:not(.logoutTop) .ico{width:19px!important;height:19px!important;}
-
-/* === end: inline-style-4 === */
 
 /* === consolidated CSS: packageCardsFinalPolish === */
 
@@ -967,13 +939,6 @@ body.dark #levelsScreen .levelCard5 .levelCardArrow{
 
 /* === end: v21-level-color-arrow-final === */
 
-/* === consolidated CSS: hsk4-typography-final === */
-
-/* HSK 4 typography refinement — intentionally isolated from layout/logic */
-#levelsScreen .levelCard4 .levelCardBody strong{font-size:28px!important;line-height:1.08!important;letter-spacing:-.65px!important;}
-@media(max-width:599px){#levelsScreen .levelCard4 .levelCardBody strong{font-size:28px!important;line-height:1.08!important;letter-spacing:-.65px!important;}}
-
-/* === end: hsk4-typography-final === */
 
 /* === consolidated CSS: fullWhiteBlackBackgroundFinal === */
 
@@ -990,108 +955,7 @@ body.dark .top{background:#000000!important;background-image:none!important;}
 
 /* === end: fullWhiteBlackBackgroundFinal === */
 
-/* === consolidated CSS: homeEditorialAccentTypographyV129 === */
 
-/* v1.29 — HOME editorial typography + restrained accent gradients
-   Visual-only layer. No HTML, data, routing, package loading, or progress logic changed. */
-
-/* Keep the canvas truly white / black. Accent gradients live only inside selected UI surfaces. */
-html, body { background:#fff !important; }
-body.dark, html.dark body { background:#000 !important; }
-
-/* --- Editorial hero typography --- */
-
-
-
-
-
-
-
-/* --- Progress dashboard: charcoal card with a barely-there accent wash --- */
-
-
-
-
-
-
-
-
-
-/* --- Continue card: warm editorial wash, not a loud gradient --- */
-
-
-
-
-
-
-/* --- History cards: alternating warm / cool editorial accents --- */
-
-
-
-
-
-
-
-
-/* --- Dark mode: true black canvas, charcoal cards, restrained warm/cool washes --- */
-
-
-
-
-
-
-
-
-
-
-/* === end: homeEditorialAccentTypographyV129 === */
-
-/* === consolidated CSS: v130-final-gradient-cleanup === */
-
-/* =========================================================
-   PROGRESS BARS — SOLID ORANGE, LIGHT + DARK
-   ========================================================= */
-
-
-/* Any generic progress fill that may be rendered by the app. */
-.progressTrack .fill,
-.progressTrack i,
-.progress-track .fill,
-.progress-track i {
-  background:#ff6548 !important;
-  background-image:none !important;
-}
-
-/* =========================================================
-   PRIMARY BUTTONS — SOLID ORANGE, NEVER GRADIENT
-   ========================================================= */
-
-
-/* Keep button states solid too. */
-
-
-/* =========================================================
-   TEXT — NO GRADIENT TEXT ANYWHERE
-   ========================================================= */
-
-
-/* Other common gradient-text declarations: force normal solid text. */
-.gradient-text,
-.text-gradient,
-[class*="gradientText"] {
-  background-image:none !important;
-  -webkit-background-clip:border-box !important;
-  background-clip:border-box !important;
-  color:var(--text) !important;
-  -webkit-text-fill-color:var(--text) !important;
-}
-
-/* =========================================================
-   IMPORTANT: do not remove gradients from CARD ACCENTS.
-   Card/background accent gradients remain untouched.
-   ========================================================= */
-
-/* === end: v130-final-gradient-cleanup === */
 
 /* === consolidated CSS: v131-final-canvas-and-gradient-safety === */
 
@@ -2405,76 +2269,6 @@ body:not(.dark) .top{
 
 /* === end: landscapeTopbarFullWidthFixV1 === */
 
-/* === consolidated CSS: dashboardFullBlackTargetV126 === */
-
-/*
- * DASHBOARD TARGET V1.26
- * Only the Home dashboard visual layer is changed here.
- * Existing HTML, DB, history, navigation, question loading, and progress logic
- * are intentionally left untouched.
- */
-html.dark,
-html.dark body,
-body.dark {
-  background:#000000 !important;
-  color:#f4f4f5 !important;
-}
-
-body.dark::before,
-body.dark::after,
-html.dark body::before,
-html.dark body::after {
-  background:#000000 !important;
-  opacity:1 !important;
-  filter:none !important;
-}
-
-
-
-/* One unified charcoal dashboard card. */
-
-
-/* Three metrics become one clean row with vertical separators. */
-
-
-
-
-
-
-/* Metric icons: orange, thin, understated. */
-
-
-
-
-
-
-
-
-
-
-
-
-/* Overall progress occupies the full lower half of the dashboard. */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Keep the dashboard completely flat: no hidden blue/gradient/glow layer. */
-
-
-
-
-/* === end: dashboardFullBlackTargetV126 === */
 
 /* === consolidated CSS: responsiveGeometryV7Adaptive === */
 
@@ -3360,7 +3154,6 @@ body.dark .mainNav,body.dark .levelCard,body.dark .levelCardIcon,body.dark .pack
   }
 }
 </style>
-</link></link></link>
 
 <!-- HSK Papers v36 — consolidated landscape navigation contract -->
 <style id="hsk-v36-landscape-nav-contract">
@@ -3374,9 +3167,6 @@ body.dark .mainNav,body.dark .levelCard,body.dark .levelCardIcon,body.dark .pack
   .mainNav .navItem .navLabel{color:var(--muted)!important;background:transparent!important;}
   main,.topin,.appFooter{box-sizing:border-box!important;width:calc(100% - 84px)!important;margin-left:84px!important;margin-right:0!important;}
 }
-</style>
-<style>
-/* === legacy HSK5 A/C-B/D order disabled in Paper Experience sandbox === */
 </style>
 
 <style id="hsk5-paper-engine-v2">
@@ -3482,10 +3272,6 @@ body.dark .mainNav,body.dark .levelCard,body.dark .levelCardIcon,body.dark .pack
 }
 </style>
 
-<style id="hsk5PaperPart1HeaderC6">
-/* C6: HSK 5 Reading Part 1 PDF-style section header. Source: H51002.pdf, Reading Part 1. */
-#exercise .section h2#exTitle.hsk5PaperSectionHeader .hsk5PaperSectionTitle{}
-</style>
 
 <style id="hsk5PaperPart2HeaderC4">
 #exercise .section h2#exTitle.hsk5PaperSectionHeader{
@@ -3592,6 +3378,246 @@ body.dark .mainNav,body.dark .levelCard,body.dark .levelCardIcon,body.dark .pack
 
 
 <!-- HSK Papers: cleaned Paper Part 3 CSS — one authoritative rule set -->
+<style id="hsk5PaperPart1HeaderC6">
+/* C6: HSK 5 Reading Part 1 PDF-style section header. Source: H51002.pdf, Reading Part 1. */
+#exercise .section h2#exTitle.hsk5PaperSectionHeader .hsk5PaperSectionTitle{}
+</style>
+
+<style id="hsk-darkmode-text-visibility-fix-v1">
+/* Dark Mode text-visibility audit: color only; no layout/size changes. */
+body.dark .brand span{
+  color:#ff7658!important;
+}
+body.dark .logoutNav{
+  color:#ff8e86!important;
+}
+body.dark .mark{
+  color:#ff7658!important;
+}
+body.dark .levelChoice.comingSoon small{
+  color:#c2b0ff!important;
+}
+body.dark .comingSoonPanel span{
+  color:#b8a4ff!important;
+}
+body.dark .eyebrow{
+  color:#9fb9ff!important;
+}
+</style>
+
+
+<style id="hsk-darkmode-text-fixed-all-v2">
+/*
+  HSK Papers — Dark Mode text visibility correction.
+  Purpose: neutralize legacy Light Mode hardcoded text colors.
+  Scope: color only. No layout, spacing, typography size, data, or JS changes.
+*/
+
+/* Package list / package cards */
+body.dark #packagesScreen .titleV12,
+body.dark #packagesScreen .descV12,
+body.dark #packagesScreen .progressV12 .progressMeta,
+body.dark #package>.grid>.tile,
+body.dark #package>.grid>.tile>b,
+body.dark #package>.grid>.tile>small,
+body.dark #package>.grid>.tile .progressMeta,
+body.dark #package .flatPartCard,
+body.dark #package .flatPartCard strong{
+  color:var(--text)!important;
+}
+body.dark #packagesScreen .descV12,
+body.dark #packagesScreen .progressV12 .progressMeta,
+body.dark #package>.grid>.tile>small,
+body.dark #package>.grid>.tile .progressMeta{
+  color:var(--muted)!important;
+}
+
+/* Part-selection cards */
+body.dark #partsScreen #sections .sectionPartTile{
+  color:var(--text)!important;
+}
+body.dark #partsScreen #sections .sectionPartTitle{
+  color:#f4f7fb!important;
+}
+body.dark #partsScreen #sections .sectionPartTile:nth-child(3n/**/+2) .sectionPartTitle{
+  color:#55c7d2!important;
+}
+body.dark #partsScreen #sections .sectionPartTile:nth-child(3n) .sectionPartTitle{
+  color:#9a78ff!important;
+}
+body.dark #partsScreen #sections .sectionPartTile>small,
+body.dark #partsScreen #sections .sectionPartTile .progressMeta{
+  color:#aeb8c8!important;
+}
+
+/* Exercise heading and HSK 5 paper headers */
+body.dark #exercise .section h2,
+body.dark #exercise .section h2#exTitle{
+  color:var(--text)!important;
+}
+body.dark #exercise .section h2#exTitle.hsk5PaperSectionHeader,
+body.dark #exercise .section h2#exTitle.hsk5PaperSectionHeader .hsk5PaperSectionTitle,
+body.dark #exercise .section h2#exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction{
+  color:#f3f6fa!important;
+}
+body.dark #exercise .section h2#exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction{
+  color:#c4ccd8!important;
+}
+
+/* HSK 5 paper body typography */
+body.dark #exercise .hsk5PaperGroupHeader,
+body.dark #exercise .hsk5PaperPassageText,
+body.dark #exercise .hsk5PaperQText,
+body.dark #exercise .hsk5PaperQNo,
+body.dark #exercise .hsk5PaperPart2 .hsk5PaperQNo,
+body.dark #exercise .hsk5PaperPart2 .hsk5PaperQText,
+body.dark #exercise .hsk5PaperOption.opt,
+body.dark #exercise .hsk5PaperOption.opt:hover,
+body.dark #exercise .hsk5PaperOption.opt:focus,
+body.dark #exercise .hsk5PaperOption.opt:active,
+body.dark #exercise .hsk5PaperOption.opt.selected,
+body.dark #exercise .hsk5PaperOption.opt.correct,
+body.dark #exercise .hsk5PaperOption.opt.wrong{
+  color:var(--text)!important;
+}
+
+/* Normal exercise text */
+body.dark #exercise .qtext,
+body.dark #exercise .qtext strong,
+body.dark #exercise .qtext b,
+body.dark #exercise .qtop,
+body.dark #exercise .qtop span:first-child,
+body.dark #exercise .instruction h2,
+body.dark #exercise .instruction p,
+body.dark #exercise .reference,
+body.dark #exercise .readingPassage .rpText{
+  color:var(--text)!important;
+}
+body.dark #exercise .qtop,
+body.dark #exercise .instruction p,
+body.dark #exercise .reference{
+  color:var(--muted)!important;
+}
+
+/* Breadcrumb / context text */
+body.dark #exercise .crumb #exPkg,
+body.dark #exercise .crumb #exPart,
+body.dark #exercise .focusHeader #exPkg{
+  color:var(--text)!important;
+}
+body.dark #exercise .crumb #exType,
+body.dark #exercise .crumb #exPkg:after{
+  color:var(--muted)!important;
+}
+
+/* Generic headings that had legacy hardcoded Light Mode colors */
+body.dark #packagesScreen .packagePageHead h2,
+body.dark #packagesScreen .packagePageHead .sectionKicker,
+body.dark #levelsScreen .levelLandingHead h2,
+body.dark #levelsScreen .levelLandingHead .sectionKicker,
+body.dark #studyPlans .studyPlansHead .sectionKicker{
+  color:var(--text)!important;
+}
+body.dark #packagesScreen .packagePageHead .sectionKicker,
+body.dark #levelsScreen .levelLandingHead .sectionKicker,
+body.dark #studyPlans .studyPlansHead .sectionKicker{
+  color:var(--blue)!important;
+}
+body.dark #packagesScreen .packagePageHead .sub,
+body.dark #levelsScreen .levelLandingHead .sub{
+  color:var(--muted)!important;
+}
+
+/* Explicitly keep the header identity readable */
+body.dark .brandTitleWrap .brandTitle{
+  color:var(--text)!important;
+}
+body.dark .brandTitleWrap .brandSubtitle{
+  color:var(--muted)!important;
+}
+</style>
+
+
+<style id="hsk-darkmode-text-final-v3">
+/* FINAL Dark Mode text cascade repair.
+   Targets the actual rendered IDs, not legacy class aliases.
+   Color only: no geometry, typography sizing, spacing, JS, or data changes. */
+
+html.dark body.dark #packagesScreen .packagePageHead #packagePageTitle,
+html.dark body.dark #packagesScreen .packagePageHead h2,
+body.dark #packagesScreen .packagePageHead #packagePageTitle,
+body.dark #packagesScreen .packagePageHead h2{
+  color:#f3f6fa!important;
+}
+
+html.dark body.dark #packagesScreen .packagePageHead #packagePageSub,
+body.dark #packagesScreen .packagePageHead #packagePageSub{
+  color:#aeb8c8!important;
+}
+
+html.dark body.dark #package #pkgTitle,
+html.dark body.dark #package .section h2,
+body.dark #package #pkgTitle,
+body.dark #package .section h2{
+  color:#f3f6fa!important;
+}
+
+html.dark body.dark #package .section .sub,
+body.dark #package .section .sub{
+  color:#aeb8c8!important;
+}
+
+html.dark body.dark #partsScreen #partsTitle,
+html.dark body.dark #partsScreen .section h2,
+body.dark #partsScreen #partsTitle,
+body.dark #partsScreen .section h2{
+  color:#f3f6fa!important;
+}
+
+html.dark body.dark #partsScreen #partsTitle .partsTitleHanzi,
+html.dark body.dark #partsScreen #partsTitle .kaiti-ui-hanzi,
+body.dark #partsScreen #partsTitle .partsTitleHanzi,
+body.dark #partsScreen #partsTitle .kaiti-ui-hanzi{
+  color:#f3f6fa!important;
+}
+
+html.dark body.dark #partsScreen .section .sub,
+body.dark #partsScreen .section .sub{
+  color:#aeb8c8!important;
+}
+
+/* Exercise context and title: actual IDs used by renderExercise(). */
+html.dark body.dark #exercise #exPkg,
+html.dark body.dark #exercise #exType,
+html.dark body.dark #exercise #exPart,
+body.dark #exercise #exPkg,
+body.dark #exercise #exType,
+body.dark #exercise #exPart{
+  color:#f3f6fa!important;
+}
+
+html.dark body.dark #exercise #exTitle:not(.hsk5PaperSectionHeader),
+body.dark #exercise #exTitle:not(.hsk5PaperSectionHeader){
+  color:#f3f6fa!important;
+}
+
+html.dark body.dark #exercise .section > .sub,
+body.dark #exercise .section > .sub{
+  color:#aeb8c8!important;
+}
+
+/* HSK 5 paper section header — keep Hanzi/instruction readable. */
+html.dark body.dark #exercise #exTitle.hsk5PaperSectionHeader .hsk5PaperSectionTitle,
+body.dark #exercise #exTitle.hsk5PaperSectionHeader .hsk5PaperSectionTitle{
+  color:#f3f6fa!important;
+}
+
+html.dark body.dark #exercise #exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction,
+body.dark #exercise #exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction{
+  color:#c4ccd8!important;
+}
+</style>
+
 </head><body><div aria-live="polite" id="appBootLoader" role="status"><div class="bootCard"><div aria-hidden="true" class="bootMark"><svg aria-hidden="true" class="bootLogoSvg bootLogoLight" preserveaspectratio="xMidYMid meet" viewbox="0 0 1536 581">
 <svg height="581" viewbox="0 0 1536 581" width="1536" xmlns="http://www.w3.org/2000/svg">
 <defs>
