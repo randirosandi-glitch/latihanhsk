@@ -6198,7 +6198,8 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   const REPO='randirosandi-glitch/latihanhsk', REF='main';
   const TREE_API='https://api.github.com/repos/'+REPO+'/git/trees/'+encodeURIComponent(REF)+'?recursive=1';
   const RAW_BASE='https://raw.githubusercontent.com/'+REPO+'/'+REF+'/';
-  const CATALOG_CACHE_KEY='hsk-dynamic-catalog-v3';
+  const CATALOG_CACHE_KEY='hsk-dynamic-catalog-v4';
+  try{localStorage.removeItem('hsk-dynamic-catalog-v3')}catch(e){}
   const $=id=>document.getElementById(id);
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const natural=(a,b)=>String(a).localeCompare(String(b),undefined,{numeric:true,sensitivity:'base'});
@@ -6255,75 +6256,62 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   async function discover(){
     /*
       Catalog policy:
-      - GitHub folder contents are the SINGLE source of truth.
-      - No package list is read from manifest.json.
-      - Every .json file directly inside each data folder is included
-        automatically, so adding/removing a package file requires no
-        manifest maintenance.
+      - manifest.json is NOT used for package discovery.
+      - The folder contents on GitHub are the source of truth.
+      - Every .json directly inside a supported data folder becomes a package.
+      - We intentionally scan the known data folders directly instead of first
+        discovering them from a manifest or recursive Git tree.
     */
     const groups=[];
+    const folders=['HSK 4','HSK 5','Workbook HSK4a','Workbook HSK4b'];
 
-    try{
-      // Discover every folder directly under /data.
-      const root=await fetchJSON(
-        'https://api.github.com/repos/'+REPO+'/contents/data?ref='+encodeURIComponent(REF),
-        7000
-      );
-      const dirs=(root?.filter(x=>x?.type==='dir')||[])
-        .map(x=>String(x.name||''))
-        .filter(Boolean);
+    for(const folder of folders){
+      const url='https://api.github.com/repos/'+REPO+'/contents/data/'
+        +folder.split('/').map(encodeURIComponent).join('/')
+        +'?ref='+encodeURIComponent(REF)+'&catalog='+Date.now();
 
-      // Enumerate every JSON file in every data folder.
-      for(const folder of dirs){
-        try{
-          const url='https://api.github.com/repos/'+REPO+'/contents/data/'
-            +folder.split('/').map(encodeURIComponent).join('/')
-            +'?ref='+encodeURIComponent(REF);
-          const items=await fetchJSON(url,7000);
-          if(!Array.isArray(items))continue;
+      try{
+        const items=await fetchJSON(url,7000);
+        if(!Array.isArray(items))continue;
 
-          const g={
-            name:folder,
-            path:'data/'+folder,
-            kind:kind(folder),
-            level:level(folder),
-            files:[],
-            codes:[]
-          };
+        const g={
+          name:folder,
+          path:'data/'+folder,
+          kind:kind(folder),
+          level:level(folder),
+          files:[],
+          codes:[]
+        };
 
-          for(const item of items){
-            const file=String(item?.name||'');
-            if(item?.type!=='file'||!/\\.json$/i.test(file))continue;
+        for(const item of items){
+          const file=String(item?.name||'');
+          if(item?.type!=='file'||!/\\.json$/i.test(file))continue;
 
-            // These are data-support files, not exam packages.
-            if(/^(manifest|reading-passages)$/i.test(file.replace(/\\.json$/i,'')))continue;
+          // Support files are not exam packages.
+          if(/^(manifest|reading-passages)$/i.test(file.replace(/\\.json$/i,'')))continue;
 
-            addFile(
-              g,
-              file.replace(/\\.json$/i,''),
-              String(item.path||('data/'+folder+'/'+file))
-            );
-          }
-
-          if(g.files.length)groups.push(g);
-        }catch(err){
-          console.warn('Folder discovery failed for',folder,err);
+          addFile(
+            g,
+            file.replace(/\\.json$/i,''),
+            String(item.path||('data/'+folder+'/'+file))
+          );
         }
-      }
 
-      if(groups.length){
-        cacheCatalog(groups);
-        return {groups,source:'github-folders'};
+        if(g.files.length)groups.push(g);
+      }catch(err){
+        console.warn('Folder discovery failed for',folder,err);
       }
-    }catch(err){
-      console.warn('GitHub folder discovery failed.',err);
     }
 
-    // Last-resort cached catalog. This does not become the source of truth;
-    // it is only used when GitHub is temporarily unreachable.
-    const cached=groupsFromCachedCatalog();
-    if(cached.length)return {groups:cached,source:'local-catalog-cache'};
-    throw new Error('Katalog package tidak dapat dimuat. Periksa koneksi internet lalu coba refresh.');
+    if(groups.length){
+      cacheCatalog(groups);
+      return {groups,source:'github-folder-contents'};
+    }
+
+    // Do not silently fall back to an old catalog: that can make the UI show
+    // an outdated package count such as 18 when the folder actually contains
+    // more files.
+    throw new Error('Katalog folder GitHub tidak dapat dibaca. Tidak menggunakan manifest/cache lama agar jumlah paket tidak salah.');
   }
 
   function sortGroups(groups){
