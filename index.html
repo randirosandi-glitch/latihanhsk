@@ -6198,7 +6198,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   const REPO='randirosandi-glitch/latihanhsk', REF='main';
   const TREE_API='https://api.github.com/repos/'+REPO+'/git/trees/'+encodeURIComponent(REF)+'?recursive=1';
   const RAW_BASE='https://raw.githubusercontent.com/'+REPO+'/'+REF+'/';
-  const CATALOG_CACHE_KEY='hsk-dynamic-catalog-v4';
+  const CATALOG_CACHE_KEY='hsk-dynamic-catalog-v5';
   const $=id=>document.getElementById(id);
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const natural=(a,b)=>String(a).localeCompare(String(b),undefined,{numeric:true,sensitivity:'base'});
@@ -6254,20 +6254,16 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 
   async function discover(){
     /*
-      Package catalog source of truth:
-      - Do NOT use manifest.json as the primary package list.
-      - Discover actual .json files in the repository dynamically.
-      - Primary: jsDelivr's GitHub flat file index (CORS-friendly).
-      - Secondary: GitHub Contents API, folder by folder.
-      - Last resort: manifest.json / cached catalog only when both dynamic
-        sources are unavailable.
+      Dynamic package catalog — repository files are the source of truth.
+      Never depend on a manually maintained package list when the repository
+      tree is reachable. The catalog cache is only a fallback.
     */
     const wantedFolders=['HSK 4','HSK 5','Workbook HSK4a','Workbook HSK4b'];
 
     function buildGroupsFromPaths(paths){
       const map=new Map();
       for(const rawPath of (paths||[])){
-        const path=String(rawPath||'').replace(/^\/+/,'');
+        const path=String(rawPath||'').replace(/^\/+/, '');
         if(!path || !/\.json$/i.test(path))continue;
 
         const parts=path.split('/');
@@ -6282,14 +6278,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 
         let g=map.get(folder);
         if(!g){
-          g={
-            name:folder,
-            path:'data/'+folder,
-            kind:kind(folder),
-            level:level(folder),
-            files:[],
-            codes:[]
-          };
+          g={name:folder,path:'data/'+folder,kind:kind(folder),level:level(folder),files:[],codes:[]};
           map.set(folder,g);
         }
         addFile(g,base,path);
@@ -6297,8 +6286,54 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       return [...map.values()].filter(g=>g.files.length);
     }
 
-    // PRIMARY: jsDelivr dynamically exposes the actual GitHub repository tree.
-    // This avoids relying on a manually maintained package manifest.
+    // PRIMARY: GitHub recursive tree. One request discovers the real files
+    // currently present on main, including newly added packages.
+    try{
+      const payload=await fetchJSON(TREE_API,10000);
+      const paths=Array.isArray(payload?.tree)
+        ? payload.tree.filter(x=>x?.type==='blob').map(x=>x.path).filter(Boolean)
+        : [];
+      const groups=buildGroupsFromPaths(paths);
+      if(groups.length){
+        cacheCatalog(groups);
+        return {groups,source:'github-tree'};
+      }
+    }catch(err){
+      console.warn('GitHub repository tree catalog failed.',err);
+    }
+
+    // SECONDARY: GitHub Contents API, one supported folder at a time.
+    try{
+      const groups=[];
+      for(const folder of wantedFolders){
+        const url='https://api.github.com/repos/'+REPO+'/contents/data/'
+          +folder.split('/').map(encodeURIComponent).join('/')
+          +'?ref='+encodeURIComponent(REF);
+        const items=await fetchJSON(url,10000);
+        if(!Array.isArray(items))continue;
+
+        const g={name:folder,path:'data/'+folder,kind:kind(folder),level:level(folder),files:[],codes:[]};
+
+        for(const item of items){
+          const file=String(item?.name||'');
+          if(item?.type!=='file' || !/\.json$/i.test(file))continue;
+          const base=file.replace(/\.json$/i,'');
+          if(/^(manifest|reading-passages)$/i.test(base))continue;
+          addFile(g,base,String(item.path||('data/'+folder+'/'+file)));
+        }
+
+        if(g.files.length)groups.push(g);
+      }
+
+      if(groups.length){
+        cacheCatalog(groups);
+        return {groups,source:'github-folder-contents'};
+      }
+    }catch(err){
+      console.warn('GitHub folder catalog failed.',err);
+    }
+
+    // TERTIARY: jsDelivr repository index.
     try{
       const url='https://data.jsdelivr.com/v1/package/gh/'+REPO+'@'+encodeURIComponent(REF)+'/flat';
       const payload=await fetchJSON(url,10000);
@@ -6314,48 +6349,8 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       console.warn('jsDelivr repository catalog failed.',err);
     }
 
-    // SECONDARY: GitHub Contents API, directly per supported data folder.
-    try{
-      const groups=[];
-      for(const folder of wantedFolders){
-        const url='https://api.github.com/repos/'+REPO+'/contents/data/'
-          +folder.split('/').map(encodeURIComponent).join('/')
-          +'?ref='+encodeURIComponent(REF);
-        const items=await fetchJSON(url,10000);
-        if(!Array.isArray(items))continue;
-
-        const g={
-          name:folder,
-          path:'data/'+folder,
-          kind:kind(folder),
-          level:level(folder),
-          files:[],
-          codes:[]
-        };
-
-        for(const item of items){
-          const file=String(item?.name||'');
-          if(item?.type!=='file' || !/\.json$/i.test(file))continue;
-
-          const base=file.replace(/\.json$/i,'');
-          if(/^(manifest|reading-passages)$/i.test(base))continue;
-
-          addFile(g,base,String(item.path||('data/'+folder+'/'+file)));
-        }
-
-        if(g.files.length)groups.push(g);
-      }
-
-      if(groups.length){
-        cacheCatalog(groups);
-        return {groups,source:'github-folder-contents'};
-      }
-    }catch(err){
-      console.warn('GitHub folder catalog failed.',err);
-    }
-
-    // LAST RESORT: manifest. This is deliberately not merged into dynamic
-    // results, so a stale manifest can never hide dynamically discovered files.
+    // LAST RESORT: manifest. This is only used when live repository discovery
+    // is unavailable. It is deliberately refreshed before using local cache.
     try{
       const m=await fetchJSON(RAW_BASE+'data/manifest.json',7000);
       const groups=groupsFromManifest(m);
