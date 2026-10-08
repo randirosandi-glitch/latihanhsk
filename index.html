@@ -6199,7 +6199,6 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   const TREE_API='https://api.github.com/repos/'+REPO+'/git/trees/'+encodeURIComponent(REF)+'?recursive=1';
   const RAW_BASE='https://raw.githubusercontent.com/'+REPO+'/'+REF+'/';
   const CATALOG_CACHE_KEY='hsk-dynamic-catalog-v4';
-  try{localStorage.removeItem('hsk-dynamic-catalog-v3')}catch(e){}
   const $=id=>document.getElementById(id);
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const natural=(a,b)=>String(a).localeCompare(String(b),undefined,{numeric:true,sensitivity:'base'});
@@ -6255,30 +6254,31 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 
   async function discover(){
     /*
-      Catalog policy:
-      1) jsDelivr's GitHub package file index is the primary dynamic source.
-         It lists the actual repository files, so no package manifest is needed.
-      2) GitHub Contents API is the secondary dynamic source.
-      3) manifest.json is only a last-resort compatibility fallback.
-         It is never the primary catalog and cannot hide packages when the
-         dynamic sources are available.
+      Package catalog source of truth:
+      - Do NOT use manifest.json as the primary package list.
+      - Discover actual .json files in the repository dynamically.
+      - Primary: jsDelivr's GitHub flat file index (CORS-friendly).
+      - Secondary: GitHub Contents API, folder by folder.
+      - Last resort: manifest.json / cached catalog only when both dynamic
+        sources are unavailable.
     */
-    const folders=['HSK 4','HSK 5','Workbook HSK4a','Workbook HSK4b'];
+    const wantedFolders=['HSK 4','HSK 5','Workbook HSK4a','Workbook HSK4b'];
 
     function buildGroupsFromPaths(paths){
       const map=new Map();
       for(const rawPath of (paths||[])){
-        const path=String(rawPath||'').replace(/^\\//,'');
-        if(!path||!/\\.json$/i.test(path))continue;
+        const path=String(rawPath||'').replace(/^\/+/,'');
+        if(!path || !/\.json$/i.test(path))continue;
 
         const parts=path.split('/');
-        if(parts.length!==3||parts[0]!=='data')continue;
+        if(parts.length!==3 || parts[0]!=='data')continue;
 
         const folder=parts[1];
         const file=parts[2];
+        if(!wantedFolders.includes(folder))continue;
 
-        if(!folders.includes(folder))continue;
-        if(/^(manifest|reading-passages)$/i.test(file.replace(/\\.json$/i,'')))continue;
+        const base=file.replace(/\.json$/i,'');
+        if(/^(manifest|reading-passages)$/i.test(base))continue;
 
         let g=map.get(folder);
         if(!g){
@@ -6292,41 +6292,36 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
           };
           map.set(folder,g);
         }
-
-        addFile(
-          g,
-          file.replace(/\\.json$/i,''),
-          path
-        );
+        addFile(g,base,path);
       }
       return [...map.values()].filter(g=>g.files.length);
     }
 
-    // PRIMARY: jsDelivr file index. This avoids GitHub API rate limits and
-    // reads the repository tree dynamically.
+    // PRIMARY: jsDelivr dynamically exposes the actual GitHub repository tree.
+    // This avoids relying on a manually maintained package manifest.
     try{
-      const api='https://data.jsdelivr.com/v1/package/gh/'+REPO+'@'+encodeURIComponent(REF)+'/flat';
-      const payload=await fetchJSON(api,10000);
-      const files=Array.isArray(payload?.files)
+      const url='https://data.jsdelivr.com/v1/package/gh/'+REPO+'@'+encodeURIComponent(REF)+'/flat';
+      const payload=await fetchJSON(url,10000);
+      const paths=Array.isArray(payload?.files)
         ? payload.files.map(x=>typeof x==='string'?x:x?.name).filter(Boolean)
         : [];
-      const groups=buildGroupsFromPaths(files);
+      const groups=buildGroupsFromPaths(paths);
       if(groups.length){
         cacheCatalog(groups);
-        return {groups,source:'jsdelivr-github-file-index'};
+        return {groups,source:'github-files-jsdelivr'};
       }
     }catch(err){
-      console.warn('jsDelivr dynamic catalog failed.',err);
+      console.warn('jsDelivr repository catalog failed.',err);
     }
 
-    // SECONDARY: GitHub Contents API, folder by folder.
+    // SECONDARY: GitHub Contents API, directly per supported data folder.
     try{
       const groups=[];
-      for(const folder of folders){
+      for(const folder of wantedFolders){
         const url='https://api.github.com/repos/'+REPO+'/contents/data/'
           +folder.split('/').map(encodeURIComponent).join('/')
           +'?ref='+encodeURIComponent(REF);
-        const items=await fetchJSON(url,7000);
+        const items=await fetchJSON(url,10000);
         if(!Array.isArray(items))continue;
 
         const g={
@@ -6340,9 +6335,12 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 
         for(const item of items){
           const file=String(item?.name||'');
-          if(item?.type!=='file'||!/\\.json$/i.test(file))continue;
-          if(/^(manifest|reading-passages)$/i.test(file.replace(/\\.json$/i,'')))continue;
-          addFile(g,file.replace(/\\.json$/i,''),String(item.path||('data/'+folder+'/'+file)));
+          if(item?.type!=='file' || !/\.json$/i.test(file))continue;
+
+          const base=file.replace(/\.json$/i,'');
+          if(/^(manifest|reading-passages)$/i.test(base))continue;
+
+          addFile(g,base,String(item.path||('data/'+folder+'/'+file)));
         }
 
         if(g.files.length)groups.push(g);
@@ -6353,11 +6351,11 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
         return {groups,source:'github-folder-contents'};
       }
     }catch(err){
-      console.warn('GitHub dynamic catalog failed.',err);
+      console.warn('GitHub folder catalog failed.',err);
     }
 
-    // LAST RESORT: compatibility fallback only. Keep the manifest synchronized,
-    // but never prefer it over a dynamic repository listing.
+    // LAST RESORT: manifest. This is deliberately not merged into dynamic
+    // results, so a stale manifest can never hide dynamically discovered files.
     try{
       const m=await fetchJSON(RAW_BASE+'data/manifest.json',7000);
       const groups=groupsFromManifest(m);
@@ -6368,6 +6366,9 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     }catch(err){
       console.warn('Manifest fallback failed.',err);
     }
+
+    const cached=groupsFromCachedCatalog();
+    if(cached.length)return {groups:cached,source:'local-catalog-cache'};
 
     throw new Error('Katalog package tidak dapat dimuat dari repository.');
   }
