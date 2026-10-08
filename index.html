@@ -6256,21 +6256,76 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   async function discover(){
     /*
       Catalog policy:
-      - manifest.json is NOT used for package discovery.
-      - The folder contents on GitHub are the source of truth.
-      - Every .json directly inside a supported data folder becomes a package.
-      - We intentionally scan the known data folders directly instead of first
-        discovering them from a manifest or recursive Git tree.
+      1) jsDelivr's GitHub package file index is the primary dynamic source.
+         It lists the actual repository files, so no package manifest is needed.
+      2) GitHub Contents API is the secondary dynamic source.
+      3) manifest.json is only a last-resort compatibility fallback.
+         It is never the primary catalog and cannot hide packages when the
+         dynamic sources are available.
     */
-    const groups=[];
     const folders=['HSK 4','HSK 5','Workbook HSK4a','Workbook HSK4b'];
 
-    for(const folder of folders){
-      const url='https://api.github.com/repos/'+REPO+'/contents/data/'
-        +folder.split('/').map(encodeURIComponent).join('/')
-        +'?ref='+encodeURIComponent(REF)+'&catalog='+Date.now();
+    function buildGroupsFromPaths(paths){
+      const map=new Map();
+      for(const rawPath of (paths||[])){
+        const path=String(rawPath||'').replace(/^\\//,'');
+        if(!path||!/\\.json$/i.test(path))continue;
 
-      try{
+        const parts=path.split('/');
+        if(parts.length!==3||parts[0]!=='data')continue;
+
+        const folder=parts[1];
+        const file=parts[2];
+
+        if(!folders.includes(folder))continue;
+        if(/^(manifest|reading-passages)$/i.test(file.replace(/\\.json$/i,'')))continue;
+
+        let g=map.get(folder);
+        if(!g){
+          g={
+            name:folder,
+            path:'data/'+folder,
+            kind:kind(folder),
+            level:level(folder),
+            files:[],
+            codes:[]
+          };
+          map.set(folder,g);
+        }
+
+        addFile(
+          g,
+          file.replace(/\\.json$/i,''),
+          path
+        );
+      }
+      return [...map.values()].filter(g=>g.files.length);
+    }
+
+    // PRIMARY: jsDelivr file index. This avoids GitHub API rate limits and
+    // reads the repository tree dynamically.
+    try{
+      const api='https://data.jsdelivr.com/v1/package/gh/'+REPO+'@'+encodeURIComponent(REF)+'/flat';
+      const payload=await fetchJSON(api,10000);
+      const files=Array.isArray(payload?.files)
+        ? payload.files.map(x=>typeof x==='string'?x:x?.name).filter(Boolean)
+        : [];
+      const groups=buildGroupsFromPaths(files);
+      if(groups.length){
+        cacheCatalog(groups);
+        return {groups,source:'jsdelivr-github-file-index'};
+      }
+    }catch(err){
+      console.warn('jsDelivr dynamic catalog failed.',err);
+    }
+
+    // SECONDARY: GitHub Contents API, folder by folder.
+    try{
+      const groups=[];
+      for(const folder of folders){
+        const url='https://api.github.com/repos/'+REPO+'/contents/data/'
+          +folder.split('/').map(encodeURIComponent).join('/')
+          +'?ref='+encodeURIComponent(REF);
         const items=await fetchJSON(url,7000);
         if(!Array.isArray(items))continue;
 
@@ -6286,32 +6341,35 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
         for(const item of items){
           const file=String(item?.name||'');
           if(item?.type!=='file'||!/\\.json$/i.test(file))continue;
-
-          // Support files are not exam packages.
           if(/^(manifest|reading-passages)$/i.test(file.replace(/\\.json$/i,'')))continue;
-
-          addFile(
-            g,
-            file.replace(/\\.json$/i,''),
-            String(item.path||('data/'+folder+'/'+file))
-          );
+          addFile(g,file.replace(/\\.json$/i,''),String(item.path||('data/'+folder+'/'+file)));
         }
 
         if(g.files.length)groups.push(g);
-      }catch(err){
-        console.warn('Folder discovery failed for',folder,err);
       }
+
+      if(groups.length){
+        cacheCatalog(groups);
+        return {groups,source:'github-folder-contents'};
+      }
+    }catch(err){
+      console.warn('GitHub dynamic catalog failed.',err);
     }
 
-    if(groups.length){
-      cacheCatalog(groups);
-      return {groups,source:'github-folder-contents'};
+    // LAST RESORT: compatibility fallback only. Keep the manifest synchronized,
+    // but never prefer it over a dynamic repository listing.
+    try{
+      const m=await fetchJSON(RAW_BASE+'data/manifest.json',7000);
+      const groups=groupsFromManifest(m);
+      if(groups.length){
+        cacheCatalog(groups);
+        return {groups,source:'manifest-fallback'};
+      }
+    }catch(err){
+      console.warn('Manifest fallback failed.',err);
     }
 
-    // Do not silently fall back to an old catalog: that can make the UI show
-    // an outdated package count such as 18 when the folder actually contains
-    // more files.
-    throw new Error('Katalog folder GitHub tidak dapat dibaca. Tidak menggunakan manifest/cache lama agar jumlah paket tidak salah.');
+    throw new Error('Katalog package tidak dapat dimuat dari repository.');
   }
 
   function sortGroups(groups){
