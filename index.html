@@ -6255,77 +6255,72 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   async function discover(){
     /*
       Catalog policy:
-      - manifest is useful as a fast/cheap catalog;
-      - the GitHub tree is the source of truth for newly created folders/files;
-      - both are MERGED, never mutually exclusive.
-      This prevents a stale manifest from hiding a newly uploaded HSK folder.
+      - GitHub folder contents are the SINGLE source of truth.
+      - No package list is read from manifest.json.
+      - Every .json file directly inside each data folder is included
+        automatically, so adding/removing a package file requires no
+        manifest maintenance.
     */
-    const merged=new Map();
-    const mergeGroups=(groups)=>{
-      for(const src of (groups||[])){
-        if(!src||!src.name)continue;
-        let dst=merged.get(src.name);
-        if(!dst){
-          dst={name:src.name,path:src.path||('data/'+src.name),kind:src.kind||kind(src.name),level:src.level??level(src.name),files:[],codes:[]};
-          merged.set(src.name,dst);
-        }
-        for(const f of (src.files||[])){
-          const code=String(f?.code||f?.name||'').replace(/\.json$/i,'').trim();
-          if(!code)continue;
-          addFile(dst,code,String(f.path||('data/'+src.name+'/'+code+'.json')));
-        }
-      }
-    };
+    const groups=[];
 
-    let manifestLoaded=false,treeLoaded=false;
-
-    // Fast manifest path. Do not return early: it may be stale.
     try{
-      const m=await fetchJSON(RAW_BASE+'data/manifest.json',7000);
-      mergeGroups(groupsFromManifest(m));
-      manifestLoaded=true;
-    }catch(err){console.warn('Raw manifest discovery failed.',err)}
+      // Discover every folder directly under /data.
+      const root=await fetchJSON(
+        'https://api.github.com/repos/'+REPO+'/contents/data?ref='+encodeURIComponent(REF),
+        7000
+      );
+      const dirs=(root?.filter(x=>x?.type==='dir')||[])
+        .map(x=>String(x.name||''))
+        .filter(Boolean);
 
-    // GitHub Contents API path. Do not depend on the recursive Git tree:
-    // large HSK databases can make that endpoint return a truncated tree,
-    // which would hide folders such as data/HSK 5. Discover the data folders
-    // directly, then enumerate JSON files inside each folder.
-    try{
-      const root=await fetchJSON('https://api.github.com/repos/'+REPO+'/contents/data?ref='+encodeURIComponent(REF),7000);
-      const dirs=(root?.filter(x=>x?.type==='dir')||[]).map(x=>String(x.name||'')).filter(Boolean);
-      const wanted=['HSK 4','HSK 5','Workbook HSK4a','Workbook HSK4b'];
-      const folderNames=[...new Set([...wanted,...dirs])];
-      for(const folder of folderNames){
+      // Enumerate every JSON file in every data folder.
+      for(const folder of dirs){
         try{
-          const url='https://api.github.com/repos/'+REPO+'/contents/data/'+folder.split('/').map(encodeURIComponent).join('/')+'?ref='+encodeURIComponent(REF);
+          const url='https://api.github.com/repos/'+REPO+'/contents/data/'
+            +folder.split('/').map(encodeURIComponent).join('/')
+            +'?ref='+encodeURIComponent(REF);
           const items=await fetchJSON(url,7000);
           if(!Array.isArray(items))continue;
-          const g={name:folder,path:'data/'+folder,kind:kind(folder),level:level(folder),files:[],codes:[]};
+
+          const g={
+            name:folder,
+            path:'data/'+folder,
+            kind:kind(folder),
+            level:level(folder),
+            files:[],
+            codes:[]
+          };
+
           for(const item of items){
             const file=String(item?.name||'');
-            if(item?.type!=='file'||!/\.json$/i.test(file))continue;
-            if(/^(manifest|reading-passages)$/i.test(file.replace(/\.json$/i,'')))continue;
-            addFile(g,file.replace(/\.json$/i,''),String(item.path||('data/'+folder+'/'+file)));
-          }
-          if(g.files.length)mergeGroups([g]);
-        }catch(err){console.warn('Folder discovery failed for',folder,err)}
-      }
-      treeLoaded=true;
-    }catch(err){console.warn('Dynamic database folder discovery failed.',err)}
+            if(item?.type!=='file'||!/\\.json$/i.test(file))continue;
 
-    const groups=[...merged.values()].filter(g=>g.files.length);
-    if(groups.length){
-      cacheCatalog(groups);
-      return {groups,source:manifestLoaded&&treeLoaded?'github-manifest+tree':treeLoaded?'github-tree': 'github-manifest'};
+            // These are data-support files, not exam packages.
+            if(/^(manifest|reading-passages)$/i.test(file.replace(/\\.json$/i,'')))continue;
+
+            addFile(
+              g,
+              file.replace(/\\.json$/i,''),
+              String(item.path||('data/'+folder+'/'+file))
+            );
+          }
+
+          if(g.files.length)groups.push(g);
+        }catch(err){
+          console.warn('Folder discovery failed for',folder,err);
+        }
+      }
+
+      if(groups.length){
+        cacheCatalog(groups);
+        return {groups,source:'github-folders'};
+      }
+    }catch(err){
+      console.warn('GitHub folder discovery failed.',err);
     }
 
-    // Same-origin manifest fallback for deployments where GitHub is blocked.
-    try{
-      const m=await fetchJSON('./data/manifest.json',7000);
-      const groups=groupsFromManifest(m);
-      if(groups.length){cacheCatalog(groups);return {groups,source:'manifest-fallback'}}
-    }catch(err){console.warn('Same-origin manifest fallback failed.',err)}
-
+    // Last-resort cached catalog. This does not become the source of truth;
+    // it is only used when GitHub is temporarily unreachable.
     const cached=groupsFromCachedCatalog();
     if(cached.length)return {groups:cached,source:'local-catalog-cache'};
     throw new Error('Katalog package tidak dapat dimuat. Periksa koneksi internet lalu coba refresh.');
