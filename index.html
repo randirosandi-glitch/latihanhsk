@@ -4166,9 +4166,9 @@ function hsk5AutoPaperOptionLayout(){
     const items=[...container.querySelectorAll(':scope > .hsk5PaperOption')];
     if(items.length!==4) return;
 
-    /* Part 3 follows the PDF composition, not viewport width:
+    /* Reading Part 1 + Part 3 follow one deterministic rule:
        <=3 Hanzi => A B C D; >=4 Hanzi in any option => A B / C D. */
-    if(part==='part3' && container.closest('.hsk5PaperPart3')){
+    if((part==='part1' && container.closest('.hsk5PaperPart1')) || (part==='part3' && container.closest('.hsk5PaperPart3'))){
       const hasLongOption=items.some(el=>{
         const text=el.querySelector('.optText')?.textContent||el.textContent||'';
         const hanzi=(String(text).match(/[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]/g)||[]).length;
@@ -4298,7 +4298,14 @@ function renderHsk5PaperPart1(pkg,qs){
     const passage='<div class="hsk5PaperGroupHeader">'+esc(g.id)+'．</div><div class="hsk5PaperPassage"><div class="hsk5PaperPassageText">'+esc(text)+'</div></div>';
     const body=g.qs.map(q=>{
       const id=String(q[0]);
-      return '<div class="hsk5PaperQuestion"><div class="hsk5PaperQText"><span class="paperQNo">'+esc(id)+'．</span></div><div class="hsk5PaperOptions">'+hsk5PaperOptionButtons(pkg,q)+'</div>'+hsk5PaperActions(id)+'</div>';
+      const model=getResolvedQuestionModel(pkg,route.type,route.sectionIndex,q);
+      const needsTwoRows=model.options.some(o=>{
+        const text=String(o.label||'')+' '+String(o.value||'');
+        const hanzi=(text.match(/[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]/g)||[]).length;
+        return hanzi>=4;
+      });
+      const optionClass=needsTwoRows?' paperOptionsTwoRows':'';
+      return '<div class="hsk5PaperQuestion"><div class="hsk5PaperQText"><span class="paperQNo">'+esc(id)+'．</span></div><div class="hsk5PaperOptions'+optionClass+'">'+hsk5PaperOptionButtons(pkg,q)+'</div>'+hsk5PaperActions(id)+'</div>';
     }).join('');
     return '<section class="hsk5PaperGroup hsk5PaperPart1">'+passage+body+'</section>';
   }).join('');
