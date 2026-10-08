@@ -3204,6 +3204,9 @@ body.dark .mainNav,body.dark .levelCard,body.dark .levelCardIcon,body.dark .pack
 #exercise .hsk5PaperPassage{margin:0 0 8px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;}
 #exercise .hsk5PaperPassageText{font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;font-size:18px!important;line-height:1.9!important;color:var(--text)!important;white-space:pre-wrap!important;}
 #exercise .hsk5PaperQuestion{margin:0!important;padding:7px 0 10px!important;border-bottom:0!important;background:transparent!important;box-shadow:none!important;border-radius:0!important;}
+/* Scroll performance: defer off-screen Reading questions without changing their visual styling. */
+#exercise .hsk5PaperQuestion{content-visibility:auto;}
+
 #exercise .hsk5PaperQText{margin:0 0 5px!important;font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;font-size:16px!important;line-height:1.65!important;font-weight:650!important;color:var(--text)!important;white-space:pre-wrap!important;}
 #exercise .hsk5PaperQText .paperQNo{font-family:inherit!important;font-weight:800!important;}
 #exercise .hsk5PaperOptions{display:flex!important;flex-wrap:nowrap!important;align-items:flex-start!important;gap:2px 20px!important;}
@@ -4433,16 +4436,16 @@ function grade(push=true){
   route={...route,screen:'exercise'};
   loadCurrentSectionState();
   resultState={score,total:currentQuestions.length,answered,checkedAt:Date.now()};
-  const preserveScrollY=window.scrollY||window.pageYOffset||0;
   renderExercise();
   setScreen('exercise',false);
-  // setScreen() has a legacy scroll-to-top hook. Assessment must not move the user.
-  // Restore the exact pre-check position after every pending navigation frame has run.
+  // After checking the section, bring the assessment card into view.
+  // Keep the sticky top bar clear so the score is immediately visible.
   requestAnimationFrame(()=>{
     requestAnimationFrame(()=>{
-      requestAnimationFrame(()=>{
-        window.scrollTo({top:preserveScrollY,left:0,behavior:'auto'});
-      });
+      const assessment=document.querySelector('#exercise .finishCard.checked');
+      if(!assessment)return;
+      const top=assessment.getBoundingClientRect().top+window.scrollY-78;
+      window.scrollTo({top:Math.max(0,top),left:0,behavior:'auto'});
     });
   });
 }
