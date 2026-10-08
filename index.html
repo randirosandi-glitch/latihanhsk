@@ -6467,13 +6467,80 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     }).join('');
   }
 
+  const PACKAGE_CACHE_NAME='hsk-papers-package-cache-v1';
+  const PACKAGE_CACHE_TTL=30*24*60*60*1000;
+  const packageCacheTime=new Map();
+
+  async function readCachedPackage(code){
+    try{
+      if(!('caches' in window))return null;
+      const cache=await caches.open(PACKAGE_CACHE_NAME);
+      const req=new Request('./'+encodeURIComponent(String(code))+'.json');
+      const hit=await cache.match(req);
+      if(!hit)return null;
+      const stamp=Number(hit.headers.get('x-hsk-cached-at')||0);
+      if(stamp && Date.now()-stamp>PACKAGE_CACHE_TTL){
+        await cache.delete(req);
+        return null;
+      }
+      const data=await hit.clone().json();
+      if(!data||typeof data!=='object')return null;
+      return data;
+    }catch(e){return null}
+  }
+
+  async function writeCachedPackage(code,data){
+    try{
+      if(!('caches' in window))return;
+      const cache=await caches.open(PACKAGE_CACHE_NAME);
+      const req=new Request('./'+encodeURIComponent(String(code))+'.json');
+      const body=JSON.stringify(data);
+      const headers=new Headers({'Content-Type':'application/json','x-hsk-cached-at':String(Date.now())});
+      await cache.put(req,new Response(body,{headers}));
+    }catch(e){}
+  }
+
+  async function fetchPackageNetwork(meta,code){
+    let lastError=null;
+    for(const url of [meta.url,meta.remoteUrl||rawURL(meta.path)]){
+      try{
+        const d=await fetchJSON(url,12000);
+        if(!d||typeof d!=='object')throw new Error('JSON package tidak valid: '+code);
+        return d;
+      }catch(e){lastError=e}
+    }
+    throw lastError||new Error('Paket gagal dimuat: '+code);
+  }
+
   async function loadPackage(code){
     code=String(code||'');
     const meta=state.byCode.get(code);if(!meta)throw new Error('Paket tidak ditemukan di database: '+code);
     if(DB[code]&&!DB[code].__lazy)return DB[code];
     if(state.cache.has(code))return state.cache.get(code);
-    const p=fetchJSON(meta.url,10000).catch(()=>fetchJSON(meta.remoteUrl||rawURL(meta.path),10000)).then(d=>{if(!d||typeof d!=='object')throw new Error('JSON package tidak valid: '+code);d.code=d.code||code;d.__folder=meta.path.split('/')[1]||'';d.__lazy=false;DB[code]=d;return d}).catch(e=>{state.cache.delete(code);throw e});
-    state.cache.set(code,p);return p;
+
+    const p=(async()=>{
+      let data;
+      try{
+        data=await fetchPackageNetwork(meta,code);
+        data.code=data.code||code;
+        data.__folder=meta.path.split('/')[1]||'';
+        data.__lazy=false;
+        DB[code]=data;
+        await writeCachedPackage(code,data);
+        return data;
+      }catch(networkError){
+        data=await readCachedPackage(code);
+        if(!data)throw networkError;
+        data.code=data.code||code;
+        data.__folder=meta.path.split('/')[1]||'';
+        data.__lazy=false;
+        DB[code]=data;
+        return data;
+      }
+    })().catch(e=>{state.cache.delete(code);throw e});
+
+    state.cache.set(code,p);
+    return p;
   }
 
   window.__hskLoadPackage=loadPackage;
