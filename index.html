@@ -7889,6 +7889,42 @@ body.dark .studyPlanPickerLevel.active{background:var(--blue)!important;color:#f
 })();
 </script>
 
+
+<style id="study-plan-picker-actions-mobile-fix-v1">
+/* Keep the study-plan picker actions reachable above the fixed mobile navbar. */
+#studyPlanPickerModal{z-index:10050!important;padding:12px 12px calc(104px + env(safe-area-inset-bottom))!important;align-items:center!important;overflow-y:auto!important}
+#studyPlanPickerModal .studyPlanModalBox{
+  width:min(100%,760px)!important;
+  max-height:calc(100dvh - 132px - env(safe-area-inset-bottom))!important;
+  min-height:0!important;
+  overflow:hidden!important;
+}
+#studyPlanPickerModal .studyPlanPickerList{
+  flex:1 1 auto!important;
+  min-height:72px!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+}
+#studyPlanPickerModal .studyPlanPickerActions{
+  position:relative!important;
+  inset:auto!important;
+  flex:0 0 auto!important;
+  padding:12px 0 0!important;
+  margin-top:8px!important;
+  background:var(--surface)!important;
+}
+body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!important}
+@media(max-width:599px){
+  #studyPlanPickerModal{padding:10px 10px calc(108px + env(safe-area-inset-bottom))!important}
+  #studyPlanPickerModal .studyPlanModalBox{
+    max-height:calc(100dvh - 142px - env(safe-area-inset-bottom))!important;
+    padding:18px!important;
+    border-radius:22px!important;
+  }
+  #studyPlanPickerModal .studyPlanPickerActions .btn{width:100%!important;min-height:46px!important}
+}
+</style>
+
 </body>
 </html>
 
