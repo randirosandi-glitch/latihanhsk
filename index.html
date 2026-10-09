@@ -8024,3 +8024,68 @@ body.dark .top {
   }
 }
 </style>
+
+
+<style id="hsk-beta-grade-loading-v1">
+#hskGradeLoading{position:fixed;inset:0;z-index:20000;display:none;align-items:center;justify-content:center;padding:24px;background:color-mix(in srgb,var(--bg,#fff) 72%,transparent);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+#hskGradeLoading.show{display:flex;animation:hskGradeFadeIn .14s ease-out both}
+#hskGradeLoading .hskGradePanel{width:min(280px,100%);padding:24px 20px;text-align:center;background:var(--surface,#fff);color:var(--text,#222);border:1px solid var(--line,#ddd);border-radius:18px}
+#hskGradeLoading .hskGradeSpinner{width:34px;height:34px;margin:0 auto 14px;border:3px solid color-mix(in srgb,var(--blue,#4778e8) 18%,transparent);border-top-color:var(--blue,#4778e8);border-radius:50%;animation:hskGradeSpin .75s linear infinite}
+#hskGradeLoading .hskGradeTitle{font-weight:750;font-size:16px}
+#hskGradeLoading .hskGradeSub{margin-top:6px;font-size:12px;color:var(--muted,#777)}
+#exercise .inlineResult{animation:hskGradeResultIn .32s cubic-bezier(.2,.7,.2,1) both}
+#exercise .inlineResultScore{font-variant-numeric:tabular-nums;animation:hskGradeNumberIn .38s ease-out both}
+@keyframes hskGradeSpin{to{transform:rotate(360deg)}}
+@keyframes hskGradeFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes hskGradeResultIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes hskGradeNumberIn{from{opacity:.35;transform:translateY(5px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+body.dark #hskGradeLoading{background:rgba(0,0,0,.56)}
+body.dark #hskGradeLoading .hskGradePanel{background:#171819;color:#f4f4f4;border-color:#353638}
+@media(prefers-reduced-motion:reduce){#hskGradeLoading.show,#hskGradeLoading .hskGradeSpinner,#exercise .inlineResult,#exercise .inlineResultScore{animation:none!important}}
+</style>
+<script id="hsk-beta-grade-loading-v1-js">
+(function(){
+  'use strict';
+  const originalGrade=window.grade;
+  if(typeof originalGrade!=='function'||window.__hskGradeLoadingInstalled)return;
+  window.__hskGradeLoadingInstalled=true;
+  let busy=false,overlay;
+  function ensureOverlay(){
+    if(overlay&&overlay.isConnected)return overlay;
+    overlay=document.createElement('div');
+    overlay.id='hskGradeLoading';
+    overlay.setAttribute('role','status');
+    overlay.setAttribute('aria-live','polite');
+    overlay.innerHTML='<div class="hskGradePanel"><div class="hskGradeSpinner" aria-hidden="true"></div><div class="hskGradeTitle">Memeriksa jawaban…</div><div class="hskGradeSub">Menghitung hasil bagian ini</div></div>';
+    document.body.appendChild(overlay);
+    return overlay;
+  }
+  window.grade=function(push=true){
+    if(busy)return;
+    busy=true;
+    const started=performance.now();
+    const layer=ensureOverlay();
+    layer.classList.add('show');
+    const button=document.querySelector('#exercise .finishCard button[onclick*="grade"],#exercise button[onclick*="grade"]');
+    if(button){button.dataset.gradeWasDisabled=button.disabled?'1':'0';button.disabled=true;}
+    requestAnimationFrame(function(){
+      setTimeout(function(){
+        try{
+          originalGrade.call(window,push);
+        }catch(err){
+          console.error('HSK grade failed',err);
+        }finally{
+          const elapsed=performance.now()-started;
+          const wait=Math.max(0,220-elapsed);
+          setTimeout(function(){
+            layer.classList.remove('show');
+            if(button&&button.isConnected){button.disabled=button.dataset.gradeWasDisabled==='1';delete button.dataset.gradeWasDisabled;}
+            busy=false;
+          },wait);
+        }
+      },20);
+    });
+  };
+})();
+</script>
+
