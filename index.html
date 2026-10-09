@@ -4130,13 +4130,18 @@ function mergeStoresLatest(local,remote){
   out._syncMeta={version:1,updatedAt:Math.max(Number(a._syncMeta?.updatedAt||0),Number(b._syncMeta?.updatedAt||0),Date.now())};
   return {store:out,localWon};
 }
-async function pullCloudState(force=false){
+async function pullCloudStateInternal(force=false){
   if(!currentUsername||!cloudEnabled())return false;
   try{
-    const local=readStore();
+    /* Read after the network lookup, not before it: the learner may answer while
+       cloudFindUser is in flight. Merging a pre-request snapshot can roll back
+       that newer local answer when the response arrives. */
     const row=await cloudFindUser(currentUsername);
+    const local=readStore();
     if(!row){
       await cloudCreateUser(currentUsername,local);
+      const latest=readStore();
+      if(JSON.stringify(latest)!==JSON.stringify(local)) await cloudUpdateUser(currentUsername,latest);
       renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();
       return true;
     }
@@ -4148,21 +4153,32 @@ async function pullCloudState(force=false){
     return true;
   }catch(e){console.warn('Cloud sync pull failed',e);return false}
 }
+let cloudPullInFlight=null,cloudLastPullAt=0;
+function pullCloudState(force=false){
+  if(cloudPullInFlight)return cloudPullInFlight;
+  const now=Date.now();
+  if(!force&&now-cloudLastPullAt<12000)return Promise.resolve(false);
+  cloudLastPullAt=now;
+  cloudPullInFlight=pullCloudStateInternal(force).finally(()=>{cloudPullInFlight=null});
+  return cloudPullInFlight;
+}
 async function pushCloudState(store){
   if(!currentUsername||!cloudEnabled())return false;
   if(cloudSyncBusy){cloudSyncPending=true;return false}
   cloudSyncBusy=true;
   try{
-    const local=readStore();
-    const candidate=store||local;
     const row=await cloudFindUser(currentUsername);
+    /* Use the newest local snapshot after the await. The scheduled argument
+       may have become stale while the cloud lookup was in flight. */
+    const latest=readStore();
     if(!row){
-      await cloudCreateUser(currentUsername,candidate);
-      writeStore(candidate);
+      await cloudCreateUser(currentUsername,latest);
+      const afterCreate=readStore();
+      if(JSON.stringify(afterCreate)!==JSON.stringify(latest)) await cloudUpdateUser(currentUsername,afterCreate);
       return true;
     }
     const remote=row.data||{};
-    const merged=mergeStoresLatest(candidate,remote).store;
+    const merged=mergeStoresLatest(latest,remote).store;
     writeStore(merged);
     await cloudUpdateUser(currentUsername,merged);
     return true;
@@ -4248,7 +4264,7 @@ function sequenceKeys(q){
 }
 function isSequenceAnswerCorrect(q,u){const a=normalizeSequenceAnswer(u);if(!a)return false;return sequenceKeys(q).some(k=>k===a)}
 function stateKey(code,type,idx){return code+'|'+type+'|'+idx}
-function getSectionState(code,type,idx){const st=readStore()[stateKey(code,type,idx)]||{};return {answers:st.answers||{},checked:st.checked||{},answerEvents:st.answerEvents||{}}}
+function getSectionState(code,type,idx,storeArg){const st=(storeArg||readStore())[stateKey(code,type,idx)]||{};return {answers:st.answers||{},checked:st.checked||{},answerEvents:st.answerEvents||{}}}
 function saveSectionState(code,type,idx,a=answers,c=checked,events){
   const st=readStore(); const now=Date.now(); const key=stateKey(code,type,idx); const prev=st[key]||{};
   if(st._progressResets&&typeof st._progressResets==='object'){
@@ -4265,13 +4281,13 @@ function saveSectionState(code,type,idx,a=answers,c=checked,events){
   writeStore(st); scheduleCloudSync();
 }
 function clearSectionState(code,type,idx){const st=readStore();delete st[stateKey(code,type,idx)];if(st._resume&&st._resume.code===code&&st._resume.type===type&&Number(st._resume.sectionIndex)===Number(idx))delete st._resume;writeStore(st);scheduleCloudSync()}
-function sectionStats(code,type,idx){const sec=DB[code]?.[type]?.[idx];if(!sec)return {answered:0,total:0,pct:0,score:0};const saved=getSectionState(code,type,idx);let answered=0,score=0;for(const q of sec.questions){const id=String(q[0]);const u=saved.answers[id];if(u!==undefined&&String(u).trim()!==''){answered++;if(isCorrect(q,u,type,idx))score++}}const total=sec.questions.length;return {answered,total,pct:total?Math.round(answered/total*100):0,score}}
+function sectionStats(code,type,idx,storeArg){const sec=DB[code]?.[type]?.[idx];if(!sec)return {answered:0,total:0,pct:0,score:0};const saved=getSectionState(code,type,idx,storeArg);let answered=0,score=0;for(const q of sec.questions){const id=String(q[0]);const u=saved.answers[id];if(u!==undefined&&String(u).trim()!==''){answered++;if(isCorrect(q,u,type,idx))score++}}const total=sec.questions.length;return {answered,total,pct:total?Math.round(answered/total*100):0,score}}
 function isSequenceReadingQuestion(id){const pkg=getActivePackageData();if(getPackageEngineRules(pkg))return false;const code=String(route?.packageCode||'');return route&&route.type==='reading'&&(Number(id)>=56&&Number(id)<=65||((code.startsWith('WB4A')||code.startsWith('WB4B'))&&Number(route.sectionIndex)===2)||code==='HSK4-SUSUN-KALIMAT');}
 function correctIndex(q,type){const model=getResolvedQuestionModel(getActivePackageData(),type,route?.sectionIndex,q);const key=String(q?.[3]??"").trim();if(model.type==="sentence_ordering"||model.type==="guided_writing"||model.type==="picture_writing")return -1;if(/^[A-F]$/i.test(key))return key.toUpperCase().charCodeAt(0)-65;const opts=q?.[2]||[];const direct=opts.findIndex(o=>norm(o)===norm(key));if(direct>=0)return direct;if(key==="√"){const i=opts.findIndex(o=>norm(o)==="对");if(i>=0)return i}if(key==="×"){const i=opts.findIndex(o=>norm(o)==="错");if(i>=0)return i}return -1}
 function isCorrect(q,u,type,idx){const model=getResolvedQuestionModel(getActivePackageData(),type,idx,q);if(model.type==="sentence_ordering"||model.type==="sequence")return isSequenceAnswerCorrect(q,u);if(model.type==="guided_writing"||model.type==="picture_writing")return false;const ci=correctIndex(q,type);return Number(u)===ci}
 function lazyPackageMeta(code){try{const meta=window.__hskDatabase?.byCode?.get(String(code));if(!meta)return null;const folder=String(meta.path||'').split('/')[1]||'';if(/^HSK\s*[45]$/i.test(folder))return {total:100,folder};if(/^Workbook\s*HSK4a$/i.test(folder)||/^Workbook\s*HSK4b$/i.test(folder))return {total:50,folder};return {total:0,folder}}catch(e){return null}}
-function lazyStoredProgress(code){const prefix=String(code)+'|',store=readStore();let answered=0;for(const [key,raw] of Object.entries(store)){if(!key.startsWith(prefix)||!raw||typeof raw!=='object')continue;const a=raw.answers;if(!a||typeof a!=='object')continue;for(const v of Object.values(a)){if(v!==undefined&&String(v).trim()!=='')answered++}}return answered}
-function packageStats(code){let total=0,answered=0,score=0,gradedTotal=0;const rows=[];const pkg=DB[code];if(pkg?.__lazy){const meta=lazyPackageMeta(code);const expected=Number(meta?.total)||0;const savedAnswered=lazyStoredProgress(code);return {total:expected,answered:Math.min(savedAnswered,expected||savedAnswered),score:0,gradedTotal:0,pct:expected?Math.round(Math.min(savedAnswered,expected)/expected*100):0,scorePct:0,rows:[]}}for(const [type,m] of Object.entries(META)){const arr=pkg?.[type]||[];for(let i=0;i<arr.length;i++){const st=sectionStats(code,type,i);total+=st.total;answered+=st.answered;if(type!=='writing'||isSequenceWriting(type,i)){score+=st.score;gradedTotal+=st.total}rows.push({type,label:m.label,zh:m.zh,section:arr[i].title.replace(/^.*?·\s*/,''),range:arr[i].range,...st,graded:type!=='writing'||isSequenceWriting(type,i)})}}return {total,answered,score,gradedTotal,pct:total?Math.round(answered/total*100):0,scorePct:gradedTotal?Math.round(score/gradedTotal*100):0,rows}}
+function lazyStoredProgress(code,storeArg){const prefix=String(code)+'|',store=storeArg||readStore();let answered=0;for(const [key,raw] of Object.entries(store)){if(!key.startsWith(prefix)||!raw||typeof raw!=='object')continue;const a=raw.answers;if(!a||typeof a!=='object')continue;for(const v of Object.values(a)){if(v!==undefined&&String(v).trim()!=='')answered++}}return answered}
+function packageStats(code,storeArg){const store=storeArg||readStore();let total=0,answered=0,score=0,gradedTotal=0;const rows=[];const pkg=DB[code];if(pkg?.__lazy){const meta=lazyPackageMeta(code);const expected=Number(meta?.total)||0;const savedAnswered=lazyStoredProgress(code,store);return {total:expected,answered:Math.min(savedAnswered,expected||savedAnswered),score:0,gradedTotal:0,pct:expected?Math.round(Math.min(savedAnswered,expected)/expected*100):0,scorePct:0,rows:[]}}for(const [type,m] of Object.entries(META)){const arr=pkg?.[type]||[];for(let i=0;i<arr.length;i++){const st=sectionStats(code,type,i,store);total+=st.total;answered+=st.answered;if(type!=='writing'||isSequenceWriting(type,i)){score+=st.score;gradedTotal+=st.total}rows.push({type,label:m.label,zh:m.zh,section:arr[i].title.replace(/^.*?·\s*/,''),range:arr[i].range,...st,graded:type!=='writing'||isSequenceWriting(type,i)})}}return {total,answered,score,gradedTotal,pct:total?Math.round(answered/total*100):0,scorePct:gradedTotal?Math.round(score/gradedTotal*100):0,rows}}
 function progressHTML(st,label='Progres'){return `<div class="progressWrap"><div class="progressMeta"><span>${label}</span><span>${st.answered}/${st.total} · ${st.pct}%</span></div><div class="progressBar"><div class="fill" style="width:${st.pct}%"></div></div></div>`}
 function renderPackageProgress(code){const st=packageStats(code);return progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket')}
 function renderContext(){const c=$('context');const tb=$('topBack');const top=document.querySelector('.top');if(top){const isHome=route.screen==='home';document.body.classList.toggle('home-route',isHome);top.classList.toggle('homeTopHidden',isHome);top.style.setProperty('display',isHome?'none':'','important');const nav=document.querySelector('.mainNav');if(nav)nav.classList.remove('focusNavHidden');}if(tb){const hideBack=route.screen==='home'||route.screen==='levels'||route.screen==='studyPlans';tb.style.setProperty('display',hideBack?'none':'inline-flex','important');}c.classList.remove('show');c.innerHTML=''}
@@ -4279,11 +4295,11 @@ function armHome(){if(typeof window.__hskArmBackGuard==='function'){window.__hsk
 function goHome(push=true){route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;setScreen('home',push);armHome()}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushCloudSync()});
 window.addEventListener('pagehide',()=>flushCloudSync());
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&currentUsername){pullCloudState(true)}});
-window.addEventListener('focus',()=>{if(currentUsername)pullCloudState(true)});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&currentUsername){pullCloudState()}});
+window.addEventListener('focus',()=>{if(currentUsername)pullCloudState()});
 
-function renderPackage(){let code=route.packageCode;let d=DB[code]||{};$('pkgCrumb').textContent=code;$('pkgTitle').textContent='Paket '+code;const palettes={listening:{accent:'#ff6548',soft:'#fff0eb'},reading:{accent:'#7890d8',soft:'#eef2ff'},writing:{accent:'#e5ad3d',soft:'#fff5df'}};$('parts').innerHTML=Object.entries(META).map(([t,m])=>{const arr=d[t]||[],total=arr.reduce((a,x)=>a+x.questions.length,0),ps=arr.reduce((a,x,i)=>{const st=sectionStats(code,t,i);return {answered:a.answered+st.answered,total:a.total+st.total}},{answered:0,total:0});ps.pct=ps.total?Math.round(ps.answered/ps.total*100):0;const pal=palettes[t]||palettes.listening;return total?`<button class="partCard flatPartCard" style="--part-accent:${pal.accent};--part-soft:${pal.soft}" type="button" onclick="openSections('${esc(code)}','${t}')"><span class="partHanzi" aria-hidden="true">${esc(m.zh)}</span><span class="partMain"><strong>${esc(m.label)}</strong><span class="partMeta">${total} soal tersedia</span>${progressHTML(ps,'Progres bagian')}</span><span class="partArrow" aria-hidden="true"><span class="material-symbols-rounded ico">arrow_forward</span></span></button>`:`<div class="partCard flatPartCard partDisabled" style="--part-accent:${pal.accent};--part-soft:${pal.soft}" aria-disabled="true"><span class="partHanzi" aria-hidden="true">${esc(m.zh)}</span><span class="partMain"><strong>${esc(m.label)}</strong><span class="partMeta">Belum tersedia dari sumber paket</span></span></div>`}).join('')+`<div style="grid-column:1/-1">${renderPackageProgress(code)}</div>`}
-function renderSections(){const d=DB[route.packageCode]?.[route.type]||[];const m=META[route.type];if(!m){goHome(false);return}$('partsPkg').textContent=route.packageCode;$('partsCrumb').textContent=m.label;$('partsTitle').innerHTML='<span class="kaiti-ui-hanzi">'+escV17(m.zh)+'</span><span aria-hidden="true"> · </span>'+escV17(m.label);const available=d.map((s,i)=>({s,i})).filter(x=>Array.isArray(x.s.questions)&&x.s.questions.length>0);let arr=available.map(({s,i})=>{let st=sectionStats(route.packageCode,route.type,i);const sectionName=s.title.replace(/^.*?·\s*/,'');return `<button class="tile sectionPartTile" onclick="startSection(${i})"><div class="sectionPartTitle kaiti-ui-hanzi">${esc(sectionName)}</div><small>Soal ${esc(s.range)} · ${s.questions.length} soal</small>${progressHTML(st,'Progres bagian')}</button>`});$('sections').innerHTML=arr.length?arr.join(''):`<div class="notice"><strong>${route.packageCode} · ${m.label}</strong><br>Bagian ini belum tersedia sebagai teks soal pada paket ini.</div>`}
+function renderPackage(){let code=route.packageCode;let d=DB[code]||{};const progressStore=readStore();$('pkgCrumb').textContent=code;$('pkgTitle').textContent='Paket '+code;const palettes={listening:{accent:'#ff6548',soft:'#fff0eb'},reading:{accent:'#7890d8',soft:'#eef2ff'},writing:{accent:'#e5ad3d',soft:'#fff5df'}};$('parts').innerHTML=Object.entries(META).map(([t,m])=>{const arr=d[t]||[],total=arr.reduce((a,x)=>a+x.questions.length,0),ps=arr.reduce((a,x,i)=>{const st=sectionStats(code,t,i,progressStore);return {answered:a.answered+st.answered,total:a.total+st.total}},{answered:0,total:0});ps.pct=ps.total?Math.round(ps.answered/ps.total*100):0;const pal=palettes[t]||palettes.listening;return total?`<button class="partCard flatPartCard" style="--part-accent:${pal.accent};--part-soft:${pal.soft}" type="button" onclick="openSections('${esc(code)}','${t}')"><span class="partHanzi" aria-hidden="true">${esc(m.zh)}</span><span class="partMain"><strong>${esc(m.label)}</strong><span class="partMeta">${total} soal tersedia</span>${progressHTML(ps,'Progres bagian')}</span><span class="partArrow" aria-hidden="true"><span class="material-symbols-rounded ico">arrow_forward</span></span></button>`:`<div class="partCard flatPartCard partDisabled" style="--part-accent:${pal.accent};--part-soft:${pal.soft}" aria-disabled="true"><span class="partHanzi" aria-hidden="true">${esc(m.zh)}</span><span class="partMain"><strong>${esc(m.label)}</strong><span class="partMeta">Belum tersedia dari sumber paket</span></span></div>`}).join('')+`<div style="grid-column:1/-1">${renderPackageProgress(code)}</div>`}
+function renderSections(){const d=DB[route.packageCode]?.[route.type]||[];const progressStore=readStore();const m=META[route.type];if(!m){goHome(false);return}$('partsPkg').textContent=route.packageCode;$('partsCrumb').textContent=m.label;$('partsTitle').innerHTML='<span class="kaiti-ui-hanzi">'+escV17(m.zh)+'</span><span aria-hidden="true"> · </span>'+escV17(m.label);const available=d.map((s,i)=>({s,i})).filter(x=>Array.isArray(x.s.questions)&&x.s.questions.length>0);let arr=available.map(({s,i})=>{let st=sectionStats(route.packageCode,route.type,i,progressStore);const sectionName=s.title.replace(/^.*?·\s*/,'');return `<button class="tile sectionPartTile" onclick="startSection(${i})"><div class="sectionPartTitle kaiti-ui-hanzi">${esc(sectionName)}</div><small>Soal ${esc(s.range)} · ${s.questions.length} soal</small>${progressHTML(st,'Progres bagian')}</button>`});$('sections').innerHTML=arr.length?arr.join(''):`<div class="notice"><strong>${route.packageCode} · ${m.label}</strong><br>Bagian ini belum tersedia sebagai teks soal pada paket ini.</div>`}
 function loadCurrentSectionState(){const st=getSectionState(route.packageCode,route.type,route.sectionIndex);answers={...st.answers};checked={...st.checked};answerEvents={...st.answerEvents};resultState=null}
 function instructionFor(type,idx){const code=String(route?.packageCode||'');const pkg=getActivePackageData();const id=Number(currentQuestions?.[0]?.[0]?.[0]||currentQuestions?.[0]?.[0]||0);const parts=pkg?.engineRules?.sections?.[type]?.parts||[];const part=parts.find(p=>ruleRangeContains(p.range,id));if(part?.instruction)return part.instruction;if(code==='HSK4-SUSUN-KATA')return 'Susun kata-kata berikut menjadi kalimat Mandarin yang benar. Jawaban dinilai berdasarkan kunci jawaban.';if(code==='HSK4-SUSUN-KALIMAT')return 'Susun kalimat-kalimat berikut menjadi paragraf yang benar dengan memilih urutan yang tepat.';if(type==='listening')return idx===0?'Dengarkan pernyataan lalu pilih apakah kalimat tersebut benar atau salah.':idx===1?'Dengarkan percakapan dengan saksama lalu pilih jawaban yang paling sesuai.':'Dengarkan percakapan lalu tentukan jawaban yang paling tepat berdasarkan informasi yang kamu dengar.';if(type==='reading')return idx===0?'Baca kalimat dan pilihan jawaban, lalu pilih kata atau ungkapan yang paling tepat.':idx===1?'Baca setiap kalimat dan pilih jawaban yang paling sesuai dengan maknanya.':idx===2?'Susun bagian-bagian kalimat menjadi urutan yang benar dengan memilih kombinasi yang tepat.':'Baca teks dengan saksama lalu pilih jawaban yang paling sesuai dengan informasi dalam bacaan.';return idx===0?'Susun kata-kata menjadi kalimat Mandarin yang benar. Kamu bisa klik kata untuk memasukkannya otomatis, atau mengetik langsung di kolom jawaban. Jawaban dinilai berdasarkan kunci jawaban.':'Gunakan kata yang diberikan untuk membuat kalimat Mandarin yang benar, lalu ketik jawabanmu. Jawaban ini tidak dinilai benar atau salah secara otomatis.'}
 function hsk5AutoPaperOptionLayout(){
@@ -4488,7 +4504,7 @@ function renderQuestionCards(){
 
 let hsk5PaperResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(hsk5PaperResizeTimer);hsk5PaperResizeTimer=setTimeout(scheduleHsk5AutoPaperOptionLayout,80)});
-function restoreQuestionUI(){for(const q of currentQuestions){const id=String(q[0]);if(currentMode==='writing'){const e=$('w'+id);if(e){e.value=answers[id]??'';if(typeof autoGrowWriting==='function')requestAnimationFrame(()=>autoGrowWriting(e))}}else if(answers[id]!==undefined){const b=document.querySelector(`.opt[data-q="${id}"][data-i="${answers[id]}"]`);if(b)b.classList.add('selected')}if(checked[id])checkOne(id,true)}}
+function restoreQuestionUI(){for(const q of currentQuestions){const id=String(q[0]);if(currentMode==='writing'){const e=$('w'+id);if(e){e.value=answers[id]??'';if(typeof autoGrowWriting==='function')requestAnimationFrame(()=>autoGrowWriting(e))}}else if(answers[id]!==undefined){const b=document.querySelector(`.opt[data-q="${id}"][data-i="${answers[id]}"]`);if(b)b.classList.add('selected')}if(checked[id])checkOne(id,true,true)}}
 function autoGrowWriting(el){if(!el||!el.classList?.contains('writingAnswerField'))return;el.style.height='auto';const cs=getComputedStyle(el);const min=parseFloat(cs.minHeight)||0;const max=parseFloat(cs.maxHeight)||Infinity;const h=Math.max(el.scrollHeight,min);el.style.height=Math.min(h,max)+'px';el.style.overflowY=h>max?'auto':'hidden'}
 function saveWriting(el){const id=String(el.id).slice(1);resumeQuestionId=id;const previous=answers[id];answers[id]=el.value;checked[id]=false;if(String(el.value||'').trim()!==''&&(previous===undefined||String(previous)!==String(el.value))){if(!answerEvents[id])answerEvents[id]=createQuestionActivity(id);}const f=$('f'+id);if(f)f.className='feedback';saveSectionState(route.packageCode,route.type,route.sectionIndex,answers,checked,answerEvents);refreshCurrentProgress()}
 function refreshCurrentProgress(){const wrap=document.querySelector('.sectionProgress');if(!wrap)return;const st=sectionStats(route.packageCode,route.type,route.sectionIndex);const meta=wrap.querySelector('.progressMeta');if(meta)meta.innerHTML=`<strong>Progres bagian</strong><span>${st.answered}/${st.total} terjawab · ${st.pct}%</span>`;const fill=wrap.querySelector('.fill');if(fill)fill.style.width=st.pct+'%'}
@@ -4533,10 +4549,10 @@ function recordQuestionAttempt(questionId,correct){
   return updateQuestionActivity(eventId,correct);
 }
 
-function checkOne(id,silent=false){const q=currentQuestions.find(x=>String(x[0])===String(id))||((DB[route?.packageCode]?.[route?.type]?.[route?.sectionIndex]?.questions)||[]).find(x=>String(x[0])===String(id));if(!q)return;const model=getResolvedQuestionModel(getActivePackageData(),route.type,route.sectionIndex,q);
-if(model.type==="sentence_ordering"||model.type==="sequence"){const e=$('w'+id);const v=e?e.value.trim():String(answers[id]??'');if(!v){if(!silent)appNotice('Jawaban belum dipilih','Pilih atau ketik susunan jawaban terlebih dahulu.');return}answers[id]=v;const ok=isSequenceAnswerCorrect(q,v);checked[id]=true;const f=$('f'+id);if(f){f.className='feedback show '+(ok?'good':'bad');f.textContent=ok?'Benar':'Salah — periksa kembali urutan kata atau lihat kunci jawaban.'}const input=$('w'+id);if(input){input.classList.remove('answer-correct','answer-wrong');input.classList.add(ok?'answer-correct':'answer-wrong')}saveSectionState(route.packageCode,route.type,route.sectionIndex);recordQuestionAttempt(id,ok);refreshCurrentProgress();return}
-if(model.type==="guided_writing"||model.type==="picture_writing"){saveWritingAnswer(id);return}
-if(answers[id]===undefined){const selectedOption=Array.from(document.querySelectorAll('.opt[data-q]')).find(el=>String(el.dataset.q)===String(id)&&el.classList.contains('selected'));if(selectedOption)answers[id]=selectedOption.dataset.i}if(answers[id]===undefined){if(!silent)appNotice('Jawaban belum dipilih','Pilih jawaban terlebih dahulu.');return}const ci=correctIndex(q,route.type),chosen=Number(answers[id]),ok=chosen===ci;checked[id]=true;const correctModel=getResolvedQuestionModel(getActivePackageData(),route.type,route.sectionIndex,q);const correctOpt=correctModel.options?.[ci];const answerLabel=correctOpt?String(correctOpt.value):(/^[A-F]$/i.test(String(q?.[3]??'').trim())?String(q[3]).trim().toUpperCase():'Tidak tersedia');const f=$('f'+id);if(f){f.className='feedback show '+(ok?'good':'bad');f.textContent=ok?'Benar':'Salah — jawaban yang benar: '+answerLabel}document.querySelectorAll(`.opt[data-q="${id}"],.hsk5ClozeOpt[data-q="${id}"]`).forEach(b=>{b.classList.remove('selected','correct','wrong');const i=Number(b.dataset.i);if(i===chosen)b.classList.add(ok?'correct':'wrong')});saveSectionState(route.packageCode,route.type,route.sectionIndex);recordQuestionAttempt(id,ok);refreshCurrentProgress()}
+function checkOne(id,silent=false,restoreOnly=false){const q=currentQuestions.find(x=>String(x[0])===String(id))||((DB[route?.packageCode]?.[route?.type]?.[route?.sectionIndex]?.questions)||[]).find(x=>String(x[0])===String(id));if(!q)return;const model=getResolvedQuestionModel(getActivePackageData(),route.type,route.sectionIndex,q);
+if(model.type==="sentence_ordering"||model.type==="sequence"){const e=$('w'+id);const v=e?e.value.trim():String(answers[id]??'');if(!v){if(!silent)appNotice('Jawaban belum dipilih','Pilih atau ketik susunan jawaban terlebih dahulu.');return}answers[id]=v;const ok=isSequenceAnswerCorrect(q,v);checked[id]=true;const f=$('f'+id);if(f){f.className='feedback show '+(ok?'good':'bad');f.textContent=ok?'Benar':'Salah — periksa kembali urutan kata atau lihat kunci jawaban.'}const input=$('w'+id);if(input){input.classList.remove('answer-correct','answer-wrong');input.classList.add(ok?'answer-correct':'answer-wrong')}if(!restoreOnly){saveSectionState(route.packageCode,route.type,route.sectionIndex);recordQuestionAttempt(id,ok);refreshCurrentProgress()}return}
+if(model.type==="guided_writing"||model.type==="picture_writing"){if(restoreOnly){const f=$('f'+id);if(f&&String(answers[id]??'').trim()){f.className='feedback show good';f.textContent='✓ Jawaban tersimpan. Silakan periksa kembali kalimatmu sendiri.'}return}saveWritingAnswer(id);return}
+if(answers[id]===undefined){const selectedOption=Array.from(document.querySelectorAll('.opt[data-q]')).find(el=>String(el.dataset.q)===String(id)&&el.classList.contains('selected'));if(selectedOption)answers[id]=selectedOption.dataset.i}if(answers[id]===undefined){if(!silent)appNotice('Jawaban belum dipilih','Pilih jawaban terlebih dahulu.');return}const ci=correctIndex(q,route.type),chosen=Number(answers[id]),ok=chosen===ci;checked[id]=true;const correctModel=getResolvedQuestionModel(getActivePackageData(),route.type,route.sectionIndex,q);const correctOpt=correctModel.options?.[ci];const answerLabel=correctOpt?String(correctOpt.value):(/^[A-F]$/i.test(String(q?.[3]??'').trim())?String(q[3]).trim().toUpperCase():'Tidak tersedia');const f=$('f'+id);if(f){f.className='feedback show '+(ok?'good':'bad');f.textContent=ok?'Benar':'Salah — jawaban yang benar: '+answerLabel}document.querySelectorAll(`.opt[data-q="${id}"],.hsk5ClozeOpt[data-q="${id}"]`).forEach(b=>{b.classList.remove('selected','correct','wrong');const i=Number(b.dataset.i);if(i===chosen)b.classList.add(ok?'correct':'wrong')});if(!restoreOnly){saveSectionState(route.packageCode,route.type,route.sectionIndex);recordQuestionAttempt(id,ok);refreshCurrentProgress()}}
 function repeatOne(id){const q=currentQuestions.find(x=>String(x[0])===String(id));if(!q)return;resumeQuestionId=String(id);delete answers[id];delete checked[id];delete answerEvents[String(id)];if(currentMode==='writing'){const e=$('w'+id);if(e){e.value='';e.dispatchEvent(new Event('input',{bubbles:true}));}if(isSequenceWriting(route.type,route.sectionIndex))refreshWordBank(id)}else{document.querySelectorAll(`.opt[data-q="${id}"]`).forEach(b=>b.classList.remove('selected','correct','wrong'));}const f=$('f'+id);if(f)f.className='feedback';const r=$('r'+id);if(r)r.className='reference';const t=$('t'+id);if(t)t.classList.remove('show');saveSectionState(route.packageCode,route.type,route.sectionIndex);refreshCurrentProgress()}
 function toggleTranscript(id){$('t'+id).classList.toggle('show')}
 function showReference(id){$('r'+id).classList.toggle('show')}
@@ -4613,32 +4629,34 @@ function openScoreLevel(level){
     window.scrollTo({top:0,left:0,behavior:'smooth'});return;
   }
   const codes=Object.keys(DB).filter(c=>typeof isWB!=='function'||!isWB(c));
+  const progressStore=readStore();
   el.className='grid scorePackagesGrid';
-  const cards=codes.map((code,idx)=>{const st=packageStats(code);const score=st.total?st.scorePct:0;const status=st.answered===0?'Belum dikerjakan':st.answered===st.total?'Selesai':'Sedang berjalan';const accent=['blue','purple','orange','pink','green'][idx%5];return `<button class="tile packageTile packageTile-${accent}" type="button" onclick="showPackageScore('${esc(code)}')"><div class="pkgTop"><div class="tileIcon" aria-hidden="true">${svg('chart')}</div><span class="statusPill">${status}</span></div><div class="pkgTitleRow"><div><b>Paket ${esc(code)}</b><small>${st.score}/${st.total} benar · ${st.answered}/${st.total} terjawab</small></div><span class="pkgArrow">${score}%</span></div>${progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres pengerjaan')}<div class="pkgFooter"><span>Nilai paket</span><span>${score}%</span></div></button>`}).join('');
+  const cards=codes.map((code,idx)=>{const st=packageStats(code,progressStore);const score=st.total?st.scorePct:0;const status=st.answered===0?'Belum dikerjakan':st.answered===st.total?'Selesai':'Sedang berjalan';const accent=['blue','purple','orange','pink','green'][idx%5];return `<button class="tile packageTile packageTile-${accent}" type="button" onclick="showPackageScore('${esc(code)}')"><div class="pkgTop"><div class="tileIcon" aria-hidden="true">${svg('chart')}</div><span class="statusPill">${status}</span></div><div class="pkgTitleRow"><div><b>Paket ${esc(code)}</b><small>${st.score}/${st.total} benar · ${st.answered}/${st.total} terjawab</small></div><span class="pkgArrow">${score}%</span></div>${progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres pengerjaan')}<div class="pkgFooter"><span>Nilai paket</span><span>${score}%</span></div></button>`}).join('');
   el.innerHTML=`<div class="scoreBackRow"><button class="btn" type="button" onclick="renderScores()">← Kembali ke level</button></div><div class="scoreLevelTitle"><div class="sectionKicker">HSK 4</div><h3>Nilai HSK 4</h3><p>Pilih paket untuk melihat rincian nilainya.</p></div>${cards||'<div class="notice">Belum ada paket latihan.</div>'}`;
   window.scrollTo({top:0,left:0,behavior:'smooth'});
 }
 function getProgressHistory(limit=3){
   const items=[],store=readStore();
   const attempts=Array.isArray(store._attempts)?store._attempts:[];
-  const latestAttempt=attempts.filter(x=>x&&x.code).sort((a,b)=>Number(b.updatedAt||b.timestamp||0)-Number(a.updatedAt||a.timestamp||0))[0]||null;
+  const latestByCode=new Map();let latestAttempt=null;
+  for(const attempt of attempts){if(!attempt||!attempt.code)continue;const ts=Number(attempt.updatedAt||attempt.timestamp||0);const code=String(attempt.code);if(ts>Number(latestByCode.get(code)||0))latestByCode.set(code,ts);if(!latestAttempt||ts>Number(latestAttempt.updatedAt||latestAttempt.timestamp||0))latestAttempt=attempt;}
   const last=store._lastActivity&&store._lastActivity.code?store._lastActivity:latestAttempt;
   /* Activity metadata is authoritative for identifying the latest package.
      This also works when the package catalog is still lazy-loading. */
   if(last?.code&&DB[last.code]){
-    const st=packageStats(last.code);
+    const st=packageStats(last.code,store);
     if(st.answered>0 || attempts.some(x=>String(x.code)===String(last.code))){
       items.push({code:last.code,st,latest:Number(last.updatedAt||last.timestamp||0),type:last.type,sectionIndex:Number(last.sectionIndex),resume:store._resume?.code===last.code?store._resume:null});
     }
   }
   Object.keys(DB).forEach(code=>{
     if(items.some(x=>x.code===code))return;
-    const st=packageStats(code); let latest=0,latestType=null,latestSection=null;
+    const st=packageStats(code,store); let latest=0,latestType=null,latestSection=null;
     Object.entries(META).forEach(([type])=>(DB[code]?.[type]||[]).forEach((_,i)=>{
       const raw=store[stateKey(code,type,i)];
       if(raw?.updatedAt&&Number(raw.updatedAt)>latest){latest=Number(raw.updatedAt);latestType=type;latestSection=i}
     }));
-    const attemptLatest=attempts.filter(x=>String(x.code)===String(code)).reduce((m,x)=>Math.max(m,Number(x.updatedAt||x.timestamp||0)),0);
+    const attemptLatest=Number(latestByCode.get(String(code))||0);
     latest=Math.max(latest,attemptLatest);
     if(st.answered>0 || attemptLatest>0)items.push({code,st,latest,type:latestType,sectionIndex:latestSection,resume:store._resume?.code===code?store._resume:null});
   });
@@ -4650,10 +4668,10 @@ function formatHistoryDate(ts){
   try{return new Intl.DateTimeFormat('id-ID',{day:'2-digit',month:'short',year:'numeric'}).format(new Date(Number(ts)));}
   catch(e){return '';}
 }
-function renderHomeHistory(){
+function renderHomeHistory(historySnapshot){
   const el=$('homeHistoryList');
   if(!el)return;
-  const history=getProgressHistory(3);
+  const history=Array.isArray(historySnapshot)?historySnapshot:getProgressHistory(3);
   if(!history.length){
     el.innerHTML='<div class="homeHistoryEmpty"><strong>Belum ada riwayat paket.</strong><span>Paket yang sudah kamu pelajari akan muncul di sini.</span></div>';
     return;
@@ -4678,7 +4696,7 @@ function renderHomeHistory(){
 function renderHome(){
   const el=$('homeLastPackage');const sub=$('homeLastSub');if(!el)return;
   const greeting=$('homeGreeting');if(greeting)greeting.innerHTML='Halo, <b>'+esc(currentUsername||'—')+'</b>. Mari lanjutkan latihanmu.';
-  const last=getLastProgress();
+  const history=getProgressHistory(3);const last=history[0]||null;
   if(!last){
     const st=readStore(),activity=st._lastActivity;
     if(activity?.code){
@@ -4688,14 +4706,14 @@ function renderHome(){
       sub.textContent='';
       el.innerHTML='<div class="homeEmpty"><strong>Kamu belum mengerjakan soal apapun.</strong><button class="homeContinueBtn" type="button" onclick="openPackages()">Mulai belajar <span class="material-symbols-rounded ico actionArrow" aria-hidden="true">arrow_forward</span></button></div>';
     }
-    renderHomeHistory();return
+    renderHomeHistory(history);return
   }
   const code=last.code,st=last.st,pct=st.pct||0;
   const resume=last.resume&&last.resume.type&&last.resume.sectionIndex!=null?DB[code]?.[last.resume.type]?.[Number(last.resume.sectionIndex)]:null;
   const resumeLabel=resume?(META[last.resume.type]?.label||last.resume.type)+' · '+String(resume.title||'').replace(/^.*?·\s*/,''):'';
   sub.textContent='';
   el.innerHTML=`<div class="homeContinue"><div class="homeContinueHead"><div><div class="homeContinueTitle">Paket ${esc(code)}</div><div class="homeContinueMeta">${resumeLabel?esc(resumeLabel)+' · ':''}${st.answered}/${st.total} soal terjawab · ${st.score} benar</div></div><div class="homeContinuePct">${pct}%</div></div>${progressHTML({answered:st.answered,total:st.total,pct},'Progres paket')}<div class="homeContinueActions"><button class="homeContinueBtn" type="button" onclick="continueLastPackage('${esc(code)}')">${pct>=100?'Lihat paket':'Lanjut belajar'} <span class="material-symbols-rounded ico actionArrow" aria-hidden="true">arrow_forward</span></button></div><div class="syncStatus ${cloudEnabled()?'':'warn'}"><strong>${cloudEnabled()?'Tersinkron ke cloud':'Tersimpan di perangkat'}</strong>${cloudEnabled()?' · progres mengikuti username @'+esc(currentUsername):' · sinkronisasi cloud belum dikonfigurasi'}</div></div>`;
-  renderHomeHistory();
+  renderHomeHistory(history);
 }
 async function continueLastActivity(){
   const store=readStore(),a=store._lastActivity;
@@ -6425,11 +6443,32 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     }catch(e){return []}
   }
 
-  async function discover(){
+  async function discover(allowFastCache=true){
+    if(allowFastCache){
+      const cached=groupsFromCachedCatalog();
+      if(cached.length){
+        setTimeout(()=>{
+          discover(false).then(fresh=>{
+            if(!fresh?.groups?.length||fresh.source==='local-catalog-cache')return;
+            const selectedName=state.selected?.name||null;
+            state.groups=sortGroups(fresh.groups);
+            state.source=fresh.source;
+            state.loaded=true;
+            installStubs();
+            state.selected=selectedName?state.groups.find(g=>g.name===selectedName)||null:null;
+            renderLevels();
+            if(state.selected)renderPackages();
+            document.dispatchEvent(new Event('hsk:data-ready'));
+            document.dispatchEvent(new Event('hsk:dynamic-catalog-ready'));
+          }).catch(err=>console.warn('Background package catalog refresh failed.',err));
+        },0);
+        return {groups:cached,source:'local-catalog-cache'};
+      }
+    }
     /*
-      Dynamic package catalog — repository files are the source of truth.
-      Never depend on a manually maintained package list when the repository
-      tree is reachable. The catalog cache is only a fallback.
+      Dynamic catalog loading — prefer the repository tree or complete folder
+      listings, but query those providers concurrently so one slow endpoint
+      does not delay a healthy endpoint. CDN/manifest are concurrent fallbacks.
     */
     const wantedFolders=['HSK 4','HSK 5','Workbook HSK4a','Workbook HSK4b'];
 
@@ -6438,107 +6477,80 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       for(const rawPath of (paths||[])){
         const path=String(rawPath||'').replace(/^\/+/, '');
         if(!path || !/\.json$/i.test(path))continue;
-
         const parts=path.split('/');
         if(parts.length!==3 || parts[0]!=='data')continue;
-
-        const folder=parts[1];
-        const file=parts[2];
+        const folder=parts[1],file=parts[2];
         if(!wantedFolders.includes(folder))continue;
-
         const base=file.replace(/\.json$/i,'');
         if(/^(manifest|reading-passages)$/i.test(base))continue;
-
         let g=map.get(folder);
-        if(!g){
-          g={name:folder,path:'data/'+folder,kind:kind(folder),level:level(folder),files:[],codes:[]};
-          map.set(folder,g);
-        }
+        if(!g){g={name:folder,path:'data/'+folder,kind:kind(folder),level:level(folder),files:[],codes:[]};map.set(folder,g)}
         addFile(g,base,path);
       }
       return [...map.values()].filter(g=>g.files.length);
     }
 
-    // PRIMARY: GitHub recursive tree. One request discovers the real files
-    // currently present on main, including newly added packages.
-    try{
-      const payload=await fetchJSON(TREE_API,10000);
-      const paths=Array.isArray(payload?.tree)
-        ? payload.tree.filter(x=>x?.type==='blob').map(x=>x.path).filter(Boolean)
-        : [];
+    async function fromTree(){
+      const payload=await fetchJSON(TREE_API,6000);
+      const paths=Array.isArray(payload?.tree)?payload.tree.filter(x=>x?.type==='blob').map(x=>x.path).filter(Boolean):[];
       const groups=buildGroupsFromPaths(paths);
-      if(groups.length){
-        cacheCatalog(groups);
-        return {groups,source:'github-tree'};
-      }
-    }catch(err){
-      console.warn('GitHub repository tree catalog failed.',err);
+      if(!groups.length)throw new Error('GitHub Tree API returned no package files.');
+      return {groups,source:'github-tree'};
     }
-
-    // SECONDARY: GitHub Contents API, one supported folder at a time.
-    try{
-      const groups=[];
-      for(const folder of wantedFolders){
+    async function fromContents(){
+      const results=await Promise.all(wantedFolders.map(async folder=>{
         const url='https://api.github.com/repos/'+REPO+'/contents/data/'
           +folder.split('/').map(encodeURIComponent).join('/')
           +'?ref='+encodeURIComponent(REF);
-        const items=await fetchJSON(url,10000);
-        if(!Array.isArray(items))continue;
-
+        try{return {folder,items:await fetchJSON(url,6000)}}
+        catch(error){return {folder,items:null,error}}
+      }));
+      if(!results.every(x=>Array.isArray(x.items)))throw new Error('GitHub Contents API did not return all package folders.');
+      const groups=[];
+      for(const {folder,items} of results){
         const g={name:folder,path:'data/'+folder,kind:kind(folder),level:level(folder),files:[],codes:[]};
-
         for(const item of items){
           const file=String(item?.name||'');
-          if(item?.type!=='file' || !/\.json$/i.test(file))continue;
+          if(item?.type!=='file'||!/\.json$/i.test(file))continue;
           const base=file.replace(/\.json$/i,'');
           if(/^(manifest|reading-passages)$/i.test(base))continue;
           addFile(g,base,String(item.path||('data/'+folder+'/'+file)));
         }
-
         if(g.files.length)groups.push(g);
       }
-
-      if(groups.length){
-        cacheCatalog(groups);
-        return {groups,source:'github-folder-contents'};
-      }
-    }catch(err){
-      console.warn('GitHub folder catalog failed.',err);
+      if(!groups.length)throw new Error('GitHub Contents API returned no package files.');
+      return {groups,source:'github-folder-contents'};
     }
-
-    // TERTIARY: jsDelivr repository index.
-    try{
+    async function fromJsDelivr(){
       const url='https://data.jsdelivr.com/v1/package/gh/'+REPO+'@'+encodeURIComponent(REF)+'/flat';
-      const payload=await fetchJSON(url,10000);
-      const paths=Array.isArray(payload?.files)
-        ? payload.files.map(x=>typeof x==='string'?x:x?.name).filter(Boolean)
-        : [];
+      const payload=await fetchJSON(url,6000);
+      const paths=Array.isArray(payload?.files)?payload.files.map(x=>typeof x==='string'?x:x?.name).filter(Boolean):[];
       const groups=buildGroupsFromPaths(paths);
-      if(groups.length){
-        cacheCatalog(groups);
-        return {groups,source:'github-files-jsdelivr'};
-      }
-    }catch(err){
-      console.warn('jsDelivr repository catalog failed.',err);
+      if(!groups.length)throw new Error('jsDelivr index returned no package files.');
+      return {groups,source:'github-files-jsdelivr'};
     }
-
-    // LAST RESORT: manifest. This is only used when live repository discovery
-    // is unavailable. It is deliberately refreshed before using local cache.
-    try{
-      const m=await fetchJSON(RAW_BASE+'data/manifest.json',7000);
+    async function fromManifest(){
+      const m=await fetchJSON(RAW_BASE+'data/manifest.json',4000);
       const groups=groupsFromManifest(m);
-      if(groups.length){
-        cacheCatalog(groups);
-        return {groups,source:'manifest-fallback'};
-      }
-    }catch(err){
-      console.warn('Manifest fallback failed.',err);
+      if(!groups.length)throw new Error('Manifest returned no package files.');
+      return {groups,source:'manifest-fallback'};
     }
 
-    const cached=groupsFromCachedCatalog();
-    if(cached.length)return {groups:cached,source:'local-catalog-cache'};
-
-    throw new Error('Katalog package tidak dapat dimuat dari repository.');
+    let result;
+    try{
+      result=await Promise.any([fromTree(),fromContents()]);
+    }catch(primaryError){
+      try{
+        result=await Promise.any([fromJsDelivr(),fromManifest()]);
+      }catch(fallbackError){
+        const cached=groupsFromCachedCatalog();
+        if(cached.length)return {groups:cached,source:'local-catalog-cache'};
+        throw new Error('Katalog package tidak dapat dimuat dari repository.');
+      }
+    }
+    const groups=sortGroups(result.groups);
+    cacheCatalog(groups);
+    return {groups,source:result.source};
   }
 
   function sortGroups(groups){
@@ -6581,6 +6593,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     if(sub)sub.textContent=g.codes.length+' '+(g.kind==='workbook'?'lesson':'paket')+' tersedia';
     const q=String($('packageSearchInput')?.value||'').trim().toLowerCase();
     const codes=g.codes.filter(c=>!q||c.toLowerCase().includes(q));
+     const progressStore=readStore();
     document.querySelectorAll('.packagePager').forEach(x=>x.remove());
 
     grid.className='grid packageGridV16';
@@ -6590,7 +6603,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     }
 
     grid.innerHTML=codes.map((c,i)=>{
-      const st=typeof packageStats==='function'?packageStats(c):{pct:0,answered:0,total:0};
+      const st=typeof packageStats==='function'?packageStats(c,progressStore):{pct:0,answered:0,total:0};
       const pct=Math.max(0,Math.min(100,Number(st.pct)||0));
       const status=pct>=100?'Selesai':pct>0?'Sedang berjalan':'Belum dimulai';
       const accent=['#ff6548','#765fc7','#2aa876','#e15b64','#e6a21a'][i%5];
@@ -6645,7 +6658,8 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     let lastError=null;
     for(const url of [meta.url,meta.remoteUrl||rawURL(meta.path)]){
       try{
-        const d=await fetchJSON(url,12000);
+        const timeout=url===meta.url?4500:6500;
+        const d=await fetchJSON(url,timeout);
         if(!d||typeof d!=='object')throw new Error('JSON package tidak valid: '+code);
         return d;
       }catch(e){lastError=e}
@@ -7411,8 +7425,11 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   function ensureReadingPassages(){
     if(passageLoadPromise)return passageLoadPromise;
 
+    var passageController=new AbortController();
+    var passageTimeout=setTimeout(function(){passageController.abort()},8000);
     passageLoadPromise=fetch('./data/reading-passages.json',{
       cache:'no-store',
+      signal:passageController.signal,
       headers:{Accept:'application/json'}
     }).then(function(r){
       if(!r.ok)throw new Error('Reading passages HTTP '+r.status);
@@ -7433,7 +7450,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       window.__hskReadingPassagesReady=false;
       console.warn('HSK reading passages unavailable; embedded fallback retained.',err);
       return false;
-    });
+    }).finally(function(){clearTimeout(passageTimeout)});
 
     return passageLoadPromise;
   }
