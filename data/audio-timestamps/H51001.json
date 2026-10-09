@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "packageCode": "H51001",
+  "audioUrl": "https://hsk-papers-audio-test.web.app/audio/H51001.mp3",
+  "durationSeconds": 1815,
+  "durationVerified": true,
+  "timestampStatus": "pending-calibration",
+  "note": "Part boundaries must be measured against the source MP3 before playback can safely be segmented. Null timestamps are intentionally not guessed.",
+  "parts": [
+    {
+      "part": 1,
+      "title": "第一部分",
+      "questionRange": [
+        1,
+        20
+      ],
+      "startSeconds": null,
+      "endSeconds": null,
+      "status": "pending-calibration"
+    },
+    {
+      "part": 2,
+      "title": "第二部分",
+      "questionRange": [
+        21,
+        45
+      ],
+      "startSeconds": null,
+      "endSeconds": null,
+      "status": "pending-calibration"
+    }
+  ]
+}
