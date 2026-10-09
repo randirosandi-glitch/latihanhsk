@@ -7990,3 +7990,37 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
 </body>
 </html>
 
+
+
+<style id="hsk-beta-scroll-v1">
+/* HSK PAPERS BETA — FLAT TOPBAR + SCROLL PERFORMANCE TEST */
+.top,
+body.dark .top {
+  background: var(--bg) !important;
+  background-image: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+@media (max-width: 900px) and (pointer: coarse) {
+  .question, .questionCard {
+    content-visibility: auto;
+    contain: layout style;
+    contain-intrinsic-size: auto 300px;
+  }
+  .transcript {
+    content-visibility: auto;
+    contain: style;
+    contain-intrinsic-size: auto 180px;
+  }
+  * { scroll-behavior: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+</style>
