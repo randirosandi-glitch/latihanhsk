@@ -4001,12 +4001,23 @@ async function cloudUpdateUser(username,store){
   return true;
 }
 function syncNowStamp(){return Date.now()}
-function mergePlanArrays(localPlans,remotePlans){
-  const lm=new Map((Array.isArray(localPlans)?localPlans:[]).map(x=>[String(x.id),x]));
-  const rm=new Map((Array.isArray(remotePlans)?remotePlans:[]).map(x=>[String(x.id),x]));
+function mergePlanArrays(localPlans,remotePlans,localDeleted,remoteDeleted){
+  const deleted={};
+  for(const [id,stamp] of Object.entries(remoteDeleted&&typeof remoteDeleted==='object'?remoteDeleted:{}))deleted[String(id)]=Number(stamp)||Date.now();
+  for(const [id,stamp] of Object.entries(localDeleted&&typeof localDeleted==='object'?localDeleted:{}))deleted[String(id)]=Math.max(Number(deleted[String(id)]||0),Number(stamp)||Date.now());
+  const lm=new Map((Array.isArray(localPlans)?localPlans:[]).filter(x=>x&&x.id!=null).map(x=>[String(x.id),x]));
+  const rm=new Map((Array.isArray(remotePlans)?remotePlans:[]).filter(x=>x&&x.id!=null).map(x=>[String(x.id),x]));
   const ids=new Set([...lm.keys(),...rm.keys()]); const out=[]; let localWon=false;
-  ids.forEach(id=>{const l=lm.get(id),r=rm.get(id);if(!r){out.push(l);localWon=true;return}if(!l){out.push(r);return}const lt=Number(l.updatedAt||0),rt=Number(r.updatedAt||0);if(lt>=rt){out.push(l);if(lt>rt)localWon=true}else out.push(r)});
-  return {out,localWon};
+  ids.forEach(id=>{
+    /* A deletion tombstone wins over stale local or cloud copies. Plan IDs are unique and never reused. */
+    if(Object.prototype.hasOwnProperty.call(deleted,id))return;
+    const l=lm.get(id),r=rm.get(id);
+    if(!r){out.push(l);localWon=true;return}
+    if(!l){out.push(r);return}
+    const lt=Number(l.updatedAt||0),rt=Number(r.updatedAt||0);
+    if(lt>=rt){out.push(l);if(lt>rt)localWon=true}else out.push(r);
+  });
+  return {out,localWon,deleted};
 }
 function progressResetAt(store,key){
   const rm=store&&typeof store._progressResets==='object'&&store._progressResets?store._progressResets:{};
@@ -4042,7 +4053,7 @@ function mergeStoresLatest(local,remote){
   for(const [k,v] of Object.entries(resetB)){if(Number(resetB[k]||0)>Number(resetA[k]||0))mergedResets[k]=Number(resetB[k]||0)}
   const keys=new Set([...Object.keys(a),...Object.keys(b)]);
   for(const k of keys){
-    if(k==='_studyPlans'||k==='_attempts'||k==='_lastActivity'||k==='_syncMeta'||k==='_progressResets')continue;
+    if(k==='_studyPlans'||k==='_deletedStudyPlans'||k==='_attempts'||k==='_lastActivity'||k==='_syncMeta'||k==='_progressResets')continue;
     const l=a[k],r=b[k];
     const resetAt=Math.max(progressResetAt(a,k),progressResetAt(b,k));
     if(resetAt && k!=='_resume'){
@@ -4092,7 +4103,9 @@ function mergeStoresLatest(local,remote){
     }
     if(lt>=rt){out[k]=l;if(lt>rt)localWon=true}else out[k]=r;
   }
-  const plans=mergePlanArrays(a._studyPlans,b._studyPlans); out._studyPlans=plans.out; localWon ||= plans.localWon;
+  const plans=mergePlanArrays(a._studyPlans,b._studyPlans,a._deletedStudyPlans,b._deletedStudyPlans); out._studyPlans=plans.out; out._deletedStudyPlans=plans.deleted; localWon ||= plans.localWon;
+  /* Keep tombstones in both stores so stale cloud snapshots cannot restore deleted plans. */
+  if(Object.keys(out._deletedStudyPlans).length===0)delete out._deletedStudyPlans;
   const attempts=new Map();
   [...(Array.isArray(b._attempts)?b._attempts:[]),...(Array.isArray(a._attempts)?a._attempts:[])].forEach(x=>{
     if(!x?.id)return;
@@ -5626,9 +5639,9 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     }
     el.innerHTML=plans.map(p=>{
       const st=planStatsMaster(p);
-      return `<article class="studyPlanCard" onclick="openStudyPlan('${escHtml(p.id)}')">
-        <div class="studyPlanCardTop"><div class="studyPlanIcon">☷</div>
-          <button class="studyPlanMenu" type="button" onclick="event.stopPropagation();toggleStudyPlanMenu('${escHtml(p.id)}')" aria-label="Menu rencana">⋯</button>
+      return `<article class="studyPlanCard" role="button" tabindex="0" data-plan-id="${escHtml(p.id)}" aria-label="Buka rencana ${escHtml(p.name)}" onclick="openStudyPlan('${escHtml(p.id)}')">
+        <div class="studyPlanCardTop"><div class="studyPlanIcon" aria-hidden="true"><span class="material-symbols-rounded">checklist</span></div>
+          <button class="studyPlanMenu" type="button" onclick="event.stopPropagation();toggleStudyPlanMenu('${escHtml(p.id)}')" aria-label="Menu rencana"><span class="material-symbols-rounded" aria-hidden="true">more_horiz</span></button>
         </div>
         <div class="studyPlanCardMenu" id="planMenu_${escHtml(p.id)}">
           <button type="button" onclick="event.stopPropagation();openStudyPlanEdit('${escHtml(p.id)}')">Edit rencana</button>
@@ -5864,9 +5877,15 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   window.deleteStudyPlan=function(id){
     const p=getPlanMaster(id);if(!p)return;
     appConfirm('Hapus rencana belajar?','Rencana “'+p.name+'” akan dihapus. Paket dan progres belajarmu tetap aman.',()=>{
-    savePlansMaster(plansStoreMaster().filter(x=>String(x.id)!==String(id)));
-    if(route.screen==='studyPlanDetail'&&String(route.studyPlanId)===String(id))window.openStudyPlans(true);
-    else window.renderStudyPlans();
+      const store=readStore();
+      const deleted=store._deletedStudyPlans&&typeof store._deletedStudyPlans==='object'?store._deletedStudyPlans:{};
+      deleted[String(id)]=Date.now();
+      store._deletedStudyPlans=deleted;
+      store._studyPlans=plansStoreMaster().filter(x=>String(x.id)!==String(id));
+      writeStore(store);
+      scheduleCloudSync();
+      if(route.screen==='studyPlanDetail'&&String(route.studyPlanId)===String(id))window.openStudyPlans(true);
+      else window.renderStudyPlans();
     },{icon:'⌫',okText:'Hapus',danger:true});
   };
 
@@ -6116,18 +6135,18 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       return;
     }
 
-    list.innerHTML=`<div class="studyPlanLongPressHint">Tekan lama pada paket untuk menghapusnya dari rencana belajar.</div>`+
+    list.innerHTML=`<div class="studyPlanLongPressHint">Ketuk paket untuk membuka. Gunakan tombol hapus untuk mengeluarkannya dari rencana.</div>`+
       p.packageCodes.map((code,i)=>{
         const x=packageStats(code);
         const status=x.total&&x.answered>=x.total?'Selesai':x.answered?'Sedang berjalan':'Belum dimulai';
-        return `<div class="studyPlanPackage" role="button" tabindex="0" data-plan-id="${escV4(p.id)}" data-package-code="${escV4(code)}"
+        return `<div class="studyPlanPackage ${x.total&&x.answered>=x.total?'isDone':''}" role="button" tabindex="0" data-plan-id="${escV4(p.id)}" data-package-code="${escV4(code)}" style="--pkg-pct:${x.pct||0}%"
           aria-label="Buka ${escV4(db()[code]?.title||('Paket '+code))}">
           <div class="studyPlanPackageNum">${String(i+1).padStart(2,'0')}</div>
           <div class="studyPlanPackageMain"><strong>${escV4(db()[code]?.title||('Paket '+code))}</strong><span>${x.answered}/${x.total} soal terjawab · ${status}</span></div>
           <span class="studyPlanPackagePct">${x.pct||0}%</span>
           <div class="studyPlanPackageActions">
-            <button type="button" data-action="open-plan-package" title="Buka paket">→</button>
-            <button type="button" data-action="remove-plan-package" title="Hapus dari rencana">×</button>
+            <button type="button" data-action="open-plan-package" title="Buka paket" aria-label="Buka paket"><span class="material-symbols-rounded" aria-hidden="true">play_arrow</span></button>
+            <button type="button" data-action="remove-plan-package" title="Hapus dari rencana" aria-label="Hapus paket dari rencana"><span class="material-symbols-rounded" aria-hidden="true">close</span></button>
           </div>
         </div>`;
       }).join('')+
@@ -6291,6 +6310,8 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 
     /* Avoid duplicates if the renderer is called repeatedly. */
     grid.querySelectorAll('.studyPlanCreateCard').forEach(el=>el.remove());
+    /* The empty state already contains its own create action; avoid showing a duplicate card. */
+    if(grid.querySelector('.studyPlanEmpty')) return;
 
     const createCard = document.createElement('button');
     createCard.type = 'button';
@@ -7707,6 +7728,167 @@ html body.dark .mainNav .navItem[aria-current="page"] .navLabel{
   color:var(--muted)!important;background:transparent!important;font-weight:500!important;
 }
 </style>
+
+<style id="study-plan-ui-audit-v1">
+/* Study Plan UI audit: one final, flat and responsive presentation layer. */
+#studyPlans,#studyPlanDetail{width:100%;max-width:960px;margin-inline:auto;box-sizing:border-box}
+#studyPlans *,#studyPlanDetail *,#studyPlanCreatorModal *,#studyPlanEditModal *,#studyPlanPickerModal *{box-sizing:border-box}
+#studyPlans .studyPlansHead{margin:26px 0 20px!important;padding:0 2px!important}
+#studyPlans .studyPlansHead .sectionKicker{display:flex;align-items:center;gap:8px;color:var(--blue)!important;font-size:10px!important;font-weight:800!important;letter-spacing:1.8px!important}
+#studyPlans .studyPlansHead .sectionKicker:before{content:"";width:7px;height:7px;flex:0 0 7px;border-radius:50%;background:var(--blue)}
+#studyPlans .studyPlansHead h2{margin:8px 0 0!important;font-size:clamp(29px,4vw,38px)!important;line-height:1.08!important;letter-spacing:-1.25px!important}
+#studyPlans .studyPlansHead .sub{max-width:560px;margin-top:8px!important;font-size:13px!important;line-height:1.6!important;color:var(--muted)!important}
+#studyPlansGrid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;align-items:stretch}
+#studyPlansGrid .studyPlanCard{position:relative;display:block;width:100%;min-width:0;min-height:0;padding:18px!important;border:1px solid var(--line)!important;border-radius:17px!important;background:var(--surface)!important;color:var(--text)!important;text-align:left;box-shadow:none!important;transform:none!important;transition:border-color .16s,background-color .16s;overflow:visible!important;cursor:pointer}
+#studyPlansGrid .studyPlanCard:hover{border-color:color-mix(in srgb,var(--blue) 45%,var(--line))!important;box-shadow:none!important;transform:none!important}
+#studyPlansGrid .studyPlanCard:focus-visible,#studyPlanPackages .studyPlanPackage:focus-visible{outline:2px solid var(--blue)!important;outline-offset:3px}
+#studyPlansGrid .studyPlanCardTop{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#studyPlansGrid .studyPlanIcon{display:grid;place-items:center;width:40px!important;height:40px!important;flex:0 0 40px;border:1px solid color-mix(in srgb,var(--blue) 18%,var(--line));border-radius:12px!important;background:var(--blueSoft)!important;color:var(--blue)!important;font-size:20px!important}
+#studyPlansGrid .studyPlanIcon .material-symbols-rounded{font-size:22px;line-height:1}
+#studyPlansGrid .studyPlanMenu{display:grid;place-items:center;width:36px!important;height:36px!important;flex:0 0 36px;border:1px solid var(--line)!important;border-radius:10px!important;background:transparent!important;color:var(--muted)!important;box-shadow:none!important}
+#studyPlansGrid .studyPlanMenu:hover{background:var(--surface2)!important;color:var(--text)!important}
+#studyPlansGrid .studyPlanMenu .material-symbols-rounded{font-size:22px}
+#studyPlansGrid .studyPlanCard h3{margin:15px 0 5px!important;font-size:clamp(17px,2vw,20px)!important;line-height:1.25!important;letter-spacing:-.35px!important;overflow-wrap:anywhere}
+#studyPlansGrid .studyPlanDesc{min-height:0!important;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:12px!important;line-height:1.55!important;color:var(--muted)!important}
+#studyPlansGrid .studyPlanMeta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:16px!important;font-size:11px!important;line-height:1.4;color:var(--muted)!important}
+#studyPlansGrid .studyPlanMeta span:first-child{min-width:0;overflow-wrap:anywhere}
+#studyPlansGrid .studyPlanPct{flex:0 0 auto;color:var(--blue)!important;font-size:12px;font-weight:800}
+#studyPlansGrid .studyPlanBar,#studyPlanDetail .studyPlanDetailHead>.studyPlanBar{height:5px!important;margin-top:8px!important;border-radius:99px!important;background:var(--surface2)!important;overflow:hidden}
+#studyPlansGrid .studyPlanBar i,#studyPlanDetail .studyPlanDetailHead>.studyPlanBar i{display:block;height:100%;border-radius:99px;background:var(--blue)!important}
+#studyPlansGrid .studyPlanCreateCard{display:block;min-height:100%;border-style:dashed!important;background:transparent!important}
+#studyPlansGrid .studyPlanCreateCard .studyPlanIcon{border-style:dashed!important;background:var(--surface2)!important;color:var(--blue)!important}
+#studyPlansGrid .studyPlanCreateCard h3{margin-top:15px!important}
+#studyPlansGrid .studyPlanCreateCard .studyPlanDesc{display:block;-webkit-line-clamp:unset}
+#studyPlansGrid .studyPlanEmpty{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:210px;padding:28px 20px!important;border:1px dashed var(--line)!important;border-radius:18px!important;background:var(--surface)!important;color:var(--muted)!important;text-align:center}
+#studyPlansGrid .studyPlanEmpty strong{font-size:17px!important;margin-bottom:6px;color:var(--text)!important}
+#studyPlansGrid .studyPlanEmpty span{max-width:350px;font-size:12px;line-height:1.6}
+#studyPlansGrid .studyPlanEmpty br{display:none}
+#studyPlansGrid .studyPlanEmpty button{margin-top:16px!important}
+.studyPlanCardMenu{top:58px!important;right:14px!important;min-width:165px!important;padding:5px!important;border:1px solid var(--line)!important;border-radius:12px!important;background:var(--surface)!important;box-shadow:none!important}
+.studyPlanCardMenu button{padding:10px 11px!important;border-radius:8px!important;font-size:12px!important}
+.studyPlanCardMenu button:hover{background:var(--surface2)!important}
+#studyPlanDetail{padding-bottom:28px}
+#studyPlanDetail .crumb{margin:15px 2px 10px!important;font-size:12px!important}
+#studyPlanDetail .studyPlanDetailHead{position:relative;margin-top:4px;padding:21px!important;border:1px solid var(--line)!important;border-radius:18px!important;background:var(--surface)!important;overflow:hidden}
+#studyPlanDetail .studyPlanDetailHead:before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--blue)}
+#studyPlanDetail .studyPlanDetailTop{display:flex;align-items:flex-start;justify-content:space-between;gap:20px!important}
+#studyPlanDetail .studyPlanDetailTop>div:first-child{min-width:0;flex:1}
+#studyPlanDetail .studyPlanDetailTitle{margin-top:6px!important;font-size:clamp(26px,3.5vw,34px)!important;line-height:1.12!important;letter-spacing:-1px!important;overflow-wrap:anywhere}
+#studyPlanDetail .studyPlanDetailDesc{max-width:600px;margin-top:7px!important;font-size:13px!important;line-height:1.6!important;color:var(--muted)!important;overflow-wrap:anywhere}
+#studyPlanDetail .studyPlanContextBadge{display:inline-flex;max-width:100%;flex-wrap:wrap;gap:5px;margin-top:12px!important;padding:7px 9px!important;border:1px solid color-mix(in srgb,var(--blue) 18%,var(--line))!important;border-radius:9px!important;background:var(--blueSoft)!important;color:var(--blue)!important;font-size:11px!important;line-height:1.4}
+#studyPlanDetail .studyPlanDetailActions{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:7px!important;min-width:0!important;max-width:100%}
+#studyPlanDetail .studyPlanDetailActions .btn{display:inline-flex;align-items:center;justify-content:center;min-height:40px!important;padding:0 12px!important;border:1px solid var(--line)!important;border-radius:10px!important;background:var(--surface)!important;color:var(--text)!important;box-shadow:none!important;font-size:12px!important;white-space:nowrap}
+#studyPlanDetail .studyPlanDetailActions .btn.primary{border-color:var(--blue)!important;background:var(--blue)!important;color:#fff!important}
+#studyPlanDetail .studyPlanDetailActions .btn:hover{transform:none!important;filter:none!important}
+#studyPlanPackages{display:grid!important;gap:9px!important;padding-top:15px!important}
+#studyPlanPackages:before{content:"PAKET DALAM RENCANA";margin:0 2px 2px;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:1.6px}
+#studyPlanPackages .studyPlanLongPressHint{margin:0 2px 3px;color:var(--muted);font-size:11px;line-height:1.5}
+#studyPlanPackages .studyPlanPackage{position:relative!important;display:grid!important;grid-template-columns:40px minmax(0,1fr) auto auto!important;align-items:center!important;gap:12px!important;min-height:0!important;padding:13px 13px 16px!important;border:1px solid var(--line)!important;border-radius:15px!important;background:var(--surface)!important;box-shadow:none!important;transform:none!important;overflow:hidden!important;cursor:pointer}
+#studyPlanPackages .studyPlanPackage:after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,var(--blue) var(--pkg-pct,0%),var(--surface2) var(--pkg-pct,0%));pointer-events:none}
+#studyPlanPackages .studyPlanPackage.isDone:after{background:linear-gradient(90deg,var(--green) var(--pkg-pct,0%),var(--surface2) var(--pkg-pct,0%))}
+#studyPlanPackages .studyPlanPackage:hover{border-color:color-mix(in srgb,var(--blue) 38%,var(--line))!important;transform:none!important}
+#studyPlanPackages .studyPlanPackage.longPressing{border-color:var(--red)!important}
+#studyPlanPackages .studyPlanPackageNum{display:grid;place-items:center;width:36px!important;height:36px!important;border:1px solid var(--line);border-radius:11px!important;background:var(--surface2)!important;color:var(--muted)!important;font-size:10px!important;font-weight:800}
+#studyPlanPackages .studyPlanPackageMain{min-width:0!important;padding:0!important}
+#studyPlanPackages .studyPlanPackageMain strong{display:block;font-size:14px!important;font-weight:750;line-height:1.35!important;letter-spacing:-.1px;overflow-wrap:anywhere}
+#studyPlanPackages .studyPlanPackageMain span{display:block;margin-top:4px!important;color:var(--muted)!important;font-size:11px!important;line-height:1.4!important}
+#studyPlanPackages .studyPlanPackagePct{align-self:center!important;min-width:43px;padding:6px 8px!important;border:1px solid color-mix(in srgb,var(--blue) 15%,var(--line));border-radius:9px!important;background:var(--blueSoft)!important;color:var(--blue)!important;text-align:center;font-size:11px!important;font-weight:800}
+#studyPlanPackages .studyPlanPackage.isDone .studyPlanPackagePct{border-color:color-mix(in srgb,var(--green) 18%,var(--line));background:color-mix(in srgb,var(--green) 9%,var(--surface))!important;color:var(--green)!important}
+#studyPlanPackages .studyPlanPackageActions{position:static!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:5px!important;grid-column:auto!important;margin:0!important;padding:0!important;z-index:1}
+#studyPlanPackages .studyPlanPackageActions button{display:grid!important;place-items:center!important;width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important;margin:0!important;padding:0!important;border:1px solid var(--line)!important;border-radius:9px!important;background:var(--surface2)!important;color:var(--muted)!important;box-shadow:none!important;transform:none!important}
+#studyPlanPackages .studyPlanPackageActions button:first-child{order:0!important;color:var(--blue)!important}
+#studyPlanPackages .studyPlanPackageActions button:last-child{order:0!important;color:var(--red)!important}
+#studyPlanPackages .studyPlanPackageActions button:hover{border-color:var(--blue)!important;background:var(--surface)!important;color:var(--blue)!important}
+#studyPlanPackages .studyPlanPackageActions button:last-child:hover{border-color:var(--red)!important;color:var(--red)!important}
+#studyPlanPackages .studyPlanPackageActions .material-symbols-rounded{font-size:19px!important;line-height:1!important}
+#studyPlanPackages .studyPlanAddHint{margin-top:2px!important;padding:14px 15px!important;border:1px dashed var(--line)!important;border-radius:13px!important;background:transparent!important;color:var(--muted)!important;font-size:12px!important;line-height:1.5!important}
+#studyPlanPackages .studyPlanAddButton{width:100%;text-align:left;cursor:pointer}
+#studyPlanPackages .studyPlanAddButton:hover{border-color:var(--blue)!important;background:var(--blueSoft)!important;color:var(--blue)!important}
+#studyPlanCreatorModal .studyPlanModalBox,#studyPlanEditModal .studyPlanModalBox,#studyPlanPickerModal .studyPlanModalBox{border:1px solid var(--line)!important;border-radius:18px!important;background:var(--surface)!important;color:var(--text)!important;box-shadow:none!important}
+.studyPlanModalBox h3{font-size:22px!important;letter-spacing:-.45px}
+.studyPlanModalBox p{color:var(--muted)!important;font-size:12px!important;line-height:1.55!important}
+.studyPlanModalIcon{width:42px!important;height:42px!important;border:1px solid color-mix(in srgb,var(--blue) 18%,var(--line));border-radius:12px!important;background:var(--blueSoft)!important;color:var(--blue)!important}
+.studyPlanModalBox .usernameLabel{margin-top:13px!important;font-size:11px!important;font-weight:750!important;color:var(--text)!important}
+.studyPlanModalBox .usernameInput,.studyPlanModalBox .studyPlanDescInput{width:100%;border:1px solid var(--line)!important;border-radius:11px!important;background:var(--surface2)!important;color:var(--text)!important;box-shadow:none!important}
+.studyPlanModalBox .usernameInput:focus,.studyPlanModalBox .studyPlanDescInput:focus{outline:2px solid color-mix(in srgb,var(--blue) 28%,transparent);outline-offset:1px}
+.studyPlanPickerSearch{border-radius:11px!important;background:var(--surface2)!important;box-shadow:none!important}
+.studyPlanPickerSearch:focus-within{box-shadow:none!important;border-color:var(--blue)!important}
+.studyPlanPickerLevelSwitch{border-radius:11px!important;background:var(--surface2)!important}
+.studyPlanPickerLevel{border-radius:8px!important}
+.studyPlanPickerLevel.active{background:var(--blue)!important;color:#fff!important;box-shadow:none!important}
+.studyPlanPickerList{gap:7px!important;padding:1px 2px 2px 0!important}
+.studyPlanPick{gap:10px!important;padding:11px!important;border-radius:12px!important;background:var(--surface)!important}
+.studyPlanPickIcon{width:36px!important;height:36px!important;border:1px solid var(--line);border-radius:10px!important;background:var(--surface2)!important;color:var(--blue)!important}
+.studyPlanPickMain strong{font-size:13px!important;line-height:1.4}
+.studyPlanPickMain span{font-size:11px!important;line-height:1.4}
+.studyPlanCreateBtn{border-radius:12px!important;background:var(--surface2)!important;box-shadow:none!important}
+.studyPlanPickerActions{background:var(--surface)!important}
+.studyPlanModalBox .btn{min-height:42px!important;border-radius:10px!important;box-shadow:none!important}
+.studyPlanModalBox .btn.primary{background:var(--blue)!important;border-color:var(--blue)!important;color:#fff!important}
+body.dark #studyPlansGrid .studyPlanCard,body.dark #studyPlanDetail .studyPlanDetailHead,body.dark #studyPlanPackages .studyPlanPackage,body.dark .studyPlanModalBox,body.dark .studyPlanPick{background:var(--surface)!important;color:var(--text)!important}
+body.dark #studyPlansGrid .studyPlanCreateCard,body.dark #studyPlansGrid .studyPlanEmpty{background:transparent!important}
+body.dark #studyPlansGrid .studyPlanIcon,body.dark #studyPlanPackages .studyPlanPackageNum,body.dark #studyPlanPackages .studyPlanPackageActions button,body.dark .studyPlanPickIcon{background:var(--surface2)!important}
+body.dark #studyPlanDetail .studyPlanDetailHead:before{background:var(--blue)!important}
+body.dark .studyPlanPickerLevel.active{background:var(--blue)!important;color:#fff!important}
+@media(min-width:1200px){
+  #studyPlans,#studyPlanDetail{max-width:1040px}
+  #studyPlansGrid{gap:14px!important}
+}
+@media(max-width:900px){
+  #studyPlanDetail .studyPlanDetailTop{display:block!important}
+  #studyPlanDetail .studyPlanDetailActions{justify-content:flex-start!important;margin-top:15px!important}
+}
+@media(max-width:599px){
+  #studyPlans,#studyPlanDetail{max-width:none;padding-inline:0}
+  #studyPlans .studyPlansHead{margin:22px 0 16px!important}
+  #studyPlans .studyPlansHead h2{font-size:30px!important;letter-spacing:-1px!important}
+  #studyPlans .studyPlansHead .sub{font-size:12px!important}
+  #studyPlansGrid{grid-template-columns:minmax(0,1fr)!important;gap:9px!important}
+  #studyPlansGrid .studyPlanCard{padding:16px!important;border-radius:15px!important}
+  #studyPlansGrid .studyPlanCard h3{margin-top:12px!important;font-size:18px!important}
+  #studyPlansGrid .studyPlanMeta{margin-top:13px!important}
+  #studyPlanDetail .crumb{margin-top:10px!important}
+  #studyPlanDetail .studyPlanDetailHead{padding:18px 15px!important;border-radius:15px!important}
+  #studyPlanDetail .studyPlanDetailTitle{font-size:27px!important}
+  #studyPlanDetail .studyPlanDetailActions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:7px!important}
+  #studyPlanDetail .studyPlanDetailActions .btn{width:100%;min-width:0;padding-inline:8px!important;font-size:11px!important}
+  #studyPlanDetail .studyPlanDetailActions .btn.primary{grid-column:1/-1;grid-row:1}
+  #studyPlanPackages{gap:8px!important;padding-top:13px!important}
+  #studyPlanPackages .studyPlanPackage{grid-template-columns:34px minmax(0,1fr) auto!important;gap:9px!important;padding:12px 11px 14px!important;border-radius:13px!important}
+  #studyPlanPackages .studyPlanPackageNum{width:32px!important;height:32px!important;border-radius:9px!important}
+  #studyPlanPackages .studyPlanPackageMain strong{font-size:13px!important}
+  #studyPlanPackages .studyPlanPackageMain span{font-size:10px!important}
+  #studyPlanPackages .studyPlanPackagePct{min-width:39px;padding:5px 6px!important;font-size:10px!important}
+  #studyPlanPackages .studyPlanPackageActions{grid-column:2/-1!important;justify-content:flex-start!important;margin-top:0!important}
+  #studyPlanPackages .studyPlanPackageActions button{width:32px!important;height:32px!important;min-width:32px!important;min-height:32px!important}
+  .studyPlanModalBox{max-height:calc(100dvh - 24px)!important;border-radius:16px!important;padding:18px!important}
+  .studyPlanPickerList{max-height:none!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #studyPlansGrid .studyPlanCard,#studyPlanPackages .studyPlanPackage{transition:none!important}
+}
+</style>
+<script id="study-plan-ui-keyboard-audit-v1">
+(function(){
+  'use strict';
+  document.addEventListener('keydown',function(e){
+    if(e.altKey||e.ctrlKey||e.metaKey)return;
+    const row=e.target.closest?.('#studyPlanPackages .studyPlanPackage');
+    if(row && !e.target.closest('button') && (e.key==='Enter'||e.key===' ')){
+      e.preventDefault();
+      const id=row.dataset.planId,code=row.dataset.packageCode;
+      if(id&&code&&typeof window.openPackageFromStudyPlan==='function')window.openPackageFromStudyPlan(id,code);
+      return;
+    }
+    const card=e.target.closest?.('#studyPlansGrid .studyPlanCard[role="button"]');
+    if(card && e.target===card && (e.key==='Enter'||e.key===' ')){
+      e.preventDefault();
+      if(typeof window.openStudyPlan==='function'&&card.dataset.planId)window.openStudyPlan(card.dataset.planId);
+    }
+  },true);
+})();
+</script>
+
 </body>
 </html>
 
