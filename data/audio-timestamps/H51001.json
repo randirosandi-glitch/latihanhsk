@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "packageCode": "H51001",
   "audioUrl": "https://hsk-papers-audio-test.web.app/audio/H51001.mp3",
-  "durationSeconds": 1815,
+  "durationSeconds": 1815.9,
   "durationVerified": true,
-  "timestampStatus": "pending-calibration",
-  "note": "Part boundaries must be measured against the source MP3 before playback can safely be segmented. Null timestamps are intentionally not guessed.",
+  "timestampStatus": "calibrated-from-source-audio",
+  "note": "Boundary at 726.9 seconds was located from the source MP3's section-transition pause and listening question ranges (Part 1: 1-20; Part 2: 21-45). Recheck in the player if source encoding or the audio file changes.",
   "parts": [
     {
       "part": 1,
@@ -14,9 +14,9 @@
         1,
         20
       ],
-      "startSeconds": null,
-      "endSeconds": null,
-      "status": "pending-calibration"
+      "startSeconds": 0,
+      "endSeconds": 726.9,
+      "status": "calibrated"
     },
     {
       "part": 2,
@@ -25,9 +25,9 @@
         21,
         45
       ],
-      "startSeconds": null,
-      "endSeconds": null,
-      "status": "pending-calibration"
+      "startSeconds": 726.9,
+      "endSeconds": 1815.9,
+      "status": "calibrated"
     }
   ]
 }
