@@ -6517,13 +6517,13 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
         const parts=path.split('/');let folder='',file='';
         if(parts.length===3&&parts[0]==='data'){folder=parts[1];file=parts[2]}
         else if(parts.length===2&&parts[0]==='data'){
-          file=parts[1];const match=file.match(/^(H([1-6])\d{4})\.json$/i);
+          file=parts[1];const match=file.match(/^(H([1-6])\d{4}[A-Za-z]?)\.json$/i);
           if(!match)continue;folder='HSK '+match[2];
         }else continue;
         if(!wantedFolders.includes(folder))continue;
         const base=file.replace(/\.json$/i,'');
         if(/^(manifest|reading-passages)$/i.test(base))continue;
-        const lv=String(base).match(/^H([1-6])\d{4}$/i);
+        const lv=String(base).match(/^H([1-6])\d{4}[A-Za-z]?$/i);
         if(folder.startsWith('HSK ')&&(!lv||Number(lv[1])!==Number(folder.slice(4))))continue;
         let g=map.get(folder);
         if(!g){g={name:folder,path:'data/'+folder,kind:kind(folder),level:level(folder),files:[],codes:[]};map.set(folder,g)}
