@@ -3973,7 +3973,8 @@ function cloudErrorMessage(status){if(status===401||status===403)return 'Supabas
 function cloudHeaders(extra={}){return {'apikey':CLOUD_CONFIG.anonKey,'Authorization':'Bearer '+CLOUD_CONFIG.anonKey,'Content-Type':'application/json',...extra}}
 async function cloudFindUser(username){
   if(!cloudEnabled())return null;
-  const url=cloudUrl('?username=eq.'+encodeURIComponent(username)+'&select=id,username,data,created_at&limit=1');
+  /* Only request the JSON payload needed by sync; omit unused row metadata. */
+  const url=cloudUrl('?username=eq.'+encodeURIComponent(username)+'&select=data&limit=1');
   const r=await fetch(url,{headers:cloudHeaders(),cache:'no-store'});
   if(!r.ok)throw new Error(cloudErrorMessage(r.status));
   const rows=await r.json();
@@ -4112,7 +4113,7 @@ function mergeStoresLatest(local,remote){
     const id=String(x.id),prev=attempts.get(id);
     if(!prev||Number(x.updatedAt||x.timestamp||0)>=Number(prev.updatedAt||prev.timestamp||0))attempts.set(id,x);
   });
-  out._attempts=[...attempts.values()].sort((x,y)=>Number(x.timestamp||0)-Number(y.timestamp||0));
+  out._attempts=[...attempts.values()].sort((x,y)=>Number(x.timestamp||0)-Number(y.timestamp||0)).slice(-300);
   const la=a._lastActivity,ra=b._lastActivity;
   if(la||ra){if(!ra){out._lastActivity=la;localWon=true}else if(!la)out._lastActivity=ra;else out._lastActivity=Number(la.updatedAt||0)>=Number(ra.updatedAt||0)?la:ra}
   /* Keep reset tombstones in sync, but drop a tombstone once a newer answer snapshot exists. */
@@ -4127,7 +4128,10 @@ function mergeStoresLatest(local,remote){
     }
   }
   if(Object.keys(mergedResets).length)out._progressResets=mergedResets;else delete out._progressResets;
-  out._syncMeta={version:1,updatedAt:Math.max(Number(a._syncMeta?.updatedAt||0),Number(b._syncMeta?.updatedAt||0),Date.now())};
+  /* Keep sync metadata stable when the actual learner data did not change.
+     Adding Date.now() here made every merge look different and triggered a full-row PATCH. */
+  const syncUpdatedAt=Math.max(Number(a._syncMeta?.updatedAt||0),Number(b._syncMeta?.updatedAt||0));
+  if(syncUpdatedAt)out._syncMeta={version:1,updatedAt:syncUpdatedAt};else delete out._syncMeta;
   return {store:out,localWon};
 }
 async function pullCloudStateInternal(force=false){
@@ -4139,25 +4143,34 @@ async function pullCloudStateInternal(force=false){
     const row=await cloudFindUser(currentUsername);
     const local=readStore();
     if(!row){
-      await cloudCreateUser(currentUsername,local);
-      const latest=readStore();
-      if(JSON.stringify(latest)!==JSON.stringify(local)) await cloudUpdateUser(currentUsername,latest);
+      /* Remember that this username has no cloud row yet. Do not create it until
+         the learner explicitly checks a section. */
+      cloudKnownRemoteUsername=currentUsername;cloudKnownRemoteStore=null;cloudKnownRemoteLoaded=true;cloudKnownRemoteAt=Date.now();
       renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();
       return true;
     }
     const remote=row.data||{};
+    cloudKnownRemoteUsername=currentUsername;cloudKnownRemoteStore=remote;cloudKnownRemoteLoaded=true;cloudKnownRemoteAt=Date.now();
     const merged=mergeStoresLatest(local,remote).store;
     writeStore(merged);
-    if(JSON.stringify(merged)!==JSON.stringify(remote)) await cloudUpdateUser(currentUsername,merged);
+    /* Pulls may merge cloud data into local storage, but never write back to cloud.
+       Cloud progress is committed only by syncAfterSectionCheck(). */
+    markCloudSnapshotSynced(remote);
     renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();
     return true;
   }catch(e){console.warn('Cloud sync pull failed',e);return false}
 }
 let cloudPullInFlight=null,cloudLastPullAt=0;
+let cloudLastSyncedSnapshot='';
+/* Reuse the latest fetched cloud snapshot for explicit section commits, avoiding
+   a full GET before every PATCH. Refresh this snapshot on login/focus pulls. */
+let cloudKnownRemoteUsername='',cloudKnownRemoteStore=null,cloudKnownRemoteLoaded=false,cloudKnownRemoteAt=0;
+const CLOUD_SNAPSHOT_MAX_AGE=60000;
+function markCloudSnapshotSynced(store){try{cloudLastSyncedSnapshot=JSON.stringify(store??readStore())}catch(e){cloudLastSyncedSnapshot=''}}
 function pullCloudState(force=false){
   if(cloudPullInFlight)return cloudPullInFlight;
   const now=Date.now();
-  if(!force&&now-cloudLastPullAt<12000)return Promise.resolve(false);
+  if(!force&&now-cloudLastPullAt<60000)return Promise.resolve(false);
   cloudLastPullAt=now;
   cloudPullInFlight=pullCloudStateInternal(force).finally(()=>{cloudPullInFlight=null});
   return cloudPullInFlight;
@@ -4165,28 +4178,49 @@ function pullCloudState(force=false){
 async function pushCloudState(store){
   if(!currentUsername||!cloudEnabled())return false;
   if(cloudSyncBusy){cloudSyncPending=true;return false}
+  const snapshotBeforeRequest=readStore();
+  let localSnapshot='';
+  try{localSnapshot=JSON.stringify(snapshotBeforeRequest)}catch(e){}
+  /* If this exact local snapshot was already synced, avoid another GET entirely.
+     Cross-device updates are still checked by the throttled pull on focus/visibility. */
+  if(localSnapshot&&localSnapshot===cloudLastSyncedSnapshot)return true;
   cloudSyncBusy=true;
   try{
-    const row=await cloudFindUser(currentUsername);
-    /* Use the newest local snapshot after the await. The scheduled argument
-       may have become stale while the cloud lookup was in flight. */
+    /* Only fetch when no current-user snapshot is known. Section checks reuse
+       the latest snapshot fetched at login/focus, reducing repeated full-row GETs. */
+    let remoteKnown=cloudKnownRemoteLoaded&&cloudKnownRemoteUsername===currentUsername&&Date.now()-cloudKnownRemoteAt<CLOUD_SNAPSHOT_MAX_AGE;
+    let remoteStore=remoteKnown?cloudKnownRemoteStore:null;
+    if(!remoteKnown){
+      const row=await cloudFindUser(currentUsername);
+      remoteKnown=true;remoteStore=row?(row.data||{}):null;
+      cloudKnownRemoteUsername=currentUsername;cloudKnownRemoteStore=remoteStore;cloudKnownRemoteLoaded=true;cloudKnownRemoteAt=Date.now();
+    }
+    /* Use the newest local snapshot after any network lookup. */
     const latest=readStore();
-    if(!row){
+    if(remoteStore===null){
       await cloudCreateUser(currentUsername,latest);
       const afterCreate=readStore();
       if(JSON.stringify(afterCreate)!==JSON.stringify(latest)) await cloudUpdateUser(currentUsername,afterCreate);
+      cloudKnownRemoteStore=readStore();cloudKnownRemoteUsername=currentUsername;cloudKnownRemoteLoaded=true;cloudKnownRemoteAt=Date.now();
+      markCloudSnapshotSynced(readStore());
       return true;
     }
-    const remote=row.data||{};
+    const remote=remoteStore;
     const merged=mergeStoresLatest(latest,remote).store;
     writeStore(merged);
-    await cloudUpdateUser(currentUsername,merged);
+    /* Skip a full-row PATCH when the merged cloud snapshot is already identical. */
+    if(JSON.stringify(merged)!==JSON.stringify(remote)) await cloudUpdateUser(currentUsername,merged);
+    cloudKnownRemoteStore=readStore();cloudKnownRemoteUsername=currentUsername;cloudKnownRemoteLoaded=true;cloudKnownRemoteAt=Date.now();
+    markCloudSnapshotSynced(readStore());
     return true;
   }catch(e){console.warn('Cloud sync push failed',e);cloudSyncPending=true;return false}
-  finally{cloudSyncBusy=false;if(cloudSyncPending){cloudSyncPending=false;clearTimeout(cloudSyncTimer);cloudSyncTimer=setTimeout(()=>pushCloudState(readStore()),180)}}
+  finally{cloudSyncBusy=false;if(cloudSyncPending){cloudSyncPending=false;clearTimeout(cloudSyncTimer);cloudSyncTimer=setTimeout(()=>pushCloudState(readStore()),1500)}}
 }
-function scheduleCloudSync(){if(!currentUsername||!cloudEnabled())return;clearTimeout(cloudSyncTimer);cloudSyncTimer=setTimeout(()=>pushCloudState(readStore()),180)}
-function flushCloudSync(){if(!currentUsername||!cloudEnabled())return;clearTimeout(cloudSyncTimer);pushCloudState(readStore())}
+/* Local answers/progress are saved immediately, but cloud writes are committed only
+   when the learner presses the section-check button (grade()). */
+function scheduleCloudSync(){clearTimeout(cloudSyncTimer)}
+function flushCloudSync(){clearTimeout(cloudSyncTimer)}
+function syncAfterSectionCheck(){if(!currentUsername||!cloudEnabled())return;clearTimeout(cloudSyncTimer);pushCloudState(readStore())}
 function saveUsername(){const v=normalizeUsername($('usernameInput')?.value);const hint=$('usernameHint');if(!validUsername(v)){if(hint)hint.textContent='Username harus 3–24 karakter dan hanya boleh memakai huruf kecil, angka, titik, garis bawah, atau tanda hubung.';return}currentUsername=v;setUsernameLocal(v);hideUsernameModal();renderUserPill();renderContext();renderHome();renderScores();renderPackagesScreen();pullCloudState(true)}
 function changeUsername(){if($('usernameInput'))$('usernameInput').value=currentUsername;showUsernameModal()}
 function renderUserPill(){
@@ -4519,7 +4553,7 @@ function createQuestionActivity(questionId){
   const id=(currentUsername||'guest')+'_'+now+'_'+Math.random().toString(36).slice(2,10);
   const attempts=Array.isArray(st._attempts)?st._attempts.filter(x=>x&&x.id):[];
   const event={id,timestamp:now,updatedAt:now,answeredAt:now,checkedAt:null,username:currentUsername||'',code,type,sectionIndex,questionId:qid,status:'answered',correct:null,schemaVersion:3};
-  attempts.push(event); st._attempts=attempts.slice(-5000);
+  attempts.push(event); st._attempts=attempts.slice(-300);
   st._lastActivity={code,type,sectionIndex,questionId:qid,updatedAt:now,schemaVersion:3};
   writeStore(st); scheduleCloudSync();
   try{window.dispatchEvent(new CustomEvent('hsk:progress-updated',{detail:{code,type,sectionIndex,questionId:qid,status:'answered',timestamp:now}}))}catch(e){}
@@ -4532,7 +4566,7 @@ function updateQuestionActivity(eventId,correct){
   if(i<0)return null;
   const now=Math.max(Date.now(),Number(attempts[i].updatedAt||0)+1,Number(st._lastActivity?.updatedAt||0)+1);
   attempts[i]={...attempts[i],checkedAt:now,updatedAt:now,status:'checked',correct:!!correct};
-  st._attempts=attempts.slice(-5000);
+  st._attempts=attempts.slice(-300);
   st._lastActivity={code:attempts[i].code,type:attempts[i].type,sectionIndex:attempts[i].sectionIndex,questionId:attempts[i].questionId,updatedAt:now,schemaVersion:3};
   writeStore(st); scheduleCloudSync();
   try{window.dispatchEvent(new CustomEvent('hsk:progress-updated',{detail:{...attempts[i],timestamp:now}}))}catch(e){}
@@ -4573,6 +4607,8 @@ function grade(push=true){
     if(has && !(route.type==='writing' && !isSequenceWriting(route.type,route.sectionIndex))) checked[id]=true;
   });
   saveSectionState(route.packageCode,route.type,route.sectionIndex);
+  /* The explicit section check is the only action that writes progress to cloud. */
+  syncAfterSectionCheck();
   resultState={score,total:currentQuestions.length,answered,checkedAt:Date.now()};
   /* Keep the exact exercise route. Assessment is now an inline state. */
   route={...route,screen:'exercise'};
