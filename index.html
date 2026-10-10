@@ -6997,7 +6997,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       resumeQuestionId=null;
       window.__hskResumePage=0;
     }
-    scheduleCloudSync();
+    if(currentUsername&&cloudEnabled())pushCloudState(readStore());
     if(route?.screen==='package')renderPackage();
     else if(route?.screen==='parts')renderSections();
     else if(typeof window.renderPackagesScreen==='function')window.renderPackagesScreen();
@@ -7031,7 +7031,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       resumeQuestionId=null;
       window.__hskResumePage=0;
     }
-    scheduleCloudSync();
+    if(currentUsername&&cloudEnabled())pushCloudState(readStore());
     if(route?.screen==='parts')renderSections();
     else if(route?.screen==='exercise')renderExercise();
     },{icon:'↻',okText:'Reset',danger:true});
