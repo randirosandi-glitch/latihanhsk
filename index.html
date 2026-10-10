@@ -6669,7 +6669,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     }).join('');
   }
 
-  const PACKAGE_CACHE_NAME='hsk-papers-package-cache-v2';
+  const PACKAGE_CACHE_NAME='hsk-papers-package-cache-v3';
   const PACKAGE_CACHE_TTL=30*24*60*60*1000;
   const packageRefresh=new Map();
 
@@ -6736,7 +6736,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       if(cached){
         const data=cached.data;
         data.code=data.code||code;
-        data.__folder=meta.path.split('/')[1]||'';
+        data.__folder=meta.group||meta.path.split('/')[1]||'';
         data.__lazy=false;
         DB[code]=data;
         refreshPackageInBackground(meta,code);
@@ -6746,7 +6746,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       try{
         const data=await fetchPackageNetwork(meta,code);
         data.code=data.code||code;
-        data.__folder=meta.path.split('/')[1]||'';
+        data.__folder=meta.group||meta.path.split('/')[1]||'';
         data.__lazy=false;
         DB[code]=data;
         await writeCachedPackage(code,data);
@@ -6756,7 +6756,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
         if(!fallback)throw networkError;
         const data=fallback.data;
         data.code=data.code||code;
-        data.__folder=meta.path.split('/')[1]||'';
+        data.__folder=meta.group||meta.path.split('/')[1]||'';
         data.__lazy=false;
         DB[code]=data;
         return data;
