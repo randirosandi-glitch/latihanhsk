@@ -6425,14 +6425,14 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   const REPO='randirosandi-glitch/latihanhsk', REF='main';
   const TREE_API='https://api.github.com/repos/'+REPO+'/git/trees/'+encodeURIComponent(REF)+'?recursive=1';
   const RAW_BASE='https://raw.githubusercontent.com/'+REPO+'/'+REF+'/';
-  const CATALOG_CACHE_KEY='hsk-dynamic-catalog-v5';
+  const CATALOG_CACHE_KEY='hsk-dynamic-catalog-v6-stable';
   const $=id=>document.getElementById(id);
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const natural=(a,b)=>String(a).localeCompare(String(b),undefined,{numeric:true,sensitivity:'base'});
   const kind=n=>/^HSK\s*\d+/i.test(n)?'hsk':/^Workbook\b/i.test(n)?'workbook':'custom';
   const level=n=>{const m=String(n).match(/^HSK\s*(\d+)/i);return m?Number(m[1]):null};
   const localURL=p=>'./'+String(p).split('/').map(encodeURIComponent).join('/');
-  const rawURL=p=>RAW_BASE+String(p).split('/').map(encodeURIComponent).join('/');
+  const rawURL=(p,repo=REPO)=>'https://raw.githubusercontent.com/'+repo+'/'+REF+'/'+String(p).split('/').map(encodeURIComponent).join('/');
   const state=window.__hskDatabase={loaded:false,source:null,error:null,groups:[],byCode:new Map(),cache:new Map(),selected:null};
   let resolveReady;
   window.__hskDynamicReadyPromise=new Promise(r=>resolveReady=r);
@@ -6443,22 +6443,23 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     finally{clearTimeout(tm)}
   }
 
-  function addFile(group,code,path){
+  function addFile(group,code,path,repo=REPO){
     if(group.files.some(x=>x.code===code))return;
-    const meta={code,name:code+'.json',path,url:localURL(path),remoteUrl:rawURL(path)};
+    const meta={code,name:code+'.json',path,group:group.name,repo,url:repo===REPO?localURL(path):rawURL(path,repo),remoteUrl:rawURL(path,repo)};
     group.files.push(meta);group.codes.push(code);state.byCode.set(code,meta);
   }
 
   function groupsFromManifest(m){
     const gm=new Map();
     const add=(folder,codes)=>{if(!Array.isArray(codes))return;let g=gm.get(folder);if(!g){g={name:folder,path:'data/'+folder,kind:kind(folder),level:level(folder),files:[],codes:[]};gm.set(folder,g)}codes.map(String).forEach(c=>addFile(g,c,'data/'+folder+'/'+c+'.json'))};
-    add('HSK 4',m?.hsk4_codes);add('HSK 5',m?.hsk5_codes);add('Workbook HSK4a',m?.workbook4a_codes);add('Workbook HSK4b',m?.workbook4b_codes);
+    for(let n=1;n<=6;n++)add('HSK '+n,m?.['hsk'+n+'_codes']);
+    add('Workbook HSK4a',m?.workbook4a_codes);add('Workbook HSK4b',m?.workbook4b_codes);
     return [...gm.values()];
   }
 
   function cacheCatalog(groups){
     try{
-      localStorage.setItem(CATALOG_CACHE_KEY,JSON.stringify(groups.map(g=>({name:g.name,path:g.path,kind:g.kind,level:g.level,files:g.files.map(f=>({code:f.code,name:f.name,path:f.path}))}))));
+      localStorage.setItem(CATALOG_CACHE_KEY,JSON.stringify(groups.map(g=>({name:g.name,path:g.path,kind:g.kind,level:g.level,files:g.files.map(f=>({code:f.code,name:f.name,path:f.path,repo:f.repo}))}))));
     }catch(e){}
   }
 
@@ -6472,7 +6473,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       for(const sg of saved){
         if(!sg||!Array.isArray(sg.files))continue;
         const g={name:String(sg.name||''),path:String(sg.path||''),kind:sg.kind||kind(sg.name),level:sg.level??level(sg.name),files:[],codes:[]};
-        sg.files.forEach(f=>addFile(g,String(f.code||''),String(f.path||('data/'+g.name+'/'+f.code+'.json'))));
+        sg.files.forEach(f=>addFile(g,String(f.code||''),String(f.path||('data/'+g.name+'/'+f.code+'.json')),String(f.repo||REPO)));
         if(g.files.length)groups.push(g);
       }
       return groups;
@@ -6506,30 +6507,36 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       listings, but query those providers concurrently so one slow endpoint
       does not delay a healthy endpoint. CDN/manifest are concurrent fallbacks.
     */
-    const wantedFolders=['HSK 4','HSK 5','Workbook HSK4a','Workbook HSK4b'];
+    const wantedFolders=[...Array.from({length:6},(_,i)=>'HSK '+(i+1)),'Workbook HSK4a','Workbook HSK4b'];
 
-    function buildGroupsFromPaths(paths){
+    function buildGroupsFromPaths(paths,sourceRepo=REPO){
       const map=new Map();
       for(const rawPath of (paths||[])){
         const path=String(rawPath||'').replace(/^\/+/, '');
         if(!path || !/\.json$/i.test(path))continue;
-        const parts=path.split('/');
-        if(parts.length!==3 || parts[0]!=='data')continue;
-        const folder=parts[1],file=parts[2];
+        const parts=path.split('/');let folder='',file='';
+        if(parts.length===3&&parts[0]==='data'){folder=parts[1];file=parts[2]}
+        else if(parts.length===2&&parts[0]==='data'){
+          file=parts[1];const match=file.match(/^(H([1-6])\d{4})\.json$/i);
+          if(!match)continue;folder='HSK '+match[2];
+        }else continue;
         if(!wantedFolders.includes(folder))continue;
         const base=file.replace(/\.json$/i,'');
         if(/^(manifest|reading-passages)$/i.test(base))continue;
+        const lv=String(base).match(/^H([1-6])\d{4}$/i);
+        if(folder.startsWith('HSK ')&&(!lv||Number(lv[1])!==Number(folder.slice(4))))continue;
         let g=map.get(folder);
         if(!g){g={name:folder,path:'data/'+folder,kind:kind(folder),level:level(folder),files:[],codes:[]};map.set(folder,g)}
-        addFile(g,base,path);
+        addFile(g,base,path,sourceRepo);
       }
       return [...map.values()].filter(g=>g.files.length);
     }
 
-    async function fromTree(){
-      const payload=await fetchJSON(TREE_API,6000);
+    async function fromTree(repo=REPO){
+      const endpoint='https://api.github.com/repos/'+repo+'/git/trees/'+encodeURIComponent(REF)+'?recursive=1';
+      const payload=await fetchJSON(endpoint,6000);
       const paths=Array.isArray(payload?.tree)?payload.tree.filter(x=>x?.type==='blob').map(x=>x.path).filter(Boolean):[];
-      const groups=buildGroupsFromPaths(paths);
+      const groups=buildGroupsFromPaths(paths,repo);
       if(!groups.length)throw new Error('GitHub Tree API returned no package files.');
       return {groups,source:'github-tree'};
     }
@@ -6585,6 +6592,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       }
     }
     const groups=sortGroups(result.groups);
+    state.byCode.clear();for(const g of groups)for(const f of g.files)state.byCode.set(f.code,f);
     cacheCatalog(groups);
     return {groups,source:result.source};
   }
@@ -6707,7 +6715,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     if(packageRefresh.has(code))return packageRefresh.get(code);
     const p=fetchPackageNetwork(meta,code).then(async d=>{
       d.code=d.code||code;
-      d.__folder=meta.path.split('/')[1]||'';
+      d.__folder=meta.group||meta.path.split('/')[1]||'';
       d.__lazy=false;
       DB[code]=d;
       await writeCachedPackage(code,d);
