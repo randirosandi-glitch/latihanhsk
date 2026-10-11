@@ -4420,6 +4420,9 @@ function getResolvedQuestionModel(packageData,sectionType,sectionIndex,question)
 function isSequenceWriting(type,idx){return type==='writing'&&Number(idx)===0}
 function normalizeSequenceAnswer(v){return String(v??'').normalize('NFKC').replace(/[\s\u3000，。！？；：、,.!?;:'"“”‘’()（）【】\[\]{}<>《》]/gu,'').replace(/[\u200B\uFEFF\u2060\u00AD]/g,'').trim()}
 function sequenceKeys(q){
+  const permutationSet=new Set(['ABC','ACB','BAC','BCA','CAB','CBA']);
+  const answerKeys=String(q?.[3]??'').split('/').map(normalizeSequenceAnswer).filter(Boolean);
+  if(answerKeys.length&&answerKeys.every(key=>permutationSet.has(key)))return answerKeys;
   return String(q?.[2]||'').split('/').map(normalizeSequenceAnswer).filter(Boolean)
 }
 function isSequenceAnswerCorrect(q,u){const a=normalizeSequenceAnswer(u);if(!a)return false;return sequenceKeys(q).some(k=>k===a)}
