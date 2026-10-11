@@ -3615,6 +3615,134 @@ body.dark #exercise #exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction
 </style>
 
 
+
+<style id="hsk4-paper-engine">
+/* BEGIN GENERATED MODULE: src/styles/hsk4-paper-engine.css */
+
+/* HSK 4 Reading follows the PDF's centered section header and flowing paper layout. */
+#exercise .section h2#exTitle.hsk5PaperSectionHeader .hsk4PaperOverallTitle{
+  display:block!important;
+  margin:0 0 7px!important;
+  font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;
+  font-size:clamp(20px,4vw,28px)!important;
+  line-height:1.25!important;
+  font-weight:600!important;
+  letter-spacing:0!important;
+}
+#exercise .hsk4PaperPart{margin:0 0 22px!important;}
+#exercise .hsk4PaperPart .hsk5PaperQuestion{content-visibility:auto;}
+#exercise .hsk4PaperWordBank{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  justify-content:center!important;
+  gap:5px 18px!important;
+  margin:0 0 18px!important;
+  padding:0 0 11px!important;
+  border-bottom:1px solid var(--line)!important;
+  font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;
+  font-size:16px!important;
+  line-height:1.7!important;
+  color:var(--text)!important;
+}
+#exercise .hsk4PaperWord{white-space:nowrap!important;}
+#exercise .hsk4PaperWord b{margin-right:3px!important;}
+#exercise .hsk4PaperClozeQuestion{
+  display:grid!important;
+  grid-template-columns:clamp(34px,5.2vw,68px) minmax(0,1fr)!important;
+  column-gap:6px!important;
+  align-items:start!important;
+  padding:8px 0 16px!important;
+  margin:0!important;
+}
+#exercise .hsk4PaperClozeQuestion .hsk5PaperQNo,
+#exercise .hsk4PaperSequenceQuestion .hsk5PaperQNo{
+  display:block!important;
+  padding-top:1px!important;
+  font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;
+  font-size:16px!important;
+  line-height:1.7!important;
+  font-weight:700!important;
+  color:var(--text)!important;
+}
+#exercise .hsk4PaperClozeQuestion .hsk5PaperQText{
+  margin:0 0 6px!important;
+  font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;
+  font-size:16px!important;
+  line-height:1.75!important;
+  font-weight:500!important;
+  white-space:pre-wrap!important;
+}
+#exercise .hsk4PaperClozeOptions{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-items:flex-start!important;
+  gap:0 20px!important;
+}
+#exercise .hsk4PaperClozeOptions .hsk5PaperOption{width:auto!important;flex:0 0 auto!important;}
+#exercise .hsk4PaperSequenceQuestion{
+  display:grid!important;
+  grid-template-columns:clamp(34px,5.2vw,68px) minmax(0,1fr)!important;
+  column-gap:6px!important;
+  align-items:start!important;
+  padding:8px 0 16px!important;
+  margin:0!important;
+}
+#exercise .hsk4PaperSentenceList{display:grid!important;gap:5px!important;margin:0 0 12px!important;}
+#exercise .hsk4PaperSentenceLine{
+  display:grid!important;
+  grid-template-columns:28px minmax(0,1fr)!important;
+  column-gap:5px!important;
+  align-items:start!important;
+  font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;
+  font-size:16px!important;
+  line-height:1.75!important;
+  color:var(--text)!important;
+}
+#exercise .hsk4PaperSentenceLine b{font-weight:700!important;}
+#exercise .hsk4PaperPermutations{display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:3px 19px!important;margin:2px 0 8px!important;}
+#exercise .hsk4PaperPermutation.opt{min-width:43px!important;padding:2px 4px!important;text-align:center!important;font-size:16px!important;}
+#exercise .hsk4PaperPermutation .optText{font-family:inherit!important;font-weight:700!important;letter-spacing:.035em!important;}
+#exercise .hsk4PaperPart4 .hsk5PaperQuestion{padding:8px 0 15px!important;}
+#exercise .hsk4PaperStar{color:var(--muted)!important;font-size:.85em!important;margin-right:3px!important;}
+#exercise .hsk4PaperPart4 .hsk5PaperOptions{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  gap:1px 20px!important;
+}
+#exercise .hsk4PaperPart4 .hsk5PaperOptions.paperOptionsTwoRows{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:1px 20px!important;
+}
+#exercise .hsk4PaperPart4 .hsk5PaperOptions:not(.paperOptionsTwoRows) .hsk5PaperOption{width:auto!important;}
+#exercise .hsk4PaperPart4 .hsk5PaperOptions.paperOptionsTwoRows .hsk5PaperOption{width:100%!important;}
+@media(max-width:720px){
+  #exercise .hsk4PaperWordBank{justify-content:flex-start!important;gap:4px 11px!important;font-size:14px!important;}
+  #exercise .hsk4PaperClozeQuestion,
+  #exercise .hsk4PaperSequenceQuestion{grid-template-columns:34px minmax(0,1fr)!important;column-gap:6px!important;}
+  #exercise .hsk4PaperClozeQuestion .hsk5PaperQNo,
+  #exercise .hsk4PaperSequenceQuestion .hsk5PaperQNo{font-size:15px!important;line-height:1.65!important;}
+  #exercise .hsk4PaperClozeQuestion .hsk5PaperQText,
+  #exercise .hsk4PaperSentenceLine{font-size:15px!important;line-height:1.65!important;}
+  #exercise .hsk4PaperClozeOptions{column-gap:12px!important;row-gap:0!important;}
+  #exercise .hsk4PaperPart4 .hsk5PaperOptions{gap:1px 12px!important;}
+  #exercise .hsk4PaperPart4 .hsk5PaperOptions.paperOptionsTwoRows{gap:1px 10px!important;}
+  #exercise .hsk4PaperPermutations{gap:2px 12px!important;}
+  #exercise .hsk4PaperPermutation.opt{min-width:40px!important;font-size:15px!important;}
+}
+@media (min-width:1400px) and (orientation:landscape){
+  #exercise .hsk4PaperWordBank{font-size:19px!important;}
+  #exercise .hsk4PaperClozeQuestion .hsk5PaperQText,
+  #exercise .hsk4PaperSentenceLine{font-size:19px!important;line-height:1.75!important;}
+  #exercise .hsk4PaperPermutation.opt{font-size:18px!important;}
+}
+body.dark #exercise .hsk4PaperOverallTitle,
+body.dark #exercise .hsk4PaperWordBank,
+body.dark #exercise .hsk4PaperWord,
+body.dark #exercise .hsk4PaperSentenceLine,
+body.dark #exercise .hsk4PaperSequenceResponse label{color:var(--text)!important;}
+/* END GENERATED MODULE: src/styles/hsk4-paper-engine.css */
+</style>
 </head><body><div aria-live="polite" id="appBootLoader" role="status"><div class="bootCard"><div aria-hidden="true" class="bootMark"><svg aria-hidden="true" class="bootLogoSvg bootLogoLight" preserveaspectratio="xMidYMid meet" viewbox="0 0 1536 581">
 <svg height="581" viewbox="0 0 1536 581" width="1536" xmlns="http://www.w3.org/2000/svg">
 <defs>
@@ -4333,7 +4461,7 @@ function clearSectionState(code,type,idx){const st=readStore();delete st[stateKe
 function isSequenceReadingQuestion(id){const pkg=getActivePackageData();if(getPackageEngineRules(pkg))return false;const code=String(route?.packageCode||'');return route&&route.type==='reading'&&(Number(id)>=56&&Number(id)<=65||((code.startsWith('WB4A')||code.startsWith('WB4B'))&&Number(route.sectionIndex)===2)||code==='HSK4-SUSUN-KALIMAT');}
 function resolvedQuestionSectionIndex(q,type,idx){const requested=idx===undefined?route?.sectionIndex:idx;if(type==='listening'&&Number(requested)===-1){const source=window.__hskListeningSourceIndex?.(q?.[0]);return source===null||source===undefined?0:Number(source)}return requested}
 function correctIndex(q,type,idx=route?.sectionIndex){const sourceIndex=resolvedQuestionSectionIndex(q,type,idx);const model=getResolvedQuestionModel(getActivePackageData(),type,sourceIndex,q);const key=String(q?.[3]??"").trim();if(model.type==="sentence_ordering"||model.type==="guided_writing"||model.type==="picture_writing")return -1;if(/^[A-F]$/i.test(key))return key.toUpperCase().charCodeAt(0)-65;const opts=q?.[2]||[];const direct=opts.findIndex(o=>norm(o)===norm(key));if(direct>=0)return direct;if(key==="√"){const i=opts.findIndex(o=>norm(o)==="对");if(i>=0)return i}if(key==="×"){const i=opts.findIndex(o=>norm(o)==="错");if(i>=0)return i}return -1}
-function isCorrect(q,u,type,idx=route?.sectionIndex){const sourceIndex=resolvedQuestionSectionIndex(q,type,idx);const model=getResolvedQuestionModel(getActivePackageData(),type,sourceIndex,q);if(model.type==="sentence_ordering"||model.type==="sequence")return isSequenceAnswerCorrect(q,u);if(model.type==="guided_writing"||model.type==="picture_writing")return false;const ci=correctIndex(q,type,sourceIndex);return Number(u)===ci}
+function isCorrect(q,u,type,idx=route?.sectionIndex){const sourceIndex=resolvedQuestionSectionIndex(q,type,idx);const model=getResolvedQuestionModel(getActivePackageData(),type,sourceIndex,q);if(model.type==="sentence_ordering"||model.type==="sequence")return isSequenceAnswerCorrect(q,hsk4Part3PermutationAnswer(q,u));if(model.type==="guided_writing"||model.type==="picture_writing")return false;const ci=correctIndex(q,type,sourceIndex);return Number(u)===ci}
 
 
 
@@ -4353,8 +4481,9 @@ function loadCurrentSectionState(){const st=getSectionState(route.packageCode,ro
 function instructionFor(type,idx){const code=String(route?.packageCode||'');const pkg=getActivePackageData();const id=Number(currentQuestions?.[0]?.[0]?.[0]||currentQuestions?.[0]?.[0]||0);const parts=pkg?.engineRules?.sections?.[type]?.parts||[];const part=parts.find(p=>ruleRangeContains(p.range,id));if(part?.instruction)return part.instruction;if(code==='HSK4-SUSUN-KATA')return 'Susun kata-kata berikut menjadi kalimat Mandarin yang benar. Jawaban dinilai berdasarkan kunci jawaban.';if(code==='HSK4-SUSUN-KALIMAT')return 'Susun kalimat-kalimat berikut menjadi paragraf yang benar dengan memilih urutan yang tepat.';if(type==='listening')return idx===0?'Dengarkan pernyataan lalu pilih apakah kalimat tersebut benar atau salah.':idx===1?'Dengarkan percakapan dengan saksama lalu pilih jawaban yang paling sesuai.':'Dengarkan percakapan lalu tentukan jawaban yang paling tepat berdasarkan informasi yang kamu dengar.';if(type==='reading')return idx===0?'Baca kalimat dan pilihan jawaban, lalu pilih kata atau ungkapan yang paling tepat.':idx===1?'Baca setiap kalimat dan pilih jawaban yang paling sesuai dengan maknanya.':idx===2?'Susun bagian-bagian kalimat menjadi urutan yang benar dengan memilih kombinasi yang tepat.':'Baca teks dengan saksama lalu pilih jawaban yang paling sesuai dengan informasi dalam bacaan.';return idx===0?'Susun kata-kata menjadi kalimat Mandarin yang benar. Kamu bisa klik kata untuk memasukkannya otomatis, atau mengetik langsung di kolom jawaban. Jawaban dinilai berdasarkan kunci jawaban.':'Gunakan kata yang diberikan untuk membuat kalimat Mandarin yang benar, lalu ketik jawabanmu. Jawaban ini tidak dinilai benar atau salah secara otomatis.'}
 function hsk5AutoPaperOptionLayout(){
   const pkg=getActivePackageData();
-  if(!isHsk5Model(pkg) || route.type!=='reading') return;
-  const part=hsk5ReadingPart(currentQuestions);
+  const hsk5=isHsk5Model(pkg),hsk4=isHsk4PaperReading(pkg);
+  if((!hsk5&&!hsk4) || route.type!=='reading') return;
+  const part=hsk5?hsk5ReadingPart(currentQuestions):hsk4PaperPart(currentQuestions);
   document.querySelectorAll('#exercise .hsk5PaperOptions').forEach(container=>{
     if(container.closest('.hsk5PaperPart2')) return;
     const items=[...container.querySelectorAll(':scope > .hsk5PaperOption')];
@@ -4362,7 +4491,7 @@ function hsk5AutoPaperOptionLayout(){
 
     /* Reading Part 1 + Part 3 follow one deterministic rule:
        <=3 Hanzi => A B C D; >=4 Hanzi in any option => A B / C D. */
-    if((part==='part1' && container.closest('.hsk5PaperPart1')) || (part==='part3' && container.closest('.hsk5PaperPart3'))){
+    if((hsk5&&((part==='part1' && container.closest('.hsk5PaperPart1')) || (part==='part3' && container.closest('.hsk5PaperPart3')))) || (hsk4&&part==='part4'&&container.closest('.hsk4PaperPart4'))){
       const hasLongOption=items.some(el=>{
         const text=el.querySelector('.optText')?.textContent||el.textContent||'';
         const hanzi=(String(text).match(/[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]/g)||[]).length;
@@ -4405,8 +4534,37 @@ function scheduleHsk5AutoPaperOptionLayout(){
     requestAnimationFrame(hsk5AutoPaperOptionLayout);
   });
 }
-function renderExercise(){const sec=DB[route.packageCode]?.[route.type]?.[route.sectionIndex];if(!sec){openSections(route.packageCode,route.type,false);return}currentQuestions=Array.isArray(sec.questions)?sec.questions:[];page=Math.max(0,Math.min(pageCount()-1,Number(window.__hskResumePage||0)));window.__hskResumePage=page;currentMode=route.type==='writing'?'writing':'choice';$('exPkg').textContent=route.packageCode;$('exType').textContent=META[route.type]?.label||route.type;$('exPart').textContent=sec.title.replace(/^.*?·\s*/,'');$('exTitle').textContent=sec.title;let st=sectionStats(route.packageCode,route.type,route.sectionIndex);let instruction=instructionFor(route.type,route.sectionIndex);$('questions').innerHTML=`<div class="instruction"><h2>Petunjuk</h2><p>${esc(instruction)}</p></div><div class="sectionProgress"><div class="progressMeta"><strong>Progres bagian</strong><span>${st.answered}/${st.total} terjawab · ${st.pct}%</span></div><div class="progressBar"><div class="fill" style="width:${st.pct}%"></div></div></div>`+renderQuestionCards();restoreQuestionUI();scheduleHsk5AutoPaperOptionLayout()}
-if(currentMode==='writing'&&isSequenceWriting(route.type,route.sectionIndex)){currentQuestions.forEach(q=>refreshWordBank(String(q[0])))}
+function renderExercise(){
+  const sec=DB[route.packageCode]?.[route.type]?.[route.sectionIndex];
+  if(!sec){openSections(route.packageCode,route.type,false);return}
+  currentQuestions=Array.isArray(sec.questions)?sec.questions:[];
+  page=Math.max(0,Math.min(pageCount()-1,Number(window.__hskResumePage||0)));
+  window.__hskResumePage=page;
+  currentMode=route.type==='writing'?'writing':'choice';
+  $('exPkg').textContent=route.packageCode;
+  $('exType').textContent=META[route.type]?.label||route.type;
+  $('exPart').textContent=sec.title.replace(/^.*?·\s*/,'');
+  const isHsk4Paper=isHsk4PaperReading(getActivePackageData());
+  const exTitle=$('exTitle');
+  const exSub=document.querySelector('#exercise .section .sub');
+  if(isHsk4Paper){
+    exTitle.innerHTML=hsk4PaperHeaderHTML(route.sectionIndex);
+    exTitle.classList.add('hsk5PaperSectionHeader');
+    if(exSub)exSub.style.display='none';
+  }else{
+    exTitle.textContent=sec.title;
+    exTitle.classList.remove('hsk5PaperSectionHeader');
+    if(exSub)exSub.style.display='';
+  }
+  const st=sectionStats(route.packageCode,route.type,route.sectionIndex);
+  const instruction=instructionFor(route.type,route.sectionIndex);
+  const prefix=isHsk4Paper?'':('<div class="instruction"><h2>Petunjuk</h2><p>'+esc(instruction)+'</p></div>');
+  $('questions').classList.toggle('hsk4PaperReading',isHsk4Paper);
+  $('questions').innerHTML=prefix+'<div class="sectionProgress"><div class="progressMeta"><strong>Progres bagian</strong><span>'+st.answered+'/'+st.total+' terjawab · '+st.pct+'%</span></div><div class="progressBar"><div class="fill" style="width:'+st.pct+'%"></div></div></div>'+renderQuestionCards();
+  restoreQuestionUI();
+  scheduleHsk5AutoPaperOptionLayout();
+  if(currentMode==='writing'&&isSequenceWriting(route.type,route.sectionIndex))currentQuestions.forEach(q=>refreshWordBank(String(q[0])));
+}
 function wordBankWords(id){const q=currentQuestions.find(x=>String(x[0])===String(id));return q?String(q[1]||'').trim().split(/\s+/).filter(Boolean):[]}
 function getWordChipMap(id){const input=$('w'+id);const words=wordBankWords(id);if(!input)return [];const tokens=String(input.value||'').trim().split(/\s+/).filter(Boolean);const used=new Set();const map=[];tokens.forEach((token,ti)=>{let found=-1;for(let i=0;i<words.length;i++){if(!used.has(i)&&words[i]===token){found=i;break}}if(found>=0){used.add(found);map.push({chipIndex:found,tokenIndex:ti})}});return map}
 function refreshWordBank(id){const used=new Set(getWordChipMap(id).map(x=>x.chipIndex));document.querySelectorAll(`.wordChip[data-q="${id}"]`).forEach(chip=>{const i=Number(chip.dataset.i);const on=used.has(i);chip.classList.toggle('used',on);chip.setAttribute('aria-pressed',on?'true':'false')})}
@@ -4478,6 +4636,121 @@ function hsk5PaperGroupRange(qs){
   const ids=qs.map(q=>String(q?.[0]??'')).filter(Boolean);
   return ids.length?ids[0]+(ids.length>1?'–'+ids[ids.length-1]:''):'';
 }
+function isHsk4PaperReading(pkg){
+  const code=String(pkg?.code||route?.packageCode||'');
+  return route?.type==='reading'&&!isHsk5Model(pkg)&&(Number(pkg?.level)===4||/^H4\d{3,}/.test(code)||/^HSK4/.test(code));
+}
+function hsk4PaperPart(qs){
+  const ids=qs.map(q=>Number(q?.[0])).filter(Number.isFinite);
+  if(!ids.length)return null;
+  const min=Math.min(...ids),max=Math.max(...ids);
+  if(min>=46&&max<=50)return 'part1';
+  if(min>=51&&max<=55)return 'part2';
+  if(min>=56&&max<=65)return 'part3';
+  if(min>=66&&max<=85)return 'part4';
+  return null;
+}
+function hsk4PaperHeaderHTML(idx){
+  const parts=[
+    {title:'第一部分',range:'46–50',instruction:'选词填空。'},
+    {title:'第二部分',range:'51–55',instruction:'选词填空。'},
+    {title:'第三部分',range:'56–65',instruction:'请排列下列句子的正确顺序。'},
+    {title:'第四部分',range:'66–85',instruction:'请选出正确答案。'}
+  ];
+  const part=parts[Number(idx)]||parts[0];
+  return (Number(idx)===0?'<span class="hsk4PaperOverallTitle">二、阅读</span>':'')+'<span class="hsk5PaperSectionTitle">'+part.title+'</span><span class="hsk5PaperSectionInstruction">第 '+part.range+' 题：'+part.instruction+'</span>';
+}
+function hsk4PaperWordBank(pkg,q){
+  const model=getResolvedQuestionModel(pkg,'reading',route.sectionIndex,q);
+  return '<div class="hsk4PaperWordBank" aria-label="Pilihan kata">'+model.options.map(o=>'<span class="hsk4PaperWord"><b>'+o.label+'</b> '+esc(o.value)+'</span>').join('')+'</div>';
+}
+function hsk4PaperClozePart(pkg,qs,part){
+  if(!qs.length)return '';
+  const bank=hsk4PaperWordBank(pkg,qs[0]);
+  const body=qs.map(q=>{
+    const id=String(q[0]);
+    const prompt=String(q[1]||'').replace(/\s+B:/g,'\nB:');
+    return '<div class="hsk5PaperQuestion hsk4PaperClozeQuestion"><div class="hsk5PaperQNo">'+esc(id)+'.</div><div class="hsk5PaperQBody"><div class="hsk5PaperQText">'+esc(prompt)+'</div><div class="hsk5PaperOptions hsk4PaperClozeOptions">'+hsk5PaperOptionButtons(pkg,q)+'</div>'+hsk5PaperActions(id)+'</div></div>';
+  }).join('');
+  return '<section class="hsk5PaperGroup hsk4PaperPart '+part+'">'+bank+body+'</section>';
+}
+function hsk4PaperPart3(pkg,qs){
+  return '<section class="hsk5PaperGroup hsk4PaperPart hsk4PaperPart3">'+qs.map(q=>{
+    const id=String(q[0]);
+    const lines=(Array.isArray(q[2])?q[2]:[]).map((text,index)=>'<div class="hsk4PaperSentenceLine"><b>'+String.fromCharCode(65+index)+'.</b><span>'+esc(text)+'</span></div>').join('');
+    const selected=hsk4Part3PermutationAnswer(q,answers[id]);
+    const choices=permutations().map((value,index)=>'<button type="button" class="opt hsk5PaperOption hsk4PaperPermutation'+(selected===value?' selected':'')+'" data-q="'+esc(id)+'" data-i="'+index+'" aria-label="Urutan '+value+'" aria-pressed="'+(selected===value?'true':'false')+'" onclick="chooseHsk4Permutation(this)"><span class="optText">'+value+'</span></button>').join('');
+    const input='<div class="hsk4PaperPermutations" role="group" aria-label="Pilihan urutan kalimat">'+choices+'</div>';
+    const actions='<div class="hsk5PaperActions"><button type="button" class="btn soft" onclick="checkOne(\''+esc(id)+'\');return false;">'+svg('check')+' Periksa</button><button type="button" class="btn" onclick="showReference(\''+esc(id)+'\')">Lihat kunci</button></div><div class="feedback hsk5PaperFeedback" id="f'+esc(id)+'"></div><div class="reference" id="r'+esc(id)+'">Kunci jawaban: '+esc(q[3]||'Tidak tersedia')+'</div>';
+    return '<div class="hsk5PaperQuestion hsk4PaperSequenceQuestion"><div class="hsk5PaperQNo">'+esc(id)+'.</div><div class="hsk5PaperQBody"><div class="hsk4PaperSentenceList">'+lines+'</div>'+input+actions+'</div></div>';
+  }).join('')+'</section>';
+}
+function hsk4Part3PermutationAnswer(q,value){
+  const code=String(route?.packageCode||'');
+  if(!code.startsWith('H410')||Number(route?.sectionIndex)!==2||!Array.isArray(q?.[2])||q[2].length!==3)return String(value??'').trim().toUpperCase();
+  const answer=String(value??'').trim().toUpperCase();
+  if(/^[1-6]$/.test(answer))return permutations()[Number(answer)-1];
+  return answer;
+}
+function chooseHsk4Permutation(btn){
+  const id=String(btn.dataset.q),value=permutations()[Number(btn.dataset.i)];
+  if(!value)return;
+  resumeQuestionId=id;resultState=null;
+  const changed=String(answers[id]??'')!==value;
+  answers[id]=value;checked[id]=false;
+  if(changed)answerEvents[id]=createQuestionActivity(id);
+  document.querySelectorAll(`.hsk4PaperPermutation[data-q="${id}"]`).forEach(option=>{option.classList.remove('selected','correct','wrong');option.setAttribute('aria-pressed','false')});
+  btn.classList.add('selected');btn.setAttribute('aria-pressed','true');
+  const feedback=$('f'+id);if(feedback)feedback.className='feedback';
+  saveSectionState(route.packageCode,route.type,route.sectionIndex);refreshCurrentProgress();
+}
+function hsk4PaperPassageKey(pkg,q){
+  const model=getResolvedQuestionModel(pkg,'reading',route.sectionIndex,q);
+  if(model.group?.id)return String(model.group.id);
+  const code=String(pkg?.code||route.packageCode||'');
+  const map=pkg?.reading_passages?.[code]||pkg?.reading_passages?.[String(code)]||READING_PASSAGES?.[code]||{};
+  const id=Number(q?.[0]);
+  for(const key of Object.keys(map)){
+    if(String(key)===String(q?.[0]))return String(key);
+    const match=/^(\d+)\s*[-–—]\s*(\d+)$/.exec(String(key));
+    if(match&&id>=Number(match[1])&&id<=Number(match[2]))return String(key);
+  }
+  return '';
+}
+function renderHsk4PaperPart4(pkg,qs){
+  const map=pkg?.reading_passages?.[pkg.code]||pkg?.reading_passages?.[String(pkg.code)]||READING_PASSAGES?.[pkg.code]||{};
+  const groups=[];let current=null;
+  for(const q of qs){
+    const id=String(q[0]),key=hsk4PaperPassageKey(pkg,q);
+    const groupKey=key||'question-'+id;
+    if(!current||current.key!==groupKey){current={key:groupKey,passageKey:key,qs:[]};groups.push(current)}
+    current.qs.push(q);
+  }
+  return groups.map(group=>{
+    const passageText=group.passageKey?String(map[group.passageKey]||''):'';
+    const media=group.passageKey&&typeof getHsk5PassageMedia==='function'?getHsk5PassageMedia(pkg,group.passageKey):[];
+    const mediaHtml=media.length?'<div class="hsk5PaperPart3Media">'+media.map(m=>'<img src="'+esc(m.source)+'" alt="'+esc(m.alt)+'" loading="lazy" decoding="async">').join('')+'</div>':'';
+    const header=group.passageKey?'<div class="hsk5PaperGroupHeader">'+esc(group.passageKey.replace(/-/g,'–'))+'．</div>':'';
+    const passage=passageText?'<div class="hsk5PaperPassage hsk5PaperPart3PassageText">'+mediaHtml+'<div class="hsk5PaperPassageText">'+esc(passageText)+'</div></div>':'';
+    const body=group.qs.map(q=>{
+      const id=String(q[0]);
+      const qText='<div class="hsk5PaperQText"><span aria-hidden="true" class="hsk4PaperStar">★</span> '+esc(q[1])+'</div>';
+      const model=getResolvedQuestionModel(pkg,'reading',route.sectionIndex,q);
+      const needsTwoRows=model.options.some(o=>{const s=String(o.label||'')+' '+String(o.value||'');return (s.match(/[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]/g)||[]).length>=4});
+      const options='<div class="hsk5PaperOptions'+(needsTwoRows?' paperOptionsTwoRows':'')+'">'+hsk5PaperOptionButtons(pkg,q)+'</div>';
+      return '<div class="hsk5PaperQuestion hsk4PaperChoiceQuestion">'+qText+options+hsk5PaperActions(id)+'</div>';
+    }).join('');
+    return '<section class="hsk5PaperGroup hsk4PaperPart hsk4PaperPart4">'+header+passage+body+'</section>';
+  }).join('');
+}
+function renderHsk4PaperExperience(pkg,qs){
+  const part=hsk4PaperPart(qs);
+  if(part==='part1')return hsk4PaperClozePart(pkg,qs,'hsk4PaperPart1');
+  if(part==='part2')return hsk4PaperClozePart(pkg,qs,'hsk4PaperPart2');
+  if(part==='part3')return hsk4PaperPart3(pkg,qs);
+  if(part==='part4')return renderHsk4PaperPart4(pkg,qs);
+  return renderStandardQuestionCards();
+}
 function renderHsk5PaperPart1(pkg,qs){
   const root=pkg?.reading_passages?.[pkg.code]||pkg?.reading_passages?.[String(pkg.code)]||{};
   const groups=[];let current=null;
@@ -4547,6 +4820,7 @@ function renderHsk5PaperExperience(pkg,qs){
 }
 function renderQuestionCards(){
   const pkg=getActivePackageData();
+  if(isHsk4PaperReading(pkg)) return renderHsk4PaperExperience(pkg,currentQuestions);
   if(isHsk5Model(pkg) && route.type==='reading') return renderHsk5PaperExperience(pkg,currentQuestions);
   return renderStandardQuestionCards();
 }
@@ -4564,7 +4838,7 @@ function saveWritingAnswer(id){resultState=null;const e=$('w'+id);const v=e?e.va
 
 
 function checkOne(id,silent=false,restoreOnly=false){const q=currentQuestions.find(x=>String(x[0])===String(id))||((DB[route?.packageCode]?.[route?.type]?.[route?.sectionIndex]?.questions)||[]).find(x=>String(x[0])===String(id));if(!q)return;const model=getResolvedQuestionModel(getActivePackageData(),route.type,route.sectionIndex,q);
-if(model.type==="sentence_ordering"||model.type==="sequence"){const e=$('w'+id);const v=e?e.value.trim():String(answers[id]??'');if(!v){if(!silent)appNotice('Jawaban belum dipilih','Pilih atau ketik susunan jawaban terlebih dahulu.');return}answers[id]=v;const ok=isSequenceAnswerCorrect(q,v);checked[id]=true;const f=$('f'+id);if(f){f.className='feedback show '+(ok?'good':'bad');f.textContent=ok?'Benar':'Salah — periksa kembali urutan kata atau lihat kunci jawaban.'}const input=$('w'+id);if(input){input.classList.remove('answer-correct','answer-wrong');input.classList.add(ok?'answer-correct':'answer-wrong')}if(!restoreOnly){saveSectionState(route.packageCode,route.type,route.sectionIndex);recordQuestionAttempt(id,ok);refreshCurrentProgress()}return}
+if(model.type==="sentence_ordering"||model.type==="sequence"){const e=$('w'+id);const v=hsk4Part3PermutationAnswer(q,e?e.value.trim():String(answers[id]??''));if(!v){if(!silent)appNotice('Jawaban belum dipilih','Pilih salah satu urutan kalimat terlebih dahulu.');return}answers[id]=v;const ok=isSequenceAnswerCorrect(q,v);checked[id]=true;const f=$('f'+id);if(f){f.className='feedback show '+(ok?'good':'bad');f.textContent=ok?'Benar':'Salah — periksa kembali urutan kata atau lihat kunci jawaban.'}const input=$('w'+id);if(input){input.classList.remove('answer-correct','answer-wrong');input.classList.add(ok?'answer-correct':'answer-wrong')}document.querySelectorAll(`.hsk4PaperPermutation[data-q="${id}"]`).forEach(option=>{option.classList.remove('selected','correct','wrong');option.setAttribute('aria-pressed','false');if(option.textContent.trim()===v)option.classList.add(ok?'correct':'wrong')});if(!restoreOnly){saveSectionState(route.packageCode,route.type,route.sectionIndex);recordQuestionAttempt(id,ok);refreshCurrentProgress()}return}
 if(model.type==="guided_writing"||model.type==="picture_writing"){if(restoreOnly){const f=$('f'+id);if(f&&String(answers[id]??'').trim()){f.className='feedback show good';f.textContent='✓ Jawaban tersimpan. Silakan periksa kembali kalimatmu sendiri.'}return}saveWritingAnswer(id);return}
 if(answers[id]===undefined){const selectedOption=Array.from(document.querySelectorAll('.opt[data-q]')).find(el=>String(el.dataset.q)===String(id)&&el.classList.contains('selected'));if(selectedOption)answers[id]=selectedOption.dataset.i}if(answers[id]===undefined){if(!silent)appNotice('Jawaban belum dipilih','Pilih jawaban terlebih dahulu.');return}const ci=correctIndex(q,route.type),chosen=Number(answers[id]),ok=chosen===ci;checked[id]=true;const correctModel=getResolvedQuestionModel(getActivePackageData(),route.type,route.sectionIndex,q);const correctOpt=correctModel.options?.[ci];const answerLabel=correctOpt?String(correctOpt.value):(/^[A-F]$/i.test(String(q?.[3]??'').trim())?String(q[3]).trim().toUpperCase():'Tidak tersedia');const f=$('f'+id);if(f){f.className='feedback show '+(ok?'good':'bad');f.textContent=ok?'Benar':'Salah — jawaban yang benar: '+answerLabel}document.querySelectorAll(`.opt[data-q="${id}"],.hsk5ClozeOpt[data-q="${id}"]`).forEach(b=>{b.classList.remove('selected','correct','wrong');const i=Number(b.dataset.i);if(i===chosen)b.classList.add(ok?'correct':'wrong')});if(!restoreOnly){saveSectionState(route.packageCode,route.type,route.sectionIndex);recordQuestionAttempt(id,ok);refreshCurrentProgress()}}
 function repeatOne(id){const q=currentQuestions.find(x=>String(x[0])===String(id));if(!q)return;resumeQuestionId=String(id);delete answers[id];delete checked[id];delete answerEvents[String(id)];if(currentMode==='writing'){const e=$('w'+id);if(e){e.value='';e.dispatchEvent(new Event('input',{bubbles:true}));}if(isSequenceWriting(route.type,route.sectionIndex))refreshWordBank(id)}else{document.querySelectorAll(`.opt[data-q="${id}"]`).forEach(b=>b.classList.remove('selected','correct','wrong'));}const f=$('f'+id);if(f)f.className='feedback';const r=$('r'+id);if(r)r.className='reference';const t=$('t'+id);if(t)t.classList.remove('show');saveSectionState(route.packageCode,route.type,route.sectionIndex);refreshCurrentProgress()}
@@ -5084,7 +5358,42 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     }
     return '<div class="inlineResult"><div class="inlineResultHead"><div><div class="inlineResultLabel">Nilai bagian</div><div class="inlineResultScore">'+pct+'%</div><div class="inlineResultMeta"><b>'+r.score+'/'+r.total+'</b> benar · '+r.answered+' dijawab · '+(r.total-r.answered)+' belum dijawab</div></div><span class="inlineResultBadge">✓ Sudah diperiksa</span></div><div class="inlineResultBar"><i style="width:'+pct+'%"></i></div></div>';
   }
-  window.renderExercise=function(){const sec=DB[route.packageCode]?.[route.type]?.[route.sectionIndex];if(!sec){openSections(route.packageCode,route.type,false);return;}currentQuestions=Array.isArray(sec.questions)?sec.questions:[];currentMode=route.type==='writing'?'writing':'choice';$('exPkg').textContent=(DB[route.packageCode]?.title||route.packageCode);$('exType').textContent=META[route.type]?.label||route.type;$('exPart').textContent=sec.title.replace(/^.*?·\s*/,'');const hsk5ReadingPartNow=isHsk5Model(getActivePackageData())&&route.type==='reading'&&hsk5ReadingPart(currentQuestions);const isHsk5ReadingPart1=hsk5ReadingPartNow==='part1';const isHsk5ReadingPart2=hsk5ReadingPartNow==='part2';const isHsk5ReadingPaperHeader=isHsk5ReadingPart1||isHsk5ReadingPart2||hsk5ReadingPartNow==='part3';const exTitle=$('exTitle');const exSub=document.querySelector('#exercise .section .sub');if(isHsk5ReadingPart1){exTitle.innerHTML='<div class="hsk5PaperSectionTitle">第一部分</div><div class="hsk5PaperSectionInstruction">第 46-60 题：请选出正确答案。</div>';exTitle.classList.add('hsk5PaperSectionHeader');if(exSub)exSub.style.display='none';}else if(isHsk5ReadingPart2){exTitle.innerHTML='<div class="hsk5PaperSectionTitle">第二部分</div><div class="hsk5PaperSectionInstruction">第 61-70 题：请选择与试题内容一致的一项。</div>';exTitle.classList.add('hsk5PaperSectionHeader');if(exSub)exSub.style.display='none';}else if(hsk5ReadingPartNow==='part3'){exTitle.innerHTML='<div class="hsk5PaperSectionTitle">第三部分</div><div class="hsk5PaperSectionInstruction">第 71-90 题：请选出正确答案。</div>';exTitle.classList.add('hsk5PaperSectionHeader');if(exSub)exSub.style.display='none';}else{exTitle.textContent=sec.title;exTitle.classList.remove('hsk5PaperSectionHeader');if(exSub)exSub.style.display='';}const st=sectionStats(route.packageCode,route.type,route.sectionIndex);const instruction=instructionFor(route.type,route.sectionIndex);const prefix=isHsk5ReadingPaperHeader?'':'<div class="instruction"><h2>Petunjuk</h2><p>'+esc(instruction)+'</p></div>';$('questions').innerHTML=prefix+'<div class="sectionProgress"><div class="progressMeta"><strong>Progres bagian</strong><span>'+st.answered+'/'+st.total+' terjawab · '+st.pct+'%</span></div><div class="progressBar"><div class="fill" style="width:'+st.pct+'%"></div></div></div>'+cardsForVisible()+pager()+finishCard();restoreVisible();};
+  window.renderExercise=function(){
+  const sec=DB[route.packageCode]?.[route.type]?.[route.sectionIndex];
+  if(!sec){openSections(route.packageCode,route.type,false);return;}
+  currentQuestions=Array.isArray(sec.questions)?sec.questions:[];
+  currentMode=route.type==='writing'?'writing':'choice';
+  $('exPkg').textContent=(DB[route.packageCode]?.title||route.packageCode);
+  $('exType').textContent=META[route.type]?.label||route.type;
+  $('exPart').textContent=sec.title.replace(/^.*?·\s*/,'');
+  const hsk5Part=isHsk5Model(getActivePackageData())&&route.type==='reading'&&hsk5ReadingPart(currentQuestions);
+  const hsk4Part=isHsk4PaperReading(getActivePackageData())?hsk4PaperPart(currentQuestions):null;
+  const isHsk5PaperHeader=['part1','part2','part3'].includes(hsk5Part);
+  const isHsk4PaperHeader=!!hsk4Part;
+  const exTitle=$('exTitle');
+  const exSub=document.querySelector('#exercise .section .sub');
+  if(hsk5Part==='part1'){
+    exTitle.innerHTML='<div class="hsk5PaperSectionTitle">第一部分</div><div class="hsk5PaperSectionInstruction">第 46-60 题：请选出正确答案。</div>';
+    exTitle.classList.add('hsk5PaperSectionHeader');if(exSub)exSub.style.display='none';
+  }else if(hsk5Part==='part2'){
+    exTitle.innerHTML='<div class="hsk5PaperSectionTitle">第二部分</div><div class="hsk5PaperSectionInstruction">第 61-70 题：请选择与试题内容一致的一项。</div>';
+    exTitle.classList.add('hsk5PaperSectionHeader');if(exSub)exSub.style.display='none';
+  }else if(hsk5Part==='part3'){
+    exTitle.innerHTML='<div class="hsk5PaperSectionTitle">第三部分</div><div class="hsk5PaperSectionInstruction">第 71-90 题：请选出正确答案。</div>';
+    exTitle.classList.add('hsk5PaperSectionHeader');if(exSub)exSub.style.display='none';
+  }else if(isHsk4PaperHeader){
+    exTitle.innerHTML=hsk4PaperHeaderHTML(route.sectionIndex);
+    exTitle.classList.add('hsk5PaperSectionHeader');if(exSub)exSub.style.display='none';
+  }else{
+    exTitle.textContent=sec.title;exTitle.classList.remove('hsk5PaperSectionHeader');if(exSub)exSub.style.display='';
+  }
+  const st=sectionStats(route.packageCode,route.type,route.sectionIndex);
+  const instruction=instructionFor(route.type,route.sectionIndex);
+  const prefix=(isHsk5PaperHeader||isHsk4PaperHeader)?'':'<div class="instruction"><h2>Petunjuk</h2><p>'+esc(instruction)+'</p></div>';
+  $('questions').classList.toggle('hsk4PaperReading',isHsk4PaperHeader);
+  $('questions').innerHTML=prefix+'<div class="sectionProgress"><div class="progressMeta"><strong>Progres bagian</strong><span>'+st.answered+'/'+st.total+' terjawab · '+st.pct+'%</span></div><div class="progressBar"><div class="fill" style="width:'+st.pct+'%"></div></div></div>'+cardsForVisible()+pager()+finishCard();
+  restoreVisible();
+};
     window.repeat=(function(fn){return function(){page=0;return fn()}})(repeat);
   function userText(q){const id=String(q[0]),u=answers[id];if(u===undefined||String(u).trim()==='')return 'Belum dijawab';const model=getResolvedQuestionModel(getActivePackageData(),route.type,route.sectionIndex,q);if(model.type==='sentence_ordering'||model.type==='guided_writing'||model.type==='picture_writing')return String(u);const opt=model.options[Number(u)];return opt?`${opt.label}. ${opt.value}`:String(u)}
 function correctText(q){const model=getResolvedQuestionModel(getActivePackageData(),route.type,route.sectionIndex,q);if(model.type==='sentence_ordering'||model.type==='sequence'){const k=sequenceKeys(q);return k.length?k.join(' / '):'Tidak tersedia'}if(model.type==='guided_writing'||model.type==='picture_writing')return String(q[2]||'Tidak tersedia');const ci=correctIndex(q,route.type);const opt=model.options[ci];return opt?`${opt.label}. ${opt.value}`:String(q[3]??'Tidak tersedia')}
