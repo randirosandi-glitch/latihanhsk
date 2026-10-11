@@ -8271,6 +8271,31 @@ body.dark #hskGradeLoading{background:rgba(0,0,0,.56)}
 body.dark #hskGradeLoading .hskGradePanel{background:#171819;color:#f4f4f4;border-color:#353638}
 @media(prefers-reduced-motion:reduce){#hskGradeLoading.show,#hskGradeLoading .hskGradeSpinner,#exercise .inlineResult,#exercise .inlineResultScore{animation:none!important}}
 /* END GENERATED MODULE: src/styles/grade-loading.css */
+
+/* Emergency mobile scroll fix 2026-10-12.
+   Use sticky header on portrait phones so Chrome Android visual-viewport changes
+   cannot leave the fixed header partially clipped. Keep the existing floating nav. */
+@media (max-width:599px) and (orientation:portrait){
+  html body .top{
+    position:sticky!important;
+    top:0!important;
+    left:auto!important;
+    right:auto!important;
+    width:100%!important;
+    max-width:none!important;
+    min-height:var(--app-topbar-h, auto)!important;
+    z-index:2000!important;
+    transform:none!important;
+  }
+  html body .topin{
+    box-sizing:border-box!important;
+    padding-top:max(10px, env(safe-area-inset-top, 0px))!important;
+  }
+  html body .mainNav{
+    bottom:calc(10px + env(safe-area-inset-bottom, 0px))!important;
+  }
+}
+
 </style>
 <script id="hsk-beta-grade-loading-v1-js">
 // BEGIN GENERATED MODULE: src/questions/grading-loading-wrapper.js
