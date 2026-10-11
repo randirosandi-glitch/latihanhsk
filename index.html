@@ -41,7 +41,6 @@
      Progress bars, progress fills, buttons, and text accents stay solid. -->
 <style id="hsk-papers-css-canonical-v4">
 /* BEGIN GENERATED MODULE: src/styles/canonical.css */
-
 /* === consolidated CSS block 1 hsk-papers-css-canonical === */
 
 
@@ -260,11 +259,11 @@ body.dark .feedback.good,html.dark body .feedback.good,body.dark .opt.correct,ht
 
 @media (min-width:600px) and (orientation:landscape){main,.appFooter{margin-left:72px!important;}.appFooter{padding-left:0!important;}}.appFooter{min-height:0!important;height:auto!important;padding-top:5px!important;padding-bottom:5px!important;}
 
-@media (min-width:600px) and (orientation:landscape){main{width:calc(100% - 84px)!important;max-width:none!important;margin-left:84px!important;margin-right:0!important;padding:0 32px 88px!important;box-sizing:border-box!important;}main>.screen.active,main>section.screen.active{width:100%!important;max-width:1180px!important;margin-left:auto!important;margin-right:auto!important;}.appFooter{width:calc(100% - 84px)!important;max-width:none!important;margin-left:84px!important;margin-right:0!important;padding:8px 32px 10px!important;box-sizing:border-box!important;min-height:0!important;height:auto!important;font-size:10px!important;}}.appFooter{min-height:0!important;height:auto!important;padding-top:6px!important;padding-bottom:8px!important;}
+@media (min-width:600px) and (orientation:landscape){body:not(.exercise-focus) main{width:calc(100% - 84px)!important;max-width:none!important;margin-left:84px!important;margin-right:0!important;padding:0 32px 88px!important;box-sizing:border-box!important;}main>.screen.active,main>section.screen.active{width:100%!important;max-width:1180px!important;margin-left:auto!important;margin-right:auto!important;}.appFooter{width:calc(100% - 84px)!important;max-width:none!important;margin-left:84px!important;margin-right:0!important;padding:8px 32px 10px!important;box-sizing:border-box!important;min-height:0!important;height:auto!important;font-size:10px!important;}}.appFooter{min-height:0!important;height:auto!important;padding-top:6px!important;padding-bottom:8px!important;}
 
 
 
-@media (min-width:600px) and (orientation:landscape){main{width:calc(100% - 84px)!important;margin-left:84px!important;margin-right:0!important;box-sizing:border-box!important;}.appFooter{width:calc(100% - 84px)!important;margin-left:84px!important;margin-right:0!important;box-sizing:border-box!important;}}body{font-synthesis:none!important;}
+@media (min-width:600px) and (orientation:landscape){body:not(.exercise-focus) main{width:calc(100% - 84px)!important;margin-left:84px!important;margin-right:0!important;box-sizing:border-box!important;}.appFooter{width:calc(100% - 84px)!important;margin-left:84px!important;margin-right:0!important;box-sizing:border-box!important;}}body{font-synthesis:none!important;}
 
 .appFooter span{color:inherit!important;opacity:1!important;}.appFooter span+span{color:#7b8798!important;opacity:1!important;}body.dark .appFooter{color:#aab5c7!important;background:transparent!important;}body.dark .appFooter span{color:#aab5c7!important;}body.dark .appFooter span+span{color:#8f9bad!important;}
 
@@ -2075,6 +2074,7 @@ body.home-route main{padding-top:18px!important;}
     padding:calc(var(--app-topbar-h) + 22px) var(--content-gutter) 120px!important;
   }
   body.home-route main{padding-top:22px!important;}
+  body.exercise-focus main{width:100%!important;margin-left:0!important;margin-right:0!important;}
   .screen{width:min(100%,var(--content-max))!important;max-width:var(--content-max)!important;margin-inline:auto!important;}
 
   /* Home / package / level grids use the second dimension of the tablet. */
@@ -2117,7 +2117,7 @@ body.home-route main{padding-top:18px!important;}
 @media (min-width:600px) and (orientation:landscape){
   :root{--content-gutter:clamp(24px,2.8vw,38px);}
 
-  main{
+  body:not(.exercise-focus) main{
     width:calc(100% - var(--nav-rail))!important;
     max-width:none!important;
     margin-left:var(--nav-rail)!important;
@@ -2982,7 +2982,7 @@ body.exercise-focus .mainNav{display:none!important}
 #exercise .listeningAudioRetry{margin-top:8px;min-height:36px}
 @media (min-width:600px) and (orientation:landscape){
   #exercise .listeningAudioDock{
-    margin-left:calc(50% - 50vw - var(--nav-rail)/2);
+    margin-left:calc(50% - 50vw);
   }
 }
 @media(max-width:599px){
@@ -3090,9 +3090,9 @@ body.exercise-focus .mainNav{display:none!important}
 @media (min-width:600px) and (orientation:landscape){
   :root{--nav-rail:80px!important;--hsk-nav-width:80px!important;--app-topbar-h:76px!important;}
   .mainNav{
-    position:fixed!important;z-index:2200!important;left:0!important;right:auto!important;top:calc(var(--app-topbar-h) + 8px)!important;bottom:0!important;
-    width:80px!important;min-width:80px!important;max-width:80px!important;height:calc(100vh - var(--app-topbar-h) - 8px)!important;height:calc(100dvh - var(--app-topbar-h) - 8px)!important;
-    margin:0!important;padding:10px 4px!important;box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+    position:fixed!important;z-index:90!important;left:0!important;right:auto!important;top:0!important;bottom:0!important;
+    width:80px!important;min-width:80px!important;max-width:80px!important;height:auto!important;
+    margin:0!important;padding:calc(var(--app-topbar-h) + 18px) 4px 10px!important;box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
     align-items:stretch!important;justify-content:flex-start!important;gap:6px!important;overflow-x:hidden!important;overflow-y:auto!important;
     border:0!important;border-right:1px solid var(--line)!important;border-radius:0!important;
     background:var(--surface)!important;background-image:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important;
@@ -3162,13 +3162,20 @@ html body.dark .mainNav .navItem.active .navLabel,html body.dark .mainNav .navIt
 
 <style id="hsk5-paper-engine-v2">
 /* BEGIN GENERATED MODULE: src/styles/hsk5-paper-engine.css */
-
 /* Checkpoint C1: marker-style option highlight layered behind option text. */
 /* HSK5 H51002 Paper Experience — sandbox v2. PDF-led layout. JSON untouched. */
 #exercise .hsk5PaperGroup{margin:0 0 24px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;}
 #exercise .hsk5PaperGroupHeader{margin:0 0 9px!important;font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;font-size:17px!important;line-height:1.4!important;font-weight:700!important;color:var(--text)!important;}
 #exercise .hsk5PaperPassage{margin:0 0 8px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;}
 #exercise .hsk5PaperPassageText{font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;font-size:18px!important;line-height:1.9!important;color:var(--text)!important;white-space:pre-wrap!important;}
+/* Keep HSK 5 Reading comfortably legible on wide laptop screens. Smaller layouts retain their current scale. */
+@media (min-width:1400px) and (orientation:landscape){
+  #exercise .hsk5PaperPassageText{font-size:22px!important;line-height:1.85!important;}
+  #exercise .hsk5PaperQText,
+  #exercise .hsk5PaperPart2 .hsk5PaperQText{font-size:19px!important;line-height:1.75!important;}
+  #exercise .hsk5PaperOption.opt{font-size:17px!important;line-height:1.6!important;}
+  #exercise .hsk5PaperPart2 .hsk5PaperQNo{font-size:18px!important;line-height:1.75!important;}
+}
 #exercise .hsk5PaperQuestion{margin:0!important;padding:7px 0 10px!important;border-bottom:0!important;background:transparent!important;box-shadow:none!important;border-radius:0!important;}
 /* Scroll performance: defer off-screen Reading questions without changing their visual styling. */
 #exercise .hsk5PaperQuestion{content-visibility:auto;}
