@@ -3118,7 +3118,8 @@ body.exercise-focus .mainNav{display:none!important}
   .topin{width:100%!important;max-width:calc(var(--content-max) + var(--nav-rail))!important;margin:0 auto!important;padding:10px 24px 10px calc(var(--nav-rail) + 24px)!important;box-sizing:border-box!important;}
   .toprow{min-height:44px!important;}
   .context{padding-left:24px!important;padding-right:24px!important;box-sizing:border-box!important;}
-  main{width:calc(100% - 80px)!important;max-width:none!important;margin:0 0 0 80px!important;box-sizing:border-box!important;padding:94px clamp(18px,2.4vw,32px) 76px!important;}
+  body:not(.exercise-focus) main{width:calc(100% - 80px)!important;max-width:none!important;margin:0 0 0 80px!important;box-sizing:border-box!important;padding:94px clamp(18px,2.4vw,32px) 76px!important;}
+  body.exercise-focus main{width:100%!important;max-width:none!important;margin:0!important;box-sizing:border-box!important;}
   body.home-route main{padding-top:18px!important;}
   .screen{width:100%!important;min-width:0!important;max-width:1180px!important;margin-left:auto!important;margin-right:auto!important;box-sizing:border-box!important;}
   .appFooter{width:calc(100% - 80px)!important;margin-left:80px!important;padding-left:24px!important;padding-right:24px!important;box-sizing:border-box!important;}
