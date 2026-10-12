@@ -3679,6 +3679,18 @@ body.dark #exercise #exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction
 }
 </style>
 
+<style id="donation-nav-mobile-fix">
+/* Keep all six bottom-nav items visible on narrow screens. */
+@media(max-width:599px){
+  .mainNav{width:calc(100% - 18px);max-width:540px;gap:1px;padding:5px 4px;justify-content:space-between}
+  .mainNav .navItem{flex:1 1 0;width:0;min-width:0;padding:6px 0;gap:3px;font-size:9px}
+  .mainNav .navItem .ico{width:19px;height:19px;flex:none}
+  .mainNav .navItem .navLabel{display:block;font-size:9px;line-height:1.1;white-space:nowrap;letter-spacing:-.25px}
+}
+@media(min-width:600px){
+  .mainNav .navItem[data-nav="donations"]{display:inline-flex}
+}
+</style>
 </head><body><div aria-live="polite" id="appBootLoader" role="status"><div class="bootCard"><div aria-hidden="true" class="bootMark"><svg aria-hidden="true" class="bootLogoSvg bootLogoLight" preserveaspectratio="xMidYMid meet" viewbox="0 0 1536 581">
 <svg height="581" viewbox="0 0 1536 581" width="1536" xmlns="http://www.w3.org/2000/svg">
 <defs>
