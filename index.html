@@ -3151,6 +3151,40 @@ body.dark .mainNav,body.dark .levelCard,body.dark .levelCardIcon,body.dark .pack
     line-height:1.65!important;
   }
 }
+
+/* Donation tab */
+.donationLayout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(300px,.8fr);gap:22px;align-items:stretch;max-width:1120px;margin:18px auto 0}
+.donationHero,.donationCard{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:26px;background:linear-gradient(135deg,var(--surface),color-mix(in srgb,var(--blue) 7%,var(--surface)));box-shadow:var(--shadow,0 10px 30px rgba(0,0,0,.07));padding:clamp(22px,3vw,38px)}
+.donationHero{display:flex;flex-direction:column;justify-content:center;min-height:480px}
+.donationEyebrow{display:flex;align-items:center;gap:8px;width:max-content;padding:7px 13px;border-radius:999px;background:color-mix(in srgb,var(--blue) 12%,transparent);color:var(--blue);font-weight:800;font-size:13px}
+.donationEyebrow .material-symbols-rounded{font-size:18px}
+.donationHero h1{position:relative;z-index:1;margin:22px 0 16px;max-width:680px;font-size:clamp(32px,4vw,52px);line-height:1.08;letter-spacing:-.045em}
+.donationHero h1 span{color:var(--blue)}
+.donationLead{position:relative;z-index:1;max-width:610px;color:var(--muted);font-size:clamp(15px,1.4vw,19px);line-height:1.6;margin:0}
+.donationBenefits{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;border-top:1px solid var(--line);margin-top:30px;padding-top:20px}
+.donationBenefits>div{display:flex;align-items:center;gap:9px;font-size:12px;line-height:1.4}
+.donationBenefits .material-symbols-rounded{display:grid;place-items:center;flex:none;width:36px;height:36px;border-radius:50%;background:color-mix(in srgb,var(--blue) 13%,transparent);color:var(--blue);font-size:20px}
+.donationBookArt{position:absolute;right:16px;bottom:-56px;color:var(--blue);opacity:.055;font-size:220px;font-weight:900;line-height:1;pointer-events:none}
+.donationCard{display:flex;flex-direction:column;background:var(--surface)}
+.donationCardHead{display:flex;align-items:center;gap:13px;margin-bottom:18px}
+.donationCardHead>.material-symbols-rounded{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:13px;background:linear-gradient(140deg,var(--blue),color-mix(in srgb,var(--blue) 65%,#73aaff));color:white;font-size:23px}
+.donationCardHead h2{font-size:19px;margin:0 0 5px}
+.donationCardHead p{font-size:13px;color:var(--muted);margin:0}
+.donationQrFrame{width:min(100%,320px);margin:0 auto 20px;padding:10px;background:#fff;border:1px solid #e4e9f2;border-radius:17px;box-shadow:0 8px 24px rgba(20,45,90,.12);min-height:180px;display:grid;place-items:center}
+.donationQrFrame img{display:block;width:100%;height:auto;object-fit:contain}
+#donationQrMissing{padding:28px 12px;text-align:center;color:#586579;font-size:13px}
+.donationDownload{display:flex;align-items:center;justify-content:center;gap:9px;padding:13px 18px;border-radius:14px;background:var(--blue);color:#fff!important;text-decoration:none!important;font-weight:800}
+.donationDownload .material-symbols-rounded{font-size:20px}
+.donationSecurity{display:flex;align-items:flex-start;gap:11px;padding:14px;margin-top:16px;border-radius:14px;background:color-mix(in srgb,var(--blue) 7%,var(--surface));color:var(--muted);font-size:12px}
+.donationSecurity>.material-symbols-rounded{color:var(--blue);font-size:22px}
+.donationSecurity strong{display:block;color:var(--text);font-size:13px;margin-bottom:3px}
+.donationSecurity p{margin:0;line-height:1.5}
+.donationThanks{display:flex;align-items:center;justify-content:center;gap:7px;color:var(--muted);font-size:13px;margin:22px 0 90px}
+.donationThanks .material-symbols-rounded{color:var(--blue);font-size:19px}
+.mainNav .navItem[data-nav="donations"]{color:var(--muted)}
+.mainNav .navItem[data-nav="donations"].active{color:var(--blue);background:color-mix(in srgb,var(--blue) 12%,transparent)}
+@media(max-width:850px){.donationLayout{grid-template-columns:1fr}.donationHero{min-height:auto}.donationCard{max-width:600px;width:100%;margin:0 auto}}
+@media(max-width:560px){.donationLayout{gap:14px;margin-top:10px}.donationHero,.donationCard{padding:22px 18px;border-radius:21px}.donationHero h1{font-size:clamp(31px,9vw,43px)}.donationLead{font-size:15px}.donationBenefits{grid-template-columns:1fr;gap:10px;margin-top:24px;padding-top:16px}.donationBenefits>div{font-size:12px}.donationBenefits .material-symbols-rounded{width:33px;height:33px}.donationBookArt{font-size:150px;bottom:-35px}.donationCardHead h2{font-size:17px}.donationThanks{margin-bottom:100px}}
 </style></style>
 <style id="hsk-v15-tablet-portrait-contract">
 /* v26 canonical responsive grid contract
@@ -3733,6 +3767,7 @@ body.dark #exercise #exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction
 <button class="navItem" data-nav="packages" onclick="openPackages()"><span aria-hidden="true" class="material-symbols-rounded ico">inventory_2</span><span class="navLabel">Paket Soal</span></button>
 <button class="navItem" data-nav="studyPlans" onclick="openStudyPlans()"><span aria-hidden="true" class="material-symbols-rounded ico">event_note</span><span class="navLabel">Rencana</span></button>
 <button class="navItem" data-nav="theme" onclick="toggleTheme()"><span aria-hidden="true" class="material-symbols-rounded ico">dark_mode</span><span class="navLabel">Tema</span></button>
+<button class="navItem" data-nav="donations" onclick="openDonations()"><span aria-hidden="true" class="material-symbols-rounded ico">volunteer_activism</span><span class="navLabel">Donasi</span></button>
 <button class="navItem logoutNav" data-nav="logout" onclick="logout()"><span aria-hidden="true" class="material-symbols-rounded ico">logout</span><span class="navLabel">Keluar</span></button>
 </nav>
 <div aria-hidden="true" class="modal" id="studyPlanPickerModal"><div class="modalBox wide studyPlanModalBox"><div class="studyPlanModalIcon">＋</div><h3>Masukkan ke Rencana</h3><p id="studyPlanPickerPackage">Paket</p><div class="studyPlanPickerSourceWrap" id="studyPlanPickerSourceWrap"><label class="studyPlanPickerSourceLabel" for="studyPlanPickerSource">Materi</label><select aria-label="Pilih materi" class="studyPlanPickerSource" id="studyPlanPickerSource" onchange="selectStudyPlanPickerSource(this.value)"></select></div><label class="studyPlanPickerSearch" for="studyPlanPickerSearchInput"><span aria-hidden="true" class="material-symbols-rounded ico">search</span><input autocomplete="off" id="studyPlanPickerSearchInput" oninput="filterStudyPlanPicker(this.value)" placeholder="Cari paket atau rencana..." type="search"/></label><div class="studyPlanPickerList" id="studyPlanPickerList"></div><div class="modalBtns studyPlanPickerActions"><button class="btn" onclick="closeStudyPlanPicker(); return false;" type="button">Selesai</button></div></div></div>
@@ -3823,6 +3858,29 @@ body.dark #exercise #exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction
 <section class="screen" id="partsScreen"><div class="crumb"><span onclick="goHome()">Beranda</span><span>›</span><span id="partsPkg"></span><span>›</span><span class="current" id="partsCrumb"></span></div><div class="section"><h2 id="partsTitle"></h2><div class="sub">Pilih bagian soal.</div></div><div class="grid" id="sections"></div></section>
 <section class="screen" id="exercise"><div class="focusHeader"><button aria-label="Kembali ke daftar bagian" class="focusBack" onclick="backRoute()" type="button"><span aria-hidden="true" class="material-symbols-rounded ico">arrow_back</span></button><div class="focusContext"><div class="focusMeta"><span id="exPkg"></span><span aria-hidden="true">·</span><span id="exType"></span></div><div class="focusPart" id="exPart"></div></div><button aria-label="Ganti tema" class="exerciseThemeToggle" onclick="toggleTheme()" title="Ganti tema" type="button"><span aria-hidden="true" class="material-symbols-rounded ico">dark_mode</span></button></div><div class="section"><h2 id="exTitle"></h2><div class="sub">Semua soal di bagian ini tampil sekaligus.</div></div><div id="questions"></div></section>
 <section class="screen" id="result"><div class="focusHeader resultFocusHeader"><button aria-label="Kembali ke soal" class="focusBack" onclick="backRoute()" type="button"><span aria-hidden="true" class="material-symbols-rounded ico">arrow_back</span></button><div class="focusContext"><div class="focusMeta"><span id="resultPkg"></span><span aria-hidden="true">·</span><span id="resultType"></span></div><div class="focusPart" id="resultPart">Hasil</div></div><button aria-label="Ganti tema" class="exerciseThemeToggle" onclick="toggleTheme()" title="Ganti tema" type="button"><span aria-hidden="true" class="material-symbols-rounded ico">dark_mode</span></button></div><div id="resultBody"></div></section>
+
+<section class="screen" id="donationsScreen">
+  <div class="donationLayout">
+    <section class="donationHero">
+      <div class="donationEyebrow"><span aria-hidden="true" class="material-symbols-rounded">favorite</span>Dukung HSK Papers</div>
+      <h1>Aplikasi ini membantu kamu lulus ujian? <span>Ayo dukung HSK Papers.</span></h1>
+      <p class="donationLead">Dukunganmu membantu HSK Papers terus dikembangkan agar makin banyak pelajar bisa mempersiapkan ujian HSK.</p>
+      <div class="donationBenefits">
+        <div><span class="material-symbols-rounded">bolt</span><b>Pengembangan<br>fitur baru</b></div>
+        <div><span class="material-symbols-rounded">school</span><b>Konten belajar<br>lebih lengkap</b></div>
+        <div><span class="material-symbols-rounded">groups</span><b>Manfaat untuk<br>lebih banyak pelajar</b></div>
+      </div>
+      <div class="donationBookArt" aria-hidden="true">书</div>
+    </section>
+    <section class="donationCard" aria-label="Donasi melalui QRIS">
+      <div class="donationCardHead"><span class="material-symbols-rounded">qr_code_scanner</span><div><h2>Scan QRIS untuk Donasi</h2><p>Gunakan aplikasi pembayaran favoritmu.</p></div></div>
+      <div class="donationQrFrame"><img src="https://raw.githubusercontent.com/randirosandi-glitch/latihanhsk/main/assets/qris/qris-donasi.png" alt="QRIS donasi HSK Papers" onerror="this.hidden=true;document.getElementById('donationQrMissing').hidden=false"><div id="donationQrMissing" hidden>QRIS belum tersedia di folder aset stable.<br><code>assets/qris/qris-donasi.png</code></div></div>
+      <a class="donationDownload" href="https://raw.githubusercontent.com/randirosandi-glitch/latihanhsk/main/assets/qris/qris-donasi.png" download="qris-donasi.png"><span class="material-symbols-rounded">download</span>Download QRIS</a>
+      <div class="donationSecurity"><span class="material-symbols-rounded">verified_user</span><div><strong>Donasi aman dan sukarela</strong><p>Kami tidak menyimpan data pembayaranmu. Periksa nama penerima sebelum menyelesaikan transaksi.</p></div></div>
+    </section>
+  </div>
+  <p class="donationThanks"><span class="material-symbols-rounded">favorite</span>Terima kasih atas dukunganmu!</p>
+</section>
 </main>
 <script>
 const DB={};
@@ -4147,6 +4205,7 @@ function progressHTML(st,label='Progres'){return `<div class="progressWrap"><div
 function renderPackageProgress(code){const st=packageStats(code);return progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket')}
 function renderContext(){const c=$('context');const tb=$('topBack');const top=document.querySelector('.top');if(top){const isHome=route.screen==='home';document.body.classList.toggle('home-route',isHome);top.classList.toggle('homeTopHidden',isHome);top.style.setProperty('display',isHome?'none':'','important');const nav=document.querySelector('.mainNav');if(nav)nav.classList.remove('focusNavHidden');}if(tb){const hideBack=route.screen==='home'||route.screen==='levels'||route.screen==='studyPlans';tb.style.setProperty('display',hideBack?'none':'inline-flex','important');}c.classList.remove('show');c.innerHTML=''}
 function armHome(){if(typeof window.__hskArmBackGuard==='function'){window.__hskArmBackGuard()} }
+function openDonations(push=true){route={screen:'donations',packageCode:null,type:null,sectionIndex:null};setScreen('donationsScreen',push);armHome()}
 function goHome(push=true){route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;setScreen('home',push);armHome()}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushCloudSync()});
 window.addEventListener('pagehide',()=>flushCloudSync());
@@ -5324,12 +5383,14 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   window.renderNavState=function(){
     const packageScreens=new Set(['levels','packages','package','parts','exercise','result']);
     const planScreens=new Set(['studyPlans','studyPlanDetail']);
+    const donationScreens=new Set(['donations']);
     document.querySelectorAll('.mainNav .navItem').forEach(b=>{
       const nav=b.dataset.nav;
       b.classList.toggle('active',
         nav==='home' && route.screen==='home' ||
         nav==='packages' && packageScreens.has(route.screen) ||
-        nav==='studyPlans' && planScreens.has(route.screen)
+        nav==='studyPlans' && planScreens.has(route.screen) ||
+        nav==='donations' && donationScreens.has(route.screen)
       );
     });
   };
