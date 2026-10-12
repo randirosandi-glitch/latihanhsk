@@ -3747,6 +3747,40 @@ body.dark #exercise .hsk4PaperSentenceLine,
 body.dark #exercise .hsk4PaperSequenceResponse label{color:var(--text)!important;}
 /* END GENERATED MODULE: src/styles/hsk4-paper-engine.css */
 </style>
+<style id="donation-styles">
+/* Donasi: one compact card, isolated from every other app screen. */
+#donations{min-height:calc(100svh - 170px);padding:8px 8px 88px;box-sizing:border-box}
+#donations .donationLayout{display:block;width:100%;max-width:720px;margin:0 auto}
+#donations .donationCard{display:flex;flex-direction:column;width:100%;max-width:720px;margin:0 auto;padding:clamp(12px,2.4vw,22px);border:0;border-radius:0;background:transparent;box-shadow:none;box-sizing:border-box}
+#donations .donationCardHead{display:block;margin:0 0 10px}
+#donations .donationCallout h2{font-size:clamp(20px,4.8vw,26px);line-height:1.18;letter-spacing:-.025em;margin:0 0 5px}
+#donations .donationCallout p{font-size:clamp(13px,3.5vw,16px);line-height:1.35;color:var(--muted);margin:0}
+#donations .donationQrFrame{display:flex;align-items:center;justify-content:center;width:min(100%,340px);margin:0 auto 10px;padding:0;min-height:0;box-sizing:border-box;border:0;border-radius:0;background:#fff;box-shadow:none}
+#donations .donationQrFrame img{display:block!important;width:auto!important;height:auto!important;max-width:100%!important;max-height:44svh!important;object-fit:contain!important;flex:none!important}
+#donations .donationDownload{display:flex;justify-content:center;align-items:center;gap:8px;padding:10px 14px;border-radius:13px;background:var(--blue);color:#fff!important;text-decoration:none!important;font-weight:800}
+#donations .donationSecurity{margin-top:9px;padding:9px 11px;border-radius:12px;background:color-mix(in srgb,var(--blue) 7%,var(--surface));font-size:11px;color:var(--muted)}
+#donations .donationSecurity strong{display:block;color:var(--text);font-size:12px;margin-bottom:2px}
+#donations .donationSecurity p{margin:0;line-height:1.35}
+@media(min-width:600px){
+ #donations{padding:12px 22px 90px}
+ #donations .donationLayout,#donations .donationCard{max-width:680px}
+ #donations .donationQrFrame{width:min(100%,340px)}
+ #donations .donationQrFrame img{max-height:44svh!important}
+}
+@media(orientation:landscape) and (max-height:600px){
+ #donations{min-height:auto;padding:6px 8px 72px}
+ #donations .donationLayout,#donations .donationCard{max-width:520px}
+ #donations .donationCard{padding:9px 13px;border-radius:17px}
+ #donations .donationCardHead{margin-bottom:6px}
+ #donations .donationCallout h2{font-size:18px}
+ #donations .donationCallout p{font-size:12px;line-height:1.25}
+ #donations .donationQrFrame{width:min(100%,135px);margin-bottom:6px;padding:3px}
+ #donations .donationQrFrame img{max-height:32svh!important}
+ #donations .donationDownload{padding:7px 12px}
+ #donations .donationSecurity{margin-top:6px;padding:6px 8px;font-size:10px}
+ #donations .donationSecurity strong{font-size:11px}
+}
+</style>
 </head><body><div aria-live="polite" id="appBootLoader" role="status"><div class="bootCard"><div aria-hidden="true" class="bootMark"><svg aria-hidden="true" class="bootLogoSvg bootLogoLight" preserveaspectratio="xMidYMid meet" viewbox="0 0 1536 581">
 <svg height="581" viewbox="0 0 1536 581" width="1536" xmlns="http://www.w3.org/2000/svg">
 <defs>
@@ -3834,6 +3868,7 @@ body.dark #exercise .hsk4PaperSequenceResponse label{color:var(--text)!important
 <button class="navItem" data-nav="home" onclick="goHome()"><svg aria-hidden="true" class="ico heroicon-solid" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="m11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z"/><path d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a2.29 2.29 0 0 0 .091-.086L12 5.432Z"/></svg><span class="navLabel">Beranda</span></button>
 <button class="navItem" data-nav="packages" onclick="openPackages()"><svg aria-hidden="true" class="ico heroicon-solid" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19.5 21a3 3 0 0 0 3-3v-4.5a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3V18a3 3 0 0 0 3 3h15ZM1.5 10.146V6a3 3 0 0 1 3-3h5.379a2.25 2.25 0 0 1 1.59.659l2.122 2.121c.14.141.331.22.53.22H19.5a3 3 0 0 1 3 3v1.146A4.483 4.483 0 0 0 19.5 9h-15a4.483 4.483 0 0 0-3 1.146Z"/></svg><span class="navLabel">Paket Soal</span></button>
 <button class="navItem" data-nav="studyPlans" onclick="openStudyPlans()"><svg aria-hidden="true" class="ico heroicon-solid" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M10.5 3A1.501 1.501 0 0 0 9 4.5h6A1.5 1.5 0 0 0 13.5 3h-3Zm-2.693.178A3 3 0 0 1 10.5 1.5h3a3 3 0 0 1 2.694 1.678c.497.042.992.092 1.486.15 1.497.173 2.57 1.46 2.57 2.929V19.5a3 3 0 0 1-3 3H6.75a3 3 0 0 1-3-3V6.257c0-1.47 1.073-2.756 2.57-2.93.493-.057.989-.107 1.487-.15Z" clip-rule="evenodd"/></svg><span class="navLabel">Rencana</span></button>
+<button class="navItem" data-nav="donations" onclick="openDonations()"><svg aria-hidden="true" class="ico heroicon-solid" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.645 20.91a.75.75 0 0 0 .71 0l.035-.02c.19-.11 1.83-1.07 3.59-2.67 1.77-1.61 3.77-4.02 4.4-6.95.66-3.06-1.08-5.88-4.08-6.56a5.25 5.25 0 0 0-4.3 1.02 5.25 5.25 0 0 0-4.3-1.02c-3 .68-4.74 3.5-4.08 6.56.63 2.93 2.63 5.34 4.4 6.95 1.76 1.6 3.4 2.56 3.59 2.67z"/></svg><span class="navLabel">Donasi</span></button>
 <button class="navItem" data-nav="theme" onclick="toggleTheme()"><svg aria-hidden="true" class="ico heroicon-solid" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 0 1 .162.819A8.97 8.97 0 0 0 9 6a9 9 0 0 0 9 9 8.97 8.97 0 0 0 3.463-.69.75.75 0 0 1 .981.98 10.503 10.503 0 0 1-9.694 6.46c-5.799 0-10.5-4.7-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 0 1 .818.162Z" clip-rule="evenodd"/></svg><span class="navLabel">Tema</span></button>
 <button class="navItem logoutNav" data-nav="logout" onclick="logout()"><svg aria-hidden="true" class="ico heroicon-solid" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M16.5 3.75a1.5 1.5 0 0 1 1.5 1.5v13.5a1.5 1.5 0 0 1-1.5 1.5h-6a1.5 1.5 0 0 1-1.5-1.5V15a.75.75 0 0 0-1.5 0v3.75a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V5.25a3 3 0 0 0-3-3h-6a3 3 0 0 0-3 3V9A.75.75 0 1 0 9 9V5.25a1.5 1.5 0 0 1 1.5-1.5h6ZM5.78 8.47a.75.75 0 0 0-1.06 0l-3 3a.75.75 0 0 0 0 1.06l3 3a.75.75 0 0 0 1.06-1.06l-1.72-1.72H15a.75.75 0 0 0 0-1.5H4.06l1.72-1.72a.75.75 0 0 0 0-1.06Z" clip-rule="evenodd"/></svg><span class="navLabel">Keluar</span></button>
 </nav>
@@ -3917,6 +3952,16 @@ body.dark #exercise .hsk4PaperSequenceResponse label{color:var(--text)!important
 <section class="screen" id="partsScreen"><div class="crumb"><span onclick="goHome()">Beranda</span><span>›</span><span id="partsPkg"></span><span>›</span><span class="current" id="partsCrumb"></span></div><div class="section"><h2 id="partsTitle"></h2><div class="sub">Pilih bagian soal.</div></div><div class="grid" id="sections"></div></section>
 <section class="screen" id="exercise"><div class="focusHeader"><button aria-label="Kembali ke daftar bagian" class="focusBack" onclick="backRoute()" type="button"><span aria-hidden="true" class="material-symbols-rounded ico">arrow_back</span></button><div class="focusContext"><div class="focusMeta"><span id="exPkg"></span><span aria-hidden="true">·</span><span id="exType"></span></div><div class="focusPart" id="exPart"></div></div><button aria-label="Ganti tema" class="exerciseThemeToggle" onclick="toggleTheme()" title="Ganti tema" type="button"><span aria-hidden="true" class="material-symbols-rounded ico">dark_mode</span></button></div><div class="section"><h2 id="exTitle"></h2><div class="sub">Semua soal di bagian ini tampil sekaligus.</div></div><div id="questions"></div></section>
 <section class="screen" id="result"><div class="focusHeader resultFocusHeader"><button aria-label="Kembali ke soal" class="focusBack" onclick="backRoute()" type="button"><span aria-hidden="true" class="material-symbols-rounded ico">arrow_back</span></button><div class="focusContext"><div class="focusMeta"><span id="resultPkg"></span><span aria-hidden="true">·</span><span id="resultType"></span></div><div class="focusPart" id="resultPart">Hasil</div></div><button aria-label="Ganti tema" class="exerciseThemeToggle" onclick="toggleTheme()" title="Ganti tema" type="button"><span aria-hidden="true" class="material-symbols-rounded ico">dark_mode</span></button></div><div id="resultBody"></div></section>
+<section class="screen" id="donations">
+<div class="donationLayout">
+ <section class="donationCard" aria-label="Donasi melalui QRIS">
+  <div class="donationCardHead"><div class="donationCallout"><h2>Aplikasi ini membantu kamu lulus ujian?</h2><p>Ayo dukung HSK Papers agar terus berkembang dan membantu lebih banyak pelajar.</p></div></div>
+  <div class="donationQrFrame"><img src="https://raw.githubusercontent.com/randirosandi-glitch/latihanhsk/main/assets/qris/qris-donasi.jpg" alt="QRIS donasi HSK Papers" onerror="this.hidden=true;document.getElementById('donationQrMissing').hidden=false"><div id="donationQrMissing" hidden>QRIS belum tersedia.<br>Tambahkan <code>assets/qris/qris-donasi.jpg</code> ke repositori Stable.</div></div>
+  <a class="donationDownload" href="https://raw.githubusercontent.com/randirosandi-glitch/latihanhsk/main/assets/qris/qris-donasi-hsk-papers.jpeg" download="qris-donasi-hsk-papers.jpeg">↓ &nbsp; Download QRIS</a>
+  <div class="donationSecurity"><strong>Donasi aman dan sukarela</strong><p>Periksa nama penerima sebelum menyelesaikan transaksi. Terima kasih sudah mendukung pengembangan HSK Papers.</p></div>
+ </section>
+</div>
+</section>
 </main>
 <script>
 const DB={};
@@ -4476,6 +4521,7 @@ function progressHTML(st,label='Progres'){return `<div class="progressWrap"><div
 function renderPackageProgress(code){const st=packageStats(code);return progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket')}
 function renderContext(){const c=$('context');const tb=$('topBack');const top=document.querySelector('.top');if(top){const isHome=route.screen==='home';document.body.classList.toggle('home-route',isHome);top.classList.toggle('homeTopHidden',isHome);top.style.setProperty('display',isHome?'none':'','important');const nav=document.querySelector('.mainNav');if(nav)nav.classList.remove('focusNavHidden');}if(tb){const hideBack=route.screen==='home'||route.screen==='levels'||route.screen==='studyPlans';tb.style.setProperty('display',hideBack?'none':'inline-flex','important');}c.classList.remove('show');c.innerHTML=''}
 function armHome(){if(typeof window.__hskArmBackGuard==='function'){window.__hskArmBackGuard()} }
+function openDonations(push=true){route={screen:"donations",packageCode:null,type:null,sectionIndex:null};setScreen("donations",push)}
 function goHome(push=true){route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;setScreen('home',push);armHome()}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushCloudSync()});
 window.addEventListener('pagehide',()=>flushCloudSync());
