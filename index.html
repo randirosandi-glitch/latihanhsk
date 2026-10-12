@@ -3784,6 +3784,8 @@ body.dark #exercise .hsk4PaperSequenceResponse label{color:var(--text)!important
 
 <style id="stable-donations-navbar-adjustments">
 /* Stable-only targeted navbar and donations adjustments */
+/* Keep the donation heart's active color consistent with the other selected navbar icons. */
+html body .mainNav .navItem[data-nav="donations"].active .heroicon-solid,html body .mainNav .navItem[data-nav="donations"][aria-current="page"] .heroicon-solid{color:var(--blue)!important;fill:currentColor!important;stroke:none!important}
 html body.donations-active header.top #topBack,html body.donations-active #topBack{display:none!important;visibility:hidden!important;pointer-events:none!important;width:0!important;height:0!important;min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important}
 html body .mainNav .navItem .navLabel,html body .mainNav .navItem.active .navLabel,html body .mainNav .navItem[aria-current="page"] .navLabel{display:none!important;visibility:hidden!important;opacity:0!important;width:0!important;max-width:0!important;height:0!important;max-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;font-size:0!important;line-height:0!important}
 html body .mainNav .navItem{gap:0!important}
