@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>Donasi — HSK Papers</title>
+<style>
+  :root { color-scheme: light dark; --bg:#fff; --fg:#111; --muted:#707070; --line:#e5e5e5; --panel:#f6f6f6; --button:#111; --buttonText:#fff; }
+  @media (prefers-color-scheme: dark) {
+    :root { color-scheme:dark; --bg:#000; --fg:#f5f5f5; --muted:#a0a0a0; --line:#292929; --panel:#151515; --button:#f5f5f5; --buttonText:#111; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+  main { width:min(100% - 32px, 620px); margin:0 auto; padding:32px 0 48px; }
+  .top { display:flex; align-items:center; gap:12px; margin-bottom:28px; }
+  .mark { width:44px; height:44px; display:grid; place-items:center; border:1px solid var(--line); border-radius:14px; flex:none; }
+  .mark svg { width:24px; height:24px; }
+  .brand { font-weight:700; letter-spacing:-.02em; }
+  .subbrand { color:var(--muted); font-size:13px; }
+  .intro { text-align:center; padding:12px 4px 24px; }
+  h1 { margin:0 0 10px; font-size:clamp(25px,5vw,34px); line-height:1.15; letter-spacing:-.04em; }
+  .intro p { max-width:440px; margin:0 auto; color:var(--muted); }
+  .qr-card { width:min(100%,360px); margin:0 auto; padding:20px; border:1px solid var(--line); border-radius:20px; }
+  .qr-wrap { aspect-ratio:1; display:grid; place-items:center; overflow:hidden; background:#fff; border-radius:12px; }
+  .qr-wrap img { display:block; width:100%; height:100%; object-fit:contain; }
+  .placeholder { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:18px; text-align:center; color:#333; }
+  .placeholder svg { width:74px; height:74px; }
+  .placeholder strong { font-size:15px; }
+  .placeholder span { font-size:12px; color:#666; }
+  .qr-label { margin:14px 0 0; text-align:center; font-weight:650; }
+  .qr-hint { margin:3px 0 0; text-align:center; font-size:13px; color:var(--muted); }
+  .actions { display:grid; grid-template-columns:1fr; gap:10px; margin-top:16px; }
+  .btn { min-height:48px; width:100%; display:flex; align-items:center; justify-content:center; gap:9px; padding:12px 16px; border:1px solid var(--fg); border-radius:12px; background:var(--button); color:var(--buttonText); font:inherit; font-weight:650; text-decoration:none; cursor:pointer; }
+  .btn svg { width:18px; height:18px; }
+  .note { display:flex; align-items:flex-start; gap:10px; max-width:360px; margin:20px auto 0; color:var(--muted); font-size:13px; }
+  .note svg { width:19px; height:19px; flex:none; margin-top:2px; }
+  .thanks { margin:28px 0 0; text-align:center; color:var(--muted); font-size:13px; }
+  @media (min-width:560px) { main { padding-top:40px; } .actions { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <div class="mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/><path d="M8 12h2l1.2-2.2L13.5 15l1.2-3H17"/></svg>
+    </div>
+    <div><div class="brand">HSK Papers</div><div class="subbrand">Dukungan aplikasi</div></div>
+  </header>
+
+  <section class="intro">
+    <h1>Dukung Operasional HSK Papers</h1>
+    <p>Dukunganmu membantu menjaga HSK Papers tetap berjalan dan terus dikembangkan.</p>
+  </section>
+
+  <section class="qr-card" aria-label="QRIS donasi">
+    <div class="qr-wrap">
+      <img id="qrisImage" src="assets/qris/qris-donasi.png" alt="QRIS untuk mendukung operasional HSK Papers"
+        onerror="this.hidden=true;document.getElementById('qrPlaceholder').hidden=false">
+      <div id="qrPlaceholder" class="placeholder" hidden>
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="5" width="20" height="20" rx="2"/><rect x="11" y="11" width="8" height="8"/><rect x="39" y="5" width="20" height="20" rx="2"/><rect x="45" y="11" width="8" height="8"/><rect x="5" y="39" width="20" height="20" rx="2"/><rect x="11" y="45" width="8" height="8"/><path d="M34 5v8h5m-5 8v5m8 5h17v8h-8v8h-9v-8h-8m-2 9h7v8h-7m17-9h10m-5 0v9"/></svg>
+        <strong>QRIS akan ditampilkan di sini</strong>
+        <span>Unggah QRIS asli ke assets/qris/qris-donasi.png</span>
+      </div>
+    </div>
+    <div class="qr-label">Pindai untuk berdonasi</div>
+    <p class="qr-hint">Gunakan aplikasi pembayaran yang mendukung QRIS.</p>
+    <div class="actions">
+      <a class="btn" id="downloadBtn" href="assets/qris/qris-donasi.png" download="QRIS-Donasi-HSK-Papers">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/></svg>
+        Download QRIS
+      </a>
+    </div>
+  </section>
+
+  <div class="note">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg>
+    <div>Donasi bersifat sukarela. HSK Papers tetap dapat digunakan tanpa berdonasi.</div>
+  </div>
+  <p class="thanks">Terima kasih telah mendukung HSK Papers.</p>
+</main>
+</body>
+</html>
