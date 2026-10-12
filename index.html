@@ -3781,6 +3781,13 @@ body.dark #exercise .hsk4PaperSequenceResponse label{color:var(--text)!important
  #donations .donationSecurity strong{font-size:11px}
 }
 </style>
+
+<style id="stable-donations-navbar-adjustments">
+/* Stable-only targeted navbar and donations adjustments */
+body.donations-active #topBack{display:none!important;visibility:hidden!important;pointer-events:none!important}
+.mainNav .navItem .navLabel,.mainNav .navItem.active .navLabel,.mainNav .navItem[aria-current="page"] .navLabel{display:none!important;visibility:hidden!important;opacity:0!important;width:0!important;height:0!important;overflow:hidden!important}
+.mainNav .navItem{gap:0!important}
+</style>
 </head><body><div aria-live="polite" id="appBootLoader" role="status"><div class="bootCard"><div aria-hidden="true" class="bootMark"><svg aria-hidden="true" class="bootLogoSvg bootLogoLight" preserveaspectratio="xMidYMid meet" viewbox="0 0 1536 581">
 <svg height="581" viewbox="0 0 1536 581" width="1536" xmlns="http://www.w3.org/2000/svg">
 <defs>
@@ -4410,7 +4417,7 @@ function performLogout(){
   renderUserPill();
   resetAuthChoices();
 }
-function setScreen(name,push=true){if(!currentUsername){showAuthScreen();return}document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));const target=$(name);if(!target)return;target.classList.add('active');document.body.classList.toggle('exercise-focus',name==='exercise');document.body.classList.toggle('result-focus',name==='result');renderContext();renderNavState();requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));/* canonical navigation guard owns browser history */if(!window.__hskRestoringLastRoute&&typeof window.__hskPersistRoute==='function')window.__hskPersistRoute();}
+function setScreen(name,push=true){if(!currentUsername){showAuthScreen();return}document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));const target=$(name);if(!target)return;target.classList.add('active');document.body.classList.toggle('exercise-focus',name==='exercise');document.body.classList.toggle('result-focus',name==='result');document.body.classList.toggle('donations-active',name==='donations');renderContext();renderNavState();requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));/* canonical navigation guard owns browser history */if(!window.__hskRestoringLastRoute&&typeof window.__hskPersistRoute==='function')window.__hskPersistRoute();}
 function saveState(){return route}
 /* Persist only the current app route so a browser refresh returns to the same page.
    This is intentionally separate from answer/progress storage. */
