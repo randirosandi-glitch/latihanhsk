@@ -3859,7 +3859,7 @@ body.dark #exercise #exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction
 <section class="screen" id="exercise"><div class="focusHeader"><button aria-label="Kembali ke daftar bagian" class="focusBack" onclick="backRoute()" type="button"><span aria-hidden="true" class="material-symbols-rounded ico">arrow_back</span></button><div class="focusContext"><div class="focusMeta"><span id="exPkg"></span><span aria-hidden="true">·</span><span id="exType"></span></div><div class="focusPart" id="exPart"></div></div><button aria-label="Ganti tema" class="exerciseThemeToggle" onclick="toggleTheme()" title="Ganti tema" type="button"><span aria-hidden="true" class="material-symbols-rounded ico">dark_mode</span></button></div><div class="section"><h2 id="exTitle"></h2><div class="sub">Semua soal di bagian ini tampil sekaligus.</div></div><div id="questions"></div></section>
 <section class="screen" id="result"><div class="focusHeader resultFocusHeader"><button aria-label="Kembali ke soal" class="focusBack" onclick="backRoute()" type="button"><span aria-hidden="true" class="material-symbols-rounded ico">arrow_back</span></button><div class="focusContext"><div class="focusMeta"><span id="resultPkg"></span><span aria-hidden="true">·</span><span id="resultType"></span></div><div class="focusPart" id="resultPart">Hasil</div></div><button aria-label="Ganti tema" class="exerciseThemeToggle" onclick="toggleTheme()" title="Ganti tema" type="button"><span aria-hidden="true" class="material-symbols-rounded ico">dark_mode</span></button></div><div id="resultBody"></div></section>
 
-<section class="screen" id="donationsScreen">
+<section class="screen" id="donations">
   <div class="donationLayout">
     <section class="donationHero">
       <div class="donationEyebrow"><span aria-hidden="true" class="material-symbols-rounded">favorite</span>Dukung HSK Papers</div>
@@ -4205,7 +4205,7 @@ function progressHTML(st,label='Progres'){return `<div class="progressWrap"><div
 function renderPackageProgress(code){const st=packageStats(code);return progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket')}
 function renderContext(){const c=$('context');const tb=$('topBack');const top=document.querySelector('.top');if(top){const isHome=route.screen==='home';document.body.classList.toggle('home-route',isHome);top.classList.toggle('homeTopHidden',isHome);top.style.setProperty('display',isHome?'none':'','important');const nav=document.querySelector('.mainNav');if(nav)nav.classList.remove('focusNavHidden');}if(tb){const hideBack=route.screen==='home'||route.screen==='levels'||route.screen==='studyPlans';tb.style.setProperty('display',hideBack?'none':'inline-flex','important');}c.classList.remove('show');c.innerHTML=''}
 function armHome(){if(typeof window.__hskArmBackGuard==='function'){window.__hskArmBackGuard()} }
-function openDonations(push=true){route={screen:'donations',packageCode:null,type:null,sectionIndex:null};setScreen('donationsScreen',push);armHome()}
+function openDonations(push=true){route={screen:'donations',packageCode:null,type:null,sectionIndex:null};setScreen('donations',push);armHome()}
 function goHome(push=true){route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;setScreen('home',push);armHome()}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushCloudSync()});
 window.addEventListener('pagehide',()=>flushCloudSync());
