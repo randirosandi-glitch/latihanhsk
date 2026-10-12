@@ -5903,7 +5903,8 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       b.classList.toggle('active',
         nav==='home' && route.screen==='home' ||
         nav==='packages' && packageScreens.has(route.screen) ||
-        nav==='studyPlans' && planScreens.has(route.screen)
+        nav==='studyPlans' && planScreens.has(route.screen) ||
+        nav==='donations' && route.screen==='donations'
       );
     });
   };
@@ -7743,6 +7744,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     document.querySelectorAll('.mainNav .navItem').forEach(b=>{
       const activeNav=(screen===b.dataset.nav)||
         ((screen==='studyPlans'||screen==='studyPlanDetail')&&b.dataset.nav==='studyPlans')||
+        (screen==='donations'&&b.dataset.nav==='donations')||
         ((screen==='levels'||screen==='packages'||screen==='package'||screen==='parts'||screen==='exercise'||screen==='result')&&b.dataset.nav==='packages');
       b.classList.toggle('active',activeNav);
     });
