@@ -1415,6 +1415,6 @@
       "CBA"
     ],
     "reading_part3_note": "A/B/C sentence text is stored in question[2]; answer remains the verified correct permutation in question[3].",
-    "schemaRepair": "v6: Fixed the actual live-engine bug. Reading 56–65 keeps the verified [id,prompt,A/B/C fragments + six permutation options,answer] question data, but its engine rule is choice/single_select so HSK Papers v1.31 renders the six ABC/ACB/BAC/BCA/CAB/CBA choices instead of the writing-style input."
+    "schemaRepair": "v6: Reading questions 56–65 now store the instruction in question[1], the three A/B/C sentence fragments in question[2], and the verified correct permutation in question[3]. The engine rule is sentence_ordering/ordering; the HSK 4 paper renderer displays the three fragments and offers the six ABC permutations."
   }
 }
