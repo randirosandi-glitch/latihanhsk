@@ -4410,7 +4410,7 @@ function progressHTML(st,label='Progres'){return `<div class="progressWrap"><div
 function renderPackageProgress(code){const st=packageStats(code);return progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket')}
 function renderContext(){const c=$('context');const tb=$('topBack');const top=document.querySelector('.top');if(top){const isHome=route.screen==='home';document.body.classList.toggle('home-route',isHome);top.classList.toggle('homeTopHidden',isHome);top.style.setProperty('display',isHome?'none':'','important');const nav=document.querySelector('.mainNav');if(nav)nav.classList.remove('focusNavHidden');}if(tb){const hideBack=route.screen==='home'||route.screen==='levels'||route.screen==='studyPlans';tb.style.setProperty('display',hideBack?'none':'inline-flex','important');}c.classList.remove('show');c.innerHTML=''}
 function armHome(){if(typeof window.__hskArmBackGuard==='function'){window.__hskArmBackGuard()} }
-function goHome(push=true){route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;setScreen('home',push);armHome()}
+function goHome(push=true){route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;setScreen('home',push);armHome()} function openDonations(push=true){route={screen:'donations',packageCode:null,type:null,sectionIndex:null};setScreen('donations',push)}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushCloudSync()});
 window.addEventListener('pagehide',()=>flushCloudSync());
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&currentUsername){pullCloudState()}});
