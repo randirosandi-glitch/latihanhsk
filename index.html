@@ -5792,7 +5792,8 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       b.classList.toggle('active',
         nav==='home' && route.screen==='home' ||
         nav==='packages' && packageScreens.has(route.screen) ||
-        nav==='studyPlans' && planScreens.has(route.screen)
+        nav==='studyPlans' && planScreens.has(route.screen) ||
+        nav==='donations' && route.screen==='donations'
       );
     });
   };
