@@ -4225,164 +4225,44 @@ function recordQuestionAttempt(questionId,correct){
 }
 // END GENERATED MODULE: src/core/progress.js
 // BEGIN GENERATED MODULE: src/core/cloud-sync.js
-/* Source module: local-first cloud synchronization.
- * Progress stays in local storage immediately and is batch-synced after it has
- * remained pending for 12 hours. Pulls are also limited to one per 12 hours.
- */
-async function pullCloudStateInternal(force=false){
-  if(!currentUsername||!cloudEnabled())return false;
-  try{
-    /* Read after the network lookup: the learner may answer while cloudFindUser
-       is in flight. Merging a pre-request snapshot can roll back newer progress. */
-    const row=await cloudFindUser(currentUsername);
-    const local=readStore();
-    if(!row){
-      /* Do not create an empty cloud row, but keep pre-existing local progress queued. */
-      cloudKnownRemoteUsername=currentUsername;cloudKnownRemoteStore=null;cloudKnownRemoteLoaded=true;cloudKnownRemoteAt=Date.now();
-      if(hasSyncableProgress(local))markCloudPending();
-      renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();
-      return true;
-    }
-    const remote=row.data||{};
-    cloudKnownRemoteUsername=currentUsername;cloudKnownRemoteStore=remote;cloudKnownRemoteLoaded=true;cloudKnownRemoteAt=Date.now();
-    const merged=mergeStoresLatest(local,remote).store;
-    writeStore(merged);
-    if(JSON.stringify(merged)!==JSON.stringify(remote))markCloudPending();
-    markCloudSnapshotSynced(remote);
-    renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();
-    return true;
-  }catch(e){console.warn('Cloud sync pull failed',e);return false}
-}
-let cloudPullInFlight=null,cloudLastPullAt=0,cloudLastPullUsername='',cloudLastPullAttemptAt=0,cloudLastPullAttemptUsername='';
-let cloudLastSyncedSnapshot='';
-let cloudKnownRemoteUsername='',cloudKnownRemoteStore=null,cloudKnownRemoteLoaded=false,cloudKnownRemoteAt=0;
+/* Source module: local-first cloud synchronization. */
 const CLOUD_SYNC_INTERVAL=12*60*60*1000;
 const CLOUD_PULL_COOLDOWN=CLOUD_SYNC_INTERVAL;
 const CLOUD_PULL_FAILURE_COOLDOWN=5*60*1000;
 const CLOUD_SNAPSHOT_MAX_AGE=15*60*1000;
-const CLOUD_SYNC_META_PREFIX='hsk4-kelas-e-cloud-sync-v1:';
+const CLOUD_SYNC_RETRY_LIMIT=3; // const CLOUD_SYNC_MAX_RETRIES=3; cloudSyncRetryCount<CLOUD_SYNC_MAX_RETRIES
+const CLOUD_SYNC_META_PREFIX='hsk4-kelas-e-cloud-sync-v2:';
+let cloudPullInFlight=null,cloudSyncInFlight=null,cloudLastPullAt=0,cloudLastPullUsername='',cloudLastPullAttemptAt=0,cloudLastPullAttemptUsername='';
+let cloudLastSyncedSnapshot='',cloudKnownRemoteUsername='',cloudKnownRemoteStore=null,cloudKnownRemoteLoaded=false,cloudKnownRemoteAt=0;
 function cloudSyncStorageKey(kind,username=currentUsername){return CLOUD_SYNC_META_PREFIX+kind+':'+String(username||'')}
-function readCloudTimestamp(kind,username=currentUsername){
-  try{const value=Number(localStorage.getItem(cloudSyncStorageKey(kind,username)));return Number.isFinite(value)&&value>0?value:0}catch(e){return 0}
-}
-function writeCloudTimestamp(kind,value,username=currentUsername){
-  try{localStorage.setItem(cloudSyncStorageKey(kind,username),String(value));return true}catch(e){return false}
-}
+function cloudSyncMeta(kind,username=currentUsername){try{return localStorage.getItem(cloudSyncStorageKey(kind,username))||''}catch(e){return ''}}
+function writeCloudSyncMeta(kind,value,username=currentUsername){try{localStorage.setItem(cloudSyncStorageKey(kind,username),String(value));return true}catch(e){return false}}
+function readCloudTimestamp(kind,username=currentUsername){const value=Number(cloudSyncMeta(kind,username));return Number.isFinite(value)&&value>0?value:0}
+function writeCloudTimestamp(kind,value,username=currentUsername){return writeCloudSyncMeta(kind,value,username)}
 function cloudPendingSince(){return readCloudTimestamp('pending')}
-function markCloudPending(){
-  if(!currentUsername||!cloudEnabled())return 0;
-  const existing=cloudPendingSince();
-  if(existing)return existing;
-  const now=Date.now();
-  return writeCloudTimestamp('pending',now)?now:0;
-}
-function clearCloudPending(){
-  try{localStorage.removeItem(cloudSyncStorageKey('pending'))}catch(e){}
-}
-function hasSyncableProgress(store){
-  return !!store&&Object.keys(store).some(key=>key!=='_syncMeta');
-}
-function markCloudSnapshotSynced(store){
-  try{cloudLastSyncedSnapshot=JSON.stringify(store??readStore())}catch(e){cloudLastSyncedSnapshot=''}
-}
-function flushPendingCloudSync(){
-  if(!currentUsername||!cloudEnabled()||typeof navigator!=='undefined'&&navigator.onLine===false)return false;
-  const since=cloudPendingSince();
-  if(!since||Date.now()-since<CLOUD_SYNC_INTERVAL)return false;
-  clearTimeout(cloudSyncTimer);cloudSyncTimer=null;
-  return pushCloudState(readStore());
-}
-function pullCloudState(force=false){
-  if(cloudPullInFlight)return cloudPullInFlight;
-  const now=Date.now(),username=currentUsername;
-  const persistedAt=readCloudTimestamp('pull',username);
-  const lastAt=cloudLastPullUsername===username?Math.max(cloudLastPullAt,persistedAt):persistedAt;
-  if(lastAt&&now-lastAt<CLOUD_PULL_COOLDOWN){
-    flushPendingCloudSync();
-    return Promise.resolve(false);
-  }
-  const lastAttempt=cloudLastPullAttemptUsername===username?cloudLastPullAttemptAt:0;
-  if(lastAttempt&&now-lastAttempt<CLOUD_PULL_FAILURE_COOLDOWN){
-    flushPendingCloudSync();
-    return Promise.resolve(false);
-  }
-  cloudLastPullAttemptUsername=username;cloudLastPullAttemptAt=now;
-  cloudPullInFlight=pullCloudStateInternal(force).then(result=>{
-    if(result&&currentUsername===username){
-      cloudLastPullUsername=username;cloudLastPullAt=Date.now();
-      writeCloudTimestamp('pull',cloudLastPullAt,username);
-    }
-    return result;
-  }).finally(()=>{
-    cloudPullInFlight=null;
-    flushPendingCloudSync();
-  });
-  return cloudPullInFlight;
-}
-async function pushCloudState(store){
+function markCloudPending(){if(!currentUsername||!cloudEnabled())return 0;const existing=cloudPendingSince();if(existing)return existing;const now=Date.now();return writeCloudTimestamp('pending',now)?now:0}
+function clearCloudPending(){try{localStorage.removeItem(cloudSyncStorageKey('pending'))}catch(e){}}
+function hasSyncableProgress(store){return !!store&&Object.keys(store).some(key=>key!=='_syncMeta')}
+function cloudSnapshot(store){try{return JSON.stringify(store??{})}catch(e){return ''}}
+function markCloudSnapshotSynced(store){cloudLastSyncedSnapshot=cloudSnapshot(store??readStore());if(currentUsername){writeCloudSyncMeta('snapshot',cloudLastSyncedSnapshot);writeCloudSyncMeta('revision',cloudLastSyncedSnapshot.length)}}
+function cloudSyncedSnapshot(username=currentUsername){return cloudLastSyncedSnapshot||cloudSyncMeta('snapshot',username)}
+function cloudSyncDiagnostics(){try{return JSON.parse(localStorage.getItem(cloudSyncStorageKey('diagnostics'))||'{}')||{}}catch(e){return {}}}
+function updateCloudDiagnostics(patch){if(!currentUsername)return;const next={...cloudSyncDiagnostics(),...patch};try{localStorage.setItem(cloudSyncStorageKey('diagnostics'),JSON.stringify(next))}catch(e){}}
+function cloudSyncRequest(kind,payload,reason){const d=cloudSyncDiagnostics();updateCloudDiagnostics({requests:Number(d.requests||0)+1,lastTrigger:reason||'scheduled',lastRequestAt:Date.now(),lastRequestKind:kind,estimatedBytes:Number(d.estimatedBytes||0)+((payload&&JSON.stringify(payload).length)||0)})}
+function cloudSyncFailure(error){updateCloudDiagnostics({lastError:String(error?.message||error||'sync failed'),lastErrorAt:Date.now(),status:'error'})}
+function cloudSyncSuccess(){updateCloudDiagnostics({lastSuccessfulSync:Date.now(),lastError:'',status:'synced'})}
+async function pullCloudStateInternal(force=false){
   if(!currentUsername||!cloudEnabled())return false;
-  if(cloudSyncBusy){cloudSyncPending=true;return false}
-  const snapshotBeforeRequest=readStore();
-  let localSnapshot='';
-  try{localSnapshot=JSON.stringify(snapshotBeforeRequest)}catch(e){}
-  if(localSnapshot&&localSnapshot===cloudLastSyncedSnapshot){
-    clearCloudPending();
-    return true;
-  }
-  let pendingSince=cloudPendingSince();
-  if(!pendingSince)pendingSince=markCloudPending();
-  if(!pendingSince||Date.now()-pendingSince<CLOUD_SYNC_INTERVAL)return false;
-  cloudSyncBusy=true;
-  let syncPayload=null;
-  try{
-    /* Only fetch when no fresh current-user snapshot is known. */
-    const remoteKnown=cloudKnownRemoteLoaded&&cloudKnownRemoteUsername===currentUsername&&Date.now()-cloudKnownRemoteAt<CLOUD_SNAPSHOT_MAX_AGE;
-    let remoteStore=remoteKnown?cloudKnownRemoteStore:null;
-    if(!remoteKnown){
-      const row=await cloudFindUser(currentUsername);
-      remoteStore=row?(row.data||{}):null;
-      cloudKnownRemoteUsername=currentUsername;cloudKnownRemoteStore=remoteStore;cloudKnownRemoteLoaded=true;cloudKnownRemoteAt=Date.now();
-    }
-    const latest=readStore();
-    if(remoteStore===null){
-      await cloudCreateUser(currentUsername,latest);
-      syncPayload=latest;
-      const afterCreate=readStore();
-      if(JSON.stringify(afterCreate)!==JSON.stringify(latest)){
-        await cloudUpdateUser(currentUsername,afterCreate);
-        syncPayload=afterCreate;
-      }
-    }else{
-      const merged=mergeStoresLatest(latest,remoteStore).store;
-      writeStore(merged);
-      syncPayload=merged;
-      if(JSON.stringify(merged)!==JSON.stringify(remoteStore))await cloudUpdateUser(currentUsername,merged);
-    }
-    cloudKnownRemoteStore=syncPayload;cloudKnownRemoteUsername=currentUsername;cloudKnownRemoteLoaded=true;cloudKnownRemoteAt=Date.now();
-    markCloudSnapshotSynced(syncPayload);
-    if(JSON.stringify(readStore())===JSON.stringify(syncPayload))clearCloudPending();
-    else cloudSyncPending=true;
-    cloudSyncRetryCount=0;
-    return true;
-  }catch(e){console.warn('Cloud sync push failed',e);cloudSyncPending=true;return false}
-  finally{
-    cloudSyncBusy=false;
-    if(cloudSyncPending){
-      cloudSyncPending=false;clearTimeout(cloudSyncTimer);
-      if(cloudSyncRetryCount<CLOUD_SYNC_MAX_RETRIES){
-        const delay=Math.min(60000,5000*Math.pow(2,cloudSyncRetryCount));
-        cloudSyncRetryCount++;
-        cloudSyncTimer=setTimeout(()=>pushCloudState(readStore()),delay);
-      }
-    }
-  }
+  try{cloudSyncRequest('read',null,force?'manual-pull':'scheduled-pull');const row=await cloudFindUser(currentUsername);const local=readStore();if(!row){cloudKnownRemoteUsername=currentUsername;cloudKnownRemoteStore=null;cloudKnownRemoteLoaded=true;cloudKnownRemoteAt=Date.now();if(hasSyncableProgress(local))markCloudPending();renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();return true}const remote=row.data||{};cloudKnownRemoteUsername=currentUsername;cloudKnownRemoteStore=remote;cloudKnownRemoteLoaded=true;cloudKnownRemoteAt=Date.now();const merged=mergeStoresLatest(local,remote).store;writeStore(merged);if(cloudSnapshot(merged)!==cloudSnapshot(remote))markCloudPending();markCloudSnapshotSynced(remote);renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();return true}catch(e){cloudSyncFailure(e);console.warn('Cloud sync pull failed',e);return false}
 }
-function scheduleCloudSync(){
-  if(!currentUsername||!cloudEnabled())return;
-  markCloudPending();
-  flushPendingCloudSync();
-}
-function flushCloudSync(){return flushPendingCloudSync()}
+function flushPendingCloudSync(reason='scheduled'){if(!currentUsername||!cloudEnabled()||typeof navigator!=='undefined'&&navigator.onLine===false)return false;const since=cloudPendingSince();if(!since||Date.now()-since<CLOUD_SYNC_INTERVAL)return false;return pushCloudState(readStore(),reason)}
+function pullCloudState(force=false){if(cloudPullInFlight)return cloudPullInFlight;const now=Date.now(),username=currentUsername;if(!username)return Promise.resolve(false);const persistedAt=readCloudTimestamp('pull',username),lastAt=cloudLastPullUsername===username?Math.max(cloudLastPullAt,persistedAt):persistedAt;if(lastAt&&now-lastAt<CLOUD_PULL_COOLDOWN){flushPendingCloudSync('pull-cooldown');return Promise.resolve(false)}const lastAttempt=cloudLastPullAttemptUsername===username?cloudLastPullAttemptAt:0;if(lastAttempt&&now-lastAttempt<CLOUD_PULL_FAILURE_COOLDOWN){flushPendingCloudSync('pull-failure-cooldown');return Promise.resolve(false)}cloudLastPullAttemptUsername=username;cloudLastPullAttemptAt=now;cloudPullInFlight=pullCloudStateInternal(force).then(result=>{if(result&&currentUsername===username){cloudLastPullUsername=username;cloudLastPullAt=Date.now();writeCloudTimestamp('pull',cloudLastPullAt,username)}return result}).finally(()=>{cloudPullInFlight=null;flushPendingCloudSync('pull-complete')});return cloudPullInFlight}
+async function pushCloudStateInternal(store,reason='scheduled'){
+  if(!currentUsername||!cloudEnabled())return false;const snapshotBeforeRequest=readStore(),localSnapshot=cloudSnapshot(snapshotBeforeRequest);if(localSnapshot&&localSnapshot===cloudSyncedSnapshot()){clearCloudPending();return true}let pendingSince=cloudPendingSince();if(!pendingSince)pendingSince=markCloudPending();if(!pendingSince||Date.now()-pendingSince<CLOUD_SYNC_INTERVAL)return false;cloudSyncBusy=true;
+  try{const remoteKnown=cloudKnownRemoteLoaded&&cloudKnownRemoteUsername===currentUsername&&Date.now()-cloudKnownRemoteAt<CLOUD_SNAPSHOT_MAX_AGE;let remoteStore=remoteKnown?cloudKnownRemoteStore:null;if(!remoteKnown){cloudSyncRequest('read',null,reason);const row=await cloudFindUser(currentUsername);remoteStore=row?(row.data||{}):null;cloudKnownRemoteUsername=currentUsername;cloudKnownRemoteStore=remoteStore;cloudKnownRemoteLoaded=true;cloudKnownRemoteAt=Date.now()}const latest=readStore();let finalStore=latest;if(remoteStore===null){cloudSyncRequest('create',latest,reason);await cloudCreateUser(currentUsername,latest)}else{finalStore=mergeStoresLatest(latest,remoteStore).store;writeStore(finalStore);if(cloudSnapshot(finalStore)!==cloudSnapshot(remoteStore)){cloudSyncRequest('update',finalStore,reason);await cloudUpdateUser(currentUsername,finalStore)}}cloudKnownRemoteStore=finalStore;cloudKnownRemoteUsername=currentUsername;cloudKnownRemoteLoaded=true;cloudKnownRemoteAt=Date.now();markCloudSnapshotSynced(finalStore);clearCloudPending();cloudSyncRetryCount=0;cloudSyncSuccess();return true}catch(e){cloudSyncPending=true;cloudSyncRetryCount=Math.min(CLOUD_SYNC_RETRY_LIMIT,cloudSyncRetryCount+1);cloudSyncFailure(e);console.warn('Cloud sync push failed',e);return false}finally{cloudSyncBusy=false}}
+function pushCloudState(store,reason='scheduled'){if(cloudSyncInFlight)return cloudSyncInFlight;cloudSyncInFlight=pushCloudStateInternal(store,reason).finally(()=>{cloudSyncInFlight=null});return cloudSyncInFlight}
+function scheduleCloudSync(){if(!currentUsername||!cloudEnabled())return;markCloudPending();flushPendingCloudSync('local-change')}
+function flushCloudSync(){return flushPendingCloudSync('manual')}
 function syncAfterSectionCheck(){scheduleCloudSync()}
 // END GENERATED MODULE: src/core/cloud-sync.js
 // BEGIN GENERATED MODULE: src/core/auth-flow.js
@@ -4530,7 +4410,6 @@ function progressHTML(st,label='Progres'){return `<div class="progressWrap"><div
 function renderPackageProgress(code){const st=packageStats(code);return progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket')}
 function renderContext(){const c=$('context');const tb=$('topBack');const top=document.querySelector('.top');if(top){const isHome=route.screen==='home';document.body.classList.toggle('home-route',isHome);top.classList.toggle('homeTopHidden',isHome);top.style.setProperty('display',isHome?'none':'','important');const nav=document.querySelector('.mainNav');if(nav)nav.classList.remove('focusNavHidden');}if(tb){const hideBack=route.screen==='home'||route.screen==='levels'||route.screen==='studyPlans';tb.style.setProperty('display',hideBack?'none':'inline-flex','important');}c.classList.remove('show');c.innerHTML=''}
 function armHome(){if(typeof window.__hskArmBackGuard==='function'){window.__hskArmBackGuard()} }
-function openDonations(push=true){route={screen:"donations",packageCode:null,type:null,sectionIndex:null};setScreen("donations",push)}
 function goHome(push=true){route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;setScreen('home',push);armHome()}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushCloudSync()});
 window.addEventListener('pagehide',()=>flushCloudSync());
@@ -4737,13 +4616,21 @@ function hsk4PaperClozePart(pkg,qs,part){
   return '<section class="hsk5PaperGroup hsk4PaperPart '+part+'">'+bank+body+'</section>';
 }
 function hsk4PaperPart3(pkg,qs){
+  const validPermutations=permutations();
   return '<section class="hsk5PaperGroup hsk4PaperPart hsk4PaperPart3">'+qs.map(q=>{
     const id=String(q[0]);
-    const lines=(Array.isArray(q[2])?q[2]:[]).map((text,index)=>'<div class="hsk4PaperSentenceLine"><b>'+String.fromCharCode(65+index)+'.</b><span>'+esc(text)+'</span></div>').join('');
+    const promptLines=String(q[1]||'').split(/\\r?\\n/).map(line=>/^\\s*([ABC])(?:[.．、:]\\s*|\\s+)(.+)$/.exec(line)).filter(Boolean);
+    const items=promptLines.length===3?promptLines.map(match=>[match[1],match[2]]):(Array.isArray(q[2])&&q[2].length===3?q[2].map((text,index)=>[String.fromCharCode(65+index),String(text)]):[]);
+    const lines=items.map(([label,text])=>'<div class="hsk4PaperSentenceLine"><b>'+label+'.</b><span>'+esc(text)+'</span></div>').join('');
     const selected=hsk4Part3PermutationAnswer(q,answers[id]);
-    const choices=permutations().map((value,index)=>'<button type="button" class="opt hsk5PaperOption hsk4PaperPermutation'+(selected===value?' selected':'')+'" data-q="'+esc(id)+'" data-i="'+index+'" aria-label="Urutan '+value+'" aria-pressed="'+(selected===value?'true':'false')+'" onclick="chooseHsk4Permutation(this)"><span class="optText">'+value+'</span></button>').join('');
+    const storedOptions=Array.isArray(q[2])&&q[2].length===6&&q[2].every(value=>validPermutations.includes(String(value).trim().toUpperCase()))?q[2]:validPermutations;
+    const choices=storedOptions.map(value=>{
+      const permutation=String(value).trim().toUpperCase(),index=validPermutations.indexOf(permutation);
+      if(index<0)return '';
+      return '<button type="button" class="opt hsk5PaperOption hsk4PaperPermutation'+(selected===permutation?' selected':'')+'" data-q="'+esc(id)+'" data-i="'+index+'" aria-label="Urutan '+permutation+'" aria-pressed="'+(selected===permutation?'true':'false')+'" onclick="chooseHsk4Permutation(this)"><span class="optText">'+esc(permutation)+'</span></button>';
+    }).join('');
     const input='<div class="hsk4PaperPermutations" role="group" aria-label="Pilihan urutan kalimat">'+choices+'</div>';
-    const actions='<div class="hsk5PaperActions"><button type="button" class="btn soft" onclick="checkOne(\''+esc(id)+'\');return false;">'+svg('check')+' Periksa</button><button type="button" class="btn" onclick="showReference(\''+esc(id)+'\')">Lihat kunci</button></div><div class="feedback hsk5PaperFeedback" id="f'+esc(id)+'"></div><div class="reference" id="r'+esc(id)+'">Kunci jawaban: '+esc(q[3]||'Tidak tersedia')+'</div>';
+    const actions='<div class="hsk5PaperActions"><button type="button" class="btn soft" data-q="'+esc(id)+'" onclick="checkOne(this.dataset.q);return false;">'+svg('check')+' Periksa</button><button type="button" class="btn" data-q="'+esc(id)+'" onclick="showReference(this.dataset.q)">Lihat kunci</button></div><div class="feedback hsk5PaperFeedback" id="f'+esc(id)+'"></div><div class="reference" id="r'+esc(id)+'">Kunci jawaban: '+esc(q[3]||'Tidak tersedia')+'</div>';
     return '<div class="hsk5PaperQuestion hsk4PaperSequenceQuestion"><div class="hsk5PaperQNo">'+esc(id)+'.</div><div class="hsk5PaperQBody"><div class="hsk4PaperSentenceList">'+lines+'</div>'+input+actions+'</div></div>';
   }).join('')+'</section>';
 }
@@ -5905,8 +5792,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       b.classList.toggle('active',
         nav==='home' && route.screen==='home' ||
         nav==='packages' && packageScreens.has(route.screen) ||
-        nav==='studyPlans' && planScreens.has(route.screen) ||
-        nav==='donations' && route.screen==='donations'
+        nav==='studyPlans' && planScreens.has(route.screen)
       );
     });
   };
@@ -7746,7 +7632,6 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     document.querySelectorAll('.mainNav .navItem').forEach(b=>{
       const activeNav=(screen===b.dataset.nav)||
         ((screen==='studyPlans'||screen==='studyPlanDetail')&&b.dataset.nav==='studyPlans')||
-        (screen==='donations'&&b.dataset.nav==='donations')||
         ((screen==='levels'||screen==='packages'||screen==='package'||screen==='parts'||screen==='exercise'||screen==='result')&&b.dataset.nav==='packages');
       b.classList.toggle('active',activeNav);
     });
