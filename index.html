@@ -8894,6 +8894,26 @@ body.dark #packagesScreen #packagesGrid.packageGridV16 .packageCardV16Hanzi{opac
   text-shadow: none !important;
 }
 
+
+/* FINAL STABLE SHADOW RESET
+   Keep navbar portrait blur intact; remove shadows regardless of theme,
+   component state, hover, active, focus, or pseudo-element. */
+html body *:not(#shadow-cleanup):not(#shadow-cleanup),
+html body *:not(#shadow-cleanup):not(#shadow-cleanup)::before,
+html body *:not(#shadow-cleanup):not(#shadow-cleanup)::after {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  -webkit-box-shadow: none !important;
+}
+html body *:not(#shadow-cleanup):not(#shadow-cleanup):hover,
+html body *:not(#shadow-cleanup):not(#shadow-cleanup):active,
+html body *:not(#shadow-cleanup):not(#shadow-cleanup):focus,
+html body *:not(#shadow-cleanup):not(#shadow-cleanup):focus-visible {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  -webkit-box-shadow: none !important;
+}
+
 </style>
 </body>
 </html>
