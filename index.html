@@ -8887,6 +8887,13 @@ body.dark #packagesScreen .packageCardV16Info small{color:var(--muted)!important
 }
 body.dark #packagesScreen #packagesGrid.packageGridV16 .packageCardV16Hanzi{opacity:.12!important;}
 
+
+/* Stable cleanup: remove all CSS box and text shadows globally. */
+*, *::before, *::after {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
 </style>
 </body>
 </html>
