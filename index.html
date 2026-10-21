@@ -8429,7 +8429,8 @@ body.dark #hskGradeLoading .hskGradePanel{background:#171819;color:#f4f4f4;borde
   }
   if(typeof original.saveSectionState==='function'){
     window.saveSectionState=function(code,type,index,answersArg,checkedArg,eventsArg){
-      if(!isCombined(code,type,index))return original.saveSectionState.apply(this,arguments);
+      const combinedListeningActive=String(type)==='listening'&&String(route?.packageCode||'')===String(code||'')&&currentQuestions?.length>0&&currentQuestions.some(function(q){return sourceIndex(q?.[0],code)!==null;});
+      if(!isCombined(code,type,index)&&!combinedListeningActive)return original.saveSectionState.apply(this,arguments);
       const parts=listeningParts(code);
       const buckets=new Map();
       parts.forEach(function(part){
