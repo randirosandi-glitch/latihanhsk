@@ -8736,7 +8736,35 @@ body.dark #hskGradeLoading .hskGradePanel{background:#171819;color:#f4f4f4;borde
     currentQuestions=flat;
     const questions=document.getElementById('questions');
     if(questions)questions.innerHTML=progressMarkup(stats)+cards+finishCard();
-    restoreQuestionUI();
+    // Restore each merged Listening question using its own source section.
+    // Do not rely on checkOne() while route.sectionIndex is -1: model resolution
+    // and answer feedback must use the section that owns this question.
+    for(const q of flat){
+      const id=String(q?.[0]);
+      const selected=answers[id];
+      if(selected!==undefined){
+        const selectedButton=document.querySelector(`.opt[data-q="${id}"][data-i="${selected}"]`);
+        if(selectedButton)selectedButton.classList.add('selected');
+      }
+      if(!checked[id] || selected===undefined)continue;
+      const source=sourceIndex(id,code);
+      const ci=correctIndex(q,'listening',source===null?0:source);
+      const chosen=Number(selected);
+      const ok=chosen===ci;
+      document.querySelectorAll(`.opt[data-q="${id}"]`).forEach(function(button){
+        button.classList.remove('correct','wrong');
+        const optionIndex=Number(button.dataset.i);
+        if(optionIndex===chosen)button.classList.add(ok?'correct':'wrong');
+      });
+      const feedback=document.getElementById('f'+id);
+      if(feedback){
+        const model=getResolvedQuestionModel(DB[code],'listening',source===null?0:source,q);
+        const correctOption=model.options?.[ci];
+        const answerLabel=correctOption?String(correctOption.value):(/^[A-F]$/i.test(String(q?.[3]??'').trim())?String(q[3]).trim().toUpperCase():'Tidak tersedia');
+        feedback.className='feedback show '+(ok?'good':'bad');
+        feedback.textContent=ok?'Benar':'Salah — jawaban yang benar: '+answerLabel;
+      }
+    }
     const audioDock=ensureDock();
     if(audioDock)audioDock.hidden=false;
     loadAudioForPackage(code,false);
